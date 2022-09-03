@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Ensemble &#8212; smol 0.0.5 documentation</title>
+    <title>Ensemble &#8212; smol 0.0.6 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -122,7 +122,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.5  <!-- this text may get changed later by javascript -->
+        0.0.6  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -132,7 +132,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/moca/ensemble and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.5'}.
+     variables api_reference/moca/ensemble and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.6'}.
 -->
 
 <script type="text/javascript">
@@ -183,10 +183,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.5 variable.
+            // this version, rather than using sphinx's 0.0.6 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.5") {
+            if (entry.version == "0.0.6") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -375,247 +375,6 @@ the system) should have <a href="#id2"><span class="problematic" id="id3">:prop:
 Systems at constant temperature and constant applied chemical potential
 (species flow allowed) should simple set the <a href="#id4"><span class="problematic" id="id5">:prop:`chemical_potentials`</span></a>
 property.</p>
-<span class="target" id="module-smol.moca.ensemble.ensemble"></span><p>Implementation of Thermodynamic Ensemble for MC sampling.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.ChemicalPotentialManager">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ChemicalPotentialManager</span></span><a class="headerlink" href="#smol.moca.ensemble.ensemble.ChemicalPotentialManager" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Chemical potential descriptor for use Ensemble class.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.ChemicalPotentialManager.natural_parameter">
-<span class="sig-name descname"><span class="pre">natural_parameter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-1.0</span></em><a class="headerlink" href="#smol.moca.ensemble.ensemble.ChemicalPotentialManager.natural_parameter" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_potentials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
-<p>Thermodynamic ensemble class.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.thermo_boundaries">
-<span class="sig-name descname"><span class="pre">thermo_boundaries</span></span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.thermo_boundaries" title="Permalink to this definition">#</a></dt>
-<dd><p>Dictionary with corresponding thermodynamic boundaries, i.e.
-chemical potentials or fugacity fractions. This is kept only for
-descriptive purposes.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<p>Initialize class instance.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>processor</strong> (<a class="reference internal" href="../autogen/moca.processor.html#moca.processor.base.Processor" title="moca.processor.base.Processor"><em>Processor</em></a>) – a processor that can compute the change in property given
-a set of flips.</p></li>
-<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – optional
-list of Sublattice objects representing sites in the processor
-supercell with same site spaces.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.active_sublattices">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">active_sublattices</span></span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.active_sublattices" title="Permalink to this definition">#</a></dt>
-<dd><p>Get list of active sub-lattices.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.as_dict" title="Permalink to this definition">#</a></dt>
-<dd><p>Get Json-serialization dict representation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>MSONable dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.chemical_potentials">
-<span class="sig-name descname"><span class="pre">chemical_potentials</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.chemical_potentials" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.compute_feature_vector">
-<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.compute_feature_vector" title="Permalink to this definition">#</a></dt>
-<dd><p>Compute the feature vector for a given occupancy.</p>
-<p>The feature vector includes the necessary features required to compute
-the exponent determining the relative probability for the given
-occupancy (i.e. a generalized enthalpy). The feature vector for
-ensembles represents the sufficient statistics.</p>
-<p>For a cluster expansion, the feature vector is the
-correlation vector x system size</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>feature vector</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.compute_feature_vector_change">
-<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
-<dd><p>Compute the change in the feature vector from a given step.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string.</p></li>
-<li><p><strong>step</strong> (<em>list of tuple</em>) – a sequence of flips given by MCUsher.propose_step</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>difference in feature vector</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>ndarray</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.from_cluster_expansion">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cluster_expansion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_expansion</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.from_cluster_expansion" title="Permalink to this definition">#</a></dt>
-<dd><p>Initialize an ensemble from a cluster expansion.</p>
-<p>Convenience constructor to instantiate an ensemble. This will take
-care of initializing the correct processor based on the
-ClusterExpansion.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cluster_expansion</strong> (<a class="reference internal" href="../autogen/cofe.html#cofe.expansion.ClusterExpansion" title="cofe.expansion.ClusterExpansion"><em>ClusterExpansion</em></a>) – A cluster expansion object.</p></li>
-<li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – Supercell matrix defining the system size.</p></li>
-<li><p><strong>**kwargs</strong> – Keyword arguments to pass to ensemble constructor. Such as
-sublattices, sublattice_probabilities, chemical_potentials,
-fugacity_fractions.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Ensemble</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble_d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.from_dict" title="Permalink to this definition">#</a></dt>
-<dd><p>Instantiate a CanonicalEnsemble from dict representation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ensemble_d</strong> (<em>dict</em>) – dictionary representation.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>CanonicalEnsemble</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.natural_parameters">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.natural_parameters" title="Permalink to this definition">#</a></dt>
-<dd><p>Get the vector of natural parameters.</p>
-<p>The natural parameters correspond to the fit coefficients of the
-underlying processor plus any additional terms involved in the Legendre
-transformation corresponding to the ensemble.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.num_energy_coefs">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_energy_coefs</span></span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.num_energy_coefs" title="Permalink to this definition">#</a></dt>
-<dd><p>Return the number of coefficients used in the energy expansion.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.num_sites">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_sites</span></span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.num_sites" title="Permalink to this definition">#</a></dt>
-<dd><p>Get the total number of sites in the supercell.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.processor">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">processor</span></span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.processor" title="Permalink to this definition">#</a></dt>
-<dd><p>Get the ensemble processor.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.reset_restricted_sites">
-<span class="sig-name descname"><span class="pre">reset_restricted_sites</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.reset_restricted_sites" title="Permalink to this definition">#</a></dt>
-<dd><p>Unfreeze all previously restricted sites.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.restrict_sites">
-<span class="sig-name descname"><span class="pre">restrict_sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.restrict_sites" title="Permalink to this definition">#</a></dt>
-<dd><p>Restricts (freezes) the given sites.</p>
-<p>This will exclude those sites from being flipped during a Monte Carlo
-run. If some of the given indices refer to inactive sites, there will
-be no effect.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>sites</strong> (<em>Sequence</em>) – indices of sites in the occupancy string to restrict.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.restricted_sites">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">restricted_sites</span></span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.restricted_sites" title="Permalink to this definition">#</a></dt>
-<dd><p>Get indices of all restricted sites.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.species">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">species</span></span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.species" title="Permalink to this definition">#</a></dt>
-<dd><p>Species on active sublattices.</p>
-<p>These are minimal species required in setting chemical potentials.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.split_sublattice_by_species">
-<span class="sig-name descname"><span class="pre">split_sublattice_by_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">occu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_in_partitions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.split_sublattice_by_species" title="Permalink to this definition">#</a></dt>
-<dd><p>Split a sub-lattice in system by its occupied species.</p>
-<p>An example use case might be simulating topotactic Li extraction
-and insertion, where we want to consider Li/Vac, TM and O as
-different sub-lattices that can not be mixed by swapping.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sublattice_id</strong> (<em>int</em>) – The index of sub-lattice to split in self.sublattices.</p></li>
-<li><p><strong>occu</strong> (<em>np.ndarray</em><em>[</em><em>int</em><em>]</em>) – An occupancy array to reference with.</p></li>
-<li><p><strong>species_in_partitions</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>int</em><em>|</em><em>Species</em><em>|</em><a class="reference internal" href="../autogen/cofe.space.html#cofe.space.domain.Vacancy" title="cofe.space.domain.Vacancy"><em>Vacancy</em></a><em>|</em><em>Element</em><em>|</em><em>str</em><em>]</em><em>]</em>) – Each sub-list contains a few species or encodings of species in
-the site space to be grouped as a new sub-lattice, namely,
-sites with occu[sites] == specie in the sub-list, will be
-used to initialize a new sub-lattice.
-Sub-lists will be pre-sorted to ascending order.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.sublattices">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.sublattices" title="Permalink to this definition">#</a></dt>
-<dd><p>Get list of Sublattices included in ensemble.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.ensemble.ensemble.Ensemble.system_size">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">system_size</span></span><a class="headerlink" href="#smol.moca.ensemble.ensemble.Ensemble.system_size" title="Permalink to this definition">#</a></dt>
-<dd><p>Get size of supercell in number of prims.</p>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 
 

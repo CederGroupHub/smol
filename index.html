@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Statistical Mechanics on Lattices &#8212; smol 0.0.5 documentation</title>
+    <title>Statistical Mechanics on Lattices &#8212; smol 0.0.6 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -121,7 +121,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.5  <!-- this text may get changed later by javascript -->
+        0.0.6  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -131,7 +131,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables index and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.5'}.
+     variables index and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.6'}.
 -->
 
 <script type="text/javascript">
@@ -182,10 +182,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.5 variable.
+            // this version, rather than using sphinx's 0.0.6 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.5") {
+            if (entry.version == "0.0.6") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -251,7 +251,7 @@ function checkPageExistsAndRedirect(event) {
 </div>
 <section id="statistical-mechanics-on-lattices">
 <h1>Statistical Mechanics on Lattices<a class="headerlink" href="#statistical-mechanics-on-lattices" title="Permalink to this headline">#</a></h1>
-<p><em>Lighthweight but caffeinated Python implementation of computational methods
+<p><em>Lightweight but caffeinated Python implementation of computational methods
 for statistical mechanical calculations of configurational states in
 crystalline material systems.</em></p>
 <a class="reference external image-reference" href="https://github.com/CederGroupHub/smol/actions/workflows/test.yml"><img alt="Test Status" src="https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg" /></a>
@@ -265,9 +265,7 @@ material systems based on the <em>cluster expansion</em> method from alloy theor
 related methods. Although <strong>smol</strong> is intentionally lightweight—in terms of
 dependencies and built-in functionality—it has a modular design that closely
 follows underlying mathematical formalism and provides useful abstractions to
-easily extend existing methods or implement and test new ones. Finally,
-although initially conceived for method development, <strong>smol</strong> can (and is being)
-used in production for materials science reasearch applications.</p>
+easily extend existing methods or implement and test new ones.</p>
 <section id="functionality">
 <h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">#</a></h2>
 <p><strong>smol</strong> currently includes the following functionality:</p>
