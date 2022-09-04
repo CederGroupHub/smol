@@ -12,6 +12,20 @@ Use this section to keep track of changes in the works.
 ### Removed
 ### Deprecated
 
+# [v0.0.6](https://github.com/CederGroupHub/smol/releases/tag/v0.0.6) (2022-09-02)
+:warning: This version introduced updates that change the order in which orbits are
+sorted in a ClusterSubspace. This means that the order correlation functions appear
+a correlation vector will be different when generating ClusterSubspaces compared to
+previous versions. However, loading a ClusterSubspace from a json file that was
+created with a previous version will still have its original order.
+### Changed
+* Include number of corr functions when sorting orbits. #256 @lbluque
+* Use max distance of centroid to sites in unit cell in cluster search. #256 @lbluque
+### Fixed
+* Fixed search of clusters by correctly using centroid of unit cell. #255 @kamronald
+### Removed
+* Removed CanonicalEnsemble and SemigrandEnsemble. #257 @lbluque
+
 # [v0.0.5](https://github.com/CederGroupHub/smol/releases/tag/v0.0.5) (2022-08-10)
 ### Added
 * Data centering example notebook. #238 @kamronald

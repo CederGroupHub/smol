@@ -19,6 +19,8 @@ from smol.correlations import corr_from_occupancy
 from smol.exceptions import StructureMatchError
 from tests.utils import assert_msonable, gen_random_structure
 
+pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
+
 
 def test_from_cutoffs(structure):
     cutoffs = {2: 5, 3: 4, 4: 4}
@@ -503,9 +505,9 @@ def test_function_hierarchy_fixed(single_subspace):
     assert sorted(hierarchy[-1]) == [17, 21]
     assert sorted(hierarchy[15]) == []
     assert sorted(hierarchy[35]) == [5, 7, 10]
-    assert sorted(hierarchy[55]) == [6, 8, 13]
-    assert sorted(hierarchy[75]) == [7, 16, 21]
-    assert sorted(hierarchy[95]) == [9, 19]
+    assert sorted(hierarchy[56]) == [7, 8, 16]
+    assert sorted(hierarchy[75]) == [7, 14, 20]
+    assert sorted(hierarchy[95]) == [13, 19, 21]
     assert sorted(hierarchy[115]) == [13, 19, 21]
 
 
@@ -515,7 +517,7 @@ def test_orbit_hierarchy_fixed(single_subspace):
     assert sorted(hierarchy[1]) == []  # point
     assert sorted(hierarchy[3]) == [1, 2]  # distinct site pair
     assert sorted(hierarchy[4]) == [1]  # same site pair
-    assert sorted(hierarchy[15]) == [3, 5]  # triplet
+    assert sorted(hierarchy[15]) == [3, 6]  # triplet
     assert sorted(hierarchy[-1]) == [6, 7]
 
 
