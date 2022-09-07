@@ -290,7 +290,6 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
     # Test that symmetrically equivalent matrices really produce the
     # same correlation vector for the same occupancy.
     def get_corr(occu, space, matrix):
-        occu = np.array(occu, dtype=int)
         mappings = space._gen_orbit_indices(matrix)
         orbit_list = [
             (

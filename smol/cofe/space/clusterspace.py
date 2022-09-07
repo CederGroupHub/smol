@@ -741,6 +741,10 @@ class ClusterSubspace(MSONable):
                 occu.append(allowed_species.index(spec))
             else:
                 occu.append(spec)
+
+        if encode:  # cast to ndarray dtype int
+            occu = np.array(occu, dtype=int)
+
         return occu
 
     def scmatrix_from_structure(self, structure):
