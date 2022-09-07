@@ -692,15 +692,6 @@ class ClusterSubspace(MSONable):
                 if True, the occupancy string will have the index of the species
                 in the expansion structure site spaces, rather than the
                 species itself.
-        Notice: smol code is designed such that, if you use one structure
-                but two different super-cell matrices as the input, even if the two
-                matrices are symmetrically equivalent (structure matcher can match
-                prim.make_supercell), as long as the two matrices are not fully identical
-                (np.allclose), the resulting occupancy string will not be
-                the same because of different site mappings. So is the case with correlation
-                functions.
-                As a result, better always store the super-cell matrix you used when encoding
-                an occupancy!
 
         Returns:
             list: occupancy string for structure.
