@@ -313,6 +313,7 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
     matrix3 = np.array([[0, 0, 1], [-1, 0, 0], [0, 1, 0]]) @ np.array(
         supercell_matrix, dtype=int
     )
+
     # Because of different site_mappings, when you change super-cell,
     # you must re-generate occupancy strings altogether even if your
     # super-cell matrices are symmetrically equivalent.
@@ -330,16 +331,46 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
         cluster_subspace.occupancy_from_structure(s, scmatrix=matrix3, encode=True)
         for s in structures
     ]
+
     corrs = np.array(
-        [get_corr(occu, cluster_subspace, supercell_matrix) for occu in occus]
+        [
+            corr_from_occupancy(
+                occu,
+                cluster_subspace.num_corr_functions,
+                cluster_subspace.gen_orbit_list(supercell_matrix),
+            )
+            for occu in occus
+        ]
     )
-    corrs2 = np.array([get_corr(occu, cluster_subspace, matrix2) for occu in occus2])
-    corrs3 = np.array([get_corr(occu, cluster_subspace, matrix3) for occu in occus3])
+
+    corrs2 = np.array(
+        [
+            corr_from_occupancy(
+                occu,
+                cluster_subspace.num_corr_functions,
+                cluster_subspace.gen_orbit_list(matrix2),
+            )
+            for occu in occus2
+        ]
+    )
+
+    corrs3 = np.array(
+        [
+            corr_from_occupancy(
+                occu,
+                cluster_subspace.num_corr_functions,
+                cluster_subspace.gen_orbit_list(matrix3),
+            )
+            for occu in occus3
+        ]
+    )
+
     # Symmetrically equivalent matrices should give the same correlation
-    # function for the same structure, when the orbit indices mapping
+    # function for the same structure, when the orbit indices mappings
     # are re-generated.
     npt.assert_array_almost_equal(corrs, corrs2)
     npt.assert_array_almost_equal(corrs, corrs3)
+
     # Symmetrically equivalent matrices should give the same correlation
     # vectors on the same structure, when using the default orbit mapping.
     cluster_subspace._supercell_orb_inds = {}

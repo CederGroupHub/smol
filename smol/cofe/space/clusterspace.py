@@ -597,18 +597,9 @@ class ClusterSubspace(MSONable):
         )
         occu = np.array(occu, dtype=int)
 
-        # Create a list of tuples with necessary information to compute corr
-        mappings = self.supercell_orbit_mappings(scmatrix)
-        orbit_list = [
-            (
-                orbit.bit_id,
-                orbit.flat_tensor_indices,
-                orbit.flat_correlation_tensors,
-                cluster_indices,
-            )
-            for cluster_indices, orbit in zip(mappings, self.orbits)
-        ]
-        corr = corr_from_occupancy(occu, self.num_corr_functions, orbit_list)
+        corr = corr_from_occupancy(
+            occu, self.num_corr_functions, self.gen_orbit_list(scmatrix)
+        )
         size = self.num_prims_from_matrix(scmatrix)
 
         if self.external_terms:
@@ -1039,6 +1030,38 @@ class ClusterSubspace(MSONable):
                     sub_fun_ids.append(sub_orbit.bit_id + i)
 
         return sub_fun_ids
+
+    def gen_orbit_list(self, scmatrix):
+        """
+        Generate list of data to compute correlation vectors.
+
+        List includes orbit bit ids, flat correlation tensors and their indices,
+        and array of cluster indices for supercell corresponding to given
+        supercell matrix.
+
+        This is a helper function for the correlation vector computation and most
+        often called internally.
+
+        Args:
+            scmatrix (ndarray):
+                supercell matrix.
+
+        Returns: list of tuples
+            [(orbit bit ids, tensor  indices, flat corr tensors, cluster indices)]
+        """
+        mappings = self.supercell_orbit_mappings(scmatrix)
+        orbit_list = []
+        for orbit, cluster_inds in zip(self.orbits, mappings):
+            orbit_list.append(
+                (
+                    orbit.bit_id,
+                    orbit.flat_tensor_indices,
+                    orbit.flat_correlation_tensors,
+                    cluster_inds,
+                )
+            )
+
+        return orbit_list
 
     def _assign_orbit_ids(self):
         """Assign unique id's to orbit.
