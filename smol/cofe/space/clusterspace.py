@@ -9,6 +9,7 @@ diverges from the CE mathematic formalism.
 # pylint: disable=too-many-lines
 
 
+import itertools
 import warnings
 from copy import deepcopy
 from importlib import import_module
@@ -700,6 +701,15 @@ class ClusterSubspace(MSONable):
                 if True, the occupancy string will have the index of the species
                 in the expansion structure site spaces, rather than the
                 species itself.
+        Notice: smol code is designed such that, if you use one structure
+                but two different super-cell matrices as the input, even if the two
+                matrices are symmetrically equivalent (structure matcher can match
+                prim.make_supercell), as long as the two matrices are not fully identical
+                (np.allclose), the resulting occupancy string will not be
+                the same because of different site mappings. So is the case with correlation
+                functions.
+                As a result, better always store the super-cell matrix you used when encoding
+                an occupancy!
 
         Returns:
             list: occupancy string for structure.
@@ -771,7 +781,6 @@ class ClusterSubspace(MSONable):
         """
         # np.arrays are not hashable and can't be used as dict keys.
         scmatrix = np.array(scmatrix)
-        # so change them into a tuple of sorted tuples for unique keys.
         scm = tuple(sorted(tuple(s.tolist()) for s in scmatrix))
         indices = self._supercell_orb_inds.get(scm)
 
@@ -809,13 +818,16 @@ class ClusterSubspace(MSONable):
         sc_orb_map = self.supercell_orbit_mappings(sc_matrix)
         aliased_orbits = []
         for orb_i, orb_map_i in enumerate(sc_orb_map):
+            # +1 because ECI index takes the null cluster as index 0.
+            if orb_i + 1 in itertools.chain(*aliased_orbits):
+                continue
             orb_i_id = orb_i + 1
             aliased = False
             orbit_i_aliased = [orb_i_id]
             sorted_orb_map_i = {tuple(sorted(c_map)) for c_map in orb_map_i}
 
             for orb_j, orb_map_j in enumerate(sc_orb_map):
-                if orb_i == orb_j:
+                if orb_i >= orb_j or (orb_j + 1 in itertools.chain(*aliased_orbits)):
                     continue
                 orb_j_id = orb_j + 1
                 sorted_orb_map_j = {tuple(sorted(c_map)) for c_map in orb_map_j}
