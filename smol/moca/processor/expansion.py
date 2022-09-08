@@ -64,7 +64,8 @@ class ClusterExpansionProcessor(Processor):
             )
 
         # List of orbit information and supercell site indices to compute corr
-        self._orbit_list = []
+        self._orbit_list = cluster_subspace.gen_orbit_list(supercell_matrix)
+
         # Dictionary of orbits by site index and information
         # necessary to compute local changes in correlation vectors from flips
         self._orbits_by_sites = defaultdict(list)
@@ -73,26 +74,21 @@ class ClusterExpansionProcessor(Processor):
         # where only the rows with the site index are stored. The ratio is
         # needed because the correlations are averages over the full inds
         # array.
-        # Prepare necssary information for local updates
-        mappings = self._subspace.supercell_orbit_mappings(supercell_matrix)
-        for cluster_indices, orbit in zip(mappings, self._subspace.orbits):
-            self._orbit_list.append(
-                (
-                    orbit.bit_id,
-                    orbit.flat_tensor_indices,
-                    orbit.flat_correlation_tensors,
-                    cluster_indices,
-                )
-            )
+        for (
+            bit_id,
+            flat_tensor_inds,
+            flat_corr_tensors,
+            cluster_indices,
+        ) in self._orbit_list:
             for site_ind in np.unique(cluster_indices):
                 in_inds = np.any(cluster_indices == site_ind, axis=-1)
                 ratio = len(cluster_indices) / np.sum(in_inds)
                 self._orbits_by_sites[site_ind].append(
                     (
-                        orbit.bit_id,
+                        bit_id,
                         ratio,
-                        orbit.flat_tensor_indices,
-                        orbit.flat_correlation_tensors,
+                        flat_tensor_inds,
+                        flat_corr_tensors,
                         cluster_indices[in_inds],
                     )
                 )
