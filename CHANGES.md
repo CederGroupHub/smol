@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* Additional tests to ensure correlation vectors are consistent across equivalent
+  supercell matrices.  #262 @qchempku2017
 ### Changed
+* Improved orbit alias detection. #262 @qchempku2017
 ### Fixed
 ### Removed
 ### Deprecated
