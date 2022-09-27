@@ -122,6 +122,8 @@ def test_prune(cluster_expansion):
 
 
 def test_msonable(cluster_expansion):
+    _ = repr(cluster_expansion)
+    _ = str(cluster_expansion)
     _ = str(cluster_expansion)
     d = cluster_expansion.as_dict()
     ce1 = ClusterExpansion.from_dict(d)
