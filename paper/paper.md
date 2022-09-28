@@ -46,14 +46,14 @@ variety of applications, such as electrochemical [@Lun:2020], structural
 [@George:2019], semiconductor, thermoelectric, magnetic, and superconducting
 [@Gao:2018] materials—necessitates the development of computational methodology
 capable of resolving details of atomic configuration and resulting thermodynamic
-properties. The cluster expansion method is a formal and effective way to
+properties. The cluster expansion (CE) method is a formal and effective way to
 construct functions of atomic configuration by coarse-graining materials
 properties, such as formation energies, in terms of species occupancy
-lattice model [@Sanchez:1984]. The cluster expansion method coupled with Monte
+lattice models [@Sanchez:1984]. The cluster expansion method coupled with Monte
 Carlo sampling (CE-MC) is an established and effective way to resolve atomic
 details underlying important thermodynamic properties [@VanderVen:2018].
 
-`smol` (Statistical Mechanics on Lattices) is a Python package for constructing general applied lattice models, and performing Monte Carlo sampling of associated thermodynamic ensembles. The representation of lattice models in `smol` is based largely on the Cluster Expansion (CE) formalism [@Sanchez:1984]. However, the package is designed to allow easy implementation of extensions to the formalism, such as redundant representations [@Barroso-Luque:2021]. `smol` also includes flexible and extensible functionality to run Monte Carlo (MC) sampling from canonical and semigrand-canonical ensembles associated with the generated lattice models. `smol` has been intentionally designed to be lightweight and include a minimal set of dependencies to enable smooth installation, use, and development. `smol` was conceived primarily to enable development and implementation of novel CE-MC methodology but is now sufficiently mature that it is already being used in applied research of relevant material systems. [@Yang:2022-a; @Chen:2022; @Jadidi:2022; @Yang:2022-b]
+`smol` (Statistical Mechanics on Lattices) is a Python package for constructing generalized applied lattice models, and performing Monte Carlo sampling of associated thermodynamic ensembles. The representation of lattice models in `smol` is based largely on the CE formalism [@Sanchez:1984]. However, the package is designed to allow easy implementation of extensions to the formalism, such as redundant representations [@Barroso-Luque:2021]. `smol` also includes flexible and extensible functionality to run Monte Carlo (MC) sampling from canonical and semigrand-canonical ensembles associated with the generated lattice models. `smol` has been intentionally designed to be lightweight and include a minimal set of dependencies to enable smooth installation, use, and development. `smol` was conceived primarily to enable development and implementation of novel CE-MC methodology but is now sufficiently mature that it is already being used in applied research of relevant material systems. [@Yang:2022-a; @Chen:2022; @Jadidi:2022; @Yang:2022-b]
 
 # Statement of need
 
@@ -63,7 +63,7 @@ Several high-quality software packages implementing CE-MC methodology, such as `
 
 2. `smol` is the only package implemented using `pymatgen`—a widely used Python materials analysis library [@Ong:2013]. This allows seamless use of `pymatgen` functionality for pre and post-processing. Additionally, several other Materials Project [@Jain:2013] packages, such as Fireworks [@Jain:2015], atomate/atomate2 [@Mathew:2017; @atomate2], database creation, and management tools can be leveraged alongside `smol` to include configuration thermodynamic calculations as part of more elaborate materials analysis workflows.
 
-3. `smol` is designed to be intentionally lightweight and dependency lean by delegating much of the non-core functionality to already well-established Python packages, for example, general structure manipulations, enumeration, and linear regression. This makes `smol` easy to install, easy to use, easy to develop, easy to extend and easy to test.
+3. `smol` is designed to be intentionally lightweight and dependency lean by delegating much of the non-core functionality to already well-established Python packages, for example, general structure manipulations, enumeration, and linear regression. This makes `smol` easy to install, easy to use, easy to develop, easy to extend, and easy to test.
 
 `smol` should be considerably more user and developer friendly than standalone C++ packages `ATAT` and `CASM`. In comparison to other Python implementations, in particular `icet`---which is superbly well documented and user-friendly---`smol` stands out as largely more developer friendly and easier to extend. In the context of all available packages, `smol` is geared towards efficient and open development of new methodology that is also user-friendly, thus allowing quick development-to-application turnaround time.
 
@@ -88,7 +88,7 @@ These two considerations are at the foundation of the original CE method [@Sanch
 H(\sigma) = \sum_\beta m_\beta J_\beta\Theta_\beta(\sigma)
 \end{equation}
 
-where $m_\beta$ are crystallographic multiplicities and $J_\beta$ are expansion coefficients. The correlation functions $\Theta_\beta$ take as input different sets of clusters of sites $S$ that are symmetrically equivalent under permutations corresponding to the symmetries of the underlying crystal structure’s space group. The set of all correlation functions $\{\Theta_\beta\}$, unlike the classical CE method, is not limited only to those that represent a basis set, but can be any complete set of functions (linearly independent or redundant) that spans the symmetry invariant function subspace over configurations $\sigma$.
+where $m_\beta$ are crystallographic multiplicities and $J_\beta$ are expansion coefficients. The correlation functions $\Theta_\beta$ take as input different sets of clusters of sites $S$ that are symmetrically equivalent under permutations corresponding to the symmetries of the underlying crystal structure’s space group. The set of all correlation functions $\{\Theta_\beta\}$, unlike the classical CE method, is not limited only to those that represent a basis set but can be any complete set of functions (linearly independent or redundant) that spans the symmetry invariant function subspace over configurations $\sigma$.
 
 Following the original CE method formalism, the correlation functions $\Theta_\beta$ are constructed from symmetrically adapted averages of cluster product functions,
 
@@ -109,13 +109,13 @@ Classes and functions for representation and construction of functions of config
 
 - Classes and functions to define site function sets, which make up the basic building blocks for an expansion as detailed in \autoref{eq:clusterfun}. The package includes functionality to generate both basis and redundant sets with any of the commonly used site function sets, (polynomial [@Sanchez:1984], trigonometric [@VandeWalle:2009], and occupancy indicator [@Zhang:2016]), as well as abstractions to effortlessly implement new function sets.
 - Classes to represent clusters of sites S and groupings of symmetrically equivalent cluster functions to represent the terms in the sum of \autoref{eq:clusterexp}. Additionally, the package includes functionality to automatically generate these objects based on a given disordered structure—that may include neutral species, ionic species with assigned oxidation states, or vacancies—by leveraging `pymatgen`’s established and flexible representations of structures and associated symmetries.
-- Classes to include additional interaction terms to a CE-based lattice model to improve training convergence. Currently, the package only includes an electrostatic pair potential for ionic structures [@Richards:2017], but the concept is applicable to any simple interaction model such as the reciprocal space CE constituent strain interaction [@Laks:1992], or any other empirical or fitted pair potential.
+- Classes to include additional interaction terms to a CE-based lattice model to improve training convergence. Currently, the package only includes an electrostatic pair potential for ionic structures [@Richards:2017], but the concept applies to any simple interaction model such as the reciprocal space CE constituent strain interaction [@Laks:1992], or any other empirical or fitted pair potential.
 - Classes and functions to preprocess and generate feature matrices and fitting data corresponding to a defined set of correlation functions, datasets of relaxed structures, and computed energies from any first-principle, machine learning, or empirical potential calculations.
 
 Additionally, the functionality to sample thermodynamic properties for a fitted lattice model under both canonical and semi-grand canonical ensembles is included in the `smol.moca` module. The `smol.moca` module includes flexible object-oriented abstractions, including the following:
 
 - Classes and functions to quickly evaluate a cluster expansion for a given configuration and local configuration changes over a predefined supercell size and shape. Critical functions are implemented in Cython so that MC performance is not compromised.
-- Classes to implement complex MC algorithms. The different components of MC are implemented as independent objects and utilities, that include classes to define configuration transition proposals, statistical ensembles, sampled value traces, and various Monte Carlo algorithm kernels. This enables customization of MC sampling methods, ensembles and computed properties without the need to re-write the sample generation, saving, and streaming to file functionality.
+- Classes to implement complex MC algorithms. The different components of MC are implemented as independent objects and utilities, that include classes to define configuration transition proposals, statistical ensembles, sampled value traces, and various Monte Carlo algorithm kernels. This enables customization of MC sampling methods, ensembles, and computed properties without the need to re-write the sample generation, saving, and streaming to file functionality.
 
 All classes and functions included in `smol` are thoroughly documented and several usage examples are available in the documentation.
 
