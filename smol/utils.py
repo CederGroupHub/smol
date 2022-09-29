@@ -8,23 +8,6 @@ import warnings
 from typing import Any, Dict
 
 
-def _repr(instance: object, **fields: Dict[str, Any]) -> str:
-    """Create object representation.
-
-    A helper function for repr overloading in classes.
-    """
-    attrs = []
-
-    for key, field in fields.items():
-        attrs.append(f"{key}={field!r}")
-
-    return (
-        (f"<{instance.__class__.__name__} {hex(id(instance))}({','.join(attrs)})>")
-        if len(attrs) == 0
-        else f"<{instance.__class__.__name__} {hex(id(instance))}>"
-    )
-
-
 def class_name_from_str(class_str):
     """Return a class name based on given string.
 

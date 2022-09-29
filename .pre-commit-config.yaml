@@ -38,13 +38,13 @@ repos:
     - --profile=black
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v2.37.3
+  rev: v2.38.2
   hooks:
     - id: pyupgrade
       args: [--py38-plus]
 
 - repo: https://github.com/myint/autoflake
-  rev: v1.5.3
+  rev: v1.6.1
   hooks:
     - id: autoflake
       args:
