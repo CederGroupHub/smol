@@ -89,6 +89,10 @@ def test_bad_propabilities(mcmcusher):
         mcmcusher.sublattice_probabilities = [0.6, 0.1]
     with pytest.raises(AttributeError):
         mcmcusher.sublattice_probabilities = [0.5, 0.2, 0.3]
+    with pytest.raises(AttributeError):
+        _ = Flip(mcmcusher.sublattices, [0.5])
+    with pytest.raises(ValueError):
+        _ = Flip(mcmcusher.sublattices, [0.5, 0.2])
 
 
 def test_propose_step(mcmcusher, rand_occu):
