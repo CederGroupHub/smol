@@ -34,6 +34,9 @@ crystalline materials.*
       :alt: Python Versions
       :target: https://img.shields.io/pypi/pyversions/smol
 
+.. image:: https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25/status.svg
+      :alt: JOSS Status
+      :target: https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25
 
 -------------------------------------------------------------------------------
 
@@ -70,9 +73,11 @@ Citing
 ======
 If you find **smol** useful please cite the following publication,
 
-    Barroso-Luque, L., et al.
-    `smol: A Python package for cluster expansions and beyond. (submitted)
-    <https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25>`_
+    Barroso-Luque, L., Yang, J.H., Xie, F., Chen T., Kam, R.L., Jadidi, Z., Zhong, P.
+    & Ceder, G.
+    `smol: A Python package for cluster expansions and beyond.
+    <https://joss.theoj.org/papers/10.21105/joss.04504>`_
+    Journal of Open Source Software 7, 4504 (2022).
 
 Since **smol** is based on **pymatgen**, please also cite this publication,
 
