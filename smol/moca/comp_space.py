@@ -708,6 +708,16 @@ class CompSpace(MSONable):
         other_constraints = [
             (a, bb) for a, bb in zip(self.A[n_cons:].tolist(), self.b[n_cons:].tolist())
         ]
+        leq_constraints = (
+            [(a, bb) for a, bb in zip(self._A_leq.tolist(), self._b_leq.tolist())]
+            if self._A_leq is not None and self._b_leq is not None
+            else None
+        )
+        geq_constraints = (
+            [(a, bb) for a, bb in zip(self._A_geq.tolist(), self._b_geq.tolist())]
+            if self._A_geq is not None and self._b_geq is not None
+            else None
+        )
 
         comp_grids = {
             f"{k[0]}_{k[1]}": v.tolist() for k, v in self._comp_grids.items()
@@ -723,6 +733,8 @@ class CompSpace(MSONable):
             "bits": bits,
             "sl_sizes": self.sl_sizes,
             "other_constraints": other_constraints,
+            "leq_constraints": leq_constraints,
+            "geq_constraints": geq_constraints,
             "charge_balanced": self.charge_balanced,
             "optimize_basis": self.optimize_basis,
             "table_ergodic": self.table_ergodic,
@@ -752,6 +764,8 @@ class CompSpace(MSONable):
         ]
         sl_sizes = d.get("sl_sizes")
         other_constraints = d.get("other_constraints")
+        leq_constraints = d.get("leq_constraints")
+        geq_constraints = d.get("geq_constraints")
         charge_balanced = d.get("charge_balanced", True)
         optimize_basis = d.get("optimize_basis", False)
         table_ergodic = d.get("table_ergodic", False)
@@ -760,6 +774,8 @@ class CompSpace(MSONable):
             bits,
             sl_sizes,
             other_constraints=other_constraints,
+            leq_constraints=leq_constraints,
+            geq_constraints=geq_constraints,
             charge_balanced=charge_balanced,
             optimize_basis=optimize_basis,
             table_ergodic=table_ergodic,

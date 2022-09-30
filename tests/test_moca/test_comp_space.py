@@ -206,11 +206,13 @@ def test_generic_attributes(comp_space):
     npt.assert_array_equal(flips, comp_space.flip_table)
 
 
-def test_serialize(comp_space):
+def test_serialize(comp_space, comp_space_lmtpo3, comp_space_lmntof):
     _ = comp_space.flip_table
     if comp_space.n_comps_estimate < 10**6:
         _ = comp_space.min_sc_grid
     assert_msonable(comp_space)
+    assert_msonable(comp_space_lmtpo3)
+    assert_msonable(comp_space_lmntof)
     comp_space_reload = CompSpace.from_dict(comp_space.as_dict())
     npt.assert_array_equal(comp_space_reload._flip_table, comp_space._flip_table)
     npt.assert_array_equal(comp_space_reload._vs, comp_space._vs)
