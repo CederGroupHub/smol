@@ -1,3 +1,4 @@
+import math
 from collections import Counter
 
 import numpy as np
@@ -6,13 +7,12 @@ import pytest
 from pymatgen.core import Composition
 
 from smol.cofe.space.domain import SiteSpace
-from smol.moca.sampler.bias import SquarechargeBias
-from smol.moca.sampler.mcusher import Flip, Swap, Tableflip
+from smol.moca.sampler.bias import SquareChargeBias
+from smol.moca.sampler.mcusher import Flip, Swap, TableFlip
 from smol.moca.sublattice import Sublattice
-from smol.moca.utils.math_utils import comb
 from tests.utils import gen_random_neutral_occupancy, gen_random_occupancy
 
-mcmcusher_classes = [Flip, Swap, Tableflip]
+mcmcusher_classes = [Flip, Swap, TableFlip]
 num_sites = 100
 
 
@@ -69,14 +69,14 @@ def rand_occu_lmtpo(all_sublattices_lmtpo):
 @pytest.fixture(params=mcmcusher_classes)
 def mcmcusher(request, all_sublattices):
     # instantiate mcmcushers to test
-    if request.param == Tableflip:
+    if request.param == TableFlip:
         return request.param(all_sublattices[0] + all_sublattices[1], swap_weight=0)
     return request.param(all_sublattices[0] + all_sublattices[1])
 
 
 @pytest.fixture
 def table_flip(all_sublattices_lmtpo):
-    return Tableflip(
+    return TableFlip(
         all_sublattices_lmtpo[0] + all_sublattices_lmtpo[1],
         optimize_basis=True,
         table_ergodic=True,
@@ -124,7 +124,7 @@ def test_propose_step(mcmcusher, rand_occu):
             flipped_sites.append(flip[0])
 
     # check probabilities seem sound
-    if not isinstance(mcmcusher, Tableflip):
+    if not isinstance(mcmcusher, TableFlip):
         assert count1 / total == pytest.approx(0.5, abs=1e-2)
         assert count2 / total == pytest.approx(0.5, abs=1e-2)
     else:
@@ -162,7 +162,7 @@ def test_propose_step(mcmcusher, rand_occu):
                 )
             total += 1
             flipped_sites.append(flip[0])
-    if not isinstance(mcmcusher, Tableflip):
+    if not isinstance(mcmcusher, TableFlip):
         assert count1 / total == pytest.approx(0.8, abs=1e-2)
         assert count2 / total == pytest.approx(0.2, abs=1e-2)
 
@@ -174,7 +174,7 @@ def test_table_flip_factors():
     site_space2 = SiteSpace(Composition({"O2-": 5 / 6, "F-": 1 / 6}))
     sublattices = [Sublattice(site_space1, sites1), Sublattice(site_space2, sites2)]
 
-    tf = Tableflip(sublattices, optimize_basis=True, table_ergodic=True)
+    tf = TableFlip(sublattices, optimize_basis=True, table_ergodic=True)
     # Case 1:
     occu1 = np.array([0, 0, 1, 0, 0, 0])
     step1 = [(2, 2), (4, 1)]
@@ -226,10 +226,10 @@ def test_table_flip(table_flip, rand_occu_lmtpo):
     def get_n_states(n):
         assert n[:3].sum() == 3
         assert n[3:].sum() == 3
-        return comb(3, n[0]) * comb(3 - n[0], n[1]) * comb(3, n[3])
+        return math.comb(3, n[0]) * math.comb(3 - n[0], n[1]) * math.comb(3, n[3])
 
     occu = rand_occu_lmtpo[0].copy()
-    bias = SquarechargeBias(table_flip.sublattices)
+    bias = SquareChargeBias(table_flip.sublattices)
     o_counter = Counter()
     n_counter = Counter()
 

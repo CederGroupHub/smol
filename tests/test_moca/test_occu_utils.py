@@ -6,11 +6,11 @@ import numpy.testing as npt
 import pytest
 
 from smol.moca.utils.occu_utils import (
-    delta_n_from_step,
+    delta_counts_from_step,
     get_dim_ids_by_sublattice,
     get_dim_ids_table,
+    occu_to_counts,
     occu_to_species_list,
-    occu_to_species_n,
 )
 from tests.utils import gen_random_occupancy
 
@@ -92,8 +92,8 @@ def test_occu_conversion(sublattices, dim_ids_table_all, dim_ids_table_active):
         occu = gen_random_occupancy(sublattices)
         list_all = occu_to_species_list(occu, d, dim_ids_table_all)
         list_active = occu_to_species_list(occu, d, dim_ids_table_active)
-        n_all = occu_to_species_n(occu, d, dim_ids_table_all)
-        n_active = occu_to_species_n(occu, d, dim_ids_table_active)
+        n_all = occu_to_counts(occu, d, dim_ids_table_all)
+        n_active = occu_to_counts(occu, d, dim_ids_table_active)
         npt.assert_array_equal(n_all, [len(sites) for sites in list_all])
         npt.assert_array_equal(n_active, [len(sites) for sites in list_active])
         dim_id = 0
@@ -135,13 +135,13 @@ def test_delta_n(sublattices, dim_ids_table_active):
         dim_id_ori = dim_ids_table_active[site, code_ori]
         dim_id_nex = dim_ids_table_active[site, code_nex]
 
-        dn1 = delta_n_from_step(occu, step1, d, dim_ids_table_active)
+        dn1 = delta_counts_from_step(occu, step1, d, dim_ids_table_active)
         dn1_std = np.zeros(len(dn1))
         dn1_std[dim_id_nex] = 1
         dn1_std[dim_id_ori] = -1
-        dn2 = delta_n_from_step(occu, step2, d, dim_ids_table_active)
+        dn2 = delta_counts_from_step(occu, step2, d, dim_ids_table_active)
         dn2_std = np.zeros(len(dn2))
-        dn3 = delta_n_from_step(occu, step3, d, dim_ids_table_active)
+        dn3 = delta_counts_from_step(occu, step3, d, dim_ids_table_active)
         npt.assert_array_equal(dn1, dn1_std)
         npt.assert_array_equal(dn2, dn2_std)
         npt.assert_array_equal(dn3, dn1_std)
@@ -154,10 +154,10 @@ def test_delta_n(sublattices, dim_ids_table_active):
         bad_code = np.random.choice(bad_codes)
         bad_step = [(site, bad_code)]
         with pytest.raises(ValueError):
-            _ = delta_n_from_step(occu, bad_step, d, dim_ids_table_active)
+            _ = delta_counts_from_step(occu, bad_step, d, dim_ids_table_active)
     inactive_sites = np.setdiff1d(all_sites, active_sites)
     bad_site = np.random.choice(inactive_sites)
     rand_code = np.random.choice(np.arange(len(table_site), dtype=int))
     bad_step = [(bad_site, rand_code)]
     with pytest.raises(ValueError):
-        _ = delta_n_from_step(occu, bad_step, d, dim_ids_table_active)
+        _ = delta_counts_from_step(occu, bad_step, d, dim_ids_table_active)

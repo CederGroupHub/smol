@@ -7,40 +7,14 @@ __author___ = "Fengyu Xie"
 
 import math
 from fractions import Fraction
-from functools import reduce
 from itertools import combinations
 
-import cvxpy as cp
 import numpy as np
-import polytope as pc
 from scipy.linalg import null_space
 from scipy.spatial import KDTree
 
 # Global numerical tolerance in this module.
 NUM_TOL = 1e-6
-
-
-class DiopInfeasibleError(Exception):
-    """Diophantine equations have no integer solution."""
-
-    def __init__(self):
-        """Initialize exception."""
-        message = "Diophantine equations have no integer solution!"
-        super().__init__(message)
-
-
-class NaturalInfeasibleError(Exception):
-    """Diophantine equations have no natural number solution."""
-
-    def __init__(self):
-        """Initialize exception."""
-        message = "Diophantine equations have no natural number solution!"
-        super().__init__(message)
-
-
-def gcd(a, b):
-    """Euclidean Algorithm, giving positive GCD's."""
-    return math.gcd(a, b)
 
 
 def gcdex(a, b):
@@ -53,52 +27,6 @@ def gcdex(a, b):
     y = x1
 
     return x, y, g
-
-
-def gcd_list(lst):
-    """Find GCD of a list of numbers."""
-    if len(lst) < 1:
-        return None
-    elif len(lst) == 1:
-        return lst[0]
-    else:
-        return reduce(lambda a, b: gcd(a, b), lst)
-
-
-def lcm(a, b):
-    """Find LCM of two numbers."""
-    if a == 0 and b == 0:
-        return 0
-    elif a == 0 and b != 0:
-        return b
-    elif a != 0 and b == 0:
-        return a
-    else:
-        return a * b // gcd(a, b)
-
-
-def lcm_list(lst):
-    """Find LCM of a list of numbers."""
-    if len(lst) < 1:
-        return None
-    elif len(lst) == 1:
-        return lst[0]
-    else:
-        return reduce(lcm, lst)
-
-
-# Combinatoric and intergerization
-def comb(n, k):
-    """Choose k from n.
-
-    Written to be compatible with lower python versions.
-    If python >= 3.8, will use math.comb.
-    Otherwise, will be computed with math.factorial.
-    """
-    if hasattr(math, "comb"):
-        return math.comb(n, k)
-    else:
-        return math.factorial(n) // (math.factorial(n - k) * math.factorial(k))
 
 
 def rationalize_number(a, max_denominator=1000, dtol=NUM_TOL):
@@ -155,7 +83,7 @@ def integerize_vector(v, max_denominator=1000, dtol=NUM_TOL):
     for c in v:
         _, deno = rationalize_number(c, max_denominator=max_denominator, dtol=dtol)
         denos.append(deno)
-    lcm = lcm_list(denos)
+    lcm = math.lcm(*denos)
     return np.array(np.round(v * lcm), dtype=np.int64), lcm
 
 
@@ -332,7 +260,7 @@ def solve_diophantines(A, b=None):
             print("B:", B)
             print("V:", V)
             assert np.allclose(B, U @ A @ V)
-            raise DiopInfeasibleError
+            raise ValueError("Diophantine equations A n = b are not feasible!")
 
     # Get base solution
     n0 = V[:, :k] @ (c[:k] // B.diagonal()[:k])
@@ -359,6 +287,15 @@ def get_nonneg_float_vertices(A, b):
         Vertices of polytope An=b, n>=0 in float:
             np.ndarray[float]
     """
+    try:
+        import polytope as pc
+    except ImportError as e:
+        print(
+            "polytope required in this function, but is not installed! "
+            "Check requirements-optional.txt!"
+        )
+        raise e
+
     A = np.array(A)
     b = np.array(b)
 
@@ -407,6 +344,24 @@ def get_natural_centroid(
         The natural number point on the grid closest to centroid ("x"):
             1D np.ndarray[int]
     """
+    try:
+        import cvxpy as cp
+    except ImportError as e:
+        print(
+            "cvxpy and cvxopt required in this function, but not installed! "
+            "Check requirements-optional.txt."
+        )
+        raise e
+
+    try:
+        import polytope as pc
+    except ImportError as e:
+        print(
+            "polytope required in this function, but is not installed! "
+            "Check requirements-optional.txt!"
+        )
+        raise e
+
     n0 = np.array(n0, dtype=int)
     vs = np.array(vs, dtype=int)
     n, d = vs.shape
@@ -430,7 +385,7 @@ def get_natural_centroid(
             solver=cp.ECOS_BB, max_iters=200, abstol=NUM_TOL, feastol=NUM_TOL
         )
     if x.value is None:
-        raise NaturalInfeasibleError
+        raise ValueError("No feasible natural number composition found!")
 
     return np.array(np.round(x.value), dtype=int)
 
@@ -500,6 +455,15 @@ def get_first_dim_extremes(a, b):
         float, float:
             min x0 and max x0 when ax<=b is feasible.
     """
+    try:
+        import cvxpy as cp
+    except ImportError as e:
+        print(
+            "cvxpy and cvxopt required in this function, but are not installed! "
+            "Check requirements-optional.txt."
+        )
+        raise e
+
     a = np.array(a)
     b = np.array(b)
     n, d = a.shape
@@ -908,13 +872,13 @@ def flip_weights_mask(flip_vectors, n, max_n=None):
 
 
 # Probability selection tools
-def choose_section_from_partition(p, rng=None):
+def choose_section_from_partition(probabilities, rng=None):
     """Choose one partition from multiple partitions.
 
     This function choose one section from a list with probability weights.
     Args:
-        p(1D Arraylike[float]):
-            Probabilities of each element. Will be normalized if not yet.
+        probabilities(1D Arraylike[float]):
+            Probabilities of each section. Will be normalized if not yet.
         rng (np.Generator): optional
             The given PRNG must be the same instance as that used by the
             kernel and any bias terms, otherwise reproducibility will be
@@ -925,7 +889,7 @@ def choose_section_from_partition(p, rng=None):
     """
     if rng is None:
         rng = np.random.default_rng()
-    p = np.array(p)
+    p = np.array(probabilities)
     if np.allclose(p, 0):
         p = np.ones(len(p))
     if not np.all(p >= -NUM_TOL):

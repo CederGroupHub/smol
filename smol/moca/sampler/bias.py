@@ -14,7 +14,7 @@ import numpy as np
 
 from smol.cofe.space.domain import get_species
 from smol.moca.comp_space import get_oxi_state
-from smol.moca.utils.occu_utils import get_dim_ids_table, occu_to_species_n
+from smol.moca.utils.occu_utils import get_dim_ids_table, occu_to_counts
 from smol.utils import class_name_from_str, derived_class_factory
 
 
@@ -213,22 +213,22 @@ class FugacityBias(MCBias):
         return table
 
 
-class SquarechargeBias(MCBias):
+class SquareChargeBias(MCBias):
     """Square charge bias.
 
     This bias penalizes energy on square of the system net charge.
     """
 
-    def __init__(self, sublattices, lam=0.5, **kwargs):
+    def __init__(self, sublattices, penalty=0.5, **kwargs):
         """Square charge bias.
 
         Args:
             sublattices (List[Sublattice]):
                 List of active sublattices, containing species information and
                 site indices in sublattice. Must include all sites!
-            lam (float): optional
-                Penalty factor. energy/kT will be penalized by + lambda
-                * charge**2 to minimize.
+            penalty (float): optional
+                Penalty factor. energy/kT will be penalized by adding penalty
+                * charge**2.
                 Must be positive. Default to 0.5, which works
                 for most of the cases.
         """
@@ -237,9 +237,9 @@ class SquarechargeBias(MCBias):
             [get_oxi_state(sp) for sp in sublatt.species]
             for sublatt in self.sublattices
         ]
-        if lam <= 0:
+        if penalty <= 0:
             raise ValueError("Penalty factor should be > 0!")
-        self.lam = lam
+        self.penalty = penalty
         num_cols = max(max(sl.encoding) for sl in self.sublattices) + 1
         num_rows = sum(len(sl.sites) for sl in self.sublattices)
         table = np.zeros((num_rows, num_cols))
@@ -258,7 +258,8 @@ class SquarechargeBias(MCBias):
             Float, bias value.
         """
         c = np.sum(self._c_table[np.arange(len(occupancy), dtype=int), occupancy])
-        return -self.lam * c**2
+        # Returns a negative value because of the implementation in mckernels.
+        return -self.penalty * c**2
 
     def compute_bias_change(self, occupancy, step):
         """Compute bias change from step.
@@ -277,37 +278,48 @@ class SquarechargeBias(MCBias):
         return self.compute_bias(occu_next) - self.compute_bias(occupancy)
 
 
-class SquarecompBias(MCBias):
-    """Square composition bias.
+class SquareHyperplaneBias(MCBias):
+    """Square hyperplane bias.
 
-    This bias penalizes energy on square of metric ||A n - b||^2
-    where n is the number "n" representation of composition
-    (See CompSpace document), and matrix A and b define constraints
-    to n.
+    This bias penalizes energy on sum square of distance from a composition n
+    ("counts" format) to hyperplanes A n = b (in the unconstrained composition space,
+    see CompositionSpace document). In other words, this bias penalizes the
+    composition's deviation from the constraints in A n = b.
     """
 
-    def __init__(self, sublattices, A, b, lam=0.5, **kwargs):
+    def __init__(
+        self,
+        sublattices,
+        hyperplane_normals,
+        hyperplane_intercepts,
+        penalty=0.5,
+        **kwargs,
+    ):
         """Square composition bias.
 
         Use this when you have other constraints to the composition
         than the charge constraint.
         Args:
-            sublattices (List[Sublattice]):
+           sublattices (List[Sublattice]):
                 List of active sublattices, containing species information and
                 site indices in sublattice. Must include all sites!
-            A, b (ArrayLike):
-                Matrix A and vector b in An-b.
-            lam (float): optional
-                Penalty factor. energy/kT will be penalized by +lambda
-                * ||A n - b||**2 to minimize. Must be positive.
+           hyperplane_normals (2D ArrayLike):
+                Normal vectors of hyperplanes, each in a row. (The matrix A.)
+           hyperplane_intercepts (1D ArrayLike):
+                Intercepts of each hyperplane. (The vector b.)
+           The matrix A and the vector b together forms a set of
+           constraint hyperplanes: A n = b. (Per-super-cell, not per-primitive cell).
+           penalty (float): optional
+                Penalty factor. energy/kT will be penalized by adding penalty
+                * ||A n - b||**2. Must be positive.
                 Default to 0.5, which works for most of the cases.
         """
         super().__init__(sublattices)
-        if lam <= 0:
+        if penalty <= 0:
             raise ValueError("Penalty factor should be > 0!")
-        self.lam = lam
-        self.A = np.array(A, dtype=int)
-        self.b = np.array(b, dtype=int)
+        self.penalty = penalty
+        self._A = np.array(hyperplane_normals, dtype=int)
+        self._b = np.array(hyperplane_intercepts, dtype=int)
         self._dim_ids_table = get_dim_ids_table(self.sublattices)
         self.d = sum(len(sublatt.species) for sublatt in sublattices)
 
@@ -320,8 +332,8 @@ class SquarecompBias(MCBias):
         Returns:
             Float, bias value.
         """
-        n = occu_to_species_n(occupancy, self.d, self._dim_ids_table)
-        return -self.lam * np.sum((self.A @ n - self.b) ** 2)
+        n = occu_to_counts(occupancy, self.d, self._dim_ids_table)
+        return -self.penalty * np.sum((self._A @ n - self._b) ** 2)
 
     def compute_bias_change(self, occupancy, step):
         """Compute bias change from step.

@@ -29,7 +29,7 @@ class Sublattice(MSONable):
 
     As implemented in the Sublattice class, you are allowed to have multiple
     species on an inactive sub-lattice, but it is not the suggested approach.
-    For simplicity, especially when you generate a CompSpace, you had better
+    For simplicity, especially when you generate a CompositionSpace, you had better
     always split inactive sub-lattices until each inactive sub-lattice have
     only 1 species in it.
 

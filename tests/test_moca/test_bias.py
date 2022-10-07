@@ -9,13 +9,13 @@ import pytest
 from smol.moca.comp_space import get_oxi_state
 from smol.moca.sampler.bias import (
     FugacityBias,
-    SquarechargeBias,
-    SquarecompBias,
+    SquareChargeBias,
+    SquareHyperplaneBias,
     mcbias_factory,
 )
 from tests.utils import gen_random_occupancy
 
-bias_classes = [FugacityBias, SquarechargeBias, SquarecompBias]
+bias_classes = [FugacityBias, SquareChargeBias, SquareHyperplaneBias]
 
 
 @pytest.fixture(scope="module")
@@ -25,7 +25,7 @@ def all_sublattices(ce_processor):
 
 @pytest.fixture(params=bias_classes)
 def mcbias(all_sublattices, request):
-    if request.param == SquarecompBias:
+    if request.param == SquareHyperplaneBias:
         n_dims = sum(len(sublatt.species) for sublatt in all_sublattices)
         n_cons = max(n_dims - 1, 1)
         a = np.random.randint(low=-10, high=10, size=(n_cons, n_dims))
@@ -56,12 +56,12 @@ def test_compute_bias_change(mcbias):
 
 def test_mcbias_factory(all_sublattices):
     for bias in bias_classes:
-        if bias == SquarecompBias:
+        if bias == SquareHyperplaneBias:
             n_dims = sum(len(sublatt.species) for sublatt in all_sublattices)
             n_cons = max(n_dims - 1, 1)
             a = np.random.randint(low=-10, high=10, size=(n_cons, n_dims))
             b = np.random.randint(low=-10, high=10, size=n_cons)
-            kwargs = {"A": a, "b": b}
+            kwargs = {"hyperplane_normals": a, "hyperplane_intercepts": b}
         else:
             kwargs = {}
         assert isinstance(
@@ -116,7 +116,7 @@ def test_build_fu_table(fugacity_bias):
 
 @pytest.fixture(scope="module")
 def square_charge_bias(all_sublattices):
-    return SquarechargeBias(all_sublattices)
+    return SquareChargeBias(all_sublattices)
 
 
 def test_charge_bias(square_charge_bias):
@@ -142,7 +142,7 @@ def square_comp_bias(all_sublattices):
     n_cons = max(n_dims - 1, 1)
     a = np.random.randint(low=-10, high=10, size=(n_cons, n_dims))
     b = np.random.randint(low=-10, high=10, size=n_cons)
-    return SquarecompBias(all_sublattices, a, b)
+    return SquareHyperplaneBias(all_sublattices, a, b)
 
 
 def test_comp_bias(square_comp_bias):
