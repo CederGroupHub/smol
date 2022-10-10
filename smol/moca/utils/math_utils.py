@@ -9,8 +9,20 @@ from fractions import Fraction
 from itertools import combinations
 
 import numpy as np
+from monty.dev import requires
 from scipy.linalg import null_space
 from scipy.spatial import KDTree
+
+try:
+    import polytope as pc
+except ImportError:
+    pc = None
+
+try:
+    import cvxpy as cp
+except ImportError:
+    cp = None
+
 
 # Global numerical tolerance in this module.
 NUM_TOL = 1e-6
@@ -266,6 +278,7 @@ def solve_diophantines(A, b=None):
     return n0, V[:, k:].transpose().copy()
 
 
+@requires(pc is not None, " 'polytope' package not found. Please install it.")
 def get_nonneg_float_vertices(A, b):
     """Get vertices of polytope An=b, n>=0.
 
@@ -285,15 +298,6 @@ def get_nonneg_float_vertices(A, b):
         Vertices of polytope An=b, n>=0 in float:
             np.ndarray[float]
     """
-    try:
-        import polytope as pc
-    except ImportError as e:
-        print(
-            "polytope required in this function, but is not installed! "
-            "Please install the polytope package to use this function."
-        )
-        raise e
-
     A = np.array(A)
     b = np.array(b)
 
@@ -313,6 +317,10 @@ def get_nonneg_float_vertices(A, b):
     return verts
 
 
+@requires(
+    pc is not None and cp is not None,
+    "'polytope' and 'cvxpy' packages are required. Please install them.",
+)
 def get_natural_centroid(
     n0, vs, sc_size, a_leq=None, b_leq=None, a_geq=None, b_geq=None
 ):
@@ -342,24 +350,6 @@ def get_natural_centroid(
         The natural number point on the grid closest to centroid ("x"):
             1D np.ndarray[int]
     """
-    try:
-        import cvxpy as cp
-    except ImportError as e:
-        print(
-            "cvxpy and cvxopt required in this function, but not installed! "
-            "Please install cvxpy and cvxopt to use this function."
-        )
-        raise e
-
-    try:
-        import polytope as pc
-    except ImportError as e:
-        print(
-            "polytope required in this function, but is not installed! "
-            "Please install the polytope package to use this function."
-        )
-        raise e
-
     n0 = np.array(n0, dtype=int)
     vs = np.array(vs, dtype=int)
     n, d = vs.shape
@@ -442,6 +432,7 @@ def get_one_dim_solutions(n0, v, integer_tol=NUM_TOL, step=1):
         return np.arange(n_min, n_max + 1, step, dtype=int)
 
 
+@requires(cp is not None, "'cvxpy' package is required. Please install it.")
 def get_first_dim_extremes(a, b):
     """Solve extremes for x0 under ax<=b.
 
@@ -453,15 +444,6 @@ def get_first_dim_extremes(a, b):
         float, float:
             min x0 and max x0 when ax<=b is feasible.
     """
-    try:
-        import cvxpy as cp
-    except ImportError as e:
-        print(
-            "cvxpy and cvxopt required in this function, but are not installed! "
-            "Please install cvxpy and cvxopt to use this function."
-        )
-        raise e
-
     a = np.array(a)
     b = np.array(b)
     n, d = a.shape
