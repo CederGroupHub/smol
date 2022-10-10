@@ -10,24 +10,26 @@ More complex steps can be defined simply by deriving from the MCUsher.
 
 __author__ = "Luis Barroso-Luque, Fengyu Xie"
 
-import math
 import warnings
 from abc import ABC, abstractmethod
 
 import numpy as np
 from scipy.special import gammaln
 
-from smol.utils import class_name_from_str, derived_class_factory
-
-from ..composition import CompositionSpace
-from ..utils.math import NUM_TOL, choose_section_from_partition, flip_weights_mask
-from ..utils.occu import (
+from smol.moca.composition import CompositionSpace
+from smol.moca.utils.math import (
+    NUM_TOL,
+    choose_section_from_partition,
+    flip_weights_mask,
+)
+from smol.moca.utils.occu import (
     delta_counts_from_step,
     get_dim_ids_by_sublattice,
     get_dim_ids_table,
     occu_to_counts,
     occu_to_species_list,
 )
+from smol.utils import class_name_from_str, derived_class_factory
 
 
 class MCUsher(ABC):
@@ -283,7 +285,7 @@ class TableFlip(MCUsher):
         self.sublattice_sizes = np.array(
             [len(sl.sites) for sl in self.sublattices], dtype=int
         )
-        self.supercell_size = math.gcd(*self.sublattice_sizes)
+        self.supercell_size = np.gcd.reduce(self.sublattice_sizes)
         self.sublattice_sizes = self.sublattice_sizes // self.supercell_size
         self.max_n = [
             len(sublatt.active_sites)
