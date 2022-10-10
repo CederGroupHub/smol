@@ -8,8 +8,9 @@ If you use **smol** for your work please cite the following publication,
 
     Barroso-Luque, L., Yang, J.H., Xie, F., Chen T., Kam, R.L., Jadidi, Z., Zhong, P.
     & Ceder, G.
-    `smol: A Python package for cluster expansions and beyond. (submitted)
-    <https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25>`_
+    `smol: A Python package for cluster expansions and beyond.
+    <https://joss.theoj.org/papers/10.21105/joss.04504>`_
+    Journal of Open Source Software 7, 4504 (2022).
 
 Since many core objects are used extensively, please also consider citing the
 **pymatgen** publication,
