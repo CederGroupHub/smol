@@ -2,7 +2,6 @@
 
 __author__ = "Fengyu Xie"
 
-import math
 import warnings
 from itertools import chain
 
@@ -11,8 +10,7 @@ from monty.json import MontyDecoder, MSONable
 from pymatgen.core import Composition, Element
 
 from smol.cofe.space.domain import Vacancy
-
-from .utils.math import (
+from smol.moca.utils.math import (
     NUM_TOL,
     get_ergodic_vectors,
     get_natural_centroid,
@@ -23,7 +21,7 @@ from .utils.math import (
     integerize_vector,
     solve_diophantines,
 )
-from .utils.occu import get_dim_ids_by_sublattice
+from smol.moca.utils.occu import get_dim_ids_by_sublattice
 
 
 def get_oxi_state(sp):
@@ -435,7 +433,7 @@ class CompositionSpace(MSONable):
         if scale is not None:
             return self._comp_grids[(supercell_size_prev, step_prev)] * scale
         else:
-            s = math.gcd(supercell_size, step)
+            s = np.gcd(supercell_size, step)
             if s > 1:
                 return (
                     self.get_composition_grid(

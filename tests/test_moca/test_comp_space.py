@@ -1,5 +1,4 @@
 import itertools
-import math
 import re
 from copy import deepcopy
 
@@ -19,7 +18,7 @@ from tests.utils import assert_msonable, assert_table_set_equal
 def comp_space(ensemble):
     bits = [s.species for s in ensemble.sublattices]
     sublattice_sizes = np.array([len(s.sites) for s in ensemble.sublattices])
-    gcd = math.gcd(*sublattice_sizes)
+    gcd = np.gcd.reduce(sublattice_sizes)
     sublattice_sizes = sublattice_sizes // gcd
     return CompositionSpace(bits, sublattice_sizes)  # Charge balanced = True, default.
 

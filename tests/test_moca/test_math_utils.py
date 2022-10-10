@@ -1,5 +1,4 @@
 """Test smol.moca.utils.math_utils."""
-import math
 from collections import Counter
 from fractions import Fraction
 
@@ -76,7 +75,7 @@ def ab(request):
 def test_rational():
     for _ in range(500):
         rand_num, rand_den = np.random.randint(low=-1000, high=1000, size=2).tolist()
-        g = math.gcd(rand_num, rand_den)
+        g = np.gcd(rand_num, rand_den)
         rand_num = rand_num // g
         rand_den = rand_den // g
         if rand_den < 0:
@@ -128,8 +127,8 @@ def test_integerize():
             den1 = 1
         if den2 == 0:
             den2 = 1
-        g1 = math.gcd(math.gcd(*a), den1)
-        g2 = math.gcd(math.gcd(*a), den2)
+        g1 = np.gcd(np.gcd.reduce(a), den1)
+        g2 = np.gcd(np.gcd.reduce(a), den2)
         a = a // g1
         den1 = den1 // g1
         aa = aa // g2
