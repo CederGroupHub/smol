@@ -5,7 +5,6 @@ Including linear algebra, combinatorics and integer enumerations.
 
 __author___ = "Fengyu Xie"
 
-import math
 from fractions import Fraction
 from itertools import combinations
 
@@ -83,7 +82,7 @@ def integerize_vector(v, max_denominator=1000, dtol=NUM_TOL):
     for c in v:
         _, deno = rationalize_number(c, max_denominator=max_denominator, dtol=dtol)
         denos.append(deno)
-    lcm = math.lcm(*denos)
+    lcm = np.lcm.reduce(denos)
     return np.array(np.round(v * lcm), dtype=np.int64), lcm
 
 
@@ -96,8 +95,7 @@ def integerize_multiple(vs, max_denominator=1000, dtol=NUM_TOL):
         max_denominator(int,default=1000):
             Maximum allowed denominator.
         dtol(float,default=1E-6):
-            Maximum allowed difference of variable a
-            to its rational form.
+            Maximum allowed difference of variable to its rational form.
         You must have 1/max_denominator > dtol!
     Return:
         Integerized vectors in the input shape, LCM of denominator:
@@ -292,7 +290,7 @@ def get_nonneg_float_vertices(A, b):
     except ImportError as e:
         print(
             "polytope required in this function, but is not installed! "
-            "Check requirements-optional.txt!"
+            "Please install the polytope package to use this function."
         )
         raise e
 
@@ -349,7 +347,7 @@ def get_natural_centroid(
     except ImportError as e:
         print(
             "cvxpy and cvxopt required in this function, but not installed! "
-            "Check requirements-optional.txt."
+            "Please install cvxpy and cvxopt to use this function."
         )
         raise e
 
@@ -358,7 +356,7 @@ def get_natural_centroid(
     except ImportError as e:
         print(
             "polytope required in this function, but is not installed! "
-            "Check requirements-optional.txt!"
+            "Please install the polytope package to use this function."
         )
         raise e
 
@@ -460,7 +458,7 @@ def get_first_dim_extremes(a, b):
     except ImportError as e:
         print(
             "cvxpy and cvxopt required in this function, but are not installed! "
-            "Check requirements-optional.txt."
+            "Please install cvxpy and cvxopt to use this function."
         )
         raise e
 
