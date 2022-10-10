@@ -19,9 +19,9 @@ from scipy.special import gammaln
 
 from smol.utils import class_name_from_str, derived_class_factory
 
-from ..comp_space import CompositionSpace
-from ..utils.math_utils import NUM_TOL, choose_section_from_partition, flip_weights_mask
-from ..utils.occu_utils import (
+from ..composition import CompositionSpace
+from ..utils.math import NUM_TOL, choose_section_from_partition, flip_weights_mask
+from ..utils.occu import (
     delta_counts_from_step,
     get_dim_ids_by_sublattice,
     get_dim_ids_table,

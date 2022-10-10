@@ -13,8 +13,8 @@ from math import log
 import numpy as np
 
 from smol.cofe.space.domain import get_species
-from smol.moca.comp_space import get_oxi_state
-from smol.moca.utils.occu_utils import get_dim_ids_table, occu_to_counts
+from smol.moca.composition import get_oxi_state
+from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
 from smol.utils import class_name_from_str, derived_class_factory
 
 

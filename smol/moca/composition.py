@@ -12,7 +12,7 @@ from pymatgen.core import Composition, Element
 
 from smol.cofe.space.domain import Vacancy
 
-from .utils.math_utils import (
+from .utils.math import (
     NUM_TOL,
     get_ergodic_vectors,
     get_natural_centroid,
@@ -23,7 +23,7 @@ from .utils.math_utils import (
     integerize_vector,
     solve_diophantines,
 )
-from .utils.occu_utils import get_dim_ids_by_sublattice
+from .utils.occu import get_dim_ids_by_sublattice
 
 
 def get_oxi_state(sp):
