@@ -9,10 +9,11 @@ Statistical Mechanics on Lattices
 [![pypi version](https://img.shields.io/pypi/v/smol?color=blue)](https://pypi.org/project/smol)
 ![python versions](https://img.shields.io/pypi/pyversions/smol)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb)
+[![status](https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25/status.svg)](https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25)
 
 *Lightweight but caffeinated Python implementation of computational methods
 for statistical mechanical calculations of configurational states in
-crystalline material systems.*
+crystalline materials.*
 
 -----------------------------------------------------------------------------
 
@@ -41,7 +42,8 @@ Functionality
   from local updates in order to quickly compute properties and changes in
   properties for specified supercell sizes.
 - Flexible toolset to sample cluster expansions using Monte Carlo with
-  Canonical and Semigrand Canonical ensembles using a Metropolis sampler.
+  canonical and semigrand canonical and charge neutral semi grand canocnical ensembles
+  using a Metropolis sampler.
 
 **smol** is built on top of [pymatgen](https://pymatgen.org) so any pre/post
 structure analysis can be done seamlessly using the various functionality
@@ -84,12 +86,19 @@ will also help you get started. You can run the example notebooks interactively 
 [binder](https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb).
 
 
+Citing
+------
+If you use **smol** in your research, please give the repo a star :star: and refer to
+the [citing](https://cedergrouphub.github.io/smol/citing.html) page in the documentation
+for formal citation information.
+
+
 Contributing
 ------------
 We welcome all your contributions with open arms! Please fork and pull request any contributions.
 See the
 [developing](https://cedergrouphub.github.io/smol/developer_guide/index.html)
-section in the documentation for how to contribute.
+page in the documentation for how to contribute.
 
 
 Changes

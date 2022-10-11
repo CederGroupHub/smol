@@ -18,7 +18,7 @@ repos:
     args: ['--maxkb=500']
 
 - repo: https://github.com/psf/black
-  rev: 22.6.0
+  rev: 22.8.0
   hooks:
   - id: black
 
@@ -38,13 +38,13 @@ repos:
     - --profile=black
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v2.37.3
+  rev: v2.38.2
   hooks:
     - id: pyupgrade
       args: [--py38-plus]
 
-- repo: https://github.com/myint/autoflake
-  rev: v1.5.1
+- repo: https://github.com/PyCQA/autoflake
+  rev: v1.6.1
   hooks:
     - id: autoflake
       args:

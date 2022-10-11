@@ -13,12 +13,16 @@ from math import log
 import numpy as np
 
 from smol.cofe.space.domain import get_species
+from smol.moca.composition import get_oxi_state
+from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
 from smol.utils import class_name_from_str, derived_class_factory
 
 
 class MCBias(ABC):
     """Base bias term class.
 
+    Note: Any MCBias should be implemented as beta*E-bias
+    will be minimized in thermodynamics kernel.
     Attributes:
         sublattices (List[Sublattice]):
             list of sublattices with active sites.
@@ -186,7 +190,7 @@ class FugacityBias(MCBias):
         delta_log_fu = sum(
             log(self._fu_table[f[0]][f[1]] / self._fu_table[f[0]][occupancy[f[0]]])
             for f in step
-        )
+        )  # Can be wrong if step has two same sites.
         return delta_log_fu
 
     def _build_fu_table(self, fugacity_fractions):
@@ -207,6 +211,145 @@ class FugacityBias(MCBias):
             ordered_fus = np.array([fus[sp] for sp in sublatt.site_space])
             table[sublatt.sites[:, None], sublatt.encoding] = ordered_fus[None, :]
         return table
+
+
+class SquareChargeBias(MCBias):
+    """Square charge bias.
+
+    This bias penalizes energy on square of the system net charge.
+    """
+
+    def __init__(self, sublattices, penalty=0.5, **kwargs):
+        """Square charge bias.
+
+        Args:
+            sublattices (List[Sublattice]):
+                List of active sublattices, containing species information and
+                site indices in sublattice. Must include all sites!
+            penalty (float): optional
+                Penalty factor. energy/kT will be penalized by adding penalty
+                * charge**2.
+                Must be positive. Default to 0.5, which works
+                for most of the cases.
+        """
+        super().__init__(sublattices)
+        charges = [
+            [get_oxi_state(sp) for sp in sublatt.species]
+            for sublatt in self.sublattices
+        ]
+        if penalty <= 0:
+            raise ValueError("Penalty factor should be > 0!")
+        self.penalty = penalty
+        num_cols = max(max(sl.encoding) for sl in self.sublattices) + 1
+        num_rows = sum(len(sl.sites) for sl in self.sublattices)
+        table = np.zeros((num_rows, num_cols))
+        for cs, sublatt in zip(charges, self.sublattices):
+            cs = np.array(cs)
+            table[sublatt.sites[:, None], sublatt.encoding] = cs[None, :]
+        self._c_table = table
+
+    def compute_bias(self, occupancy):
+        """Compute bias from occupancy.
+
+        Args:
+            occupancy(np.ndarray):
+                Encoded occupancy string.
+        Returns:
+            Float, bias value.
+        """
+        c = np.sum(self._c_table[np.arange(len(occupancy), dtype=int), occupancy])
+        # Returns a negative value because of the implementation in mckernels.
+        return -self.penalty * c**2
+
+    def compute_bias_change(self, occupancy, step):
+        """Compute bias change from step.
+
+        Args:
+            occupancy: (ndarray):
+                Encoded occupancy array.
+            step: (List[tuple(int,int)]):
+                Step returned by MCUsher.
+        Return:
+            Float, change of bias value after step.
+        """
+        occu_next = occupancy.copy()
+        for site, code in step:
+            occu_next[site] = code
+        return self.compute_bias(occu_next) - self.compute_bias(occupancy)
+
+
+class SquareHyperplaneBias(MCBias):
+    """Square hyperplane bias.
+
+    This bias penalizes energy on sum square of distance from a composition n
+    ("counts" format) to hyperplanes A n = b (in the unconstrained composition space,
+    see CompositionSpace document). In other words, this bias penalizes the
+    composition's deviation from the constraints in A n = b.
+    """
+
+    def __init__(
+        self,
+        sublattices,
+        hyperplane_normals,
+        hyperplane_intercepts,
+        penalty=0.5,
+        **kwargs,
+    ):
+        """Square composition bias.
+
+        Use this when you have other constraints to the composition
+        than the charge constraint.
+        Args:
+           sublattices (List[Sublattice]):
+                List of active sublattices, containing species information and
+                site indices in sublattice. Must include all sites!
+           hyperplane_normals (2D ArrayLike):
+                Normal vectors of hyperplanes, each in a row. (The matrix A.)
+           hyperplane_intercepts (1D ArrayLike):
+                Intercepts of each hyperplane. (The vector b.)
+           The matrix A and the vector b together forms a set of
+           constraint hyperplanes: A n = b. (Per-super-cell, not per-primitive cell).
+           penalty (float): optional
+                Penalty factor. energy/kT will be penalized by adding penalty
+                * ||A n - b||**2. Must be positive.
+                Default to 0.5, which works for most of the cases.
+        """
+        super().__init__(sublattices)
+        if penalty <= 0:
+            raise ValueError("Penalty factor should be > 0!")
+        self.penalty = penalty
+        self._A = np.array(hyperplane_normals, dtype=int)
+        self._b = np.array(hyperplane_intercepts, dtype=int)
+        self._dim_ids_table = get_dim_ids_table(self.sublattices)
+        self.d = sum(len(sublatt.species) for sublatt in sublattices)
+
+    def compute_bias(self, occupancy):
+        """Compute bias from occupancy.
+
+        Args:
+            occupancy(np.ndarray):
+                Encoded occupancy string.
+        Returns:
+            Float, bias value.
+        """
+        n = occu_to_counts(occupancy, self.d, self._dim_ids_table)
+        return -self.penalty * np.sum((self._A @ n - self._b) ** 2)
+
+    def compute_bias_change(self, occupancy, step):
+        """Compute bias change from step.
+
+        Args:
+            occupancy: (ndarray):
+                Encoded occupancy array.
+            step: (List[tuple(int,int)]):
+                Step returned by MCUsher.
+        Return:
+            Float, change of bias value after step.
+        """
+        occu_next = occupancy.copy()
+        for site, code in step:
+            occu_next[site] = code
+        return self.compute_bias(occu_next) - self.compute_bias(occupancy)
 
 
 def mcbias_factory(bias_type, sublattices, *args, **kwargs):

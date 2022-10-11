@@ -6,11 +6,24 @@ Some of these are borrowed from pymatgen test scripts.
 import json
 
 import numpy as np
+import numpy.testing as npt
 from monty.json import MontyDecoder, MSONable
 from pymatgen.core import Composition, Element
 from pymatgen.entries.computed_entries import ComputedStructureEntry
 
 from smol.cofe.space.domain import Vacancy
+
+
+def assert_table_set_equal(a1, a2):
+    a1 = np.array(a1)
+    a2 = np.array(a2)
+    assert len(a1.shape) == 2
+    assert a1.shape == a2.shape
+    a1_set = np.concatenate((a1, -a1), axis=0)
+    a2_set = np.concatenate((a2, -a2), axis=0)
+    a1_set = np.array(sorted(tuple(r) for r in a1_set))
+    a2_set = np.array(sorted(tuple(r) for r in a2_set))
+    npt.assert_array_equal(a1_set, a2_set)
 
 
 def assert_msonable(obj, skip_keys=None, test_if_subclass=True):

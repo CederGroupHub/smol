@@ -9,6 +9,7 @@ diverges from the CE mathematic formalism.
 # pylint: disable=too-many-lines
 
 
+import itertools
 import warnings
 from copy import deepcopy
 from importlib import import_module
@@ -596,18 +597,9 @@ class ClusterSubspace(MSONable):
         )
         occu = np.array(occu, dtype=int)
 
-        # Create a list of tuples with necessary information to compute corr
-        mappings = self.supercell_orbit_mappings(scmatrix)
-        orbit_list = [
-            (
-                orbit.bit_id,
-                orbit.flat_tensor_indices,
-                orbit.flat_correlation_tensors,
-                cluster_indices,
-            )
-            for cluster_indices, orbit in zip(mappings, self.orbits)
-        ]
-        corr = corr_from_occupancy(occu, self.num_corr_functions, orbit_list)
+        corr = corr_from_occupancy(
+            occu, self.num_corr_functions, self.gen_orbit_list(scmatrix)
+        )
         size = self.num_prims_from_matrix(scmatrix)
 
         if self.external_terms:
@@ -731,6 +723,10 @@ class ClusterSubspace(MSONable):
                 occu.append(allowed_species.index(spec))
             else:
                 occu.append(spec)
+
+        if encode:  # cast to ndarray dtype int
+            occu = np.array(occu, dtype=int)
+
         return occu
 
     def scmatrix_from_structure(self, structure):
@@ -771,7 +767,6 @@ class ClusterSubspace(MSONable):
         """
         # np.arrays are not hashable and can't be used as dict keys.
         scmatrix = np.array(scmatrix)
-        # so change them into a tuple of sorted tuples for unique keys.
         scm = tuple(sorted(tuple(s.tolist()) for s in scmatrix))
         indices = self._supercell_orb_inds.get(scm)
 
@@ -809,13 +804,16 @@ class ClusterSubspace(MSONable):
         sc_orb_map = self.supercell_orbit_mappings(sc_matrix)
         aliased_orbits = []
         for orb_i, orb_map_i in enumerate(sc_orb_map):
+            # +1 because ECI index takes the null cluster as index 0.
+            if orb_i + 1 in itertools.chain(*aliased_orbits):
+                continue
             orb_i_id = orb_i + 1
             aliased = False
             orbit_i_aliased = [orb_i_id]
             sorted_orb_map_i = {tuple(sorted(c_map)) for c_map in orb_map_i}
 
             for orb_j, orb_map_j in enumerate(sc_orb_map):
-                if orb_i == orb_j:
+                if orb_i >= orb_j or (orb_j + 1 in itertools.chain(*aliased_orbits)):
                     continue
                 orb_j_id = orb_j + 1
                 sorted_orb_map_j = {tuple(sorted(c_map)) for c_map in orb_map_j}
@@ -1023,6 +1021,38 @@ class ClusterSubspace(MSONable):
                     sub_fun_ids.append(sub_orbit.bit_id + i)
 
         return sub_fun_ids
+
+    def gen_orbit_list(self, scmatrix):
+        """
+        Generate list of data to compute correlation vectors.
+
+        List includes orbit bit ids, flat correlation tensors and their indices,
+        and array of cluster indices for supercell corresponding to given
+        supercell matrix.
+
+        This is a helper function for the correlation vector computation and most
+        often called internally.
+
+        Args:
+            scmatrix (ndarray):
+                supercell matrix.
+
+        Returns: list of tuples
+            [(orbit bit ids, tensor  indices, flat corr tensors, cluster indices)]
+        """
+        mappings = self.supercell_orbit_mappings(scmatrix)
+        orbit_list = []
+        for orbit, cluster_inds in zip(self.orbits, mappings):
+            orbit_list.append(
+                (
+                    orbit.bit_id,
+                    orbit.flat_tensor_indices,
+                    orbit.flat_correlation_tensors,
+                    cluster_inds,
+                )
+            )
+
+        return orbit_list
 
     def _assign_orbit_ids(self):
         """Assign unique id's to orbit.

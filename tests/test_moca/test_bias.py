@@ -2,12 +2,20 @@
 
 from copy import deepcopy
 
+import numpy as np
+import numpy.testing as npt
 import pytest
 
-from smol.moca.sampler.bias import FugacityBias, mcbias_factory
+from smol.moca.composition import get_oxi_state
+from smol.moca.sampler.bias import (
+    FugacityBias,
+    SquareChargeBias,
+    SquareHyperplaneBias,
+    mcbias_factory,
+)
 from tests.utils import gen_random_occupancy
 
-bias_classes = [FugacityBias]
+bias_classes = [FugacityBias, SquareChargeBias, SquareHyperplaneBias]
 
 
 @pytest.fixture(scope="module")
@@ -17,13 +25,20 @@ def all_sublattices(ce_processor):
 
 @pytest.fixture(params=bias_classes)
 def mcbias(all_sublattices, request):
+    if request.param == SquareHyperplaneBias:
+        n_dims = sum(len(sublatt.species) for sublatt in all_sublattices)
+        n_cons = max(n_dims - 1, 1)
+        a = np.random.randint(low=-10, high=10, size=(n_cons, n_dims))
+        b = np.random.randint(low=-10, high=10, size=n_cons)
+        return request.param(all_sublattices, a, b)
     return request.param(all_sublattices)
 
 
-def test_compute_bias_change(mcbias, rng):
+def test_compute_bias_change(mcbias):
     step = []
     occu = gen_random_occupancy(mcbias.sublattices)
     new_occu = occu.copy()
+    rng = np.random.default_rng()
     for _ in range(50):
         s = rng.choice(list(range(len(mcbias.active_sublattices))))
         i = rng.choice(mcbias.active_sublattices[s].sites)
@@ -41,7 +56,17 @@ def test_compute_bias_change(mcbias, rng):
 
 def test_mcbias_factory(all_sublattices):
     for bias in bias_classes:
-        assert isinstance(mcbias_factory(bias.__name__, all_sublattices), bias)
+        if bias == SquareHyperplaneBias:
+            n_dims = sum(len(sublatt.species) for sublatt in all_sublattices)
+            n_cons = max(n_dims - 1, 1)
+            a = np.random.randint(low=-10, high=10, size=(n_cons, n_dims))
+            b = np.random.randint(low=-10, high=10, size=n_cons)
+            kwargs = {"hyperplane_normals": a, "hyperplane_intercepts": b}
+        else:
+            kwargs = {}
+        assert isinstance(
+            mcbias_factory(bias.__name__, all_sublattices, **kwargs), bias
+        )
 
 
 # Tests for FugacityBias
@@ -87,3 +112,41 @@ def test_build_fu_table(fugacity_bias):
         for i in sublatt.sites:
             for j, species in zip(sublatt.encoding, sublatt.site_space):
                 assert fugacity_fractions[species] == table[i, j]
+
+
+@pytest.fixture(scope="module")
+def square_charge_bias(all_sublattices):
+    return SquareChargeBias(all_sublattices)
+
+
+def test_charge_bias(square_charge_bias):
+    table = square_charge_bias._c_table
+    n_species = max(max(s.encoding) for s in square_charge_bias.sublattices) + 1
+    n_sites = sum(len(s.sites) for s in square_charge_bias.sublattices)
+    assert table.shape == (n_sites, n_species)
+    # All sites on all sublattices must be included in table
+    for sublatt in square_charge_bias.sublattices:
+        charges = np.array([get_oxi_state(sp) for sp in sublatt.species])
+        npt.assert_array_equal(
+            table[sublatt.sites[:, None], sublatt.encoding] - charges[None, :], 0
+        )
+    # Bias should be implemented as negative.
+    for _ in range(100):
+        occu = gen_random_occupancy(square_charge_bias.sublattices)
+        assert square_charge_bias.compute_bias(occu) <= 1e-6
+
+
+@pytest.fixture(scope="module")
+def square_comp_bias(all_sublattices):
+    n_dims = sum(len(sublatt.species) for sublatt in all_sublattices)
+    n_cons = max(n_dims - 1, 1)
+    a = np.random.randint(low=-10, high=10, size=(n_cons, n_dims))
+    b = np.random.randint(low=-10, high=10, size=n_cons)
+    return SquareHyperplaneBias(all_sublattices, a, b)
+
+
+def test_comp_bias(square_comp_bias):
+    # Bias should be implemented as negative.
+    for _ in range(100):
+        occu = gen_random_occupancy(square_comp_bias.sublattices)
+        assert square_comp_bias.compute_bias(occu) <= 1e-6

@@ -6,9 +6,10 @@ of the random structure supercell being sampled in a Monte Carlo
 simulation.
 """
 
-__author__ = "Luis Barroso-Luque"
+__author__ = "Luis Barroso-Luque, Fengyu Xie"
 
 import itertools
+import warnings
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -25,6 +26,12 @@ class Sublattice(MSONable):
     A Sublattice is used to represent a subset of supercell sites that have
     the same site space. Rigorously it represents a set of sites in a
     "substructure" of the total structure.
+
+    As implemented in the Sublattice class, you are allowed to have multiple
+    species on an inactive sub-lattice, but it is not the suggested approach.
+    For simplicity, especially when you generate a CompositionSpace, you had better
+    always split inactive sub-lattices until each inactive sub-lattice have
+    only 1 species in it.
 
     Attributes:
      site_space (SiteSpace):
@@ -58,6 +65,11 @@ class Sublattice(MSONable):
     @property
     def is_active(self):
         """Whether sub-lattice has active sites."""
+        if len(self.active_sites) == 0 and len(self.species) > 1:
+            warnings.warn(
+                "Sub-lattice is inactive, but have multiple "
+                "allowed species. You'd better split it."
+            )
         return len(self.active_sites) > 0
 
     @property

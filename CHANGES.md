@@ -7,16 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* Charge neutral semi grand canonical sampling. #271 @qchempku2017
 ### Changed
 ### Fixed
 ### Removed
 ### Deprecated
 
+# [v0.0.7](https://github.com/CederGroupHub/smol/releases/tag/v0.0.7) (2022-09-26)
+### Added
+* Additional tests to ensure correlation vectors are consistent across equivalent
+  supercell matrices.  #262 @qchempku2017
+* Unit-test updates. #269 @lbluque
+### Changed
+* Improved orbit alias detection. #262 @qchempku2017
+
 # [v0.0.6](https://github.com/CederGroupHub/smol/releases/tag/v0.0.6) (2022-09-02)
 :warning: This version introduced updates that change the order in which orbits are
 sorted in a ClusterSubspace. This means that the order correlation functions appear
 a correlation vector will be different when generating ClusterSubspaces compared to
-previous versions.
+previous versions. However, loading a ClusterSubspace from a json file that was
+created with a previous version will still have its original order.
 ### Changed
 * Include number of corr functions when sorting orbits. #256 @lbluque
 * Use max distance of centroid to sites in unit cell in cluster search. #256 @lbluque
