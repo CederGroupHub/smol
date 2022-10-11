@@ -4,12 +4,17 @@
 Citing
 ======
 
+.. note::
+    If you have any comments, suggestions or you think we have missed a
+    pertinent publications in our recommended citations, please let us know!
+
+
 If you use **smol** for your work please cite the following publication,
 
     Barroso-Luque, L., Yang, J.H., Xie, F., Chen T., Kam, R.L., Jadidi, Z., Zhong, P.
     & Ceder, G.
-    `smol: A Python package for cluster expansions and beyond.
-    <https://joss.theoj.org/papers/10.21105/joss.04504>`_
+    `smol: A Python package for cluster expansions and beyond
+    <https://joss.theoj.org/papers/10.21105/joss.04504>`_.
     Journal of Open Source Software 7, 4504 (2022).
 
 Since many core objects are used extensively, please also consider citing the
@@ -20,10 +25,37 @@ Since many core objects are used extensively, please also consider citing the
     <https://doi.org/10.1016/j.commatsci.2012.10.028>`_.
     ComputationalMaterials Science 68, 314–319 (2013).
 
+Generally, we recommend that work using the cluster expansion method to cite the
+original publication,
+
+    Sanchez, J. M., Ducastelle F., & Gratias D.
+    `Generalized cluster description of multicomponent systems
+    <https://doi.org/10.1016/0378-4371(84)90096-7>`_.
+    Physica A: Statistical Mechanics and its Applications 128, 334–350 (1984).
+
+Cluster expansion site basis sets
+=================================
+
+Based on the specific site basis sets used in the cluster expansion, we recommend citing
+the following papers.
+
+When using :code:`sinusoid` site basis sets consider citing,
+
+    van de Walle, A. `Multicomponent multisublattice alloys, nonconfigurational entropy
+    and other additions to the Alloy Theoretic Automated Toolkit.
+    <https://doi.org/10.1016/j.calphad.2008.12.005>`_ Calphad 33, 266–278 (2009).
+
+When using :code:`indicator` site basis sets consider citing,
+
+    Zhang, X. & Sluiter, M. H. F. `Cluster Expansions for Thermodynamics and Kinetics of
+    Multicomponent Alloys <https://doi.org/10.1007/s11669-015-0427-x>`_.
+    J. Phase Equilib. Diffus. 37, 44–52 (2016).
+
+
 Cluster expansions with redundant function sets
 ===============================================
 
-If you use the (:class:`smol.cofe.PottsSubspace`) class or related functionality
+If you use the :class:`PottsSubspace` class or related functionality
 to include redundancy in cluster expansions please cite this publication,
 
     Barroso-Luque, L., Yang, J. H. & Ceder, G.
@@ -57,9 +89,38 @@ for hierarchical constrained expansion fits, please cite these publications,
 
     Zhong, P., Chen, T., Barroso-Luque, L., Xie, F. & Ceder, G.
     An :math:`\ell_0\ell_2`-norm `regularized regression model for construction of
-    robust cluster expansions in multicomponent systems.
+    robust cluster expansions in multicomponent systems
     <https://doi.org/10.1103/PhysRevB.106.024203>`_
     Phys. Rev. B 106, 024203 (2022).
+
+    Barroso-Luque, L., Zhong, P., Yang, J. H., Chen, T. & Ceder, G.
+    Cluster Expansions of Multicomponent Ionic Materials:Formalism & Methods.
+    (submitted)
+
+Charge neutral semigrand canonical sampling
+===========================================
+
+If you use the charge neutral semigrand canonical sampling or any related functionality
+please cite the following work,
+
+    Xie, F., Zhong, P., Barroso-Luque, L., Ouyang, B. & Ceder, G.
+    `Grand-canonical Monte-Carlo simulation methods for charge-decorated cluster
+    expansions <https://arxiv.org/abs/2210.01165>`_ [arxiv:2210.01165].
+
+
+Coulomb electrostatic interactions
+==================================
+When using :class:`EwaldTerm` as an additional term in a lattice Hamiltonian, please
+cite the following publications,
+
+    Seko, A. & Tanaka, I. `Cluster expansion of multicomponent ionic systems with
+    controlled accuracy: importance of long-range interactions in heterovalent ionic
+    systems <https://doi.org/10.1088/0953-8984/26/11/115403>`_.
+    J. Phys.: Condens. Matter 26, 115403 (2014).
+
+    Richards, W. D., Wang, Y., Miara, L. J., Kim, J. C. & Ceder, G.
+    `Design of Li1+2xZn1−xPS4, a new lithium ion conductor
+    <https://doi.org/10.1039/C6EE02094A>`_. Energy Environ. Sci. 9, 3272–3278 (2016).
 
     Barroso-Luque, L., Zhong, P., Yang, J. H., Chen, T. & Ceder, G.
     Cluster Expansions of Multicomponent Ionic Materials:Formalism & Methods.
