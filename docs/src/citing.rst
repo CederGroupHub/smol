@@ -25,7 +25,7 @@ Since many core objects are used extensively, please also consider citing the
     <https://doi.org/10.1016/j.commatsci.2012.10.028>`_.
     ComputationalMaterials Science 68, 314–319 (2013).
 
-Generally, we recommend that work using the cluster expansion method to cite the
+Generally, we recommend that any work using the cluster expansion method cite the
 original publication,
 
     Sanchez, J. M., Ducastelle F., & Gratias D.
@@ -56,7 +56,7 @@ Cluster expansions with redundant function sets
 ===============================================
 
 If you use the :class:`PottsSubspace` class or related functionality
-to include redundancy in cluster expansions please cite this publication,
+to include redundancy in cluster expansions, please cite this publication,
 
     Barroso-Luque, L., Yang, J. H. & Ceder, G.
     `Sparse expansions of multicomponent oxide configuration energy using
