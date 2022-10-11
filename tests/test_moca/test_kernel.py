@@ -15,7 +15,7 @@ from smol.moca.sampler.kernel import (
     UniformlyRandom,
     WangLandau,
 )
-from smol.moca.sampler.mcusher import Flip, Swap
+from smol.moca.sampler.mcusher import Flip, Swap, TableFlip
 from tests.utils import gen_random_occupancy
 
 kernels_with_bias = [UniformlyRandom, Metropolis]
@@ -49,7 +49,9 @@ def mckernel_bias(ensemble, request):
     return kernel
 
 
-@pytest.mark.parametrize("step_type, mcusher", [("swap", Swap), ("flip", Flip)])
+@pytest.mark.parametrize(
+    "step_type, mcusher", [("swap", Swap), ("flip", Flip), ("table-flip", TableFlip)]
+)
 def test_constructor(ensemble, step_type, mcusher):
     kernel = Metropolis(ensemble, step_type=step_type, temperature=500)
     assert isinstance(kernel._usher, mcusher)
