@@ -328,6 +328,7 @@ class UniformlyRandom(MCKernel):
             StepTrace
         """
         step = self._usher.propose_step(occupancy)
+        log_factor = self._usher.compute_log_priori_factor(occupancy, step)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
         self.trace.delta_trace.enthalpy = np.array(
             np.dot(self.natural_params, self.trace.delta_trace.features)
@@ -337,11 +338,13 @@ class UniformlyRandom(MCKernel):
             self.trace.delta_trace.bias = np.array(
                 self._bias.compute_bias_change(occupancy, step)
             )
-            self.trace.accepted = np.array(
-                True
-                if self.trace.delta_trace.bias >= 0
-                else self.trace.delta_trace.bias > log(self._rng.random())
-            )
+            exponent = self.trace.delta_trace.bias + log_factor
+        else:
+            exponent = log_factor
+
+        self.trace.accepted = np.array(
+            True if exponent >= 0 else exponent > log(self._rng.random())
+        )
 
         if self.trace.accepted:
             for tup in step:
@@ -375,6 +378,7 @@ class Metropolis(ThermalKernel):
             StepTrace
         """
         step = self._usher.propose_step(occupancy)
+        log_factor = self._usher.compute_log_priori_factor(occupancy, step)
         self.trace.delta_trace.features = self._feature_change(occupancy, step)
         self.trace.delta_trace.enthalpy = np.array(
             np.dot(self.natural_params, self.trace.delta_trace.features)
@@ -387,17 +391,15 @@ class Metropolis(ThermalKernel):
             exponent = (
                 -self.beta * self.trace.delta_trace.enthalpy
                 + self.trace.delta_trace.bias
+                + log_factor
             )
-            self.trace.accepted = np.array(
-                True if exponent >= 0 else exponent > log(self._rng.random())
-            )
+
         else:
-            self.trace.accepted = np.array(
-                True
-                if self.trace.delta_trace.enthalpy <= 0
-                else -self.beta * self.trace.delta_trace.enthalpy
-                > log(self._rng.random())  # noqa
-            )
+            exponent = -self.beta * self.trace.delta_trace.enthalpy + log_factor
+
+        self.trace.accepted = np.array(
+            True if exponent >= 0 else exponent > log(self._rng.random())
+        )
 
         if self.trace.accepted:
             for tup in step:

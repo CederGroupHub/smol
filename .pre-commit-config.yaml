@@ -43,7 +43,7 @@ repos:
     - id: pyupgrade
       args: [--py38-plus]
 
-- repo: https://github.com/myint/autoflake
+- repo: https://github.com/PyCQA/autoflake
   rev: v1.6.1
   hooks:
     - id: autoflake

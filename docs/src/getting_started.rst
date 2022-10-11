@@ -171,7 +171,8 @@ Basic Examples
 - `Creating a cluster expansion with electrostatics`_
 - `Visualizing clusters`_
 - `Running Canonical Monte Carlo`_
-- `Running Semi-Grand Canonical Monte Carlo`_
+- `Running Semigrand Canonical Monte Carlo`_
+- `Running Charge Neutral Semigrand Canonical Monte Carlo`_
 - `Preparing cluster expansion training data`_
 
 .. _Creating a basic cluster expansion: notebooks/creating-a-ce.ipynb
@@ -182,7 +183,9 @@ Basic Examples
 
 .. _Running Canonical Monte Carlo: notebooks/running-canonical-mc.ipynb
 
-.. _Running Semi-Grand Canonical Monte Carlo: notebooks/running-semigrand-mc.ipynb
+.. _Running Semigrand Canonical Monte Carlo: notebooks/running-semigrand-mc.ipynb
+
+.. _Running Charge Neutral Semigrand Canonical Monte Carlo: notebooks/running-charge-balanced-gcmc.ipynb
 
 .. _Preparing cluster expansion training data: notebooks/training-data-preparation.ipynb
 

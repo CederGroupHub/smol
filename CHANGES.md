@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* Charge neutral semi grand canonical sampling. #271 @qchempku2017
 ### Changed
 ### Fixed
 ### Removed
