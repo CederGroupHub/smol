@@ -528,6 +528,10 @@ class WangLandau(MCKernel):
         super().__init__(
             ensemble=ensemble, step_type=step_type, *args, seed=seed, **kwargs
         )
+
+        if self.bias is not None:
+            raise ValueError("Cannot apply bias to Wang-Landau simulation!")
+
         # Additional clean-ups.
         self._histogram[:] = 0
         self._occurrences[:] = 0
@@ -604,7 +608,8 @@ class WangLandau(MCKernel):
             new_bin_id = self._get_bin_id(new_enthalpy)
             entropy = self._entropy[bin_id]
             new_entropy = self._entropy[new_bin_id]
-            exponent = entropy - new_entropy
+            log_factor = self._usher.compute_log_priori_factor(occupancy, step)
+            exponent = entropy - new_entropy + log_factor
             self.trace.accepted = np.array(
                 True if exponent >= 0 else exponent > log(self._rng.random())
             )
