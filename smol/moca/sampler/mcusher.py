@@ -192,7 +192,7 @@ class Swap(MCUsher):
 
 
 class MultiStep(MCUsher):
-    """A multi step usher to generate steps of several flips.
+    """A multistep usher to generate steps of several flips.
 
     Any usher can be used to chain steps, ie create multi flip steps, multi swap steps
     even multi composite steps, etc.
@@ -203,7 +203,6 @@ class MultiStep(MCUsher):
         sublattices,
         mcusher,
         step_lengths,
-        sublattice_probabilities=None,
         step_probabilities=None,
         rng=None,
     ):
@@ -216,13 +215,13 @@ class MultiStep(MCUsher):
                 degrees of freedom DOFs, only occupancy on active sub-lattices' active sites
                 are allowed to change.
             mcusher (MCUsher):
-                The MCUsher to use to create multisteps.
+                An instantiated MCUsher to use to create multisteps.
             step_lengths (int or Sequence of int):
                 The length or lengths of steps. If given a sequence of sizes, a size
-                is choosen at each proposal according to step_probabilities.
-            sublattice_probabilities (list of float): optional
-                list of probabilities to pick a site from specific active
-                sublattices.
+                is choosen at each proposal according to step_probabilities. The step
+                length proposed may be less in cases where the same site is chosen
+                more than once. This should become less and less likely for larger
+                supercells.
             step_probabilities (Sequence of float): optional
                 A sequence of probabilites corresponding to the step lengths provided.
                 If none is given, then a uniform probability is used.
@@ -230,7 +229,9 @@ class MultiStep(MCUsher):
                 The given PRNG must be the same instance as that used by the kernel and
                 any bias terms, otherwise reproducibility will be compromised.
         """
-        super().__init__(sublattices, sublattice_probabilities, rng=rng)
+        super().__init__(sublattices, rng=rng)
+
+        self._sublatt_probs = None
 
         if isinstance(step_lengths, int):
             self._step_lens = np.array([step_lengths], dtype=int)
@@ -254,20 +255,36 @@ class MultiStep(MCUsher):
             mcusher = mcusher_factory(
                 mcusher,
                 self.sublattices,
-                sublattice_probabilities=self.sublattice_probabilities,
             )
 
         self._mcusher = mcusher
 
+    @property
+    def sublattice_probabilities(self):
+        """Get the probabilities of choosing a sublattice."""
+        return self._mcusher.sublattice_probabilities
+
+    @sublattice_probabilities.setter
+    def sublattice_probabilities(self, value):
+        """Set the probabilities of choosing a sublattice."""
+        self._mcusher.sublattice_probabilities = value
+
     def propose_step(self, occupancy):
         """Propose a step given an occupancy."""
         step_length = self._rng.choice(self._step_lens, p=self._step_p)
-        steps = []
         occu = occupancy.copy()
-        for _ in range(step_length):
-            steps.append(self._mcusher.propose_step(occu))
-            for f in steps[-1]:
-                occu[f[0]] = f[1]
+
+        steps = [self._mcusher.propose_step(occu)]
+        for f in steps[-1]:
+            occu[f[0]] = f[1]
+
+        for _ in range(step_length - 1):
+            step = self._mcusher.propose_step(occu)
+            # only if all sites to be flipped are not already in steps
+            if all(s not in (s for st in steps for s, _ in st) for s, _ in step):
+                steps.append(step)
+                for f in steps[-1]:
+                    occu[f[0]] = f[1]
 
         # unpack them to single list
         return [flip for step in steps for flip in step]
@@ -283,9 +300,8 @@ class Composite(MCUsher):
     def __init__(
         self,
         sublattices,
-        sublattice_probabilities=None,
-        mcushers=None,
-        weights=None,
+        mcushers,
+        mcusher_weights=None,
         rng=None,
     ):
         """Initialize the composite usher.
@@ -296,12 +312,9 @@ class Composite(MCUsher):
                 sublattices are those that include sites with configuration
                 degrees of freedom DOFs, only occupancy on active sub-lattices' active sites
                 are allowed to change.
-            sublattice_probabilities (list of float): optional
-                list of probabilities to pick a site from specific active
-                sublattices.
             mcushers (list of MCUsher):
                 A list of mcushers to add to the composite.
-            weights (list of float):
+            mcusher_weights (list of float):
                 A list of the weights associated with each mcusher passed. With this
                 the corresponding probabilities for each mcusher to be picked are
                 generated. Must be in the same order as the mcusher list.
@@ -309,24 +322,22 @@ class Composite(MCUsher):
                 The given PRNG must be the same instance as that used by the kernel and
                 any bias terms, otherwise reproducibility will be compromised.
         """
-        super().__init__(sublattices, sublattice_probabilities, rng=rng)
+        super().__init__(sublattices, rng=rng)
         self._mcushers = []
         self._weights = []
         self._p = []
 
-        if mcushers is not None:
-            if weights is None:
-                weights = len(mcushers) * [
-                    1,
-                ]
-            for weight, usher in zip(weights, mcushers):
-                if isinstance(usher, str):
-                    usher = mcusher_factory(
-                        usher,
-                        self.sublattices,
-                        sublattice_probabilities=self.sublattice_probabilities,
-                    )
-                self.add_mcusher(usher, weight)
+        if mcusher_weights is None:
+            mcusher_weights = len(mcushers) * [
+                1,
+            ]
+        for weight, usher in zip(mcusher_weights, mcushers):
+            if isinstance(usher, str):
+                usher = mcusher_factory(
+                    usher,
+                    self.sublattices,
+                )
+            self.add_mcusher(usher, weight)
 
     @property
     def mcushers(self):
