@@ -65,7 +65,7 @@ class MCUsher(ABC):
             )
         elif len(sublattice_probabilities) != len(self.active_sublattices):
             raise AttributeError(
-                "Sublattice probabilites needs to be the " "same length as sublattices."
+                "Sublattice probabilites needs to be the same length as sublattices."
             )
         elif sum(sublattice_probabilities) != 1:
             raise ValueError("Sublattice probabilites must sum to one.")
@@ -189,6 +189,187 @@ class Swap(MCUsher):
             # inefficient, maybe re-call method? infinite recursion problem
             swap = []
         return swap
+
+
+class MultiStep(MCUsher):
+    """A multistep usher to generate steps of several flips.
+
+    Any usher can be used to chain steps, ie create multi flip steps, multi swap steps
+    even multi composite steps, etc.
+    """
+
+    def __init__(
+        self,
+        sublattices,
+        mcusher,
+        step_lengths,
+        step_probabilities=None,
+        rng=None,
+    ):
+        """Initialize a multistep usher.
+
+        Args:
+            sublattices (list of Sublattice):
+                list of active Sublattices to propose steps for. Active
+                sublattices are those that include sites with configuration
+                degrees of freedom DOFs, only occupancy on active sub-lattices' active sites
+                are allowed to change.
+            mcusher (MCUsher):
+                An instantiated MCUsher to use to create multisteps.
+            step_lengths (int or Sequence of int):
+                The length or lengths of steps. If given a sequence of sizes, a size
+                is choosen at each proposal according to step_probabilities. The step
+                length proposed may be less in cases where the same site is chosen
+                more than once. This should become less and less likely for larger
+                supercells.
+            step_probabilities (Sequence of float): optional
+                A sequence of probabilites corresponding to the step lengths provided.
+                If none is given, then a uniform probability is used.
+            rng (np.Generator): optional
+                The given PRNG must be the same instance as that used by the kernel and
+                any bias terms, otherwise reproducibility will be compromised.
+        """
+        super().__init__(sublattices, rng=rng)
+
+        self._sublatt_probs = None
+
+        if isinstance(step_lengths, int):
+            self._step_lens = np.array([step_lengths], dtype=int)
+        else:
+            self._step_lens = np.array(step_lengths, dtype=int)
+
+        if step_probabilities is not None:
+            if sum(step_probabilities) != 1.0:
+                raise ValueError("The step_probabilities do not sum to 1.")
+            if len(step_probabilities) != len(step_lengths):
+                raise ValueError(
+                    "The lenght of step_lengths and step_probabilities does not match."
+                )
+            self.step_p = np.array(step_probabilities)
+        else:
+            self._step_p = np.array(
+                [1.0 / len(self._step_lens) for _ in range(len(self._step_lens))]
+            )
+
+        if isinstance(mcusher, str):  # TODO additional kwargs?
+            mcusher = mcusher_factory(
+                mcusher,
+                self.sublattices,
+            )
+
+        self._mcusher = mcusher
+
+    @property
+    def sublattice_probabilities(self):
+        """Get the probabilities of choosing a sublattice."""
+        return self._mcusher.sublattice_probabilities
+
+    @sublattice_probabilities.setter
+    def sublattice_probabilities(self, value):
+        """Set the probabilities of choosing a sublattice."""
+        self._mcusher.sublattice_probabilities = value
+
+    def propose_step(self, occupancy):
+        """Propose a step given an occupancy."""
+        step_length = self._rng.choice(self._step_lens, p=self._step_p)
+        occu = occupancy.copy()
+
+        steps = [self._mcusher.propose_step(occu)]
+        for f in steps[-1]:
+            occu[f[0]] = f[1]
+
+        for _ in range(step_length - 1):
+            step = self._mcusher.propose_step(occu)
+            # only if all sites to be flipped are not already in steps
+            if all(s not in (s for st in steps for s, _ in st) for s, _ in step):
+                steps.append(step)
+                for f in steps[-1]:
+                    occu[f[0]] = f[1]
+
+        # unpack them to single list
+        return [flip for step in steps for flip in step]
+
+
+class Composite(MCUsher):
+    """A composite usher for chaining different step types.
+
+    This can be used to mix step types for all sublattices or to create hybrid
+    ensembles where different sublattices have different allowed steps.
+    """
+
+    def __init__(
+        self,
+        sublattices,
+        mcushers,
+        mcusher_weights=None,
+        rng=None,
+    ):
+        """Initialize the composite usher.
+
+        Args:
+            sublattices (list of Sublattice):
+                list of active Sublattices to propose steps for. Active
+                sublattices are those that include sites with configuration
+                degrees of freedom DOFs, only occupancy on active sub-lattices' active sites
+                are allowed to change.
+            mcushers (list of MCUsher):
+                A list of mcushers to add to the composite.
+            mcusher_weights (list of float):
+                A list of the weights associated with each mcusher passed. With this
+                the corresponding probabilities for each mcusher to be picked are
+                generated. Must be in the same order as the mcusher list.
+            rng (np.Generator): optional
+                The given PRNG must be the same instance as that used by the kernel and
+                any bias terms, otherwise reproducibility will be compromised.
+        """
+        super().__init__(sublattices, rng=rng)
+        self._mcushers = []
+        self._weights = []
+        self._p = []
+
+        if mcusher_weights is None:
+            mcusher_weights = len(mcushers) * [
+                1,
+            ]
+        for weight, usher in zip(mcusher_weights, mcushers):
+            if isinstance(usher, str):
+                usher = mcusher_factory(
+                    usher,
+                    self.sublattices,
+                )
+            self.add_mcusher(usher, weight)
+
+    @property
+    def mcushers(self):
+        """Get the list of mcushers."""
+        return self._mcushers
+
+    @property
+    def weight(self):
+        """Get the weights associated with each mcusher."""
+        return self._weights
+
+    def add_mcusher(self, mcusher, weight=1):
+        """Add an MCUsher to the Composite usher.
+
+        Args:
+            mcusher (MCUsher):
+                The MCUsher to add
+            weight (float):
+                The weight associated with the mcusher being added
+        """
+        self._mcushers.append(mcusher)
+        self._update_p(weight)
+
+    def _update_p(self, weight):
+        """Update the probabilities for each mcuhser based on a new weight."""
+        self._weights.append(weight)
+        total = sum(self._weights)
+        self._p = [weight / total for weight in self._weights]
+
+    def propose_step(self, occupancy):
+        """Propose a step given an occupancy."""
+        return self._rng.choice(self._mcushers, p=self._p).propose_step(occupancy)
 
 
 class TableFlip(MCUsher):

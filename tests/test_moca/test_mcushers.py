@@ -1,5 +1,6 @@
 import math
 from collections import Counter
+from random import choice, choices
 
 import numpy as np
 import numpy.testing as npt
@@ -7,12 +8,13 @@ import pytest
 from pymatgen.core import Composition
 
 from smol.cofe.space.domain import SiteSpace
+from smol.moca.sampler import mcusher
 from smol.moca.sampler.bias import SquareChargeBias
-from smol.moca.sampler.mcusher import Flip, Swap, TableFlip
+from smol.moca.sampler.kernel import ALL_MCUSHERS
 from smol.moca.sublattice import Sublattice
 from tests.utils import gen_random_neutral_occupancy, gen_random_occupancy
 
-mcmcusher_classes = [Flip, Swap, TableFlip]
+mcmcusher_classes = [getattr(mcusher, i) for i in ALL_MCUSHERS]
 num_sites = 100
 
 
@@ -69,14 +71,35 @@ def rand_occu_lmtpo(all_sublattices_lmtpo):
 @pytest.fixture(params=mcmcusher_classes)
 def mcmcusher(request, all_sublattices):
     # instantiate mcmcushers to test
-    if request.param == TableFlip:
-        return request.param(all_sublattices[0] + all_sublattices[1], swap_weight=0)
-    return request.param(all_sublattices[0] + all_sublattices[1])
+    kwargs = {}
+    if request.param == mcusher.TableFlip:
+        kwargs["swap_weight"] = 0
+        # return request.param(all_sublattices[0] + all_sublattices[1], swap_weight=0)
+    elif request.param == mcusher.MultiStep:
+        ushers = [
+            c
+            for c in mcmcusher_classes
+            # avoid TableFlip to avoid further checking in differeting proposal probabilities
+            if c not in (mcusher.MultiStep, mcusher.Composite, mcusher.TableFlip)
+        ]
+        kwargs["mcusher"] = choice(ushers)(all_sublattices[0] + all_sublattices[1])
+        kwargs["step_lengths"] = np.random.randint(1, 4, size=2)
+    elif request.param == mcusher.Composite:
+        kwargs["mcushers"] = choices(
+            [
+                klass(all_sublattices[0] + all_sublattices[1])
+                for klass in mcmcusher_classes
+                if klass
+                not in (mcusher.MultiStep, mcusher.Composite, mcusher.TableFlip)
+            ],
+            k=np.random.randint(2, len(mcmcusher_classes) - 2),
+        )
+    return request.param(all_sublattices[0] + all_sublattices[1], **kwargs)
 
 
 @pytest.fixture
 def table_flip(all_sublattices_lmtpo):
-    return TableFlip(
+    return mcusher.TableFlip(
         all_sublattices_lmtpo[0] + all_sublattices_lmtpo[1],
         optimize_basis=True,
         table_ergodic=True,
@@ -90,9 +113,9 @@ def test_bad_propabilities(mcmcusher):
     with pytest.raises(AttributeError):
         mcmcusher.sublattice_probabilities = [0.5, 0.2, 0.3]
     with pytest.raises(AttributeError):
-        _ = Flip(mcmcusher.sublattices, [0.5])
+        _ = mcusher.Flip(mcmcusher.sublattices, [0.5])
     with pytest.raises(ValueError):
-        _ = Flip(mcmcusher.sublattices, [0.5, 0.2])
+        _ = mcusher.Flip(mcmcusher.sublattices, [0.5, 0.2])
 
 
 def test_propose_step(mcmcusher, rand_occu):
@@ -116,17 +139,16 @@ def test_propose_step(mcmcusher, rand_occu):
                 assert flip[1] in mcmcusher.active_sublattices[1].encoding
             else:
                 raise RuntimeError(
-                    "Something went wrong in proposing"
-                    f"a step site proposed in {step} is"
-                    " not in any of the allowed sites"
+                    "Something went wrong in proposing a step site proposed in {step} "
+                    "is not in any of the allowed sites"
                 )
             total += 1
             flipped_sites.append(flip[0])
 
     # check probabilities seem sound
-    if not isinstance(mcmcusher, TableFlip):
-        assert count1 / total == pytest.approx(0.5, abs=1e-2)
-        assert count2 / total == pytest.approx(0.5, abs=1e-2)
+    if not isinstance(mcmcusher, mcusher.TableFlip):
+        assert count1 / total == pytest.approx(0.5, abs=5e-2)
+        assert count2 / total == pytest.approx(0.5, abs=5e-2)
     else:
         # Because Table flip is equal per-direction.
         assert count1 / total == pytest.approx(0.6, abs=5e-2)
@@ -141,7 +163,11 @@ def test_propose_step(mcmcusher, rand_occu):
     assert all(i not in fixed_sites for i in flipped_sites)
 
     # Now check with a sublattice bias
-    mcmcusher.sublattice_probabilities = [0.8, 0.2]
+    if isinstance(mcmcusher, mcusher.Composite):
+        for usher in mcmcusher.mcushers:
+            usher.sublattice_probabilities = [0.8, 0.2]
+    else:
+        mcmcusher.sublattice_probabilities = [0.8, 0.2]
     flipped_sites = []
     count1, count2 = 0, 0
     total = 0
@@ -162,7 +188,7 @@ def test_propose_step(mcmcusher, rand_occu):
                 )
             total += 1
             flipped_sites.append(flip[0])
-    if not isinstance(mcmcusher, TableFlip):
+    if not isinstance(mcmcusher, mcusher.TableFlip):
         assert count1 / total == pytest.approx(0.8, abs=1e-2)
         assert count2 / total == pytest.approx(0.2, abs=1e-2)
 
@@ -174,7 +200,7 @@ def test_table_flip_factors():
     site_space2 = SiteSpace(Composition({"O2-": 5 / 6, "F-": 1 / 6}))
     sublattices = [Sublattice(site_space1, sites1), Sublattice(site_space2, sites2)]
 
-    tf = TableFlip(sublattices, optimize_basis=True, table_ergodic=True)
+    tf = mcusher.TableFlip(sublattices, optimize_basis=True, table_ergodic=True)
     # Case 1:
     occu1 = np.array([0, 0, 1, 0, 0, 0])
     step1 = [(2, 2), (4, 1)]
