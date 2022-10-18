@@ -147,8 +147,8 @@ def test_propose_step(mcmcusher, rand_occu):
 
     # check probabilities seem sound
     if not isinstance(mcmcusher, mcusher.TableFlip):
-        assert count1 / total == pytest.approx(0.5, abs=1e-2)
-        assert count2 / total == pytest.approx(0.5, abs=1e-2)
+        assert count1 / total == pytest.approx(0.5, abs=5e-2)
+        assert count2 / total == pytest.approx(0.5, abs=5e-2)
     else:
         # Because Table flip is equal per-direction.
         assert count1 / total == pytest.approx(0.6, abs=5e-2)
