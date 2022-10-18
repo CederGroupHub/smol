@@ -147,12 +147,12 @@ def test_propose_step(mcmcusher, rand_occu):
 
     # check probabilities seem sound
     if not isinstance(mcmcusher, mcusher.TableFlip):
-        assert count1 / total == pytest.approx(0.5, abs=5e-2)
-        assert count2 / total == pytest.approx(0.5, abs=5e-2)
+        assert count1 / total == pytest.approx(0.5, abs=2e-2)
+        assert count2 / total == pytest.approx(0.5, abs=2e-2)
     else:
         # Because Table flip is equal per-direction.
-        assert count1 / total == pytest.approx(0.6, abs=5e-2)
-        assert count2 / total == pytest.approx(0.4, abs=5e-2)
+        assert count1 / total == pytest.approx(0.6, abs=2e-2)
+        assert count2 / total == pytest.approx(0.4, abs=2e-2)
 
     # check that every site was flipped at least once
     assert all(
@@ -189,8 +189,8 @@ def test_propose_step(mcmcusher, rand_occu):
             total += 1
             flipped_sites.append(flip[0])
     if not isinstance(mcmcusher, mcusher.TableFlip):
-        assert count1 / total == pytest.approx(0.8, abs=1e-2)
-        assert count2 / total == pytest.approx(0.2, abs=1e-2)
+        assert count1 / total == pytest.approx(0.8, abs=2e-2)
+        assert count2 / total == pytest.approx(0.2, abs=2e-2)
 
 
 def test_table_flip_factors():
