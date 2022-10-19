@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Citing &#8212; smol 0.0.7 documentation</title>
+    <title>Citing &#8212; smol 0.0.1.dev1+gb653c06 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -124,7 +124,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.7  <!-- this text may get changed later by javascript -->
+        0.0.1.dev1+gb653c06  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -134,7 +134,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables citing and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.7'}.
+     variables citing and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1.dev1+gb653c06'}.
 -->
 
 <script type="text/javascript">
@@ -185,10 +185,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.7 variable.
+            // this version, rather than using sphinx's 0.0.1.dev1+gb653c06 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.7") {
+            if (entry.version == "0.0.1.dev1+gb653c06") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -249,6 +249,11 @@ function checkPageExistsAndRedirect(event) {
 <nav id="bd-toc-nav">
     <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cluster-expansion-site-basis-sets">
+   Cluster expansion site basis sets
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#cluster-expansions-with-redundant-function-sets">
    Cluster expansions with redundant function sets
   </a>
@@ -264,6 +269,16 @@ function checkPageExistsAndRedirect(event) {
     \(\ell_0\ell_2\)
    </span>
    MIQP fits with hierarchical constraints
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#charge-neutral-semigrand-canonical-sampling">
+   Charge neutral semigrand canonical sampling
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#coulomb-electrostatic-interactions">
+   Coulomb electrostatic interactions
   </a>
  </li>
 </ul>
@@ -296,11 +311,17 @@ function checkPageExistsAndRedirect(event) {
                 
   <section id="citing">
 <span id="id1"></span><h1>Citing<a class="headerlink" href="#citing" title="Permalink to this headline">#</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you have any comments, suggestions or you think we have missed a
+pertinent publications in our recommended citations, please let us know!</p>
+</div>
 <p>If you use <strong>smol</strong> for your work please cite the following publication,</p>
 <blockquote>
 <div><p>Barroso-Luque, L., Yang, J.H., Xie, F., Chen T., Kam, R.L., Jadidi, Z., Zhong, P.
 &amp; Ceder, G.
-<a class="reference external" href="https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25">smol: A Python package for cluster expansions and beyond. (submitted)</a></p>
+<a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.04504">smol: A Python package for cluster expansions and beyond</a>.
+Journal of Open Source Software 7, 4504 (2022).</p>
 </div></blockquote>
 <p>Since many core objects are used extensively, please also consider citing the
 <strong>pymatgen</strong> publication,</p>
@@ -309,10 +330,33 @@ function checkPageExistsAndRedirect(event) {
 <a class="reference external" href="https://doi.org/10.1016/j.commatsci.2012.10.028">A robust, open-source python library for materials analysis</a>.
 ComputationalMaterials Science 68, 314–319 (2013).</p>
 </div></blockquote>
+<p>Generally, we recommend that any work using the cluster expansion method cite the
+original publication,</p>
+<blockquote>
+<div><p>Sanchez, J. M., Ducastelle F., &amp; Gratias D.
+<a class="reference external" href="https://doi.org/10.1016/0378-4371(84)90096-7">Generalized cluster description of multicomponent systems</a>.
+Physica A: Statistical Mechanics and its Applications 128, 334–350 (1984).</p>
+</div></blockquote>
+<section id="cluster-expansion-site-basis-sets">
+<h2>Cluster expansion site basis sets<a class="headerlink" href="#cluster-expansion-site-basis-sets" title="Permalink to this headline">#</a></h2>
+<p>Based on the specific site basis sets used in the cluster expansion, we recommend citing
+the following papers.</p>
+<p>When using <code class="code docutils literal notranslate"><span class="pre">sinusoid</span></code> site basis sets consider citing,</p>
+<blockquote>
+<div><p>van de Walle, A. <a class="reference external" href="https://doi.org/10.1016/j.calphad.2008.12.005">Multicomponent multisublattice alloys, nonconfigurational entropy
+and other additions to the Alloy Theoretic Automated Toolkit.</a> Calphad 33, 266–278 (2009).</p>
+</div></blockquote>
+<p>When using <code class="code docutils literal notranslate"><span class="pre">indicator</span></code> site basis sets consider citing,</p>
+<blockquote>
+<div><p>Zhang, X. &amp; Sluiter, M. H. F. <a class="reference external" href="https://doi.org/10.1007/s11669-015-0427-x">Cluster Expansions for Thermodynamics and Kinetics of
+Multicomponent Alloys</a>.
+J. Phase Equilib. Diffus. 37, 44–52 (2016).</p>
+</div></blockquote>
+</section>
 <section id="cluster-expansions-with-redundant-function-sets">
 <h2>Cluster expansions with redundant function sets<a class="headerlink" href="#cluster-expansions-with-redundant-function-sets" title="Permalink to this headline">#</a></h2>
-<p>If you use the (<code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.PottsSubspace</span></code>) class or related functionality
-to include redundancy in cluster expansions please cite this publication,</p>
+<p>If you use the <code class="xref py py-class docutils literal notranslate"><span class="pre">PottsSubspace</span></code> class or related functionality
+to include redundancy in cluster expansions, please cite this publication,</p>
 <blockquote>
 <div><p>Barroso-Luque, L., Yang, J. H. &amp; Ceder, G.
 <a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevB.104.224203">Sparse expansions of multicomponent oxide configuration energy using
@@ -329,9 +373,9 @@ model, please cite the following,</p>
 <div><p>Yang, J. H., Chen, T., Barroso-Luque, L., Jadidi, Z. &amp; Ceder, G.
 <a class="reference external" href="https://www.nature.com/articles/s41524-022-00818-3">Approaches for handling high-dimensional cluster expansions of ionic systems</a>.
 npj Comput Mater 8, 1–11 (2022).</p>
-<p>Barroso-Luque, L., Zhong, P., Yang, J. H., Chen, T. &amp; Ceder, G.
-Cluster Expansions of Multicomponent Ionic Materials:Formalism &amp; Methods.
-(submitted)</p>
+<p>Barroso-Luque, L. et al.
+<a class="reference external" href="https://doi.org/10.1103/PhysRevB.106.144202">Cluster expansions of multicomponent ionic materials: Formalism and methodology.</a>.
+Phys. Rev. B 106, 144202 (2022).</p>
 </div></blockquote>
 </section>
 <section id="ell-0-ell-2-miqp-fits-with-hierarchical-constraints">
@@ -341,11 +385,37 @@ for hierarchical constrained expansion fits, please cite these publications,</p>
 <blockquote>
 <div><p>Zhong, P., Chen, T., Barroso-Luque, L., Xie, F. &amp; Ceder, G.
 An <span class="math notranslate nohighlight">\(\ell_0\ell_2\)</span>-norm <a class="reference external" href="https://doi.org/10.1103/PhysRevB.106.024203">regularized regression model for construction of
-robust cluster expansions in multicomponent systems.</a>
+robust cluster expansions in multicomponent systems</a>
 Phys. Rev. B 106, 024203 (2022).</p>
-<p>Barroso-Luque, L., Zhong, P., Yang, J. H., Chen, T. &amp; Ceder, G.
-Cluster Expansions of Multicomponent Ionic Materials:Formalism &amp; Methods.
-(submitted)</p>
+<p>Barroso-Luque, L. et al.
+<a class="reference external" href="https://doi.org/10.1103/PhysRevB.106.144202">Cluster expansions of multicomponent ionic materials: Formalism and methodology.</a>.
+Phys. Rev. B 106, 144202 (2022).</p>
+</div></blockquote>
+</section>
+<section id="charge-neutral-semigrand-canonical-sampling">
+<h2>Charge neutral semigrand canonical sampling<a class="headerlink" href="#charge-neutral-semigrand-canonical-sampling" title="Permalink to this headline">#</a></h2>
+<p>If you use the charge neutral semigrand canonical sampling or any related functionality
+please cite the following work,</p>
+<blockquote>
+<div><p>Xie, F., Zhong, P., Barroso-Luque, L., Ouyang, B. &amp; Ceder, G.
+<a class="reference external" href="https://arxiv.org/abs/2210.01165">Grand-canonical Monte-Carlo simulation methods for charge-decorated cluster
+expansions</a> [arxiv:2210.01165].</p>
+</div></blockquote>
+</section>
+<section id="coulomb-electrostatic-interactions">
+<h2>Coulomb electrostatic interactions<a class="headerlink" href="#coulomb-electrostatic-interactions" title="Permalink to this headline">#</a></h2>
+<p>When using <code class="xref py py-class docutils literal notranslate"><span class="pre">EwaldTerm</span></code> as an additional term in a lattice Hamiltonian, please
+cite the following publications,</p>
+<blockquote>
+<div><p>Seko, A. &amp; Tanaka, I. <a class="reference external" href="https://doi.org/10.1088/0953-8984/26/11/115403">Cluster expansion of multicomponent ionic systems with
+controlled accuracy: importance of long-range interactions in heterovalent ionic
+systems</a>.
+J. Phys.: Condens. Matter 26, 115403 (2014).</p>
+<p>Richards, W. D., Wang, Y., Miara, L. J., Kim, J. C. &amp; Ceder, G.
+<a class="reference external" href="https://doi.org/10.1039/C6EE02094A">Design of Li1+2xZn1−xPS4, a new lithium ion conductor</a>. Energy Environ. Sci. 9, 3272–3278 (2016).</p>
+<p>Barroso-Luque, L. et al.
+<a class="reference external" href="https://doi.org/10.1103/PhysRevB.106.144202">Cluster expansions of multicomponent ionic materials: Formalism and methodology.</a>.
+Phys. Rev. B 106, 144202 (2022).</p>
 </div></blockquote>
 </section>
 </section>

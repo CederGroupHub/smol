@@ -135,7 +135,9 @@ save_work("CuAu_ce_mc.json", wrangler, expansion, ensemble, sampler.samples)
 #
 # * Running Canonical Monte Carlo
 #
-# * Running Semi-Grand Canonical Monte Carlo
+# * Running Semigrand Canonical Monte Carlo
+#
+# * Running Charge Neutral Semigrand Canonical Monte Carlo
 #
 # * Preparing cluster expansion training data
 #

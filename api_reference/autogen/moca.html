@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>moca package &#8212; smol 0.0.7 documentation</title>
+    <title>moca package &#8212; smol 0.0.1.dev1+gb653c06 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -120,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.7  <!-- this text may get changed later by javascript -->
+        0.0.1.dev1+gb653c06  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -130,7 +130,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/autogen/moca and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.7'}.
+     variables api_reference/autogen/moca and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1.dev1+gb653c06'}.
 -->
 
 <script type="text/javascript">
@@ -181,10 +181,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.7 variable.
+            // this version, rather than using sphinx's 0.0.1.dev1+gb653c06 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.7") {
+            if (entry.version == "0.0.1.dev1+gb653c06") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -363,6 +363,11 @@ simulation.</p>
 <p>A Sublattice is used to represent a subset of supercell sites that have
 the same site space. Rigorously it represents a set of sites in a
 “substructure” of the total structure.</p>
+<p>As implemented in the Sublattice class, you are allowed to have multiple
+species on an inactive sub-lattice, but it is not the suggested approach.
+For simplicity, especially when you generate a CompositionSpace, you had better
+always split inactive sub-lattices until each inactive sub-lattice have
+only 1 species in it.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.sublattice.Sublattice.site_space">
 <span class="sig-name descname"><span class="pre">site_space</span></span><a class="headerlink" href="#moca.sublattice.Sublattice.site_space" title="Permalink to this definition">#</a></dt>
@@ -760,6 +765,342 @@ for the new species to place at that site.</p></li>
 <dt class="sig sig-object py" id="moca.CompositeProcessor.processors">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">processors</span></span><a class="headerlink" href="#moca.CompositeProcessor.processors" title="Permalink to this definition">#</a></dt>
 <dd><p>Return the list of processors in CompositeProcessor.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="moca.CompositionSpace">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CompositionSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_sizes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge_balanced</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leq_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geq_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize_basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_ergodic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositionSpace" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<p>Composition space class.</p>
+<p>Generates a charge neutral compositional space from a list of Species
+or DummySpecies and the number of sites in each sub-lattice in a PRIM CELL.</p>
+<dl class="simple">
+<dt>A composition in the CompositionSpace can be expressed in 4 formats:</dt><dd><dl class="simple">
+<dt>1, Count of species on each sub-lattice, orded and concatenated as</dt><dd><p>each sub-lattice provided in self.bits and self.sublattice_sizes,
+into an 1D array. (“counts” format, also called unconstrained
+coordinates)</p>
+</dd>
+<dt>2, Coordinates x on the constrained integer grid, computed with</dt><dd><p>n = n0 + V &#64; x from its counts format representation n,
+where V are the grid basi vectors and n0 is a base solution in
+a certain super-cell size. (“coordinates” format, also called
+constrained coordinates).</p>
+</dd>
+<dt>3, Composition of each sub-lattice in pymatgen.Composition,</dt><dd><p>but each sub-lattice composition is required to be divided
+by number of the sites in the sub-lattice, so that the sum of species
+content can not exceed 1. Vacancies contents are not explicitly
+included, but taken a 1 - sum(other_species_contents).
+(“compositions” format).</p>
+</dd>
+<dt>4, Count each species in the whole structure, without distinguishing</dt><dd><p>sub-lattice. The species are sorted, and the order of species is
+given in self.species. (“species-counts” format).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="moca.CompositionSpace.n_dims">
+<span class="sig-name descname"><span class="pre">n_dims</span></span><a class="headerlink" href="#moca.CompositionSpace.n_dims" title="Permalink to this definition">#</a></dt>
+<dd><p>The dimension of unconstrained composition space, which equals to
+the sum of site space size in all sub-lattices. Namely, it is the
+dimension of “counts” format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="moca.CompositionSpace.species">
+<span class="sig-name descname"><span class="pre">species</span></span><a class="headerlink" href="#moca.CompositionSpace.species" title="Permalink to this definition">#</a></dt>
+<dd><p>All species in the given system (sorted).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[Species|DummySpecies|Element|<a class="reference internal" href="cofe.space.html#cofe.space.domain.Vacancy" title="cofe.space.domain.Vacancy">Vacancy</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="moca.CompositionSpace.dim_ids">
+<span class="sig-name descname"><span class="pre">dim_ids</span></span><a class="headerlink" href="#moca.CompositionSpace.dim_ids" title="Permalink to this definition">#</a></dt>
+<dd><p>The corresponding index in the “counts” vector
+of each species on each sub-lattice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[List[int]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="moca.CompositionSpace.species_ids">
+<span class="sig-name descname"><span class="pre">species_ids</span></span><a class="headerlink" href="#moca.CompositionSpace.species_ids" title="Permalink to this definition">#</a></dt>
+<dd><p>The index of sorted species in self.species, in each sub-lattice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[List[int]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initialize CompositionSpace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bits</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>Specie</em><em>|</em><a class="reference internal" href="cofe.space.html#cofe.space.domain.Vacancy" title="cofe.space.domain.Vacancy"><em>Vacancy</em></a><em>|</em><em>Element</em><em>]</em><em>]</em>) – Species on each sub-lattice.</p></li>
+<li><p><strong>sublattice_sizes</strong> (<em>1D ArrayLike</em><em>[</em><em>int</em><em>]</em>) – optional
+Number of sites in each sub-lattice per primitive cell.
+If not given, assume one site for each sub-lattice.
+Better provide them as co-prime integers.</p></li>
+<li><p><strong>charge_balanced</strong> (<em>bool</em>) – optional
+Whether to add charge balance constraint. Default
+to true.</p></li>
+<li><p><strong>other_constraints</strong> (<em>List</em><em>[</em><em>tuple</em><em>(</em><em>1D arrayLike</em><em>[</em><em>float</em><em>]</em><em>, </em><em>float</em><em>)</em><em>]</em>) – optional
+Other equality type composition constraints except charge balance
+and site-number conservation. Should be given in the form of
+tuple(a, bb), each gives constraint np.dot(a, n)=bb. a and bb
+should be in the form of per primitive cell.
+For example, you may want to constrain n_Li + n_Vac = 0.5 per
+primitive cell.</p></li>
+<li><p><strong>leq_constraints</strong> (<em>List</em><em>[</em><em>tuple</em><em>(</em><em>1D arrayLike</em><em>[</em><em>float</em><em>]</em><em>, </em><em>float</em><em>)</em><em>]</em>) – optional
+Constraint np.dot(a, n)&lt;=bb. a and bb should be in the form of
+per primitive cell.</p></li>
+<li><p><strong>geq_constraints</strong> (<em>List</em><em>[</em><em>tuple</em><em>(</em><em>1D arrayLike</em><em>[</em><em>float</em><em>]</em><em>, </em><em>float</em><em>)</em><em>]</em>) – optional
+Constraint np.dot(a, n)&gt;=bb. a and bb should be in the form of
+per primitive cell.
+Both leq and geq constraints are only used when enumerating
+compositions. Table ergodicity code will only consider equality
+constraints, not leq and geqs.</p></li>
+<li><p><strong>optimize_basis</strong> (<em>bool</em>) – optional
+Whether to optimize the basis to minimal flip sizes and maximal
+connectivity in the minimum super-cell size.
+When the minimal super-cell size is large, we recommend not to
+optimize basis.</p></li>
+<li><p><strong>table_ergodic</strong> (<em>bool</em>) – optional
+When generating a flip table, whether to add vectors and
+ensure ergodicity under a minimal super-cell size.
+Default to False.
+When the minimal super-cell size is large, we recommend not to
+ensure ergodicity. This is not only because of the computation
+difficulty; but also because at large super-cell size,
+the fraction of inaccessible compositions usually becomes
+minimal.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.CompositionSpace.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositionSpace.as_dict" title="Permalink to this definition">#</a></dt>
+<dd><p>Serialize into dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dict.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.CompositionSpace.basis">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis</span></span><a class="headerlink" href="#moca.CompositionSpace.basis" title="Permalink to this definition">#</a></dt>
+<dd><p>Basis vectors of the integer composition grid.</p>
+<p>if self.optimize_basis is set to true, will be optimized so that flip
+sizes are minimal, and the graph connectivity between enumerated
+compositions in a self.min_supercell_size super-cell is maximized.
+:returns:     2D np.ndarray[int]
+:rtype: Basis vectors in “counts” format, each in a row</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.CompositionSpace.flip_reactions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flip_reactions</span></span><a class="headerlink" href="#moca.CompositionSpace.flip_reactions" title="Permalink to this definition">#</a></dt>
+<dd><p>Reaction formula representations of table flips.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Reaction formulae (only forward direction)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.CompositionSpace.flip_table">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flip_table</span></span><a class="headerlink" href="#moca.CompositionSpace.flip_table" title="Permalink to this definition">#</a></dt>
+<dd><p>Give flip table vectors.</p>
+<p>If self.table_ergodic is true, will add flips until the flip table is ergodic
+in a self.min_supercell_size super-cell.
+:returns:     2D np.ndarray[int]
+:rtype: Flip vectors in the “counts” format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.CompositionSpace.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositionSpace.from_dict" title="Permalink to this definition">#</a></dt>
+<dd><p>Load CompositionSpace object from dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – Dictionary to decode from.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>CompositionSpace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.CompositionSpace.get_centroid_composition">
+<span class="sig-name descname"><span class="pre">get_centroid_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">supercell_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositionSpace.get_centroid_composition" title="Permalink to this definition">#</a></dt>
+<dd><p>Get the closest integer composition to the centroid of polytope.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>supercell_size</strong> (<em>int</em>) – optional
+Super-cell size to get the composition with.
+If not given, will use self.min_supercell_size</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>the closest composition to the centroid (“coordinates” format,
+not normalized):</p>
+<blockquote>
+<div><p>1D np.ndarray[int]</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.CompositionSpace.get_composition_grid">
+<span class="sig-name descname"><span class="pre">get_composition_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">supercell_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositionSpace.get_composition_grid" title="Permalink to this definition">#</a></dt>
+<dd><p>Get the integer compositions (“coordinates”).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>supercell_size</strong> (<em>int</em>) – Super-cell size to enumerate with.</p></li>
+<li><p><strong>step</strong> (<em>int</em>) – optional
+Step in returning the enumerated compositions.
+If step = N &gt; 1, on each dimension of the composition space,
+we will only yield one composition every N compositions.
+Default to 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>2Dnp.ndarray[int]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Integer compositions (“coordinates” format, not normalized)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.CompositionSpace.get_supercell_base_solution">
+<span class="sig-name descname"><span class="pre">get_supercell_base_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">supercell_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositionSpace.get_supercell_base_solution" title="Permalink to this definition">#</a></dt>
+<dd><p>Find one solution (not natural numbers) in a super-cell size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>supercell_size</strong> (<em>int</em>) – optional
+Super-cell size in the number of primitive cells.
+If not given, will use self.min_supercell_size.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>1D np.ndarray[int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.CompositionSpace.min_supercell_grid">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">min_supercell_grid</span></span><a class="headerlink" href="#moca.CompositionSpace.min_supercell_grid" title="Permalink to this definition">#</a></dt>
+<dd><p>Get integer compositions on grid at min_supercell_size (“coordinates”).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>2Dnp.ndarray[int]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Integer compositions (“coordinates” format, not normalized)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.CompositionSpace.min_supercell_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">min_supercell_size</span></span><a class="headerlink" href="#moca.CompositionSpace.min_supercell_size" title="Permalink to this definition">#</a></dt>
+<dd><p>Minimum super-cell size.</p>
+<p>Computed as the minimum integer that can multiply prim_vertices into
+integral vectors.
+:returns: int</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.CompositionSpace.num_unconstrained_compositions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_unconstrained_compositions</span></span><a class="headerlink" href="#moca.CompositionSpace.num_unconstrained_compositions" title="Permalink to this definition">#</a></dt>
+<dd><p>Estimated number of unconstrained compositions.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.CompositionSpace.prim_vertices">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prim_vertices</span></span><a class="headerlink" href="#moca.CompositionSpace.prim_vertices" title="Permalink to this definition">#</a></dt>
+<dd><p>Vertex compositions in a primitive cell.</p>
+<p>leq and geq constraints are not considered here.
+:returns:     2D np.ndarray[float]
+:rtype: prim vertices in “counts” format</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.CompositionSpace.translate_format">
+<span class="sig-name descname"><span class="pre">translate_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_format</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'counts'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.CompositionSpace.translate_format" title="Permalink to this definition">#</a></dt>
+<dd><p>Translate a composition representation to another format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>c</strong> (<em>1D ArrayLike</em><em>|</em><em>List</em><em>[</em><em>Composition</em><em>]</em>) – Input format. Can be int or fractional.</p></li>
+<li><p><strong>supercell_size</strong> (<em>int</em>) – Supercell size of this composition. You must make sure
+it is the right super-cell size of composition c.</p></li>
+<li><p><strong>from_format</strong> (<em>str</em>) – <p>Specifies the input format.
+A composition can be expressed in 4 formats:
+1, Count of species on each sub-lattice, orded and concatenated as</p>
+<blockquote>
+<div><p>each sub-lattice provided in self.bits and self.sublattice_sizes,
+into an 1D array. (“counts” format)</p>
+</div></blockquote>
+<dl class="simple">
+<dt>2, Coordinates x on the constrained integer grid, computed with</dt><dd><p>n = n0 + V &#64; x from its counts format representation n,
+where V are the grid basi vectors and n0 is a base solution in
+a certain super-cell size. (“coordinates” format).</p>
+</dd>
+<dt>3, Composition of each sub-lattice in pymatgen.Composition,</dt><dd><p>but each sub-lattice composition is required to be divided
+by number of the sites in the sub-lattice, so that the sum of species
+content can not exceed 1. Vacancies contents are not explicitly
+included, but taken a 1 - sum(other_species_contents).
+(“compositions” format).</p>
+</dd>
+<dt>4, Count each species in the whole structure, without distinguishing</dt><dd><p>sub-lattice. The species are sorted, and the order of species is
+given in self.species. (“species-counts” format).</p>
+</dd>
+</dl>
+<p>Note: “species-counts” format cannot be converted to other formats,
+because it does not have information on species distribution across
+sub-lattices.</p>
+</p></li>
+<li><p><strong>to_format</strong> (<em>str</em>) – optional
+Specified the output format.
+Same as from_format, with an addition “species-counts”.</p></li>
+<li><p><strong>rounding</strong> (<em>bool</em>) – optional
+If the returned format is “counts”, “coordinates” or “species-counts”,
+whether to round up the output array as integers. Default to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>1D np.ndarray[int|float]|List[Composition]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Depends on to_format argument</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

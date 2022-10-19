@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Statistical Mechanics on Lattices &#8212; smol 0.0.7 documentation</title>
+    <title>Statistical Mechanics on Lattices &#8212; smol 0.0.1.dev1+gb653c06 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -121,7 +121,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.7  <!-- this text may get changed later by javascript -->
+        0.0.1.dev1+gb653c06  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -131,7 +131,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables index and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.7'}.
+     variables index and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1.dev1+gb653c06'}.
 -->
 
 <script type="text/javascript">
@@ -182,10 +182,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.7 variable.
+            // this version, rather than using sphinx's 0.0.1.dev1+gb653c06 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.7") {
+            if (entry.version == "0.0.1.dev1+gb653c06") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -258,6 +258,7 @@ crystalline materials.</em></p>
 <a class="reference external image-reference" href="https://www.codacy.com/gh/CederGroupHub/smol/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CederGroupHub/smol&amp;utm_campaign=Badge_Coverage"><img alt="Coverage" src="https://app.codacy.com/project/badge/Coverage/f6180b5223f346d2ac9dcf9a4bcc62d9" /></a>
 <a class="reference external image-reference" href="https://pypi.org/project/smol"><img alt="PyPi Version" src="https://img.shields.io/pypi/v/smol?color=blue" /></a>
 <a class="reference external image-reference" href="https://img.shields.io/pypi/pyversions/smol"><img alt="Python Versions" src="https://img.shields.io/pypi/pyversions/smol" /></a>
+<a class="reference external image-reference" href="https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25"><img alt="JOSS Status" src="https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25/status.svg" /></a>
 <hr class="docutils" />
 <p><strong>smol</strong> is a minimal implementation of computational methods to calculate
 statistical mechanical and thermodynamic properties of crystalline
@@ -281,7 +282,8 @@ of functionality to inspect the resulting feature matrix.</p></li>
 from local updates in order to quickly compute properties and changes in
 properties for specified supercells.</p></li>
 <li><p>Flexible toolset to sample cluster expansions using Monte Carlo with
-Canonical and Semigrand Canonical ensembles using a Metropolis sampler.</p></li>
+canonical and semigrand canonical and charge neutral semigrand canonical ensembles
+using a Metropolis sampler.</p></li>
 </ul>
 <p><strong>smol</strong> is built on top of <a class="reference external" href="https://pymatgen.org/">pymatgen</a> so any pre/post
 structure analysis can be done seamlessly using the various functionality
@@ -291,8 +293,10 @@ supported there.</p>
 <h2>Citing<a class="headerlink" href="#citing" title="Permalink to this headline">#</a></h2>
 <p>If you find <strong>smol</strong> useful please cite the following publication,</p>
 <blockquote>
-<div><p>Barroso-Luque, L., et al.
-<a class="reference external" href="https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25">smol: A Python package for cluster expansions and beyond. (submitted)</a></p>
+<div><p>Barroso-Luque, L., Yang, J.H., Xie, F., Chen T., Kam, R.L., Jadidi, Z., Zhong, P.
+&amp; Ceder, G.
+<a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.04504">smol: A Python package for cluster expansions and beyond.</a>
+Journal of Open Source Software 7, 4504 (2022).</p>
 </div></blockquote>
 <p>Since <strong>smol</strong> is based on <strong>pymatgen</strong>, please also cite this publication,</p>
 <blockquote>

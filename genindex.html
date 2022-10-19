@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; smol 0.0.7 documentation</title>
+    <title>Index &#8212; smol 0.0.1.dev1+gb653c06 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -119,7 +119,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.7  <!-- this text may get changed later by javascript -->
+        0.0.1.dev1+gb653c06  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -129,7 +129,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables genindex and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.7'}.
+     variables genindex and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1.dev1+gb653c06'}.
 -->
 
 <script type="text/javascript">
@@ -180,10 +180,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.7 variable.
+            // this version, rather than using sphinx's 0.0.1.dev1+gb653c06 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.7") {
+            if (entry.version == "0.0.1.dev1+gb653c06") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -283,6 +283,8 @@ function checkPageExistsAndRedirect(event) {
 </li>
       <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.add_external_term">add_external_term() (ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.add_external_term">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.add_external_term">[2]</a>
 </li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.Composite.add_mcusher">add_mcusher() (Composite method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.Composite.add_mcusher">[1]</a>
+</li>
       <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.add_processor">add_processor() (CompositeProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.add_processor">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.add_processor">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.add_processor">[3]</a>
 </li>
       <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.add_properties">add_properties() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.add_properties">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.add_properties">[2]</a>
@@ -305,6 +307,8 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.as_dict">(ClusterSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.as_dict">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.as_dict">[2]</a>
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.as_dict">(CompositeProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.as_dict">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.as_dict">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.as_dict">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.as_dict">(CompositionSpace method)</a>
 </li>
         <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.as_dict">(DiscreteBasis method)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.as_dict">[1]</a>
 </li>
@@ -355,6 +359,8 @@ function checkPageExistsAndRedirect(event) {
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.basis">basis (CompositionSpace property)</a>
+</li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.basis_arrays">basis_arrays (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.basis_arrays">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.basis_arrays">[2]</a>
 </li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis_factory">basis_factory() (in module cofe.space)</a>
@@ -548,8 +554,6 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.constants">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     cofe.space.domain
 
@@ -564,6 +568,8 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/autogen/cofe.space.html#module-cofe.space.orbit">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     cofe.wrangling
 
@@ -592,6 +598,12 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/autogen/cofe.wrangling.html#module-cofe.wrangling.wrangler">module</a>
 </li>
       </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.Composite">Composite (class in moca.sampler.mcusher)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.Composite">(class in smol.moca.sampler.mcusher)</a>
+</li>
+      </ul></li>
       <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor">CompositeProcessor (class in moca)</a>
 
       <ul>
@@ -614,6 +626,8 @@ function checkPageExistsAndRedirect(event) {
       </ul></li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.composition_variance">composition_variance() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.composition_variance">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.composition_variance">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.composition_variance">[3]</a>
 </li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace">CompositionSpace (class in moca)</a>
+</li>
       <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.compute_average_drift">compute_average_drift() (Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.compute_average_drift">[1]</a>
 </li>
       <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.FugacityBias.compute_bias">compute_bias() (FugacityBias method)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.FugacityBias.compute_bias">[1]</a>
@@ -621,11 +635,19 @@ function checkPageExistsAndRedirect(event) {
       <ul>
         <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.MCBias.compute_bias">(MCBias method)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.MCBias.compute_bias">[1]</a>
 </li>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.SquareChargeBias.compute_bias">(SquareChargeBias method)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.SquareChargeBias.compute_bias">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.SquareHyperplaneBias.compute_bias">(SquareHyperplaneBias method)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.SquareHyperplaneBias.compute_bias">[1]</a>
+</li>
       </ul></li>
       <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.FugacityBias.compute_bias_change">compute_bias_change() (FugacityBias method)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.FugacityBias.compute_bias_change">[1]</a>
 
       <ul>
         <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.MCBias.compute_bias_change">(MCBias method)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.MCBias.compute_bias_change">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.SquareChargeBias.compute_bias_change">(SquareChargeBias method)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.SquareChargeBias.compute_bias_change">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.SquareHyperplaneBias.compute_bias_change">(SquareHyperplaneBias method)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.SquareHyperplaneBias.compute_bias_change">[1]</a>
 </li>
       </ul></li>
       <li><a href="api_reference/autogen/moca.html#moca.ClusterExpansionProcessor.compute_feature_vector">compute_feature_vector() (ClusterExpansionProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.ClusterExpansionProcessor.compute_feature_vector">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector">[2]</a>, <a href="api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector">[3]</a>
@@ -656,6 +678,12 @@ function checkPageExistsAndRedirect(event) {
 
       <ul>
         <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.ThermalKernel.compute_initial_trace">(ThermalKernel method)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.ThermalKernel.compute_initial_trace">[1]</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MCUsher.compute_log_priori_factor">compute_log_priori_factor() (MCUsher method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MCUsher.compute_log_priori_factor">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.TableFlip.compute_log_priori_factor">(TableFlip method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.TableFlip.compute_log_priori_factor">[1]</a>
 </li>
       </ul></li>
       <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.compute_property">compute_property() (CompositeProcessor method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.compute_property">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.compute_property">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.compute_property">[3]</a>
@@ -707,6 +735,8 @@ function checkPageExistsAndRedirect(event) {
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.diameter">diameter (Cluster property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.diameter">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.diameter">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.dim_ids">dim_ids (CompositionSpace attribute)</a>
 </li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis">DiscreteBasis (class in cofe.space.basis)</a>
 
@@ -826,6 +856,10 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.Flip">(class in smol.moca.sampler.mcusher)</a>
 </li>
       </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.flip_reactions">flip_reactions (CompositionSpace property)</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.flip_table">flip_table (CompositionSpace property)</a>
+</li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.flush_to_backend">flush_to_backend() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.flush_to_backend">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.flush_to_backend">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.flush_to_backend">[3]</a>
 </li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.frac_coords">frac_coords (Cluster attribute)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.frac_coords">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.frac_coords">[2]</a>
@@ -852,6 +886,8 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/autogen/cofe.html#cofe.ClusterSubspace.from_dict">(ClusterSubspace class method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.ClusterSubspace.from_dict">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.from_dict">[2]</a>
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.CompositeProcessor.from_dict">(CompositeProcessor class method)</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.CompositeProcessor.from_dict">[1]</a>, <a href="api_reference/autogen/moca.processor.html#moca.processor.composite.CompositeProcessor.from_dict">[2]</a>, <a href="api_reference/moca/processors.composite.html#smol.moca.processor.composite.CompositeProcessor.from_dict">[3]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.from_dict">(CompositionSpace class method)</a>
 </li>
         <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.from_dict">(DiscreteBasis class method)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.from_dict">[1]</a>
 </li>
@@ -958,7 +994,11 @@ function checkPageExistsAndRedirect(event) {
       </ul></li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_backend">get_backend() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_backend">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_backend">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_backend">[3]</a>
 </li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.get_centroid_composition">get_centroid_composition() (CompositionSpace method)</a>
+</li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.get_complete_mapping">get_complete_mapping() (in module cofe.space.clusterspace)</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.get_composition_grid">get_composition_grid() (CompositionSpace method)</a>
 </li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_compositions">get_compositions() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_compositions">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_compositions">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_compositions">[3]</a>
 </li>
@@ -988,10 +1028,10 @@ function checkPageExistsAndRedirect(event) {
 </li>
       <li><a href="api_reference/autogen/cofe.html#cofe.PottsSubspace.get_function_decoration">get_function_decoration() (PottsSubspace method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.clusterspace.PottsSubspace.get_function_decoration">[1]</a>, <a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.get_function_decoration">[2]</a>
 </li>
-      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_gram_matrix">get_gram_matrix() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_gram_matrix">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_gram_matrix">[2]</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_gram_matrix">get_gram_matrix() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_gram_matrix">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_gram_matrix">[2]</a>
+</li>
       <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.get_matching_corr_duplicate_indices">get_matching_corr_duplicate_indices() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_matching_corr_duplicate_indices">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_matching_corr_duplicate_indices">[2]</a>
 </li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_minimum_energy">get_minimum_energy() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_minimum_energy">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_minimum_energy">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_minimum_energy">[3]</a>
@@ -1041,6 +1081,8 @@ function checkPageExistsAndRedirect(event) {
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_sublattice_species_counts">get_sublattice_species_counts() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_sublattice_species_counts">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_sublattice_species_counts">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_sublattice_species_counts">[3]</a>
 </li>
       <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor.get_sublattices">get_sublattices() (Processor method)</a>, <a href="api_reference/moca/processors.base.html#smol.moca.processor.base.Processor.get_sublattices">[1]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.get_supercell_base_solution">get_supercell_base_solution() (CompositionSpace method)</a>
 </li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.get_trace_value">get_trace_value() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.get_trace_value">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_trace_value">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.get_trace_value">[3]</a>
 </li>
@@ -1168,6 +1210,8 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.mcusher_factory">(in module smol.moca.sampler.mcusher)</a>
 </li>
       </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.Composite.mcushers">mcushers (Composite property)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.Composite.mcushers">[1]</a>
+</li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.mean_composition">mean_composition() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.mean_composition">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_composition">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.mean_composition">[3]</a>
 </li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.mean_energy">mean_energy() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.mean_energy">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_energy">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.mean_energy">[3]</a>
@@ -1198,6 +1242,10 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.Metropolis">(class in smol.moca.sampler.kernel)</a>
 </li>
       </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.min_supercell_grid">min_supercell_grid (CompositionSpace property)</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.min_supercell_size">min_supercell_size (CompositionSpace property)</a>
+</li>
       <li>
     moca
 
@@ -1407,12 +1455,20 @@ function checkPageExistsAndRedirect(event) {
 </li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.multiplicity">multiplicity (Orbit property)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.multiplicity">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.multiplicity">[2]</a>
 </li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MultiStep">MultiStep (class in moca.sampler.mcusher)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MultiStep">(class in smol.moca.sampler.mcusher)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.n_dims">n_dims (CompositionSpace attribute)</a>
+</li>
       <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.StepTrace.names">names (StepTrace property)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.StepTrace.names">[1]</a>
 
       <ul>
@@ -1460,6 +1516,8 @@ function checkPageExistsAndRedirect(event) {
 </li>
       </ul></li>
       <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.num_structures">num_structures (StructureWrangler property)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.num_structures">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.num_structures">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.num_unconstrained_compositions">num_unconstrained_compositions (CompositionSpace property)</a>
 </li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.NumpyPolyIterator">NumpyPolyIterator (class in cofe.space.basis)</a>
 
@@ -1539,10 +1597,12 @@ function checkPageExistsAndRedirect(event) {
       </ul></li>
       <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.predict">predict() (ClusterExpansion method)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.predict">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.predict">[2]</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.prim_vertices">prim_vertices (CompositionSpace property)</a>
+</li>
       <li><a href="api_reference/autogen/cofe.html#cofe.StructureWrangler.process_entry">process_entry() (StructureWrangler method)</a>, <a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.process_entry">[1]</a>, <a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.process_entry">[2]</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api_reference/autogen/moca.processor.html#moca.processor.base.Processor">Processor (class in moca.processor.base)</a>
 
       <ul>
@@ -1557,12 +1617,18 @@ function checkPageExistsAndRedirect(event) {
 </li>
       <li><a href="api_reference/autogen/cofe.html#cofe.RegressionData.property_vector">property_vector (RegressionData attribute)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.RegressionData.property_vector">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.property_vector">[2]</a>
 </li>
-      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.Flip.propose_step">propose_step() (Flip method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.Flip.propose_step">[1]</a>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.Composite.propose_step">propose_step() (Composite method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.Composite.propose_step">[1]</a>
 
       <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.Flip.propose_step">(Flip method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.Flip.propose_step">[1]</a>
+</li>
         <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MCUsher.propose_step">(MCUsher method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MCUsher.propose_step">[1]</a>
 </li>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MultiStep.propose_step">(MultiStep method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MultiStep.propose_step">[1]</a>
+</li>
         <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.Swap.propose_step">(Swap method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.Swap.propose_step">[1]</a>
+</li>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.TableFlip.propose_step">(TableFlip method)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.TableFlip.propose_step">[1]</a>
 </li>
       </ul></li>
       <li><a href="api_reference/autogen/cofe.html#cofe.ClusterExpansion.prune">prune() (ClusterExpansion method)</a>, <a href="api_reference/autogen/cofe.html#cofe.expansion.ClusterExpansion.prune">[1]</a>, <a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.prune">[2]</a>
@@ -1806,8 +1872,6 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/exceptions.html#module-smol.exceptions">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     smol.io
 
@@ -1815,6 +1879,8 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/io.html#module-smol.io">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     smol.moca.processor.base
 
@@ -1878,18 +1944,34 @@ function checkPageExistsAndRedirect(event) {
         <li><a href="api_reference/utils.html#module-smol.utils">module</a>
 </li>
       </ul></li>
-      <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.species">species (DiscreteBasis property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.species">[1]</a>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.species">species (CompositionSpace attribute)</a>
 
       <ul>
+        <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.DiscreteBasis.species">(DiscreteBasis property)</a>, <a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.species">[1]</a>
+</li>
         <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.Ensemble.species">(Ensemble property)</a>, <a href="api_reference/autogen/moca.html#moca.Ensemble.species">[1]</a>
 </li>
         <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.species">(Sublattice property)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.species">[1]</a>
 </li>
       </ul></li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.species_ids">species_ids (CompositionSpace attribute)</a>
+</li>
       <li><a href="api_reference/autogen/moca.html#moca.sublattice.Sublattice.split_by_species">split_by_species() (Sublattice method)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.split_by_species">[1]</a>
 </li>
       <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.Ensemble.split_sublattice_by_species">split_sublattice_by_species() (Ensemble method)</a>, <a href="api_reference/autogen/moca.html#moca.Ensemble.split_sublattice_by_species">[1]</a>
 </li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.SquareChargeBias">SquareChargeBias (class in moca.sampler.bias)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.SquareChargeBias">(class in smol.moca.sampler.bias)</a>
+</li>
+      </ul></li>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.SquareHyperplaneBias">SquareHyperplaneBias (class in moca.sampler.bias)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.SquareHyperplaneBias">(class in smol.moca.sampler.bias)</a>
+</li>
+      </ul></li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.basis.StandardBasis">StandardBasis (class in cofe.space.basis)</a>
 
       <ul>
@@ -1941,12 +2023,14 @@ function checkPageExistsAndRedirect(event) {
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.sublattice_composition_variance">sublattice_composition_variance() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.sublattice_composition_variance">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.sublattice_composition_variance">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.sublattice_composition_variance">[3]</a>
 </li>
       <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MCUsher.sublattice_probabilities">sublattice_probabilities (MCUsher property)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MCUsher.sublattice_probabilities">[1]</a>
+
+      <ul>
+        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.MultiStep.sublattice_probabilities">(MultiStep property)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.MultiStep.sublattice_probabilities">[1]</a>
 </li>
+      </ul></li>
       <li><a href="api_reference/autogen/moca.ensemble.html#moca.ensemble.Ensemble.sublattices">sublattices (Ensemble property)</a>, <a href="api_reference/autogen/moca.html#moca.Ensemble.sublattices">[1]</a>
 
       <ul>
-        <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.bias.MCBias.sublattices">(MCBias attribute)</a>, <a href="api_reference/moca/sampler.bias.html#smol.moca.sampler.bias.MCBias.sublattices">[1]</a>
-</li>
         <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.sublattices">(SampleContainer attribute)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.sublattices">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.sublattices">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.sublattices">[3]</a>
 </li>
       </ul></li>
@@ -1974,6 +2058,12 @@ function checkPageExistsAndRedirect(event) {
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.TableFlip">TableFlip (class in moca.sampler.mcusher)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.TableFlip">(class in smol.moca.sampler.mcusher)</a>
+</li>
+      </ul></li>
       <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.ThermalKernel.temperature">temperature (ThermalKernel property)</a>, <a href="api_reference/moca/sampler.kernel.html#smol.moca.sampler.kernel.ThermalKernel.temperature">[1]</a>
 </li>
       <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.ThermalKernel">ThermalKernel (class in moca.sampler.kernel)</a>
@@ -1986,10 +2076,10 @@ function checkPageExistsAndRedirect(event) {
 </li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Cluster.to">to() (Cluster method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.cluster.Cluster.to">[1]</a>, <a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.to">[2]</a>
 </li>
-      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.to_hdf5">to_hdf5() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.to_hdf5">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.to_hdf5">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.to_hdf5">[3]</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.to_hdf5">to_hdf5() (SampleContainer method)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.to_hdf5">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.to_hdf5">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.to_hdf5">[3]</a>
+</li>
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.total_mc_steps">total_mc_steps (SampleContainer property)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.total_mc_steps">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.total_mc_steps">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.total_mc_steps">[3]</a>
 </li>
       <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.kernel.Trace">Trace (class in moca.sampler.kernel)</a>
@@ -2003,6 +2093,8 @@ function checkPageExistsAndRedirect(event) {
       <li><a href="api_reference/autogen/moca.html#moca.SampleContainer.traced_values">traced_values (SampleContainer property)</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.SampleContainer.traced_values">[1]</a>, <a href="api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.traced_values">[2]</a>, <a href="api_reference/moca/sampler.container.html#smol.moca.sampler.SampleContainer.traced_values">[3]</a>
 </li>
       <li><a href="api_reference/autogen/cofe.space.html#cofe.space.Orbit.transform_site_bases">transform_site_bases() (Orbit method)</a>, <a href="api_reference/autogen/cofe.space.html#cofe.space.orbit.Orbit.transform_site_bases">[1]</a>, <a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.transform_site_bases">[2]</a>
+</li>
+      <li><a href="api_reference/autogen/moca.html#moca.CompositionSpace.translate_format">translate_format() (CompositionSpace method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -2072,6 +2164,8 @@ function checkPageExistsAndRedirect(event) {
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/autogen/moca.sampler.html#moca.sampler.mcusher.Composite.weight">weight (Composite property)</a>, <a href="api_reference/moca/sampler.mcusher.html#smol.moca.sampler.mcusher.Composite.weight">[1]</a>
+</li>
       <li><a href="api_reference/autogen/cofe.wrangling.html#cofe.wrangling.weights_energy_above_composition">weights_energy_above_composition() (in module cofe.wrangling)</a>
 
       <ul>

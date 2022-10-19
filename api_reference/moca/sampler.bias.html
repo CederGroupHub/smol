@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Sampling Bias &#8212; smol 0.0.7 documentation</title>
+    <title>Sampling Bias &#8212; smol 0.0.1.dev1+gb653c06 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -122,7 +122,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.7  <!-- this text may get changed later by javascript -->
+        0.0.1.dev1+gb653c06  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -132,7 +132,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/moca/sampler.bias and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.7'}.
+     variables api_reference/moca/sampler.bias and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1.dev1+gb653c06'}.
 -->
 
 <script type="text/javascript">
@@ -183,10 +183,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.7 variable.
+            // this version, rather than using sphinx's 0.0.1.dev1+gb653c06 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.7") {
+            if (entry.version == "0.0.1.dev1+gb653c06") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -448,17 +448,17 @@ step returned by MCUsher.</p></li>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.MCBias" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base bias term class.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="smol.moca.sampler.bias.MCBias.sublattices">
-<span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#smol.moca.sampler.bias.MCBias.sublattices" title="Permalink to this definition">#</a></dt>
-<dd><p>list of sublattices with active sites.</p>
+<p>Note: Any MCBias should be implemented as beta*E-bias
+will be minimized in thermodynamics kernel.
+.. attribute:: sublattices</p>
+<blockquote>
+<div><p>list of sublattices with active sites.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>List[<a class="reference internal" href="../autogen/moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice">Sublattice</a>]</p>
+<dt class="field-odd">type</dt>
+<dd class="field-odd"><p>List[Sublattice]</p>
 </dd>
 </dl>
-</dd></dl>
-
+</div></blockquote>
 <p>Initialize MCBias.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -501,6 +501,126 @@ the ensemble probability (i.e. exp(-beta * E) * bias).</p>
 encoded occupancy array.</p></li>
 <li><p><strong>step</strong> – (List[tuple(int,int)]):
 step returned by MCUsher.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Float, change of bias value after step.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="smol.moca.sampler.bias.SquareChargeBias">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SquareChargeBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.SquareChargeBias" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.bias.MCBias" title="smol.moca.sampler.bias.MCBias"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.bias.MCBias</span></code></a></p>
+<p>Square charge bias.</p>
+<p>This bias penalizes energy on square of the system net charge.</p>
+<p>Square charge bias.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sublattices</strong> (<em>List</em><em>[</em><a class="reference internal" href="../autogen/moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice"><em>Sublattice</em></a><em>]</em>) – List of active sublattices, containing species information and
+site indices in sublattice. Must include all sites!</p></li>
+<li><p><strong>penalty</strong> (<em>float</em>) – optional
+Penalty factor. energy/kT will be penalized by adding penalty
+* charge**2.
+Must be positive. Default to 0.5, which works
+for most of the cases.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.sampler.bias.SquareChargeBias.compute_bias">
+<span class="sig-name descname"><span class="pre">compute_bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.SquareChargeBias.compute_bias" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute bias from occupancy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>np.ndarray</em>) – Encoded occupancy string.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Float, bias value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.sampler.bias.SquareChargeBias.compute_bias_change">
+<span class="sig-name descname"><span class="pre">compute_bias_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.SquareChargeBias.compute_bias_change" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute bias change from step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>occupancy</strong> – (ndarray):
+Encoded occupancy array.</p></li>
+<li><p><strong>step</strong> – (List[tuple(int,int)]):
+Step returned by MCUsher.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Float, change of bias value after step.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="smol.moca.sampler.bias.SquareHyperplaneBias">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SquareHyperplaneBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hyperplane_normals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hyperplane_intercepts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.SquareHyperplaneBias" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.bias.MCBias" title="smol.moca.sampler.bias.MCBias"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.bias.MCBias</span></code></a></p>
+<p>Square hyperplane bias.</p>
+<p>This bias penalizes energy on sum square of distance from a composition n
+(“counts” format) to hyperplanes A n = b (in the unconstrained composition space,
+see CompositionSpace document). In other words, this bias penalizes the
+composition’s deviation from the constraints in A n = b.</p>
+<p>Square composition bias.</p>
+<p>Use this when you have other constraints to the composition
+than the charge constraint.
+:param sublattices: List of active sublattices, containing species information and</p>
+<blockquote>
+<div><p>site indices in sublattice. Must include all sites!</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hyperplane_normals</strong> (<em>2D ArrayLike</em>) – Normal vectors of hyperplanes, each in a row. (The matrix A.)</p></li>
+<li><p><strong>hyperplane_intercepts</strong> (<em>1D ArrayLike</em>) – Intercepts of each hyperplane. (The vector b.)</p></li>
+<li><p><strong>of</strong> (<em>The matrix A and the vector b together forms a set</em>) – </p></li>
+<li><p><strong>hyperplanes</strong> (<em>constraint</em>) – A n = b. (Per-super-cell, not per-primitive cell).</p></li>
+<li><p><strong>penalty</strong> (<em>float</em>) – optional
+Penalty factor. energy/kT will be penalized by adding penalty
+* ||A n - b||**2. Must be positive.
+Default to 0.5, which works for most of the cases.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.sampler.bias.SquareHyperplaneBias.compute_bias">
+<span class="sig-name descname"><span class="pre">compute_bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.SquareHyperplaneBias.compute_bias" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute bias from occupancy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>np.ndarray</em>) – Encoded occupancy string.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Float, bias value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.sampler.bias.SquareHyperplaneBias.compute_bias_change">
+<span class="sig-name descname"><span class="pre">compute_bias_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.bias.SquareHyperplaneBias.compute_bias_change" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute bias change from step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>occupancy</strong> – (ndarray):
+Encoded occupancy array.</p></li>
+<li><p><strong>step</strong> – (List[tuple(int,int)]):
+Step returned by MCUsher.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

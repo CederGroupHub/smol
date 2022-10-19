@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>moca.sampler package &#8212; smol 0.0.7 documentation</title>
+    <title>moca.sampler package &#8212; smol 0.0.1.dev1+gb653c06 documentation</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -120,7 +120,7 @@
       <div class="navbar-end-item">
         <div class="dropdown" id="version_switcher">
     <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.0.7  <!-- this text may get changed later by javascript -->
+        0.0.1.dev1+gb653c06  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
@@ -130,7 +130,7 @@
 
 <!-- NOTE: this JS must live here (not in our global JS file) because it relies
      on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/autogen/moca.sampler and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.7'}.
+     variables api_reference/autogen/moca.sampler and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.0.1.dev1+gb653c06'}.
 -->
 
 <script type="text/javascript">
@@ -181,10 +181,10 @@ function checkPageExistsAndRedirect(event) {
 
             $("#version_switcher_menu").append(node);
             // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.0.7 variable.
+            // this version, rather than using sphinx's 0.0.1.dev1+gb653c06 variable.
             // also highlight the dropdown entry for the currently-viewed
             // version's entry
-            if (entry.version == "0.0.7") {
+            if (entry.version == "0.0.1.dev1+gb653c06") {
                 node.classList.add("active");
                 let btn = document.getElementById("version_switcher_button");
                 btn.innerText = btn.dataset["activeVersionName"] = entry.name;
@@ -411,17 +411,17 @@ step returned by MCUsher.</p></li>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.MCBias" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base bias term class.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="moca.sampler.bias.MCBias.sublattices">
-<span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#moca.sampler.bias.MCBias.sublattices" title="Permalink to this definition">#</a></dt>
-<dd><p>list of sublattices with active sites.</p>
+<p>Note: Any MCBias should be implemented as beta*E-bias
+will be minimized in thermodynamics kernel.
+.. attribute:: sublattices</p>
+<blockquote>
+<div><p>list of sublattices with active sites.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>List[<a class="reference internal" href="moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice">Sublattice</a>]</p>
+<dt class="field-odd">type</dt>
+<dd class="field-odd"><p>List[Sublattice]</p>
 </dd>
 </dl>
-</dd></dl>
-
+</div></blockquote>
 <p>Initialize MCBias.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -464,6 +464,126 @@ the ensemble probability (i.e. exp(-beta * E) * bias).</p>
 encoded occupancy array.</p></li>
 <li><p><strong>step</strong> – (List[tuple(int,int)]):
 step returned by MCUsher.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Float, change of bias value after step.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="moca.sampler.bias.SquareChargeBias">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SquareChargeBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.SquareChargeBias" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#moca.sampler.bias.MCBias" title="moca.sampler.bias.MCBias"><code class="xref py py-class docutils literal notranslate"><span class="pre">moca.sampler.bias.MCBias</span></code></a></p>
+<p>Square charge bias.</p>
+<p>This bias penalizes energy on square of the system net charge.</p>
+<p>Square charge bias.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sublattices</strong> (<em>List</em><em>[</em><a class="reference internal" href="moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice"><em>Sublattice</em></a><em>]</em>) – List of active sublattices, containing species information and
+site indices in sublattice. Must include all sites!</p></li>
+<li><p><strong>penalty</strong> (<em>float</em>) – optional
+Penalty factor. energy/kT will be penalized by adding penalty
+* charge**2.
+Must be positive. Default to 0.5, which works
+for most of the cases.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.sampler.bias.SquareChargeBias.compute_bias">
+<span class="sig-name descname"><span class="pre">compute_bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.SquareChargeBias.compute_bias" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute bias from occupancy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>np.ndarray</em>) – Encoded occupancy string.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Float, bias value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.sampler.bias.SquareChargeBias.compute_bias_change">
+<span class="sig-name descname"><span class="pre">compute_bias_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.SquareChargeBias.compute_bias_change" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute bias change from step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>occupancy</strong> – (ndarray):
+Encoded occupancy array.</p></li>
+<li><p><strong>step</strong> – (List[tuple(int,int)]):
+Step returned by MCUsher.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Float, change of bias value after step.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="moca.sampler.bias.SquareHyperplaneBias">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SquareHyperplaneBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hyperplane_normals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hyperplane_intercepts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.SquareHyperplaneBias" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#moca.sampler.bias.MCBias" title="moca.sampler.bias.MCBias"><code class="xref py py-class docutils literal notranslate"><span class="pre">moca.sampler.bias.MCBias</span></code></a></p>
+<p>Square hyperplane bias.</p>
+<p>This bias penalizes energy on sum square of distance from a composition n
+(“counts” format) to hyperplanes A n = b (in the unconstrained composition space,
+see CompositionSpace document). In other words, this bias penalizes the
+composition’s deviation from the constraints in A n = b.</p>
+<p>Square composition bias.</p>
+<p>Use this when you have other constraints to the composition
+than the charge constraint.
+:param sublattices: List of active sublattices, containing species information and</p>
+<blockquote>
+<div><p>site indices in sublattice. Must include all sites!</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hyperplane_normals</strong> (<em>2D ArrayLike</em>) – Normal vectors of hyperplanes, each in a row. (The matrix A.)</p></li>
+<li><p><strong>hyperplane_intercepts</strong> (<em>1D ArrayLike</em>) – Intercepts of each hyperplane. (The vector b.)</p></li>
+<li><p><strong>of</strong> (<em>The matrix A and the vector b together forms a set</em>) – </p></li>
+<li><p><strong>hyperplanes</strong> (<em>constraint</em>) – A n = b. (Per-super-cell, not per-primitive cell).</p></li>
+<li><p><strong>penalty</strong> (<em>float</em>) – optional
+Penalty factor. energy/kT will be penalized by adding penalty
+* ||A n - b||**2. Must be positive.
+Default to 0.5, which works for most of the cases.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.sampler.bias.SquareHyperplaneBias.compute_bias">
+<span class="sig-name descname"><span class="pre">compute_bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.SquareHyperplaneBias.compute_bias" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute bias from occupancy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>np.ndarray</em>) – Encoded occupancy string.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Float, bias value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.sampler.bias.SquareHyperplaneBias.compute_bias_change">
+<span class="sig-name descname"><span class="pre">compute_bias_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.SquareHyperplaneBias.compute_bias_change" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute bias change from step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>occupancy</strong> – (ndarray):
+Encoded occupancy array.</p></li>
+<li><p><strong>step</strong> – (List[tuple(int,int)]):
+Step returned by MCUsher.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1034,12 +1154,12 @@ successful.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.sampler.kernel.Metropolis.valid_bias">
-<span class="sig-name descname"><span class="pre">valid_bias</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['FugacityBias']</span></em><a class="headerlink" href="#moca.sampler.kernel.Metropolis.valid_bias" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">valid_bias</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['FugacityBias',</span> <span class="pre">'SquareChargeBias',</span> <span class="pre">'SquareHyperplaneBias']</span></em><a class="headerlink" href="#moca.sampler.kernel.Metropolis.valid_bias" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.sampler.kernel.Metropolis.valid_mcushers">
-<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Flip',</span> <span class="pre">'Swap']</span></em><a class="headerlink" href="#moca.sampler.kernel.Metropolis.valid_mcushers" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Flip',</span> <span class="pre">'Swap',</span> <span class="pre">'MultiStep',</span> <span class="pre">'Composite',</span> <span class="pre">'TableFlip']</span></em><a class="headerlink" href="#moca.sampler.kernel.Metropolis.valid_mcushers" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1193,12 +1313,12 @@ successful.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.sampler.kernel.UniformlyRandom.valid_bias">
-<span class="sig-name descname"><span class="pre">valid_bias</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['FugacityBias']</span></em><a class="headerlink" href="#moca.sampler.kernel.UniformlyRandom.valid_bias" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">valid_bias</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['FugacityBias',</span> <span class="pre">'SquareChargeBias',</span> <span class="pre">'SquareHyperplaneBias']</span></em><a class="headerlink" href="#moca.sampler.kernel.UniformlyRandom.valid_bias" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="moca.sampler.kernel.UniformlyRandom.valid_mcushers">
-<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Flip',</span> <span class="pre">'Swap']</span></em><a class="headerlink" href="#moca.sampler.kernel.UniformlyRandom.valid_mcushers" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Flip',</span> <span class="pre">'Swap',</span> <span class="pre">'MultiStep',</span> <span class="pre">'Composite',</span> <span class="pre">'TableFlip']</span></em><a class="headerlink" href="#moca.sampler.kernel.UniformlyRandom.valid_mcushers" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1235,6 +1355,65 @@ For example a Flipper simply proposes a change of the identity of a species
 at a site for use in a SemiGrand ensemble. A Swapper will propose a swap
 between species at two sites for use in Canonical ensemble simulations.</p>
 <p>More complex steps can be defined simply by deriving from the MCUsher.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="moca.sampler.mcusher.Composite">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Composite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcushers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcusher_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.Composite" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#moca.sampler.mcusher.MCUsher" title="moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">moca.sampler.mcusher.MCUsher</span></code></a></p>
+<p>A composite usher for chaining different step types.</p>
+<p>This can be used to mix step types for all sublattices or to create hybrid
+ensembles where different sublattices have different allowed steps.</p>
+<p>Initialize the composite usher.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of active Sublattices to propose steps for. Active
+sublattices are those that include sites with configuration
+degrees of freedom DOFs, only occupancy on active sub-lattices’ active sites
+are allowed to change.</p></li>
+<li><p><strong>mcushers</strong> (<em>list of MCUsher</em>) – A list of mcushers to add to the composite.</p></li>
+<li><p><strong>mcusher_weights</strong> (<em>list of float</em>) – A list of the weights associated with each mcusher passed. With this
+the corresponding probabilities for each mcusher to be picked are
+generated. Must be in the same order as the mcusher list.</p></li>
+<li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
+The given PRNG must be the same instance as that used by the kernel and
+any bias terms, otherwise reproducibility will be compromised.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.sampler.mcusher.Composite.add_mcusher">
+<span class="sig-name descname"><span class="pre">add_mcusher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mcusher</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.Composite.add_mcusher" title="Permalink to this definition">#</a></dt>
+<dd><p>Add an MCUsher to the Composite usher.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mcusher</strong> (<a class="reference internal" href="#moca.sampler.mcusher.MCUsher" title="moca.sampler.mcusher.MCUsher"><em>MCUsher</em></a>) – The MCUsher to add</p></li>
+<li><p><strong>weight</strong> (<em>float</em>) – The weight associated with the mcusher being added</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.sampler.mcusher.Composite.mcushers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mcushers</span></span><a class="headerlink" href="#moca.sampler.mcusher.Composite.mcushers" title="Permalink to this definition">#</a></dt>
+<dd><p>Get the list of mcushers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.sampler.mcusher.Composite.propose_step">
+<span class="sig-name descname"><span class="pre">propose_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.Composite.propose_step" title="Permalink to this definition">#</a></dt>
+<dd><p>Propose a step given an occupancy.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.sampler.mcusher.Composite.weight">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weight</span></span><a class="headerlink" href="#moca.sampler.mcusher.Composite.weight" title="Permalink to this definition">#</a></dt>
+<dd><p>Get the weights associated with each mcusher.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.sampler.mcusher.Flip">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Flip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.Flip" title="Permalink to this definition">#</a></dt>
@@ -1301,6 +1480,29 @@ any bias terms, otherwise reproducibility will be compromised.</p></li>
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="moca.sampler.mcusher.MCUsher.compute_log_priori_factor">
+<span class="sig-name descname"><span class="pre">compute_log_priori_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.MCUsher.compute_log_priori_factor" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute a-priori weight to adjust step acceptance ratio.</p>
+<p>This is essential in keeping detailed balance for some particular
+metropolis proposal methods. Return log of the factor for numerical
+accuracy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p></li>
+<li><p><strong>step</strong> (<em>list</em><em>[</em><em>tuple</em><em>]</em>) – Metropolis step. list of tuples each with (index, code).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>log of a-priori adjustment weight.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="moca.sampler.mcusher.MCUsher.get_random_sublattice">
 <span class="sig-name descname"><span class="pre">get_random_sublattice</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.MCUsher.get_random_sublattice" title="Permalink to this definition">#</a></dt>
 <dd><p>Return a random sublattice based on given probabilities.</p>
@@ -1346,6 +1548,50 @@ form (site index, species code to set)</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="moca.sampler.mcusher.MultiStep">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultiStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcusher</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_lengths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.MultiStep" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#moca.sampler.mcusher.MCUsher" title="moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">moca.sampler.mcusher.MCUsher</span></code></a></p>
+<p>A multistep usher to generate steps of several flips.</p>
+<p>Any usher can be used to chain steps, ie create multi flip steps, multi swap steps
+even multi composite steps, etc.</p>
+<p>Initialize a multistep usher.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of active Sublattices to propose steps for. Active
+sublattices are those that include sites with configuration
+degrees of freedom DOFs, only occupancy on active sub-lattices’ active sites
+are allowed to change.</p></li>
+<li><p><strong>mcusher</strong> (<a class="reference internal" href="#moca.sampler.mcusher.MCUsher" title="moca.sampler.mcusher.MCUsher"><em>MCUsher</em></a>) – An instantiated MCUsher to use to create multisteps.</p></li>
+<li><p><strong>step_lengths</strong> (<em>int</em><em> or </em><em>Sequence of int</em>) – The length or lengths of steps. If given a sequence of sizes, a size
+is choosen at each proposal according to step_probabilities. The step
+length proposed may be less in cases where the same site is chosen
+more than once. This should become less and less likely for larger
+supercells.</p></li>
+<li><p><strong>step_probabilities</strong> (<em>Sequence of float</em>) – optional
+A sequence of probabilites corresponding to the step lengths provided.
+If none is given, then a uniform probability is used.</p></li>
+<li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
+The given PRNG must be the same instance as that used by the kernel and
+any bias terms, otherwise reproducibility will be compromised.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.sampler.mcusher.MultiStep.propose_step">
+<span class="sig-name descname"><span class="pre">propose_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.MultiStep.propose_step" title="Permalink to this definition">#</a></dt>
+<dd><p>Propose a step given an occupancy.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.sampler.mcusher.MultiStep.sublattice_probabilities">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sublattice_probabilities</span></span><a class="headerlink" href="#moca.sampler.mcusher.MultiStep.sublattice_probabilities" title="Permalink to this definition">#</a></dt>
+<dd><p>Get the probabilities of choosing a sublattice.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="moca.sampler.mcusher.Swap">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Swap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.Swap" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#moca.sampler.mcusher.MCUsher" title="moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">moca.sampler.mcusher.MCUsher</span></code></a></p>
@@ -1379,6 +1625,140 @@ form (site index, species code to set)</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list of tuples each with (index, code)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list(tuple)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="moca.sampler.mcusher.TableFlip">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TableFlip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge_balanced</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize_basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_ergodic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.TableFlip" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#moca.sampler.mcusher.MCUsher" title="moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">moca.sampler.mcusher.MCUsher</span></code></a></p>
+<p>Implementation of table flips.</p>
+<p>Use user-specified or auto-calculated flip tables. Does not
+check the correctness of the flip tables.</p>
+<p>No longer computing and assigning a-priori proabilities
+before flip selection, and selects sites instead.</p>
+<p>Direct use of this class is not recommended, because the
+dict form of the flip table is not very easy to read and
+write.</p>
+<p>Initialize TableFlip.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of Sublattices to propose steps for. Must
+be all sublattices, including active and inactive
+ones.</p></li>
+<li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
+The given PRNG must be the same instance as that used by the
+kernel and any bias terms, otherwise reproducibility will be
+compromised.</p></li>
+<li><p><strong>flip_table</strong> (<em>2D np.ndarray</em><em>[</em><em>int</em><em>]</em>) – Flip vectors in “n” format, as generated by a CompositionSpace.
+If not given, we will initialize a CompositionSpace from
+sublattice informations, and calculate the flip table
+with that CompositionSpace.
+Notice:
+1, We suggest you provide a pre-computed flip table, unless
+the number of sites in sub-lattices can be reduced to very
+small when divided with their GCD.
+2, As implemented in the Sublattice class,
+you are allowed to have multiple species on an inactive
+sub-lattice, but it is not the suggested approach.
+In this case, you have 3 choices. Either always try to split
+until all inactive sub-lattices only have one species
+(suggested), fixing number of inactive species as a
+constraint, or pre-compute your own flip table.</p></li>
+<li><p><strong>charge_balanced</strong> (<em>bool</em>) – optional
+Whether to add charge balance constraint. Default
+to true.</p></li>
+<li><p><strong>other_constraints</strong> (<em>List</em><em>[</em><em>tuple</em><em>(</em><em>1D arrayLike</em><em>[</em><em>int</em><em>]</em><em>, </em><em>int</em><em>)</em><em>]</em>) – optional
+Other integer constraints except charge balance and
+site-number conservation. Should be given in the form of
+tuple(a, bb), each gives constraint np.dot(a, n)=bb.</p></li>
+<li><p><strong>optimize_basis</strong> (<em>bool</em>) – optional
+Whether to optimize the basis to minimal flip sizes and maximal
+connectivity in the minimum super-cell size.
+When the minimal super-cell size is large, we recommend not to
+optimize basis.</p></li>
+<li><p><strong>table_ergodic</strong> (<em>bool</em>) – optional
+When generating a flip table, whether to add vectors and
+ensure ergodicity under a minimal super-cell size.
+Default to False.
+When the minimal super-cell size is large, we recommend not to
+ensure ergodicity. This is not only because of the computation
+difficulty; but also because at large super-cell size,
+the fraction of inaccessible compositions usually becomes
+minimal.</p></li>
+<li><p><strong>swap_weight</strong> (<em>float</em>) – optional
+Percentage of canonical swaps to attempt. Should be a
+positive value, but smaller than 1.
+Default to 0.1.</p></li>
+<li><p><strong>flip_weights</strong> (<em>1D Arraylike</em>) – optional
+Weights to adjust probability of each flip. If
+None given, will assign equal weights to each
+flip vector and its inverse. Length must equal to
+2*len(flip_table).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Note: In table flip, adding proposal bias to different
+sub-lattices is not meaningful. We will always assign
+sub-lattice probabilities as equal.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.sampler.mcusher.TableFlip.compute_log_priori_factor">
+<span class="sig-name descname"><span class="pre">compute_log_priori_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.TableFlip.compute_log_priori_factor" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute a-priori weight to adjust step acceptance ratio.</p>
+<p>This is essential in keeping detailed balance. Return log for
+numerical accuracy.</p>
+<dl class="simple">
+<dt>Arg:</dt><dd><dl class="simple">
+<dt>occupancy (ndarray):</dt><dd><p>encoded occupancy string. (Processor encoding.)</p>
+</dd>
+<dt>step (list[tuple]):</dt><dd><p>Metropolis step. list of tuples each with (index, code).
+(Processor encoding.)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>log of a-priori adjustment ratio.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="moca.sampler.mcusher.TableFlip.propose_step">
+<span class="sig-name descname"><span class="pre">propose_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.mcusher.TableFlip.propose_step" title="Permalink to this definition">#</a></dt>
+<dd><p>Propose a single random flip step.</p>
+<p>A step is given as a sequence of tuples, where each tuple is of the
+form (site index, species code to set)</p>
+<p>1, Pick a flip in table;
+2, Choose sites from site specie statistics list according to the flip.
+3, (Acceptance proability will be adjusted according to a-priori</p>
+<blockquote>
+<div><p>weight to enforce detailed balance.)</p>
+</div></blockquote>
+<dl class="simple">
+<dt>4, If selection failed, may or may not attempt a canonical swap based</dt><dd><p>on self.add_swap parameter.</p>
+</dd>
+</dl>
+<p>There are circumstances where the current occupancy can not be accessed
+by minimal table flips. This method does not take care of that, please
+be careful when choosing starting compositions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of tuples each with (idex, code).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list(tuple)</p>
