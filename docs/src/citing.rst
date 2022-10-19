@@ -76,10 +76,11 @@ model, please cite the following,
     <https://www.nature.com/articles/s41524-022-00818-3>`_.
     npj Comput Mater 8, 1–11 (2022).
 
+    Barroso-Luque, L. et al.
+    `Cluster expansions of multicomponent ionic materials: Formalism and methodology.
+    <https://doi.org/10.1103/PhysRevB.106.144202>`_.
+    Phys. Rev. B 106, 144202 (2022).
 
-    Barroso-Luque, L., Zhong, P., Yang, J. H., Chen, T. & Ceder, G.
-    Cluster Expansions of Multicomponent Ionic Materials:Formalism & Methods.
-    (submitted)
 
 :math:`\ell_0\ell_2` MIQP fits with hierarchical constraints
 ============================================================
@@ -93,9 +94,10 @@ for hierarchical constrained expansion fits, please cite these publications,
     <https://doi.org/10.1103/PhysRevB.106.024203>`_
     Phys. Rev. B 106, 024203 (2022).
 
-    Barroso-Luque, L., Zhong, P., Yang, J. H., Chen, T. & Ceder, G.
-    Cluster Expansions of Multicomponent Ionic Materials:Formalism & Methods.
-    (submitted)
+    Barroso-Luque, L. et al.
+    `Cluster expansions of multicomponent ionic materials: Formalism and methodology.
+    <https://doi.org/10.1103/PhysRevB.106.144202>`_.
+    Phys. Rev. B 106, 144202 (2022).
 
 Charge neutral semigrand canonical sampling
 ===========================================
@@ -122,6 +124,7 @@ cite the following publications,
     `Design of Li1+2xZn1−xPS4, a new lithium ion conductor
     <https://doi.org/10.1039/C6EE02094A>`_. Energy Environ. Sci. 9, 3272–3278 (2016).
 
-    Barroso-Luque, L., Zhong, P., Yang, J. H., Chen, T. & Ceder, G.
-    Cluster Expansions of Multicomponent Ionic Materials:Formalism & Methods.
-    (submitted)
+    Barroso-Luque, L. et al.
+    `Cluster expansions of multicomponent ionic materials: Formalism and methodology.
+    <https://doi.org/10.1103/PhysRevB.106.144202>`_.
+    Phys. Rev. B 106, 144202 (2022).
