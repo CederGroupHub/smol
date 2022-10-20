@@ -64,7 +64,7 @@ to include redundancy in cluster expansions, please cite this publication,
     <https://link.aps.org/doi/10.1103/PhysRevB.104.224203>`_.
     Phys. Rev. B 104, 224203 (2021).
 
-Orbit group wise regularized fits
+Orbit group-wise regularized fits
 =================================
 
 If you use **smol** or any of the other great CE packages to fit an expansion
@@ -99,7 +99,7 @@ for hierarchical constrained expansion fits, please cite these publications,
     <https://doi.org/10.1103/PhysRevB.106.144202>`_.
     Phys. Rev. B 106, 144202 (2022).
 
-Charge neutral semigrand canonical sampling
+Charge-neutral semigrand canonical sampling
 ===========================================
 
 If you use the charge neutral semigrand canonical sampling or any related functionality

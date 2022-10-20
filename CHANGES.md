@@ -7,11 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
-* Charge neutral semi grand canonical sampling. #271 @qchempku2017
 ### Changed
 ### Fixed
 ### Removed
 ### Deprecated
+
+## [v0.1.0](https://github.com/CederGroupHub/smol/releases/tag/v0.1.0) (2022-10-20)
+### Added
+* Charge neutral semi grand canonical sampling. #271 @qchempku2017
+* `MultiStep` and `Composite` mcushers for more flexible sampling. #279 @lbluque
 
 # [v0.0.7](https://github.com/CederGroupHub/smol/releases/tag/v0.0.7) (2022-09-26)
 ### Added
