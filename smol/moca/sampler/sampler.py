@@ -194,7 +194,7 @@ class Sampler:
         # TODO check that initial states are independent if num_walkers > 1
         # TODO make samplers with single chain, multiple and multiprocess
         # TODO kernel should take only 1 occupancy
-        # set up any auxiliary states from inital occupancies
+        # set up any auxiliary states from initial occupancies
         for kernel, occupancy in zip(self._kernels, occupancies):
             kernel.set_aux_state(occupancy)
 
@@ -315,7 +315,7 @@ class Sampler:
             if keep_last_chunk is False:
                 self.clear_samples()
 
-        # A checkpoing of aux states should be saved to container here.
+        # A checkpoint of aux states should be saved to container here.
         # Note that to save any general "state" we will need to make sure it is
         # properly serializable to save as json and also to save in h5py
 

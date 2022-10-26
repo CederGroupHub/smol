@@ -204,7 +204,7 @@ class FugacityBias(MCBias):
         occupancy will have all 1 values and should never be used.
         """
         num_cols = max(max(sublatt.encoding) for sublatt in self.sublattices) + 1
-        # Sublattice can only be initialized as default, or splitted from default.
+        # Sublattice can only be initialized as default, or split from default.
         num_rows = sum(len(sl.sites) for sl in self.sublattices)
         table = np.ones((num_rows, num_cols))
         for fus, sublatt in zip(fugacity_fractions, self.active_sublattices):
@@ -362,7 +362,7 @@ def mcbias_factory(bias_type, sublattices, *args, **kwargs):
             list of active sublattices, containing species information and
             site indices in sublattice.
         *args:
-            positional args to instatiate a bias term.
+            positional args to instantiate a bias term.
         *kwargs:
             keyword argument to instantiate a bias term.
     """

@@ -112,13 +112,13 @@ class ClusterSubspace(MSONable):
                 StructureMatcher used to find supercell matrices
                 relating the prim structure to other structures. If you pass
                 this directly you should know how to set the matcher up,
-                otherwise matching your relaxed structures can fail, alot.
+                otherwise matching your relaxed structures can fail, a lot.
             site_matcher (StructureMatcher): optional
                 StructureMatcher used to find site mappings
                 relating the sites of a given structure to an appropriate
                 supercell of the prim structure . If you pass this directly you
                 should know how to set the matcher up, otherwise matching your
-                relaxed structures can fail, alot.
+                relaxed structures can fail, a lot.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
                 through to the StructureMatchers. Structures that don't match
@@ -238,13 +238,13 @@ class ClusterSubspace(MSONable):
                 StructureMatcher used to find supercell matrices
                 relating the prim structure to other structures. If you pass
                 this directly you should know how to set the matcher up,
-                otherwise matching your relaxed structures will fail, alot.
+                otherwise matching your relaxed structures will fail, a lot.
             site_matcher (StructureMatcher): optional
                 StructureMatcher used to find site mappings
                 relating the sites of a given structure to an appropriate
                 supercell of the prim structure . If you pass this directly you
                 should know how to set the matcher up, otherwise matching your
-                relaxed structures will fail, alot.
+                relaxed structures will fail, a lot.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
                 through to the StructureMatchers. Structures that don't match
@@ -1097,7 +1097,7 @@ class ClusterSubspace(MSONable):
             basis (str):
                 name identifying site basis set to use.
             orthonorm (bool):
-                wether to ensure orthonormal basis set.
+                whether to ensure orthonormal basis set.
             use_conc (bool):
                 If true the concentrations in the prim structure sites will be
                 used as the measure to orthormalize site bases.
@@ -1295,7 +1295,7 @@ class ClusterSubspace(MSONable):
             # orbit_ids holds orbit, and 2d array of index groups that
             # correspond to the orbit
             # the 2d array may have some duplicates. This is due to
-            # symetrically equivalent groups being matched to the same sites
+            # symmetrically equivalent groups being matched to the same sites
             # (eg in simply cubic all 6 nn interactions will all be [0, 0]
             # indices. This multiplicity disappears as supercell_structure size
             # increases, so I haven't implemented a more efficient method
@@ -1459,7 +1459,7 @@ def invert_mapping(mapping):
     Args:
         mapping (list of lists):
             List of sublists, each contains integer indices, indicating
-            a foward mapping from the current sublist index to the indices
+            a forward mapping from the current sublist index to the indices
             in the sublist.
 
     Returns:
@@ -1491,7 +1491,7 @@ def get_complete_mapping(mapping):
     Args:
         mapping (list of lists):
              List of sublists, each contains integer indices, indicating
-            a foward mapping from the current sublist index to the indices
+            a forward mapping from the current sublist index to the indices
             in the sublist.
 
     Returns:
@@ -1578,13 +1578,13 @@ class PottsSubspace(ClusterSubspace):
                 StructureMatcher used to find supercell matrices
                 relating the prim structure to other structures. If you pass
                 this directly you should know how to set the matcher up,
-                otherwise matching your relaxed structures can fail, alot.
+                otherwise matching your relaxed structures can fail, a lot.
             site_matcher (StructureMatcher): (optional)
                 StructureMatcher used to find site mappings
                 relating the sites of a given structure to an appropriate
                 supercell of the prim structure . If you pass this directly you
                 should know how to set the matcher up, otherwise matching your
-                relaxed structures can fail, alot.
+                relaxed structures can fail, a lot.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
                 through to the StructureMatchers. Structures that don't match
@@ -1643,13 +1643,13 @@ class PottsSubspace(ClusterSubspace):
                StructureMatcher used to find supercell matrices
                relating the prim structure to other structures. If you pass
                this directly you should know how to set the matcher up,
-               otherwise matching your relaxed structures will fail, alot.
+               otherwise matching your relaxed structures will fail, a lot.
            site_matcher (StructureMatcher): (optional)
                StructureMatcher used to find site mappings
                relating the sites of a given structure to an appropriate
                supercell of the prim structure . If you pass this directly you
                should know how to set the matcher up, otherwise matching your
-               relaxed structures will fail, alot.
+               relaxed structures will fail, a lot.
            matcher_kwargs:
                ltol, stol, angle_tol, supercell_size: parameters to pass
                through to the StructureMatchers. Structures that don't match

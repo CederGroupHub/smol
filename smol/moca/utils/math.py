@@ -480,7 +480,7 @@ def get_natural_solutions(n0, vs, integer_tol=NUM_TOL, step=1):
         1, This function is very costly! Do not
     use it with a large super-cell size!
         2, This function does not apply to any n0
-    and vs. It only applys to bounded polytopes!
+    and vs. It only applies to bounded polytopes!
 
     Args:
         n0(1D ArrayLike[int]):
