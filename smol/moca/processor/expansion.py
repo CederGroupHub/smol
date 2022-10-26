@@ -166,7 +166,7 @@ class ClusterDecompositionProcessor(Processor):
 
     A few practical and important differences though, the featyre vectors
     that are used and sampled are the cluster interactions for each occupancy
-    as oposed to the correlation vectors (so if you need correlation vectors
+    as opposed to the correlation vectors (so if you need correlation vectors
     for further analysis you're probably better off with a standard
     ClusterExpansionProcessor
 
@@ -214,7 +214,7 @@ class ClusterDecompositionProcessor(Processor):
         # Dictionary of orbits by site index and information
         # necessary to compute local changes in correlation vectors from flips
         self._orbits_by_sites = defaultdict(list)
-        # Prepare necssary information for local updates
+        # Prepare necessary information for local updates
         mappings = self._subspace.supercell_orbit_mappings(supercell_matrix)
         for cluster_indices, interaction_tensor, orbit in zip(
             mappings, self._fac_tensors[1:], self._subspace.orbits

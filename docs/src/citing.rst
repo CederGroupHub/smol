@@ -6,7 +6,7 @@ Citing
 
 .. note::
     If you have any comments, suggestions or you think we have missed a
-    pertinent publications in our recommended citations, please let us know!
+    pertinent publication in our recommended citations, please let us know!
 
 
 If you use **smol** for your work please cite the following publication,

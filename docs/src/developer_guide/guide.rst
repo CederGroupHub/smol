@@ -29,7 +29,7 @@ Developing
 Code contributions can be anything from fixing the simplest bugs, to adding new
 extensive features or subpackages. If you have written code or want to start
 writing new code that you think will improve **smol** then please follow the
-steps bellow to make a contribution. To know where best to start implementing new
+steps below to make a contribution. To know where best to start implementing new
 functionality please have a look at the :ref:`design` page.
 
 Guidelines

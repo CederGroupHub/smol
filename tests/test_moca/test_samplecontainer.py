@@ -323,7 +323,7 @@ def test_get_mins(container, fake_traces, rng):
 def test_msonable(container, fake_traces):
     # fails for empty container with nwalkers > 1
     # since the _chain.tolist turns the empty array to an empty list and so
-    # the shape is lost, but dont think anyone really cares about an emtpy
+    # the shape is lost, but dont think anyone really cares about an empty
     # container....
     # d = container.as_dict()
     # cntr = container.from_dict(d)

@@ -193,7 +193,7 @@ class StandardBasis(DiscreteBasis):
         """
         super().__init__(site_space, basis_functions)
         self._r_array = None  # array from QR in basis orthonormalization
-        # rotation arrray
+        # rotation array
         self._rot_array = np.eye(self.function_array.shape[1])
 
     def _construct_function_array(self, basis_functions):
