@@ -101,11 +101,11 @@ class StepTrace(Trace):
 # TODO make it easier to have multiple walkers, either have the sampler have
 #  a list of kernel copies or make a multi-kernel class that simply holds
 #  the copies but ow behaves the same, that will really simplify writing kernels!
-#  TODO it is so tedious and unessecary to have multiple walkers for the WL Kernel !
+#  TODO it is so tedious and unnecessary to have multiple walkers for the WL Kernel !
 
 
 class MCKernel(ABC):
-    """Abtract base class for transition kernels.
+    """Abstract base class for transition kernels.
 
     A kernel is used to implement a specific MC algorithm used to sample
     the ensemble classes. For an illustrative example of how to derive from this
@@ -231,7 +231,7 @@ class MCKernel(ABC):
         return self.trace
 
     def compute_initial_trace(self, occupancy):
-        """Compute inital values for sample trace given an occupancy.
+        """Compute initial values for sample trace given an occupancy.
 
         Args:
             occupancy (ndarray):
@@ -257,7 +257,7 @@ class MCKernel(ABC):
 
 
 class ThermalKernel(MCKernel):
-    """Abtract base class for transition kernels with a set temperature.
+    """Abstract base class for transition kernels with a set temperature.
 
     Basically all kernels should derive from this with the exception of those
     for multicanonical sampling and related methods
@@ -298,7 +298,7 @@ class ThermalKernel(MCKernel):
         self.beta = 1.0 / (kB * temperature)
 
     def compute_initial_trace(self, occupancy):
-        """Compute inital values for sample trace given occupancy.
+        """Compute initial values for sample trace given occupancy.
 
         Args:
             occupancy (ndarray):
@@ -511,7 +511,7 @@ class WangLandau(MCKernel):
 
         self._levels = np.arange(min_enthalpy, max_enthalpy, bin_size)
 
-        # The correct intialization will be handled in set_aux_state.
+        # The correct initialization will be handled in set_aux_state.
         self._current_enthalpy = np.inf
         self._current_features = np.zeros(len(ensemble.natural_parameters))
         self._entropy = np.zeros(len(self._levels))

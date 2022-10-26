@@ -76,7 +76,7 @@ class CompositionSpace(MSONable):
     or DummySpecies and the number of sites in each sub-lattice in a PRIM CELL.
 
     A composition in the CompositionSpace can be expressed in 4 formats:
-        1, Count of species on each sub-lattice, orded and concatenated as
+        1, Count of species on each sub-lattice, ordered and concatenated as
            each sub-lattice provided in self.bits and self.sublattice_sizes,
            into an 1D array. ("counts" format, also called unconstrained
            coordinates)
@@ -516,7 +516,7 @@ class CompositionSpace(MSONable):
             from_format(str):
                 Specifies the input format.
                 A composition can be expressed in 4 formats:
-                1, Count of species on each sub-lattice, orded and concatenated as
+                1, Count of species on each sub-lattice, ordered and concatenated as
                    each sub-lattice provided in self.bits and self.sublattice_sizes,
                    into an 1D array. ("counts" format)
                 2, Coordinates x on the constrained integer grid, computed with

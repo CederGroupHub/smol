@@ -1,7 +1,7 @@
 """Implementation of SiteSpace and functions to get spaces and allowed species.
 
 Implementation functions to generate lists of site spaces and allowed species
-for a given disordered strucuture.
+for a given disordered structure.
 
 A site space is made up of the allowed species and their concentrations
 including special species such as vacancies. A site spaces makes up the domain

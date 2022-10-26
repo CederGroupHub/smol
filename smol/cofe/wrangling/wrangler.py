@@ -468,7 +468,7 @@ class StructureWrangler(MSONable):
         or unit cell, directly from DFT).
 
         An attempt to compute the correlation vector is made and if successful the
-        structure is succesfully added. Otherwise the structure is ignored.
+        structure is successfully added. Otherwise the structure is ignored.
         Usually failures are caused by the StructureMatcher in the given
         ClusterSubspace failing to map structures to the primitive structure.
 
@@ -520,14 +520,14 @@ class StructureWrangler(MSONable):
             self._corr_duplicate_warning(self.num_structures - 1)
 
     def append_entries(self, entries):
-        """Append a list of entrys.
+        """Append a list of entries.
 
         Each entry must have all necessary fields. A entry can be
         obtained using the process_structure method.
 
         Args:
             entries (list of ComputedStructureEntry):
-                list of entrys with all necessary information
+                list of entries with all necessary information
         """
         required_keys = [
             "refined_structure",
@@ -686,7 +686,7 @@ class StructureWrangler(MSONable):
 
         Args:
             entry (ComputedStructureEntry):
-                A ComputedStructureEntry corresponding to a training strucutre and
+                A ComputedStructureEntry corresponding to a training structure and
                 properties
             properties (dict): optional
                 A dictionary with a keys describing the property and the target
