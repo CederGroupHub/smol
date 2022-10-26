@@ -85,4 +85,4 @@ repos:
     - id: codespell
       stages: [commit, commit-msg]
       exclude_types: [html]
-      args: [--ignore-words-list, 'nd, tread']
+      args: [--ignore-words-list, 'nd, tread, mater', --skip, "*.ipynb"]

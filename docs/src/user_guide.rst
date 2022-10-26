@@ -134,14 +134,14 @@ Full documentation of the class is available here: :ref:`structure wrangler`.
 
 Cluster expansion
 ^^^^^^^^^^^^^^^^^
-:class:`ClusterExpansion` contains the fitted coefficents of the cluster
+:class:`ClusterExpansion` contains the fitted coefficients of the cluster
 expansion for predicting CE properties of new structures.
 Based on the feature matrix from the :class:`StructureWrangler`, one can fit
 fit the data to the properties using any fitting method they like (e.g.,
 linear regression, regularized regression, etc). :code:`smol.cofe`
 contains wrapper class :class:`RegressionData` to save important information from
 the regression method used (optionally including the feature matrix, target vector,
-regression class, and hyperparameters). Specifically a convenience constructure to
+regression class, and hyperparameters). Specifically a convenience constructor to
 extract information from regression methods in
 `sklearn <https://scikit-learn.org/stable/>`_ or those following their API is included.
 The fitted coefficients and
@@ -243,7 +243,7 @@ Full documentation of the class is available here: :ref:`sampler`.
 SampleContainer
 ^^^^^^^^^^^^^^^
 A :class:`SampleContainer` stores data from Monte Carlo sampling simulations,
-especially the occupancies and feature vectors. For lenghty MC simulations a
+especially the occupancies and feature vectors. For lengthy MC simulations a
 :class:`SampleContainer` allows streaming directly to an
 `HDF5 <https://www.hdfgroup.org/solutions/hdf5/>`_ file, and so minimize
 computer memory requirements. It also includes some minimal methods and properties
