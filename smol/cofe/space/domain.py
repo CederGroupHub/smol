@@ -1,7 +1,7 @@
 """Implementation of SiteSpace and functions to get spaces and allowed species.
 
 Implementation functions to generate lists of site spaces and allowed species
-for a given disordered strucuture.
+for a given disordered structure.
 
 A site space is made up of the allowed species and their concentrations
 including special species such as vacancies. A site spaces makes up the domain
@@ -165,7 +165,7 @@ class SiteSpace(Mapping, Hashable, MSONable):
 
     @property
     def codes(self):
-        """Return range of species."""
+        """Return range of species (not necessarily sub-lattice encodings)."""
         return tuple(range(len(self)))
 
     def __getitem__(self, item):
@@ -195,6 +195,10 @@ class SiteSpace(Mapping, Hashable, MSONable):
         return all(
             item1 == item2 for item1, item2 in zip(self._data.items(), other.items())
         )
+
+    def __lt__(self, other):
+        """Compare order of two SiteSpaces."""
+        return list(self._data.keys()) < list(other._data.keys())
 
     def __hash__(self):
         """Take the hash of the composition for now."""

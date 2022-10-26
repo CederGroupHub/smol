@@ -63,7 +63,8 @@ class Processor(MSONable, metaclass=ABCMeta):
 
         # this can be used (maybe should) to check if a flip is valid
         site_spaces = set(get_site_spaces(self.structure))
-        self.unique_site_spaces = tuple(site_spaces)
+        self.unique_site_spaces = tuple(sorted(site_spaces))
+        # Sort to ensure a fixed ordering between sub-lattices.
         self.active_site_spaces = tuple(
             space for space in self.unique_site_spaces if len(space) > 1
         )

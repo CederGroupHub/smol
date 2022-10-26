@@ -57,7 +57,7 @@ class ClusterExpansionProcessor(Processor):
         self.num_corr_functions = self.cluster_subspace.num_corr_functions
         if len(coefficients) != self.num_corr_functions:
             raise ValueError(
-                f"The provided coeffiecients are not the right length. "
+                f"The provided coefficients are not the right length. "
                 f"Got {len(coefficients)} coefficients, the length must be "
                 f"{self.num_corr_functions} based on the provided cluster "
                 f"subspace."

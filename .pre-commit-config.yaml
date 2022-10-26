@@ -18,7 +18,7 @@ repos:
     args: ['--maxkb=500']
 
 - repo: https://github.com/psf/black
-  rev: 22.8.0
+  rev: 22.10.0
   hooks:
   - id: black
 
@@ -38,13 +38,13 @@ repos:
     - --profile=black
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v2.38.2
+  rev: v3.1.0
   hooks:
     - id: pyupgrade
       args: [--py38-plus]
 
-- repo: https://github.com/myint/autoflake
-  rev: v1.6.1
+- repo: https://github.com/PyCQA/autoflake
+  rev: v1.7.4
   hooks:
     - id: autoflake
       args:
@@ -78,3 +78,11 @@ repos:
   - id: rst-backticks
   - id: rst-directive-colons
   - id: rst-inline-touching-normal
+
+- repo: https://github.com/codespell-project/codespell
+  rev: v2.2.1
+  hooks:
+    - id: codespell
+      stages: [commit, commit-msg]
+      exclude_types: [html]
+      args: [--ignore-words-list, 'nd, tread']

@@ -99,7 +99,7 @@ class StepTrace(Trace):
 
 
 class MCKernel(ABC):
-    """Abtract base class for transition kernels.
+    """Abstract base class for transition kernels.
 
     A kernel is used to implement a specific MC algorithm used to sample
     the ensemble classes. For an illustrative example of how to derive from this
@@ -225,7 +225,7 @@ class MCKernel(ABC):
         return self.trace
 
     def compute_initial_trace(self, occupancy):
-        """Compute inital values for sample trace given an occupancy.
+        """Compute initial values for sample trace given an occupancy.
 
         Args:
             occupancy (ndarray):
@@ -246,7 +246,7 @@ class MCKernel(ABC):
 
 
 class ThermalKernel(MCKernel):
-    """Abtract base class for transition kernels with a set temperature.
+    """Abstract base class for transition kernels with a set temperature.
 
     Basically all kernels should derive from this with the exception of those
     for multicanonical sampling and related methods
@@ -287,7 +287,7 @@ class ThermalKernel(MCKernel):
         self.beta = 1.0 / (kB * temperature)
 
     def compute_initial_trace(self, occupancy):
-        """Compute inital values for sample trace given occupancy.
+        """Compute initial values for sample trace given occupancy.
 
         Args:
             occupancy (ndarray):
@@ -327,6 +327,7 @@ class UniformlyRandom(MCKernel):
             StepTrace
         """
         step = self._usher.propose_step(occupancy)
+        log_factor = self._usher.compute_log_priori_factor(occupancy, step)
         self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
             occupancy, step
         )  # noqa
@@ -338,11 +339,13 @@ class UniformlyRandom(MCKernel):
             self.trace.delta_trace.bias = np.array(
                 self._bias.compute_bias_change(occupancy, step)
             )
-            self.trace.accepted = np.array(
-                True
-                if self.trace.delta_trace.bias >= 0
-                else self.trace.delta_trace.bias > log(self._rng.random())
-            )
+            exponent = self.trace.delta_trace.bias + log_factor
+        else:
+            exponent = log_factor
+
+        self.trace.accepted = np.array(
+            True if exponent >= 0 else exponent > log(self._rng.random())
+        )
 
         if self.trace.accepted:
             for tup in step:
@@ -376,6 +379,7 @@ class Metropolis(ThermalKernel):
             StepTrace
         """
         step = self._usher.propose_step(occupancy)
+        log_factor = self._usher.compute_log_priori_factor(occupancy, step)
         self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
             occupancy, step
         )  # noqa
@@ -390,17 +394,15 @@ class Metropolis(ThermalKernel):
             exponent = (
                 -self.beta * self.trace.delta_trace.enthalpy
                 + self.trace.delta_trace.bias
+                + log_factor
             )
-            self.trace.accepted = np.array(
-                True if exponent >= 0 else exponent > log(self._rng.random())
-            )
+
         else:
-            self.trace.accepted = np.array(
-                True
-                if self.trace.delta_trace.enthalpy <= 0
-                else -self.beta * self.trace.delta_trace.enthalpy
-                > log(self._rng.random())  # noqa
-            )
+            exponent = -self.beta * self.trace.delta_trace.enthalpy + log_factor
+
+        self.trace.accepted = np.array(
+            True if exponent >= 0 else exponent > log(self._rng.random())
+        )
 
         if self.trace.accepted:
             for tup in step:

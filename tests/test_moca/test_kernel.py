@@ -1,4 +1,5 @@
 from itertools import product
+from random import choice, choices
 
 import numpy as np
 import numpy.testing as npt
@@ -14,7 +15,7 @@ from smol.moca.sampler.kernel import (
     Trace,
     UniformlyRandom,
 )
-from smol.moca.sampler.mcusher import Flip, Swap
+from smol.moca.sampler.mcusher import Flip, Swap, TableFlip
 from tests.utils import gen_random_occupancy
 
 kernels = [UniformlyRandom, Metropolis]
@@ -27,6 +28,17 @@ def mckernel(ensemble, request):
     kernel_class, step_type = request.param
     if issubclass(kernel_class, ThermalKernel):
         kwargs["temperature"] = 5000
+
+    if step_type == "MultiStep":
+        kwargs["mcusher"] = choice(
+            [c for c in ushers if c not in ("MultiStep", "Composite")]
+        )
+        kwargs["step_lengths"] = 4
+    elif step_type == "Composite":
+        kwargs["mcushers"] = choices(
+            [c for c in ushers if c not in ("MultiStep", "Composite")], k=2
+        )
+
     kernel = kernel_class(ensemble, step_type=step_type, **kwargs)
     return kernel
 
@@ -37,12 +49,25 @@ def mckernel_bias(ensemble, request):
     kernel_class, step_type = request.param
     if issubclass(kernel_class, ThermalKernel):
         kwargs["temperature"] = 5000
+
+    if step_type == "MultiStep":
+        kwargs["mcusher"] = choice(
+            [c for c in ushers if c not in ("MultiStep", "Composite")]
+        )
+        kwargs["step_lengths"] = 4
+    elif step_type == "Composite":
+        kwargs["mcushers"] = choices(
+            [c for c in ushers if c not in ("MultiStep", "Composite")], k=2
+        )
+
     kernel = kernel_class(ensemble, step_type=step_type, **kwargs)
     kernel.bias = FugacityBias(kernel.mcusher.sublattices)
     return kernel
 
 
-@pytest.mark.parametrize("step_type, mcusher", [("swap", Swap), ("flip", Flip)])
+@pytest.mark.parametrize(
+    "step_type, mcusher", [("swap", Swap), ("flip", Flip), ("table-flip", TableFlip)]
+)
 def test_constructor(ensemble, step_type, mcusher):
     kernel = Metropolis(ensemble, step_type=step_type, temperature=500)
     assert isinstance(kernel._usher, mcusher)

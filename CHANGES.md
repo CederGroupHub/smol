@@ -4,13 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+# [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
 ### Changed
 ### Fixed
 ### Removed
 ### Deprecated
+
+# [v0.1.0](https://github.com/CederGroupHub/smol/releases/tag/v0.1.0) (2022-10-20)
+### Added
+* Charge neutral semi grand canonical sampling. #271 @qchempku2017
+* `MultiStep` and `Composite` mcushers for more flexible sampling. #279 @lbluque
 
 # [v0.0.7](https://github.com/CederGroupHub/smol/releases/tag/v0.0.7) (2022-09-26)
 ### Added
@@ -296,7 +301,7 @@ sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
      `Metropolis` currently only kernel implemented to run single site
      Metropolis random walk.
   * `MCUsher` classes to handle specific MCMC step proposals (i.e. single
-  swaps, to preseve composition, single flips, single constrained flips,
+  swaps, to preserve composition, single flips, single constrained flips,
   multisite flips, local flips, etc).
   * `SampleContainer` class to hold MCMC samples and pertinent information for
   post-processing and analysis (improvement on previous implementation using
@@ -305,7 +310,7 @@ sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
 * `Vacancy` class, inherits from `pymatgen.DummySpecie`.
 * `SiteSpace` class to encapsulate prior site space implementation using
 OrderedDicts.
-* `get_species` function to mimick `get_el_sp` from pymatgen but correctly
+* `get_species` function to mimic `get_el_sp` from pymatgen but correctly
 handle `Vacancy`.
 * MCMC sample streaming functionality using hdf5 files.
 [\#84](https://github.com/CederGroupHub/smol/pull/84)

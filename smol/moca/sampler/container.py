@@ -84,7 +84,7 @@ class SampleContainer(MSONable):
         self._total_steps = 0
         self.metadata = {} if sampling_metadata is None else sampling_metadata
         self._num_energy_coefs = num_energy_coefs
-        # need counter because cant use shape of arraus when allocating space
+        # need counter because can't use shape of arraus when allocating space
         self._nsamples = 0
         self._trace = sample_trace
         self._aux_checkpoint = None

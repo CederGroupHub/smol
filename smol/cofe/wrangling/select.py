@@ -87,7 +87,7 @@ def composition_select(
         composition (ndarray):
             array for the center composition to sample around.
         cell_sizes (int or Sequence):
-            mumber of unit cells or size of supercells used to set the
+            number of unit cells or size of supercells used to set the
             number of variables in the multinomial distribution.
         num_samples (int):
             number of samples to return. Note that if the number is too high

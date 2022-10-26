@@ -356,9 +356,9 @@ class StandardBasis(DiscreteBasis):
 class IndicatorBasis(DiscreteBasis, MSONable):
     """Class that represents a full indicator basis for a site space.
 
-    This class represents the "trivial" indicator basis, wihch includes an
+    This class represents the "trivial" indicator basis, which includes an
     indicator function for every species in the site space, and does NOT
-    include a contant function.
+    include a constant function.
     NOT to be confused with a cluster indicator basis used for a Cluster
     Expansion (that is represented in smol by a StandardBasis with an
     IndicatorIterator).

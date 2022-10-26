@@ -212,7 +212,7 @@ class Orbit(MSONable):
     def correlation_tensors(self):
         """Get the array of correlation functions for all possible configs.
 
-        Array of stacked correlation arrays for each symetrically distinct
+        Array of stacked correlation arrays for each symmetrically distinct
         set of bit combos, i.e a correlation function.
 
         The correlations array is a multidimensional array with each dimension
