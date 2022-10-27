@@ -43,7 +43,7 @@ def derived_class_factory(
     Args:
         class_name (str):
             name of class
-        base_class (obect):
+        base_class (object):
             base class of derived class sought
         *args:
             positional arguments for class constructor
@@ -99,7 +99,7 @@ def progress_bar(display, total, description):
     if display:
         if tqdm is None:
             warnings.warn(
-                "tqdm libary needs to be installed to show a " " progress bar."
+                "tqdm library needs to be installed to show a " " progress bar."
             )
             return _EmptyBar()
 

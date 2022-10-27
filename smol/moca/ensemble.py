@@ -90,7 +90,7 @@ class ChemicalPotentialManager:
         """Set the chemical potentials and update table."""
         num_cols = max(max(sl.encoding) for sl in obj.sublattices) + 1
 
-        # Sublattice can only be initialized as default, or splitted from default.
+        # Sublattice can only be initialized as default, or split from default.
         table = np.zeros((obj.num_sites, num_cols))
         for sublatt in obj.active_sublattices:
             ordered_pots = [value[sp] for sp in sublatt.site_space]

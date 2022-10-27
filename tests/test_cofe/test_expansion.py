@@ -108,7 +108,7 @@ def test_prune(cluster_expansion):
     assert len(expansion.eci_orbit_ids) == len(new_coefs)
     pruned_feat_matrix = cluster_expansion._feat_matrix[:, ids]
     npt.assert_array_equal(expansion._feat_matrix, pruned_feat_matrix)
-    # check that recomputing features produces whats expected
+    # check that recomputing features produces what's expected
     new_feature_matrix = np.array(
         [
             expansion.cluster_subspace.corr_from_structure(s)

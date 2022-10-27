@@ -99,7 +99,7 @@ class StepTrace(Trace):
 
 
 class MCKernel(ABC):
-    """Abtract base class for transition kernels.
+    """Abstract base class for transition kernels.
 
     A kernel is used to implement a specific MC algorithm used to sample
     the ensemble classes. For an illustrative example of how to derive from this
@@ -226,7 +226,7 @@ class MCKernel(ABC):
         return self.trace
 
     def compute_initial_trace(self, occupancy):
-        """Compute inital values for sample trace given an occupancy.
+        """Compute initial values for sample trace given an occupancy.
 
         Args:
             occupancy (ndarray):
@@ -247,7 +247,7 @@ class MCKernel(ABC):
 
 
 class ThermalKernel(MCKernel):
-    """Abtract base class for transition kernels with a set temperature.
+    """Abstract base class for transition kernels with a set temperature.
 
     Basically all kernels should derive from this with the exception of those
     for multicanonical sampling and related methods
@@ -288,7 +288,7 @@ class ThermalKernel(MCKernel):
         self.beta = 1.0 / (kB * temperature)
 
     def compute_initial_trace(self, occupancy):
-        """Compute inital values for sample trace given occupancy.
+        """Compute initial values for sample trace given occupancy.
 
         Args:
             occupancy (ndarray):

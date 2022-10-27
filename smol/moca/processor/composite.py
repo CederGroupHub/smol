@@ -104,7 +104,7 @@ class CompositeProcessor(Processor):
                 list of tuples for (index of site, specie code to set)
 
         Returns:
-            float:  property difference between inital and final states
+            float:  property difference between initial and final states
         """
         return sum(
             pr.compute_property_change(occupancy, flips) for pr in self._processors

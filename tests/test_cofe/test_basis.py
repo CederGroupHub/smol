@@ -102,7 +102,7 @@ def test_rotate(standard_basis, rng):
             f_array @ f_array.T, standard_basis._f_array @ standard_basis._f_array.T
         )
     else:
-        # if not orthogonal only vector norms should mathch!
+        # if not orthogonal only vector norms should match!
         npt.assert_array_almost_equal(
             np.diag(f_array @ f_array.T),
             np.diag(standard_basis._f_array @ standard_basis._f_array.T),

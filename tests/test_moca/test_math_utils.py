@@ -315,7 +315,7 @@ def test_one_dim_solution():
     v = np.array([0, 1, -5])
     xs = get_one_dim_solutions(n0, v)
     assert len(xs) == 0
-    # Conter example of case 2, and unbounded.
+    # Counter example of case 2, and unbounded.
     n0 = np.array([1, -1, 0])
     v = np.array([0, 1, 5])
     with pytest.raises(ValueError):
