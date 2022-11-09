@@ -89,7 +89,7 @@ Since **smol** is based on **pymatgen**, please also cite this publication,
 
 Additionally, several of the functionality included in **smol** is based on
 methodology developed by various researchers. Please see the
-:doc:`citing page </citing>` for additional refrences.
+:doc:`citing page </citing>` for additional references.
 
 License
 =======

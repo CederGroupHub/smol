@@ -51,9 +51,9 @@ def test_ewald_energy_indices(structure_wrangler):
             for entry in wrangler.entries:
                 struct = entry.structure
                 matrix = entry.data["supercell_matrix"]
-                mapp = entry.data["site_mapping"]
+                map = entry.data["site_mapping"]
                 occu = wrangler.cluster_subspace.occupancy_from_structure(
-                    struct, encode=True, scmatrix=matrix, site_mapping=mapp
+                    struct, encode=True, scmatrix=matrix, site_mapping=map
                 )
 
                 supercell = wrangler.cluster_subspace.structure.copy()

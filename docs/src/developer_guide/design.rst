@@ -87,7 +87,7 @@ Following the diagram above, the main purpose of the classes depicted is,
       :class:`Molecule` the hold a lattice (of the structure they are associated with).
     * A :class:`SiteBasis` represents the basis set that spans the function space of
       the configurations for a single site. Several types of basis sets are included
-      and implementing new ones is relatively straighforward. A :class:`SiteBasis` holds
+      and implementing new ones is relatively straightforward. A :class:`SiteBasis` holds
       a :class:`SiteSpace` which represents its single site configuration space.
 
       * :class:`SiteSpace` represents the possible configurations of a given site.
@@ -115,7 +115,7 @@ Following the diagram above, the main purpose of the classes depicted is,
 * A :class:`ClusterExpansion` represent the final *fitted* lattice model. It holds
   a :class:`ClusterSubspace`, and a corresponding set of fitted coefficients. A
   :class:`ClusterSubspace` can be used to predict the energy of new structures, as well
-  as obtain the *effectice cluster interactions* (ECI), and prune unimportant terms.
+  as obtain the *effective cluster interactions* (ECI), and prune unimportant terms.
 
 
 :mod:`smol.moca`
@@ -125,7 +125,7 @@ A diagram showing the overall design of the :mod:`smol.moca` module. The
 main classes in this module that are necessary to run Monte Carlo sampling using
 a :class:`ClusterExpansion` are the :class:`Processor` classes, the :class:`Ensemble`,
 and the :class:`Sampler` class. However, a number of helper classes are implemented
-to allow running and implenting a large variety of types of MC calculations.
+to allow running and implementing a large variety of types of MC calculations.
 
 .. image:: ../_static/smol_moca.svg
 
