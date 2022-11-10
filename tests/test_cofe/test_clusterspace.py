@@ -19,6 +19,8 @@ from smol.correlations import corr_from_occupancy
 from smol.exceptions import StructureMatchError
 from tests.utils import assert_msonable, gen_random_structure
 
+pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
+
 
 def test_from_cutoffs(structure):
     cutoffs = {2: 5, 3: 4, 4: 4}
@@ -280,16 +282,119 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
             assert found
 
     # check that the matrix was cached
-    m_hash = tuple(sorted(tuple(s) for s in supercell_matrix))
+    m_hash = tuple(sorted(tuple(s.tolist()) for s in supercell_matrix))
     assert cluster_subspace._supercell_orb_inds[
         m_hash
     ] is cluster_subspace.supercell_orbit_mappings(supercell_matrix)
+
+    # Test that symmetrically equivalent matrices really produce the
+    # same correlation vector for the same occupancy.
+    def get_corr(occu, space, matrix):
+        mappings = space._gen_orbit_indices(matrix)
+        orbit_list = [
+            (
+                orbit.bit_id,
+                orbit.flat_tensor_indices,
+                orbit.flat_correlation_tensors,
+                cluster_indices,
+            )
+            for cluster_indices, orbit in zip(mappings, space.orbits)
+        ]
+        corr = corr_from_occupancy(occu, space.num_corr_functions, orbit_list)
+        return corr
+
+    structures = [
+        gen_random_structure(cluster_subspace.structure, size=supercell_matrix)
+        for _ in range(10)
+    ]
+    matrix2 = np.array([[0, 1, 0], [0, 0, 1], [1, 0, 0]]) @ np.array(
+        supercell_matrix, dtype=int
+    )
+    matrix3 = np.array([[0, 0, 1], [-1, 0, 0], [0, 1, 0]]) @ np.array(
+        supercell_matrix, dtype=int
+    )
+
+    # Because of different site_mappings, when you change super-cell,
+    # you must re-generate occupancy strings altogether even if your
+    # super-cell matrices are symmetrically equivalent.
+    occus = [
+        cluster_subspace.occupancy_from_structure(
+            s, scmatrix=supercell_matrix, encode=True
+        )
+        for s in structures
+    ]
+    occus2 = [
+        cluster_subspace.occupancy_from_structure(s, scmatrix=matrix2, encode=True)
+        for s in structures
+    ]
+    occus3 = [
+        cluster_subspace.occupancy_from_structure(s, scmatrix=matrix3, encode=True)
+        for s in structures
+    ]
+
+    corrs = np.array(
+        [
+            corr_from_occupancy(
+                occu,
+                cluster_subspace.num_corr_functions,
+                cluster_subspace.gen_orbit_list(supercell_matrix),
+            )
+            for occu in occus
+        ]
+    )
+
+    corrs2 = np.array(
+        [
+            corr_from_occupancy(
+                occu,
+                cluster_subspace.num_corr_functions,
+                cluster_subspace.gen_orbit_list(matrix2),
+            )
+            for occu in occus2
+        ]
+    )
+
+    corrs3 = np.array(
+        [
+            corr_from_occupancy(
+                occu,
+                cluster_subspace.num_corr_functions,
+                cluster_subspace.gen_orbit_list(matrix3),
+            )
+            for occu in occus3
+        ]
+    )
+
+    # Symmetrically equivalent matrices should give the same correlation
+    # function for the same structure, when the orbit indices mappings
+    # are re-generated.
+    npt.assert_array_almost_equal(corrs, corrs2)
+    npt.assert_array_almost_equal(corrs, corrs3)
+
+    # Symmetrically equivalent matrices should give the same correlation
+    # vectors on the same structure, when using the default orbit mapping.
+    cluster_subspace._supercell_orb_inds = {}
+    for s, c in zip(structures, corrs):
+        npt.assert_array_almost_equal(
+            cluster_subspace.corr_from_structure(s),
+            cluster_subspace.corr_from_structure(s, scmatrix=supercell_matrix),
+        )
+        npt.assert_array_almost_equal(
+            cluster_subspace.corr_from_structure(s),
+            cluster_subspace.corr_from_structure(s, scmatrix=matrix2),
+        )
+        npt.assert_array_almost_equal(
+            cluster_subspace.corr_from_structure(s),
+            cluster_subspace.corr_from_structure(s, scmatrix=matrix3),
+        )
+        npt.assert_array_almost_equal(cluster_subspace.corr_from_structure(s), c)
 
 
 def test_get_aliased_orbits(cluster_subspace, supercell_matrix):
     # Verify that
     # 1) site mappings for aliased orbits are indeed an identical set,
     # 2) each orbit is counted only once,
+    # 3) New implementation is the same with the old one.
     aliased_orbs = cluster_subspace.get_aliased_orbits(supercell_matrix)
     sc_orbit_maps = cluster_subspace.supercell_orbit_mappings(supercell_matrix)
     accounted_orbs = []
@@ -306,9 +411,32 @@ def test_get_aliased_orbits(cluster_subspace, supercell_matrix):
                 )
                 assert set(orbit_map_i) == set(orbit_map_j)
 
+    aliased_orbits_std = []
+    for orb_i, orb_map_i in enumerate(sc_orbit_maps):
+        orb_i_id = orb_i + 1
+        aliased = False
+        orbit_i_aliased = [orb_i_id]
+        sorted_orb_map_i = {tuple(sorted(c_map)) for c_map in orb_map_i}
+
+        for orb_j, orb_map_j in enumerate(sc_orbit_maps):
+            if orb_i == orb_j:
+                continue
+            orb_j_id = orb_j + 1
+            sorted_orb_map_j = {tuple(sorted(c_map)) for c_map in orb_map_j}
+
+            if sorted_orb_map_i == sorted_orb_map_j:
+                aliased = True
+                orbit_i_aliased.append(orb_j_id)
+
+        orbit_i_aliased = tuple(sorted(orbit_i_aliased))
+        if aliased:
+            aliased_orbits_std.append(orbit_i_aliased)
+
+    aliased_orbits_std = sorted(list(set(aliased_orbits_std)), key=lambda x: x[0])
+    assert aliased_orbits_std == aliased_orbs
+
 
 def test_periodicity_and_symmetry(cluster_subspace, supercell_matrix):
-
     structure = gen_random_structure(cluster_subspace.structure, size=2)
     larger_structure = structure.copy()
     larger_structure.make_supercell(supercell_matrix)
@@ -503,9 +631,9 @@ def test_function_hierarchy_fixed(single_subspace):
     assert sorted(hierarchy[-1]) == [17, 21]
     assert sorted(hierarchy[15]) == []
     assert sorted(hierarchy[35]) == [5, 7, 10]
-    assert sorted(hierarchy[55]) == [6, 8, 13]
-    assert sorted(hierarchy[75]) == [7, 16, 21]
-    assert sorted(hierarchy[95]) == [9, 19]
+    assert sorted(hierarchy[56]) == [7, 8, 16]
+    assert sorted(hierarchy[75]) == [7, 14, 20]
+    assert sorted(hierarchy[95]) == [13, 19, 21]
     assert sorted(hierarchy[115]) == [13, 19, 21]
 
 
@@ -515,7 +643,7 @@ def test_orbit_hierarchy_fixed(single_subspace):
     assert sorted(hierarchy[1]) == []  # point
     assert sorted(hierarchy[3]) == [1, 2]  # distinct site pair
     assert sorted(hierarchy[4]) == [1]  # same site pair
-    assert sorted(hierarchy[15]) == [3, 5]  # triplet
+    assert sorted(hierarchy[15]) == [3, 6]  # triplet
     assert sorted(hierarchy[-1]) == [6, 7]
 
 

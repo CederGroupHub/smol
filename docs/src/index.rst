@@ -14,9 +14,9 @@
 Statistical Mechanics on Lattices
 =================================
 
-*Lighthweight but caffeinated Python implementation of computational methods
+*Lightweight but caffeinated Python implementation of computational methods
 for statistical mechanical calculations of configurational states in
-crystalline material systems.*
+crystalline materials.*
 
 .. image:: https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg
       :alt: Test Status
@@ -26,14 +26,17 @@ crystalline material systems.*
       :alt: Coverage
       :target: https://www.codacy.com/gh/CederGroupHub/smol/dashboard?utm_source=github.com&utm_medium=referral&utm_content=CederGroupHub/smol&utm_campaign=Badge_Coverage
 
-.. image:: https://img.shields.io/pypi/v/statmech-on-lattices?color=blue
+.. image:: https://img.shields.io/pypi/v/smol?color=blue
       :alt: PyPi Version
-      :target: https://pypi.org/project/statmech-on-lattices
+      :target: https://pypi.org/project/smol
 
-.. image:: https://img.shields.io/pypi/pyversions/statmech-on-lattices
+.. image:: https://img.shields.io/pypi/pyversions/smol
       :alt: Python Versions
-      :target: https://img.shields.io/pypi/pyversions/statmech-on-lattices
+      :target: https://img.shields.io/pypi/pyversions/smol
 
+.. image:: https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25/status.svg
+      :alt: JOSS Status
+      :target: https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25
 
 -------------------------------------------------------------------------------
 
@@ -43,9 +46,7 @@ material systems based on the *cluster expansion* method from alloy theory and
 related methods. Although **smol** is intentionally lightweight---in terms of
 dependencies and built-in functionality---it has a modular design that closely
 follows underlying mathematical formalism and provides useful abstractions to
-easily extend existing methods or implement and test new ones. Finally,
-although initially conceived for method development, **smol** can (and is being)
-used in production for materials science reasearch applications.
+easily extend existing methods or implement and test new ones.
 
 Functionality
 =============
@@ -62,7 +63,8 @@ Functionality
   from local updates in order to quickly compute properties and changes in
   properties for specified supercells.
 - Flexible toolset to sample cluster expansions using Monte Carlo with
-  Canonical and Semigrand Canonical ensembles using a Metropolis sampler.
+  canonical and semigrand canonical and charge neutral semigrand canonical ensembles
+  using a Metropolis sampler.
 
 **smol** is built on top of `pymatgen <https://pymatgen.org/>`_ so any pre/post
 structure analysis can be done seamlessly using the various functionality
@@ -72,9 +74,11 @@ Citing
 ======
 If you find **smol** useful please cite the following publication,
 
-    Barroso-Luque, L., et al.
-    `smol: A Python package for cluster expansions and beyond. (submitted)
-    <https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25>`_
+    Barroso-Luque, L., Yang, J.H., Xie, F., Chen T., Kam, R.L., Jadidi, Z., Zhong, P.
+    & Ceder, G.
+    `smol: A Python package for cluster expansions and beyond.
+    <https://joss.theoj.org/papers/10.21105/joss.04504>`_
+    Journal of Open Source Software 7, 4504 (2022).
 
 Since **smol** is based on **pymatgen**, please also cite this publication,
 
@@ -85,7 +89,7 @@ Since **smol** is based on **pymatgen**, please also cite this publication,
 
 Additionally, several of the functionality included in **smol** is based on
 methodology developed by various researchers. Please see the
-:doc:`citing page </citing>` for additional refrences.
+:doc:`citing page </citing>` for additional references.
 
 License
 =======

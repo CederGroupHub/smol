@@ -8,23 +8,6 @@ import warnings
 from typing import Any, Dict
 
 
-def _repr(instance: object, **fields: Dict[str, Any]) -> str:
-    """Create object representation.
-
-    A helper function for repr overloading in classes.
-    """
-    attrs = []
-
-    for key, field in fields.items():
-        attrs.append(f"{key}={field!r}")
-
-    return (
-        (f"<{instance.__class__.__name__} {hex(id(instance))}({','.join(attrs)})>")
-        if len(attrs) == 0
-        else f"<{instance.__class__.__name__} {hex(id(instance))}>"
-    )
-
-
 def class_name_from_str(class_str):
     """Return a class name based on given string.
 
@@ -60,7 +43,7 @@ def derived_class_factory(
     Args:
         class_name (str):
             name of class
-        base_class (obect):
+        base_class (object):
             base class of derived class sought
         *args:
             positional arguments for class constructor
@@ -116,7 +99,7 @@ def progress_bar(display, total, description):
     if display:
         if tqdm is None:
             warnings.warn(
-                "tqdm libary needs to be installed to show a " " progress bar."
+                "tqdm library needs to be installed to show a " " progress bar."
             )
             return _EmptyBar()
 

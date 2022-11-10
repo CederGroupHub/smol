@@ -4,12 +4,67 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+# [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
 ### Changed
+### Fixed
 ### Removed
 ### Deprecated
+
+# [v0.1.0](https://github.com/CederGroupHub/smol/releases/tag/v0.1.0) (2022-10-20)
+### Added
+* Charge neutral semi grand canonical sampling. #271 @qchempku2017
+* `MultiStep` and `Composite` mcushers for more flexible sampling. #279 @lbluque
+
+# [v0.0.7](https://github.com/CederGroupHub/smol/releases/tag/v0.0.7) (2022-09-26)
+### Added
+* Additional tests to ensure correlation vectors are consistent across equivalent
+  supercell matrices.  #262 @qchempku2017
+* Unit-test updates. #269 @lbluque
+### Changed
+* Improved orbit alias detection. #262 @qchempku2017
+
+# [v0.0.6](https://github.com/CederGroupHub/smol/releases/tag/v0.0.6) (2022-09-02)
+:warning: This version introduced updates that change the order in which orbits are
+sorted in a ClusterSubspace. This means that the order correlation functions appear
+a correlation vector will be different when generating ClusterSubspaces compared to
+previous versions. However, loading a ClusterSubspace from a json file that was
+created with a previous version will still have its original order.
+### Changed
+* Include number of corr functions when sorting orbits. #256 @lbluque
+* Use max distance of centroid to sites in unit cell in cluster search. #256 @lbluque
+### Fixed
+* Fixed search of clusters by correctly using centroid of unit cell. #255 @kamronald
+### Removed
+* Removed CanonicalEnsemble and SemigrandEnsemble. #257 @lbluque
+
+# [v0.0.5](https://github.com/CederGroupHub/smol/releases/tag/v0.0.5) (2022-08-10)
+### Added
+* Data centering example notebook. #238 @kamronald
+### Changed
+* Single sampler multiple kernels. #245 @qchempku2017
+### Fixed
+* Fix returning all sub_orbit_mappings. #249 @lbluque
+
+# [v0.0.4](https://github.com/CederGroupHub/smol/releases/tag/v0.0.4) (2022-06-23)
+### Added
+* Allow streaming to h5 in simulated annealing. #216 @lbluque
+### Fixed
+* Fix recording sampled traces for nwalkers > 1. #219 @lbluque
+* Fix minor error in ClusterSubspace.__str__ #226 @lbluque
+
+# [v0.0.3](https://github.com/CederGroupHub/smol/releases/tag/v0.0.3) (2022-06-03)
+### Added
+* Developing section of docs. #215 @lbluque
+* Single `Ensemble` class for canonical and semi-grand canonical sampling. #210 @lbluque
+### Changed
+* Package name properly `smol` instead of `statmech-on-lattices`.
+### Fixed
+* Fixed #213 metadata serialization for saving of `SampleContainers`. #214 @lbluque
+### Deprecated
+* `SemiGrandEnsemble` and `CanonicalEnsemble`. Use `Ensemble` with or without setting
+   chemical potentials instead. #210 @lbluque
 
 # [v0.0.2](https://github.com/CederGroupHub/smol/releases/tag/v0.0.2) (2022-05-22)
 ### Fixed
@@ -246,7 +301,7 @@ sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
      `Metropolis` currently only kernel implemented to run single site
      Metropolis random walk.
   * `MCUsher` classes to handle specific MCMC step proposals (i.e. single
-  swaps, to preseve composition, single flips, single constrained flips,
+  swaps, to preserve composition, single flips, single constrained flips,
   multisite flips, local flips, etc).
   * `SampleContainer` class to hold MCMC samples and pertinent information for
   post-processing and analysis (improvement on previous implementation using
@@ -255,7 +310,7 @@ sets. [\#90](https://github.com/CederGroupHub/smol/pull/90)
 * `Vacancy` class, inherits from `pymatgen.DummySpecie`.
 * `SiteSpace` class to encapsulate prior site space implementation using
 OrderedDicts.
-* `get_species` function to mimick `get_el_sp` from pymatgen but correctly
+* `get_species` function to mimic `get_el_sp` from pymatgen but correctly
 handle `Vacancy`.
 * MCMC sample streaming functionality using hdf5 files.
 [\#84](https://github.com/CederGroupHub/smol/pull/84)

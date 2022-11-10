@@ -9,6 +9,7 @@ diverges from the CE mathematic formalism.
 # pylint: disable=too-many-lines
 
 
+import itertools
 import warnings
 from copy import deepcopy
 from importlib import import_module
@@ -111,13 +112,13 @@ class ClusterSubspace(MSONable):
                 StructureMatcher used to find supercell matrices
                 relating the prim structure to other structures. If you pass
                 this directly you should know how to set the matcher up,
-                otherwise matching your relaxed structures can fail, alot.
+                otherwise matching your relaxed structures can fail, a lot.
             site_matcher (StructureMatcher): optional
                 StructureMatcher used to find site mappings
                 relating the sites of a given structure to an appropriate
                 supercell of the prim structure . If you pass this directly you
                 should know how to set the matcher up, otherwise matching your
-                relaxed structures can fail, alot.
+                relaxed structures can fail, a lot.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
                 through to the StructureMatchers. Structures that don't match
@@ -237,13 +238,13 @@ class ClusterSubspace(MSONable):
                 StructureMatcher used to find supercell matrices
                 relating the prim structure to other structures. If you pass
                 this directly you should know how to set the matcher up,
-                otherwise matching your relaxed structures will fail, alot.
+                otherwise matching your relaxed structures will fail, a lot.
             site_matcher (StructureMatcher): optional
                 StructureMatcher used to find site mappings
                 relating the sites of a given structure to an appropriate
                 supercell of the prim structure . If you pass this directly you
                 should know how to set the matcher up, otherwise matching your
-                relaxed structures will fail, alot.
+                relaxed structures will fail, a lot.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
                 through to the StructureMatchers. Structures that don't match
@@ -409,12 +410,12 @@ class ClusterSubspace(MSONable):
         The orbit hierarchy represents in inclusion relationships between orbits and
         their suborbits.
 
-        The empty/constant cluster index 0 is technically a suborbit of all
-        orbits, but is not added to the hierarchy entries.
-
         Args:
-            level (int):
-            min_size (int):
+            level (int): optional
+                how many levels down to look for suborbits. If all suborbits
+                are needed make level large enough or set to None.
+            min_size (int): optional
+                minimum size of clusters in sub orbits to include
 
         Returns:
             list of list: each element of the inner lists is the orbit id for
@@ -444,8 +445,11 @@ class ClusterSubspace(MSONable):
         it is a factor of a higher degree correlation function.
 
         Args:
-            level (int):
-            min_size (int):
+            level (int): optional
+                how many levels down to look for suborbits. If all suborbits
+                are needed make level large enough or set to None.
+            min_size (int): optional
+                minimum size of clusters in sub orbits to include
             invert (bool): optional
                 Default is invert=False which gives the high to low bit combo
                 hierarchy. Invert= True will invert the hierarchy into low to
@@ -593,18 +597,9 @@ class ClusterSubspace(MSONable):
         )
         occu = np.array(occu, dtype=int)
 
-        # Create a list of tuples with necessary information to compute corr
-        mappings = self.supercell_orbit_mappings(scmatrix)
-        orbit_list = [
-            (
-                orbit.bit_id,
-                orbit.flat_tensor_indices,
-                orbit.flat_correlation_tensors,
-                cluster_indices,
-            )
-            for cluster_indices, orbit in zip(mappings, self.orbits)
-        ]
-        corr = corr_from_occupancy(occu, self.num_corr_functions, orbit_list)
+        corr = corr_from_occupancy(
+            occu, self.num_corr_functions, self.gen_orbit_list(scmatrix)
+        )
         size = self.num_prims_from_matrix(scmatrix)
 
         if self.external_terms:
@@ -710,7 +705,7 @@ class ClusterSubspace(MSONable):
         if site_mapping is None:
             site_mapping = self.structure_site_mapping(supercell, structure)
 
-        occu = []  # np.zeros(len(self.supercell_structure), dtype=np.int)
+        occu = []  # np.zeros(len(self.supercell_structure), dtype=int)
 
         for i, allowed_species in enumerate(get_allowed_species(supercell)):
             # rather than starting with all vacancies and looping
@@ -728,6 +723,10 @@ class ClusterSubspace(MSONable):
                 occu.append(allowed_species.index(spec))
             else:
                 occu.append(spec)
+
+        if encode:  # cast to ndarray dtype int
+            occu = np.array(occu, dtype=int)
+
         return occu
 
     def scmatrix_from_structure(self, structure):
@@ -768,7 +767,6 @@ class ClusterSubspace(MSONable):
         """
         # np.arrays are not hashable and can't be used as dict keys.
         scmatrix = np.array(scmatrix)
-        # so change them into a tuple of sorted tuples for unique keys.
         scm = tuple(sorted(tuple(s.tolist()) for s in scmatrix))
         indices = self._supercell_orb_inds.get(scm)
 
@@ -806,13 +804,16 @@ class ClusterSubspace(MSONable):
         sc_orb_map = self.supercell_orbit_mappings(sc_matrix)
         aliased_orbits = []
         for orb_i, orb_map_i in enumerate(sc_orb_map):
+            # +1 because ECI index takes the null cluster as index 0.
+            if orb_i + 1 in itertools.chain(*aliased_orbits):
+                continue
             orb_i_id = orb_i + 1
             aliased = False
             orbit_i_aliased = [orb_i_id]
             sorted_orb_map_i = {tuple(sorted(c_map)) for c_map in orb_map_i}
 
             for orb_j, orb_map_j in enumerate(sc_orb_map):
-                if orb_i == orb_j:
+                if orb_i >= orb_j or (orb_j + 1 in itertools.chain(*aliased_orbits)):
                     continue
                 orb_j_id = orb_j + 1
                 sorted_orb_map_j = {tuple(sorted(c_map)) for c_map in orb_map_j}
@@ -1021,6 +1022,38 @@ class ClusterSubspace(MSONable):
 
         return sub_fun_ids
 
+    def gen_orbit_list(self, scmatrix):
+        """
+        Generate list of data to compute correlation vectors.
+
+        List includes orbit bit ids, flat correlation tensors and their indices,
+        and array of cluster indices for supercell corresponding to given
+        supercell matrix.
+
+        This is a helper function for the correlation vector computation and most
+        often called internally.
+
+        Args:
+            scmatrix (ndarray):
+                supercell matrix.
+
+        Returns: list of tuples
+            [(orbit bit ids, tensor  indices, flat corr tensors, cluster indices)]
+        """
+        mappings = self.supercell_orbit_mappings(scmatrix)
+        orbit_list = []
+        for orbit, cluster_inds in zip(self.orbits, mappings):
+            orbit_list.append(
+                (
+                    orbit.bit_id,
+                    orbit.flat_tensor_indices,
+                    orbit.flat_correlation_tensors,
+                    cluster_inds,
+                )
+            )
+
+        return orbit_list
+
     def _assign_orbit_ids(self):
         """Assign unique id's to orbit.
 
@@ -1064,7 +1097,7 @@ class ClusterSubspace(MSONable):
             basis (str):
                 name identifying site basis set to use.
             orthonorm (bool):
-                wether to ensure orthonormal basis set.
+                whether to ensure orthonormal basis set.
             use_conc (bool):
                 If true the concentrations in the prim structure sites will be
                 used as the measure to orthormalize site bases.
@@ -1140,9 +1173,15 @@ class ClusterSubspace(MSONable):
             if new_orbit not in pt_orbits:
                 pt_orbits.append(new_orbit)
 
+        # sorted by decreasing crystallographic multiplicity and finally by increasing
+        # number of correlation functions (bit combos) -> so that higher symmetry orbits
+        # come first
         pt_orbits = sorted(
             pt_orbits,
-            key=lambda x: (np.round(x.base_cluster.diameter, 6), -x.multiplicity),
+            key=lambda x: (
+                -x.multiplicity,
+                len(x),
+            ),
         )
         return pt_orbits
 
@@ -1173,17 +1212,18 @@ class ClusterSubspace(MSONable):
             dict:
                 {size: list of Orbits within diameter cutoff}
         """
-        # Vector sum of a, b, c divided by 2.
         # diameter + max_lp gives maximum possible distance from
         # [0.5, 0.5, 0.5] prim centoid to a point in all enumerable
         # clusters. Add SITE_TOL as a numerical tolerance grace.
         orbits = {1: point_orbits}
-        max_lp = np.linalg.norm(exp_struct.lattice.matrix.sum(axis=0)) / 2
-        max_lp += SITE_TOL
+        centroid = exp_struct.lattice.get_cartesian_coords([0.5, 0.5, 0.5])
+        coords = exp_struct.lattice.get_cartesian_coords(exp_struct.frac_coords)
+        max_lp = max(np.sum((coords - centroid) ** 2, axis=-1) ** 0.5) + SITE_TOL
+
         for size, diameter in sorted(cutoffs.items()):
             new_orbits = []
             neighbors = exp_struct.get_sites_in_sphere(
-                [0.5, 0.5, 0.5], diameter + max_lp, include_index=True
+                centroid, diameter + max_lp, include_index=True
             )
             for orbit in orbits[size - 1]:
                 if orbit.base_cluster.diameter > diameter:
@@ -1214,12 +1254,16 @@ class ClusterSubspace(MSONable):
                     if new_orbit not in new_orbits:
                         new_orbits.append(new_orbit)
 
+            # sorted by increasing cluster diameter, then by decreasing crystallographic
+            # multiplicity and finally by increasing number of correlation functions
+            # (bit combos) -> so that higher symmetry orbits come first
             if len(new_orbits) > 0:
                 orbits[size] = sorted(
                     new_orbits,
                     key=lambda x: (
                         np.round(x.base_cluster.diameter, 6),
                         -x.multiplicity,
+                        len(x),
                     ),
                 )
         return orbits
@@ -1251,7 +1295,7 @@ class ClusterSubspace(MSONable):
             # orbit_ids holds orbit, and 2d array of index groups that
             # correspond to the orbit
             # the 2d array may have some duplicates. This is due to
-            # symetrically equivalent groups being matched to the same sites
+            # symmetrically equivalent groups being matched to the same sites
             # (eg in simply cubic all 6 nn interactions will all be [0, 0]
             # indices. This multiplicity disappears as supercell_structure size
             # increases, so I haven't implemented a more efficient method
@@ -1287,7 +1331,7 @@ class ClusterSubspace(MSONable):
         """Convert class into pretty string for printing."""
         outs = [
             f"Basis/Orthogonal/Orthonormal : {self.basis_type}/{self.basis_orthogonal}/"
-            "{self.basis_orthonormal}",
+            f"{self.basis_orthonormal}",
             f"       Unit Cell Composition : {self.structure.composition}",
             f"            Number of Orbits : {self.num_orbits}",
             f"No. of Correlation Functions : {self.num_corr_functions}",
@@ -1415,7 +1459,7 @@ def invert_mapping(mapping):
     Args:
         mapping (list of lists):
             List of sublists, each contains integer indices, indicating
-            a foward mapping from the current sublist index to the indices
+            a forward mapping from the current sublist index to the indices
             in the sublist.
 
     Returns:
@@ -1447,7 +1491,7 @@ def get_complete_mapping(mapping):
     Args:
         mapping (list of lists):
              List of sublists, each contains integer indices, indicating
-            a foward mapping from the current sublist index to the indices
+            a forward mapping from the current sublist index to the indices
             in the sublist.
 
     Returns:
@@ -1534,13 +1578,13 @@ class PottsSubspace(ClusterSubspace):
                 StructureMatcher used to find supercell matrices
                 relating the prim structure to other structures. If you pass
                 this directly you should know how to set the matcher up,
-                otherwise matching your relaxed structures can fail, alot.
+                otherwise matching your relaxed structures can fail, a lot.
             site_matcher (StructureMatcher): (optional)
                 StructureMatcher used to find site mappings
                 relating the sites of a given structure to an appropriate
                 supercell of the prim structure . If you pass this directly you
                 should know how to set the matcher up, otherwise matching your
-                relaxed structures can fail, alot.
+                relaxed structures can fail, a lot.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
                 through to the StructureMatchers. Structures that don't match
@@ -1599,13 +1643,13 @@ class PottsSubspace(ClusterSubspace):
                StructureMatcher used to find supercell matrices
                relating the prim structure to other structures. If you pass
                this directly you should know how to set the matcher up,
-               otherwise matching your relaxed structures will fail, alot.
+               otherwise matching your relaxed structures will fail, a lot.
            site_matcher (StructureMatcher): (optional)
                StructureMatcher used to find site mappings
                relating the sites of a given structure to an appropriate
                supercell of the prim structure . If you pass this directly you
                should know how to set the matcher up, otherwise matching your
-               relaxed structures will fail, alot.
+               relaxed structures will fail, a lot.
            matcher_kwargs:
                ltol, stol, angle_tol, supercell_size: parameters to pass
                through to the StructureMatchers. Structures that don't match

@@ -1,0 +1,15 @@
+name: smol-env
+channels:
+  - default
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pymatgen
+  - spglib<2.0.0
+  - scipy
+  - polytope
+  - cvxpy
+  - cvxopt
+  - h5py
+  - pip:
+    - smol

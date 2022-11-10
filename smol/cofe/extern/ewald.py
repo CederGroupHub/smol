@@ -93,7 +93,7 @@ class EwaldTerm(MSONable):
                 inds[i] = len(ewald_sites)
                 ewald_sites.append(PeriodicSite(spec, site.frac_coords, site.lattice))
             ewald_inds.append(inds)
-        ewald_inds = np.array(ewald_inds, dtype=np.int)
+        ewald_inds = np.array(ewald_inds, dtype=int)
         ewald_structure = Structure.from_sites(ewald_sites)
 
         return ewald_structure, ewald_inds
@@ -124,7 +124,7 @@ class EwaldTerm(MSONable):
         #   i_inds = i_inds[i_inds != -1]
         # just make b_inds one longer than it needs to be and don't return
         # the last value
-        b_inds = np.zeros(num_ewald_sites + 1, dtype=np.bool)
+        b_inds = np.zeros(num_ewald_sites + 1, dtype=bool)
         b_inds[i_inds] = True
         return b_inds[:-1]
 

@@ -46,6 +46,16 @@ def test_regression_data(cluster_subspace, rng):
     assert reg_data.parameters == reg.get_params()
     assert_msonable(expansion)
 
+    # test bad feature matrix shape
+    reg_data = RegressionData.from_sklearn(
+        reg, feature_matrix=feat_matrix[:, :-1], property_vector=prop_vec
+    )
+    with pytest.raises(AttributeError):
+        expansion = ClusterExpansion(cluster_subspace, coeffs, reg_data)
+    # test bad coeff length
+    with pytest.raises(AttributeError):
+        expansion = ClusterExpansion(cluster_subspace, coeffs[:-1], reg_data)
+
 
 def test_predict(cluster_expansion, rng):
     subspace = cluster_expansion.cluster_subspace
@@ -98,7 +108,7 @@ def test_prune(cluster_expansion):
     assert len(expansion.eci_orbit_ids) == len(new_coefs)
     pruned_feat_matrix = cluster_expansion._feat_matrix[:, ids]
     npt.assert_array_equal(expansion._feat_matrix, pruned_feat_matrix)
-    # check that recomputing features produces whats expected
+    # check that recomputing features produces what's expected
     new_feature_matrix = np.array(
         [
             expansion.cluster_subspace.corr_from_structure(s)
@@ -112,6 +122,8 @@ def test_prune(cluster_expansion):
 
 
 def test_msonable(cluster_expansion):
+    _ = repr(cluster_expansion)
+    _ = str(cluster_expansion)
     _ = str(cluster_expansion)
     d = cluster_expansion.as_dict()
     ce1 = ClusterExpansion.from_dict(d)

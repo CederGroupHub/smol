@@ -13,6 +13,8 @@ from smol.moca.processor import (
 from smol.moca.processor.base import Processor
 from tests.utils import assert_msonable, gen_random_occupancy, gen_random_structure
 
+pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
+
 RTOL = 0.0  # relative tolerance to check property change functions
 # absolute tolerance to check property change functions (eps is approx 2E-16)
 ATOL = 2e4 * np.finfo(float).eps
@@ -70,7 +72,7 @@ def test_site_spaces(ce_processor):
 
 def test_sublattice(ce_processor):
     sublattices = ce_processor.get_sublattices()
-    # These are default initialized, not splitted.
+    # These are default initialized, not split.
     site_species = get_allowed_species(ce_processor.structure)
     for sublatt, site_space in zip(sublattices, ce_processor.unique_site_spaces):
         assert sublatt.site_space == site_space
@@ -122,7 +124,7 @@ def test_structure_occupancy_conversion(ce_processor):
 
         # occu_conv = ce_processor.occupancy_from_structure(s_conv)
 
-        # For symetrically equivalent structures, StructureMatcher might generate
+        # For symmetrically equivalent structures, StructureMatcher might generate
         # different structure_site_mappings
         # (see cluster_subspace.structure_site_mappings), therefore we may get
         # different occupancy strings with occupancy_from_structure, and
@@ -130,7 +132,7 @@ def test_structure_occupancy_conversion(ce_processor):
         # occu1 == occu2. In most use cases, it is not necessary to enforce that
         # occu1 == occu2. If you have to do so, you'll need to deeply modify the code of
         # StructureMatcher, which might not be a trivial task. Here we will only test
-        # whether occu1 -> str1 and occu2 -> str2 are symetrically equivalent.
+        # whether occu1 -> str1 and occu2 -> str2 are symmetrically equivalent.
         # This should be enough in our application. We notify the users about this
         # mismatch in the documentations.
         assert sm.fit(s_init, s_conv)

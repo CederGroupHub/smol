@@ -1,19 +1,25 @@
+import os
+
 import numpy as np
 import numpy.testing as npt
 import pytest
 
-from smol.moca import Sampler
+from smol.moca import SampleContainer, Sampler
 from smol.moca.sampler.kernel import Metropolis
 from smol.moca.sampler.mcusher import Flip, Swap
 from tests.utils import gen_random_occupancy
 
 TEMPERATURE = 5000
+ATOL = 1e-14
 
 
 @pytest.fixture(params=[1, 5])
 def sampler(ensemble, rng, request):
     sampler = Sampler.from_ensemble(
-        ensemble, temperature=TEMPERATURE, seed=rng, nwalkers=request.param
+        ensemble,
+        temperature=TEMPERATURE,
+        seeds=[rng for _ in range(request.param)],
+        nwalkers=request.param,
     )
     # fix this additional attribute to sampler to access in gen occus for tests
     sampler.num_sites = ensemble.num_sites
@@ -21,18 +27,18 @@ def sampler(ensemble, rng, request):
 
 
 def test_from_ensemble(sampler):
-    if "Canonical" in sampler.samples.metadata["name"]:
-        assert isinstance(sampler.mckernel._usher, Swap)
+    if "chemical_potentials" in sampler.samples.metadata:
+        assert isinstance(sampler.mckernels[0]._usher, Flip)
     else:
-        assert isinstance(sampler.mckernel._usher, Flip)
-    assert isinstance(sampler.mckernel, Metropolis)
+        assert isinstance(sampler.mckernels[0]._usher, Swap)
+    assert isinstance(sampler.mckernels[0], Metropolis)
 
 
 @pytest.mark.parametrize("thin", (1, 10))
 def test_sample(sampler, thin):
     occu = np.vstack(
         [
-            gen_random_occupancy(sampler.mckernel._usher.sublattices)
+            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices)
             for _ in range(sampler.samples.shape[0])
         ]
     )
@@ -47,25 +53,41 @@ def test_sample(sampler, thin):
 
 # TODO efficiency is sometimes =0 and so fails
 @pytest.mark.parametrize("thin", (1, 10))
-def test_run(sampler, thin):
+def test_run(sampler, thin, rng):
     occu = np.vstack(
         [
-            gen_random_occupancy(sampler.mckernel._usher.sublattices)
-            for _ in range(sampler.samples.shape[0])
+            gen_random_occupancy(kernel._usher.sublattices)
+            for kernel in sampler.mckernels
         ]
     )
     steps = 1000
     sampler.run(steps, occu, thin_by=thin)
     assert len(sampler.samples) == steps // thin
     assert 0 <= sampler.efficiency() <= 1
+
+    # pick some random samples and check recorded traces match!
+    for i in rng.choice(range(sampler.samples.num_samples), size=10):
+        npt.assert_allclose(
+            sampler.samples.get_feature_vectors(flat=False)[i],
+            np.vstack(
+                list(
+                    map(
+                        sampler.mckernels[0]._compute_features,
+                        sampler.samples.get_occupancies(flat=False)[i],
+                    )
+                )
+            ),
+            atol=ATOL,
+        )
+
     sampler.clear_samples()
 
 
-def test_anneal(sampler):
+def test_anneal(sampler, tmpdir):
     temperatures = np.linspace(2000, 500, 5)
     occu = np.vstack(
         [
-            gen_random_occupancy(sampler.mckernel._usher.sublattices)
+            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices)
             for _ in range(sampler.samples.shape[0])
         ]
     )
@@ -81,6 +103,22 @@ def test_anneal(sampler):
             ]
         )
     npt.assert_array_equal(sampler.samples.get_trace_value("temperature"), expected)
+    assert sampler.samples.num_samples == len(temperatures) * steps
+
+    # test streaming anneal
+    new_container = SampleContainer.from_dict(sampler.samples.as_dict())
+    new_container.clear()
+    new_sampler = Sampler(sampler.mckernels, new_container)
+    file_path = os.path.join(tmpdir, "test.h5")
+
+    new_sampler.anneal(
+        temperatures, steps, occu, stream_chunk=10, stream_file=file_path
+    )
+    assert new_sampler.samples.num_samples == 0
+    samples = SampleContainer.from_hdf5(file_path)
+    assert samples.num_samples == len(temperatures) * steps
+    npt.assert_array_equal(samples.get_trace_value("temperature"), expected)
+    os.remove(file_path)
     # test temp error
     with pytest.raises(ValueError):
         sampler.anneal([100, 200], steps)

@@ -324,8 +324,10 @@ class StructureWrangler(MSONable):
                     self.structures[c[0]], self.structures[c[1]], symmetric=True
                 )
             ]
-            overlaps = list(filter(lambda s: s[0] & s[1], combinations(matches, 2)))
-            while overlaps:  # change to := walrus when commiting to 3.8 only
+
+            while overlaps := list(
+                filter(lambda s: s[0] & s[1], combinations(matches, 2))
+            ):
                 all_overlaps = [o for overlap in overlaps for o in overlap]
                 # keep only disjoint sets
                 matches = [s for s in matches if s not in all_overlaps]
@@ -466,7 +468,7 @@ class StructureWrangler(MSONable):
         or unit cell, directly from DFT).
 
         An attempt to compute the correlation vector is made and if successful the
-        structure is succesfully added. Otherwise the structure is ignored.
+        structure is successfully added. Otherwise the structure is ignored.
         Usually failures are caused by the StructureMatcher in the given
         ClusterSubspace failing to map structures to the primitive structure.
 
@@ -518,14 +520,14 @@ class StructureWrangler(MSONable):
             self._corr_duplicate_warning(self.num_structures - 1)
 
     def append_entries(self, entries):
-        """Append a list of entrys.
+        """Append a list of entries.
 
         Each entry must have all necessary fields. A entry can be
         obtained using the process_structure method.
 
         Args:
             entries (list of ComputedStructureEntry):
-                list of entrys with all necessary information
+                list of entries with all necessary information
         """
         required_keys = [
             "refined_structure",
@@ -548,7 +550,8 @@ class StructureWrangler(MSONable):
                     raise ValueError(
                         f"The properties in the entry being added do not match all "
                         f"the properties that have already been added: "
-                        f"{self.available_properties}.\n Additional entrys must include "
+                        f"{self.available_properties}.\n"
+                        f" Additional entries must include "
                         f"the same properties included."
                     )
 
@@ -556,7 +559,8 @@ class StructureWrangler(MSONable):
                     raise ValueError(
                         f"The properties in the entry being added do not match all "
                         f"the weights that have already been added: "
-                        f"{self.available_weights}.\n Additional entrys must include the"
+                        f"{self.available_weights}.\n"
+                        f" Additional entries must include the"
                         f" same weights included."
                     )
             self._entries.append(entry)
@@ -616,7 +620,7 @@ class StructureWrangler(MSONable):
                 for entry in self._entries:
                     del entry.data["properties"][key]
             except KeyError:
-                warnings.warn(f"Propertiy {key} does not exist.", RuntimeWarning)
+                warnings.warn(f"Property {key} does not exist.", RuntimeWarning)
 
     def remove_entry(self, entry):
         """Remove a given structure and associated data."""
@@ -682,7 +686,7 @@ class StructureWrangler(MSONable):
 
         Args:
             entry (ComputedStructureEntry):
-                A ComputedStructureEntry corresponding to a training strucutre and
+                A ComputedStructureEntry corresponding to a training structure and
                 properties
             properties (dict): optional
                 A dictionary with a keys describing the property and the target
@@ -875,7 +879,7 @@ class StructureWrangler(MSONable):
             "@class": self.__class__.__name__,
             "_subspace": self._subspace.as_dict(),
             "_entries": [entry.as_dict() for entry in self._entries],
-            "_ind_sets": jsanitize(self._ind_sets),  # jic for np.int's
+            "_ind_sets": jsanitize(self._ind_sets),  # jic for int's
             "metadata": self.metadata,
         }
         return wrangler_dict

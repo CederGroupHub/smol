@@ -1,3 +1,5 @@
+.. _geting-started :
+
 ===============
 Getting Started
 ===============
@@ -5,12 +7,18 @@ Getting Started
 
 Installation
 ============
-**smol** is purposedly light on dependencies which should make the installation
+**smol** is purposely light on dependencies which should make the installation
 process headache free. Using ``pip``::
 
-        pip install statmech-on-lattices
+        pip install smol
 
-(unfortunately someone is name-squatting so we can't use "smol" for now.)
+Although **smol** is not tested on Windows platforms, it should still run on Windows
+since there aren't any platform specific dependencies. The only known installation issue
+is building *pymatgen* dependencies. If simply running ``pip install smol`` fails, try
+installing *pymatgen* with conda first::
+
+        conda install -c conda-forge pymatgen
+        pip install smol
 
 Basic Usage
 ===========
@@ -30,8 +38,7 @@ Start by creating a disordered primitive structure.
 
     >>> from pymatgen.core.structure import Structure, Lattice
     >>> species = {"Au": 0.5, "Cu": 0.5}
-    >>> prim = Structure.from_spacegroup(
-            "Fm-3m", Lattice.cubic(3.6), [species], [[0, 0, 0]])
+    >>> prim = Structure.from_spacegroup("Fm-3m", Lattice.cubic(3.6), [species], [[0, 0, 0]])
 
 Now create a cluster subspace for that structure including pair, triplet and
 quadruplet clusters up to given cluster diameter cutoffs.
@@ -71,11 +78,10 @@ fit.
 
     >>> from sklearn.linear_model import LinearRegression
     >>> reg = LinearRegression(fit_intercept=False)
-    >>> reg.fit(wrangler.feature_matrix,
-                wrangler.get_property_vector("energy"))
+    >>> reg.fit(wrangler.feature_matrix, wrangler.get_property_vector("energy"))
 
 Finally, create a cluster expansion for prediction of new structures and
-eventual Monte Carlo sampling. We recommed saving the details used to fit the
+eventual Monte Carlo sampling. We recommend saving the details used to fit the
 expansion for future reproducibility (although this is not strictly necessary).
 
 .. nbplot::
@@ -84,9 +90,9 @@ expansion for future reproducibility (although this is not strictly necessary).
     >>> reg_data = RegressionData.from_sklearn(
             estimator=reg,
             feature_matrix=wrangler.feature_matrix,
-            property_vector=wrangler.get_property_vector('energy'))
-    >>> expansion = ClusterExpansion(
-            subspace, coefficients=reg.coef_, regression_data=reg_data)
+            property_vector=wrangler.get_property_vector('energy')
+        )
+    >>> expansion = ClusterExpansion(subspace, coefficients=reg.coef_, regression_data=reg_data)
 
 Creating an ensemble for Monte Carlo Sampling
 ---------------------------------------------
@@ -96,10 +102,9 @@ to define the sampling domain.
 
 .. nbplot::
 
-    >>> from smol.moca import CanonicalEnsemble
+    >>> from smol.moca import Ensemble
     >>> sc_matrix = [[5, 0, 0], [0, 5, 0], [0, 0, 5]]
-    >>> ensemble = CanonicalEnsemble.from_cluster_expansion(
-            expansion, supercell_matrix=sc_matrix)
+    >>> ensemble = Ensemble.from_cluster_expansion(expansion, supercell_matrix=sc_matrix)
 
 Running Monte Carlo sampling
 ----------------------------
@@ -109,8 +114,7 @@ object.
 .. nbplot::
 
     >>> from smol.moca import Sampler
-    >>> sampler = Sampler.from_ensemble(
-            ensemble, temperature=500)
+    >>> sampler = Sampler.from_ensemble(ensemble, temperature=1000)
 
 In order to begin an MC simulation, an initial configuration must be provided.
 In this case we use pymatgen's functionality to provide an ordered structure
@@ -118,33 +122,31 @@ given a disordered one.
 
 .. nbplot::
 
-    >>> from pymatgen.transformations.standard_transformations import \
-            OrderDisorderedStructureTransformation
+    >>> from pymatgen.transformations.standard_transformations import OrderDisorderedStructureTransformation
     >>> transformation = OrderDisorderedStructureTransformation()
     >>> structure = expansion.cluster_subspace.structure.copy()
     >>> structure.make_supercell(sc_matrix)
     >>> structure = transformation.apply_transformation(structure)
 
 Finally, the ordered structure can be used to generate an initial configuration
-to run MC sampling interations.
+to run MC sampling.
 
 .. nbplot::
 
     >>> init_occu = ensemble.processor.occupancy_from_structure(structure)
-    >>> sampler.run(1000000, initial_occupancy=init_occu)
+    >>> sampler.run(100000, initial_occupancy=init_occu)
 
 Saving the generated objects and data
 -------------------------------------
 To save the generated objects for the previous workflow we can simply use the
-provided convenience io functionaltiy. However, all main classes are
+provided convenience io functionality. However, all main classes are
 serializable just as pymatgen and so can be saved as json dictionaries or
 using the `monty <https://guide.materialsvirtuallab.org/monty//>`_ python
 package.
 
 .. nbplot::
 
-    >>> save_work(
-        "CuAu_ce_mc.json", wrangler, expansion, ensemble, sampler.samples)
+    >>> save_work("CuAu_ce_mc.json", wrangler, expansion, ensemble, sampler.samples)
 
 
 .. code-links:: python
@@ -153,8 +155,14 @@ package.
 
 Example Notebooks
 =================
+
 For more detailed examples on how to use **smol** have a look at the following
 Jupyter notebooks.
+
+You can run the notebooks interactively on Binder.
+
+.. image:: https://mybinder.org/badge_logo.svg
+ :target: https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb
 
 Basic Examples
 --------------
@@ -163,7 +171,8 @@ Basic Examples
 - `Creating a cluster expansion with electrostatics`_
 - `Visualizing clusters`_
 - `Running Canonical Monte Carlo`_
-- `Running Semi-Grand Canonical Monte Carlo`_
+- `Running Semigrand Canonical Monte Carlo`_
+- `Running Charge Neutral Semigrand Canonical Monte Carlo`_
 - `Preparing cluster expansion training data`_
 
 .. _Creating a basic cluster expansion: notebooks/creating-a-ce.ipynb
@@ -174,16 +183,21 @@ Basic Examples
 
 .. _Running Canonical Monte Carlo: notebooks/running-canonical-mc.ipynb
 
-.. _Running Semi-Grand Canonical Monte Carlo: notebooks/running-semigrand-mc.ipynb
+.. _Running Semigrand Canonical Monte Carlo: notebooks/running-semigrand-mc.ipynb
+
+.. _Running Charge Neutral Semigrand Canonical Monte Carlo: notebooks/running-charge-balanced-gcmc.ipynb
 
 .. _Preparing cluster expansion training data: notebooks/training-data-preparation.ipynb
 
 Advanced Examples
 -----------------
 
+- `Centering training data in stage-wise fit with electrostatics`_
 - `Adding structures to a StructureWrangler in parallel`_
 - `Simulated annealing with point electrostatics`_
 - `Li-Mn-O DRX cluster expansion and sampling`_
+
+.. _Centering training data in stage-wise fit with electrostatics: notebooks/ce-fit-w-centering.ipynb
 
 .. _Adding structures to a StructureWrangler in parallel: notebooks/adding-structures-in-parallel.ipynb
 

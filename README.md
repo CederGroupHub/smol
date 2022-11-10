@@ -1,4 +1,4 @@
-<img src="docs/_static/logo.png" width="500px" alt=" ">
+<img src="docs/src/_static/logo.png" width="500px" alt=" ">
 
 Statistical Mechanics on Lattices
 =================================
@@ -6,12 +6,14 @@ Statistical Mechanics on Lattices
 ![test](https://github.com/CederGroupHub/smol/actions/workflows/test.yml/badge.svg)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/f6180b5223f346d2ac9dcf9a4bcc62d9)](https://www.codacy.com/gh/CederGroupHub/smol/dashboard?utm_source=github.com&utm_medium=referral&utm_content=CederGroupHub/smol&utm_campaign=Badge_Coverage)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/CederGroupHub/smol/main.svg)](https://results.pre-commit.ci/latest/github/CederGroupHub/smol/main)
-[![pypi version](https://img.shields.io/pypi/v/statmech-on-lattices?color=blue)](https://pypi.org/project/statmech-on-lattices)
-![python versions](https://img.shields.io/pypi/pyversions/statmech-on-lattices)
+[![pypi version](https://img.shields.io/pypi/v/smol?color=blue)](https://pypi.org/project/smol)
+![python versions](https://img.shields.io/pypi/pyversions/smol)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb)
+[![status](https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25/status.svg)](https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25)
 
-*Lighthweight but caffeinated Python implementation of computational methods
+*Lightweight but caffeinated Python implementation of computational methods
 for statistical mechanical calculations of configurational states in
-crystalline material systems.*
+crystalline materials.*
 
 -----------------------------------------------------------------------------
 
@@ -21,9 +23,7 @@ material systems based on the *cluster expansion* method from alloy theory and
 related methods. Although **smol** is intentionally lightweight---in terms of
 dependencies and built-in functionality---it has a modular design that closely
 follows underlying mathematical formalism and provides useful abstractions to
-easily extend existing methods or implement and test new ones. Finally,
-although initially conceived for method development, **smol** can (and is being)
-used in production for materials science research applications.
+easily extend existing methods or implement and test new ones.
 
 
 Functionality
@@ -42,17 +42,19 @@ Functionality
   from local updates in order to quickly compute properties and changes in
   properties for specified supercell sizes.
 - Flexible toolset to sample cluster expansions using Monte Carlo with
-  Canonical and Semigrand Canonical ensembles using a Metropolis sampler.
+  canonical, semigrand canonical, and charge neutral semigrand canonical ensembles
+  using a Metropolis sampler.
 
 **smol** is built on top of [pymatgen](https://pymatgen.org) so any pre/post
 structure analysis can be done seamlessly using the various functionality
 supported there.
 
 Installation
-----------
+------------
+
 From pypi:
 
-    pip install statmech-on-lattices
+    pip install smol
 
 From source:
 
@@ -62,18 +64,41 @@ lingering bugs. From the top level directory
 
     pip install .
 
+Although `smol` is not tested on Windows platforms, it should still run on Windows since
+there aren't any platform specific dependencies. The only known installation issue
+is building `pymatgen` dependencies. If simply running `pip install smol` fails, try
+installing `pymatgen` with conda first:
+
+    conda install -c conda-forge pymatgen
+    pip install smol
+
+You can also simply use the *environment.yml* file in the repository to install `smol`:
+
+    conda env create -f environment.yml
+    source activate smol-env
+
+
 Usage
 -----
 Refer to the [documentation](https://cedergrouphub.github.io/smol/) for details on using
 **smol**. Going through the [example notebooks](https://github.com/CederGroupHub/smol/tree/main/docs/src/notebooks)
-will also help you get started.
+will also help you get started. You can run the example notebooks interactively in
+[binder](https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb).
+
+
+Citing
+------
+If you use **smol** in your research, please give the repo a star :star: and refer to
+the [citing](https://cedergrouphub.github.io/smol/citing.html) page in the documentation
+for formal citation information.
+
 
 Contributing
 ------------
 We welcome all your contributions with open arms! Please fork and pull request any contributions.
 See the
 [developing](https://cedergrouphub.github.io/smol/developer_guide/index.html)
-section in the documentation for how to contribute.
+page in the documentation for how to contribute.
 
 
 Changes

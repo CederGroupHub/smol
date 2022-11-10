@@ -1,3 +1,5 @@
+.. _user_guide :
+
 ==========
 User Guide
 ==========
@@ -8,20 +10,19 @@ model). Additionally, it includes tools to run Monte Carlo simulations to sample
 thermodynamic properties based on a fitted lattice model. The package is organized in
 two main submodules:
 
-- :ref:`smol.cofe ug` (Cluster Orbit Function Expansions) includes classes and
+- :ref:`smol.cofe ug` (:mod:`smol.cofe`) includes classes and
   functions to define, train, and test cluster expansions.
-- :ref:`smol.moca ug` (Monte Carlo) includes classes and functions to run
+- :ref:`smol.moca ug` (:mod:`smol.moca`) includes classes and functions to run
   Markov Chain Monte Carlo (MCMC) sampling based on a cluster expansion
   Hamiltonian (and a few other Hamiltonian models).
 
 Overview diagram
-----------------
+================
 
 An overview diagram of the main classes and data inputs necessary to build and sample
 a lattice model is shown below.
 
-.. image:: ../_static/use_workflow.png
-   :width: 800px
+.. image:: _static/smol_workflow.svg
 
 Following the diagram above, the general workflow to construct, fit and sample a lattice
 model is as follows,
@@ -52,11 +53,10 @@ model is as follows,
 This simple workflow shown is sufficient for the majority of applications. A summary of
 the main classes is given below. For more advanced use and custom calculations a more
 detailed description of the package is given in the
-:doc:`Developing </developer_guide/index>` section.
+:ref:`design` section of the Developing page.
 
 ----------------------------------------------------------------------------------------
 
-============
 Main classes
 ============
 
@@ -66,10 +66,10 @@ for full documentation of all classes and functions in the package.
 
 .. _smol.cofe ug:
 
-smol.cofe
----------
+Cluster Orbit Function Expansions
+---------------------------------
 
-This module includes the necessary classes to define, train, and test cluster
+:mod:`smol.cofe` includes the necessary classes to define, train, and test cluster
 expansions. A cluster expansion is essentially a way to fit a function of
 configurational degrees of freedom using a specific set of basis functions that
 allow a sparse representation of that function (which resides in a high
@@ -134,14 +134,14 @@ Full documentation of the class is available here: :ref:`structure wrangler`.
 
 Cluster expansion
 ^^^^^^^^^^^^^^^^^
-:class:`ClusterExpansion` contains the fitted coefficents of the cluster
+:class:`ClusterExpansion` contains the fitted coefficients of the cluster
 expansion for predicting CE properties of new structures.
 Based on the feature matrix from the :class:`StructureWrangler`, one can fit
 fit the data to the properties using any fitting method they like (e.g.,
 linear regression, regularized regression, etc). :code:`smol.cofe`
 contains wrapper class :class:`RegressionData` to save important information from
 the regression method used (optionally including the feature matrix, target vector,
-regression class, and hyperparameters). Specifically a convenience constructure to
+regression class, and hyperparameters). Specifically a convenience constructor to
 extract information from regression methods in
 `sklearn <https://scikit-learn.org/stable/>`_ or those following their API is included.
 The fitted coefficients and
@@ -158,10 +158,10 @@ Full documentation of the class is available here: :ref:`cluster expansion`.
 
 .. _smol.moca ug:
 
-smol.moca
----------
+Monte Carlo
+-----------
 
-This module includes classes and functions to run Markov Chain Monte Carlo
+:mod:`smol.moca` includes classes and functions to run Markov Chain Monte Carlo
 sampling of statistical mechanical ensembles represented by a cluster expansion
 Hamiltonian (there is also support to run MCMC with simple pair interaction
 models, such as Ewald electrostatic interactions). MCMC sampling is done for a
@@ -181,11 +181,7 @@ The core classes are:
   - :class:`EwaldProcessor`
   - :class:`CompositeProcessor`
 
-- :ref:`ensembles ug`
-
-  - :class:`CanonicalEnsemle`
-  - :class:`SemiGrandEnsemble`
-
+- :ref:`ensemble ug`
 - :ref:`sampler ug`
 - :ref:`samplecontainer ug`
 
@@ -208,22 +204,24 @@ specific use cases, users will need to instantiate the appropriate processor dir
 
 Full documentation of the class and its subclasses available here: :ref:`processors`.
 
-.. _ensembles ug:
+.. _ensemble ug:
 
-Ensembles
-^^^^^^^^^
-:class:`Ensemble` classes represent the specific statistical mechanics ensemble
+Ensemble
+^^^^^^^^
+The :class:`Ensemble` class represents the specific statistical mechanics ensemble
 by defining the relevant thermodynamic boundary conditions in order to compute
 the appropriate ensemble probability ratios. For example,
-:class:`CanonicalEnsemble` is used for systems at constant temperature and
-constant composition, while :class:`SemiGrandEnsemble` is used for systems at
-constant temperature and constant chemical potential. Ensembles also hold
+canonical ensemble is used for systems at constant temperature and
+constant composition, and can be created simply using an :class:`Ensemble` without setting
+any chemical potentials. While a semigrand ensemble is used for systems at
+constant temperature and constant chemical potential, which can be created simply by setting
+the :class:`Ensemble` :prop:`chemical_potentials`. Ensembles also hold
 information of the underlying set of :class:`Sublattice` for the configuration
 space to be sampled. Note that as implemented, an ensemble applies to any
 temperature, but the specific temperature to generate samples at is set in kernel used
 when sampling using a :class:`Sampler`.
 
-Full documentation of the class and its subclasses are available here: :ref:`ensembles`.
+Full documentation of the class and its subclasses are available here: :ref:`ensemble`.
 
 .. _sampler ug:
 
@@ -245,7 +243,7 @@ Full documentation of the class is available here: :ref:`sampler`.
 SampleContainer
 ^^^^^^^^^^^^^^^
 A :class:`SampleContainer` stores data from Monte Carlo sampling simulations,
-especially the occupancies and feature vectors. For lenghty MC simulations a
+especially the occupancies and feature vectors. For lengthy MC simulations a
 :class:`SampleContainer` allows streaming directly to an
 `HDF5 <https://www.hdfgroup.org/solutions/hdf5/>`_ file, and so minimize
 computer memory requirements. It also includes some minimal methods and properties

@@ -11,6 +11,7 @@ from smol.cofe.space import basis, domain
 from smol.utils import get_subclasses
 from tests.utils import assert_msonable
 
+pytestmark = pytest.mark.filterwarnings("ignore:The measure given does not sum to 1.")
 basis_iterators = list(get_subclasses(basis.BasisIterator).values())
 
 
@@ -101,7 +102,7 @@ def test_rotate(standard_basis, rng):
             f_array @ f_array.T, standard_basis._f_array @ standard_basis._f_array.T
         )
     else:
-        # if not orthogonal only vector norms should mathch!
+        # if not orthogonal only vector norms should match!
         npt.assert_array_almost_equal(
             np.diag(f_array @ f_array.T),
             np.diag(standard_basis._f_array @ standard_basis._f_array.T),

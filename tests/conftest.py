@@ -9,11 +9,10 @@ from smol.cofe import ClusterSubspace, StructureWrangler
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.basis import BasisIterator
 from smol.moca import (
-    CanonicalEnsemble,
     ClusterExpansionProcessor,
     CompositeProcessor,
+    Ensemble,
     EwaldProcessor,
-    SemiGrandEnsemble,
 )
 from smol.utils import get_subclasses
 from tests.utils import gen_fake_training_data
@@ -34,7 +33,6 @@ files = [
 
 test_structures = [loadfn(os.path.join(DATA_DIR, file)) for file in files]
 basis_iterator_names = list(get_subclasses(BasisIterator))
-ensembles = [CanonicalEnsemble, SemiGrandEnsemble]
 
 
 @pytest.fixture(scope="module")
@@ -123,9 +121,9 @@ def composite_processor(cluster_subspace_ewald, rng):
     return proc
 
 
-@pytest.fixture(params=ensembles, scope="module")
+@pytest.fixture(params=["canonical", "semigrand"], scope="module")
 def ensemble(composite_processor, request):
-    if request.param is SemiGrandEnsemble:
+    if request.param == "semigrand":
         species = {
             sp
             for space in composite_processor.active_site_spaces
@@ -134,14 +132,14 @@ def ensemble(composite_processor, request):
         kwargs = {"chemical_potentials": {sp: 0.3 for sp in species}}
     else:
         kwargs = {}
-    return request.param(composite_processor, **kwargs)
+    return Ensemble(composite_processor, **kwargs)
 
 
 @pytest.fixture(scope="module")
 def single_canonical_ensemble(single_subspace, rng):
     coefs = rng.random(single_subspace.num_corr_functions)
     proc = ClusterExpansionProcessor(single_subspace, 4 * np.eye(3), coefs)
-    return CanonicalEnsemble(proc)
+    return Ensemble(proc)
 
 
 @pytest.fixture(params=basis_iterator_names, scope="package")
