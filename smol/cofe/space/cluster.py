@@ -289,10 +289,7 @@ class Cluster(SiteCollection, MSONable):
                 }
             )
 
-        cluster = Cluster.from_sites(sites, Lattice.from_dict(d["lattice"]))
-        #  force set this to get exact object
-        cluster._frac_coords = np.array(d["frac_coords"])
-        return cluster
+        return Cluster.from_sites(sites, Lattice.from_dict(d["lattice"]))
 
     def as_dict(self):
         """Get json-serialization dict representation.
@@ -304,7 +301,6 @@ class Cluster(SiteCollection, MSONable):
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "lattice": self.lattice.as_dict(),
-            "frac_coords": self.frac_coords.tolist(),
             "sites": [site.as_dict() for site in self.sites],
             "vacancy_symbols": [
                 [spec.symbol for spec in site.species if isinstance(spec, Vacancy)]
