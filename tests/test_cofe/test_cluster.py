@@ -64,9 +64,10 @@ def test_to_from(cluster, tmpdir):
     yml = cluster.to("yaml")
     js = cluster.to("json")
 
-    cluster2 = Cluster.from_str(yml, "yaml")
-    assert cluster == cluster2
     cluster2 = Cluster.from_str(js, "json")
+    assert cluster == cluster2
+
+    cluster2 = Cluster.from_str(yml, "yaml")
     assert cluster == cluster2
 
     with open(os.path.join(tmpdir, "cluster.yaml"), "w") as f:
