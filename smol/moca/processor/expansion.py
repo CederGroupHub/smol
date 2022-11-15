@@ -12,7 +12,11 @@ from collections import defaultdict
 import numpy as np
 
 from smol.cofe.space.clusterspace import ClusterSubspace
-from smol.correlations import corr_from_occupancy, delta_corr_single_flip
+from smol.correlations import (
+    corr_from_occupancy,
+    delta_corr_dist_single_flip,
+    delta_corr_single_flip,
+)
 from smol.moca.processor.base import Processor
 
 
@@ -133,6 +137,43 @@ class ClusterExpansionProcessor(Processor):
             site_orbit_list = self._orbits_by_sites[f[0]]
             delta_corr += delta_corr_single_flip(
                 occu_f, occu_i, self.num_corr_functions, site_orbit_list
+            )
+            occu_i = occu_f
+
+        return delta_corr * self.size
+
+    def compute_feature_vector_distance_change(self, feature_vector, occupancy, flips):
+        """
+        Compute the change of feature vector differences from a fixed vector from a list of flips.
+
+        The distance used implicitly is a "Manhattan distancc", ie absolute value of differences.
+
+        Args:
+            feature_vector (ndarray):
+                fixed vector to compute absolute distance differences from.
+            occupancy (ndarray):
+                encoded occupancy array
+            flips (list of tuple):
+                list of tuples with two elements. Each tuple represents a
+                single flip where the first element is the index of the site
+                in the occupancy array and the second element is the index
+                for the new species to place at that site.
+
+        Returns:
+            array: change in correlation vector
+        """
+        occu_i = occupancy
+        delta_corr = np.zeros(self.num_corr_functions)
+        for f in flips:
+            occu_f = occu_i.copy()
+            occu_f[f[0]] = f[1]
+            site_orbit_list = self._orbits_by_sites[f[0]]
+            delta_corr += delta_corr_dist_single_flip(
+                occu_f,
+                occu_i,
+                feature_vector,
+                self.num_corr_functions,
+                site_orbit_list,
             )
             occu_i = occu_f
 

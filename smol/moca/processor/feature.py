@@ -1,6 +1,6 @@
 """Implementation of target feature processors.
 
-Feature metric processors are used to compute a distance between the feature values
+Feature distance processors are used to compute a distance between the feature values
 of a particular configuration and a target feature vector. This functionality is useful
 to obtain special structures, such as SQS, SSOS, etc.
 """
@@ -13,27 +13,29 @@ import numpy as np
 from smol.cofe.space.clusterspace import ClusterSubspace
 from smol.moca.processor.base import Processor
 
+# TODO this feels hacky, better to just make a base class and then inherit from it
 
-def create_feature_metric_processor(processor_class):
-    """Create a feature metric processor class derived from a given processor class.
 
-    The FeatureMetricProcessor is derived from the given processor_class, meaning
+def create_feature_distance_processor(processor_class):
+    """Create a feature distance processor class derived from a given processor class.
+
+    The FeaturedistanceProcessor is derived from the given processor_class, meaning
     that the features to be computed are those associated with that processor.
 
     Args:
         processor_class (class):
             processor class to use.
     Returns:
-        FeatureMetricProcessor:
-            A FeatureMetricPocessor class derived from the given processor class.
+        FeaturedistanceProcessor:
+            A FeaturedistancePocessor class derived from the given processor class.
     """
     if not issubclass(processor_class, Processor):
         raise TypeError("processor_class must be a Processor class")
 
-    class FeatureMetricProcessor(processor_class):
-        """FeatureMetricProcessor class to compute distance from a feature vector.
+    class FeatureDistanceProcessor(processor_class):
+        """FeaturedistanceProcessor class to compute distance from a feature vector.
 
-        The metric used to measure distance is,
+        The distance used to measure distance is,
         d = -wL + ||f - f_T||_1
         As proposed in the following publication,
         https://doi.org/10.1016/j.calphad.2013.06.006
@@ -80,7 +82,7 @@ def create_feature_metric_processor(processor_class):
             if match_weight is not None:
                 if match_weight <= 0:
                     raise ValueError("The match weight must be a positive number.")
-                self.match_weight = match_weight
+            self.match_weight = match_weight
 
         def compute_feature_vector(self, occupancy):
             """
@@ -119,6 +121,9 @@ def create_feature_metric_processor(processor_class):
             Returns:
                 array: change in correlation vector
             """
+            return super().compute_feature_vector_distance_change(
+                self.target, occupancy, flips
+            )
 
         def compute_property(self, occupancy):
             """Compute the distance of the feature vector from the target.
@@ -175,4 +180,4 @@ def create_feature_metric_processor(processor_class):
 
             return cls(cluster_subspace, supercell_matrix, target, match_weight, **d)
 
-    return FeatureMetricProcessor
+    return FeatureDistanceProcessor

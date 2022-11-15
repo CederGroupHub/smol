@@ -1109,7 +1109,7 @@ typedef struct {
 } __Pyx_BufFmt_Context;
 
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":690
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":689
  * # in Cython to enable them only on the right systems.
  *
  * ctypedef npy_int8       int8_t             # <<<<<<<<<<<<<<
@@ -1118,7 +1118,7 @@ typedef struct {
  */
 typedef npy_int8 __pyx_t_5numpy_int8_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":691
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":690
  *
  * ctypedef npy_int8       int8_t
  * ctypedef npy_int16      int16_t             # <<<<<<<<<<<<<<
@@ -1127,7 +1127,7 @@ typedef npy_int8 __pyx_t_5numpy_int8_t;
  */
 typedef npy_int16 __pyx_t_5numpy_int16_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":692
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":691
  * ctypedef npy_int8       int8_t
  * ctypedef npy_int16      int16_t
  * ctypedef npy_int32      int32_t             # <<<<<<<<<<<<<<
@@ -1136,7 +1136,7 @@ typedef npy_int16 __pyx_t_5numpy_int16_t;
  */
 typedef npy_int32 __pyx_t_5numpy_int32_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":693
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":692
  * ctypedef npy_int16      int16_t
  * ctypedef npy_int32      int32_t
  * ctypedef npy_int64      int64_t             # <<<<<<<<<<<<<<
@@ -1145,7 +1145,7 @@ typedef npy_int32 __pyx_t_5numpy_int32_t;
  */
 typedef npy_int64 __pyx_t_5numpy_int64_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":697
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":696
  * #ctypedef npy_int128     int128_t
  *
  * ctypedef npy_uint8      uint8_t             # <<<<<<<<<<<<<<
@@ -1154,7 +1154,7 @@ typedef npy_int64 __pyx_t_5numpy_int64_t;
  */
 typedef npy_uint8 __pyx_t_5numpy_uint8_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":698
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":697
  *
  * ctypedef npy_uint8      uint8_t
  * ctypedef npy_uint16     uint16_t             # <<<<<<<<<<<<<<
@@ -1163,7 +1163,7 @@ typedef npy_uint8 __pyx_t_5numpy_uint8_t;
  */
 typedef npy_uint16 __pyx_t_5numpy_uint16_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":699
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":698
  * ctypedef npy_uint8      uint8_t
  * ctypedef npy_uint16     uint16_t
  * ctypedef npy_uint32     uint32_t             # <<<<<<<<<<<<<<
@@ -1172,7 +1172,7 @@ typedef npy_uint16 __pyx_t_5numpy_uint16_t;
  */
 typedef npy_uint32 __pyx_t_5numpy_uint32_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":700
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":699
  * ctypedef npy_uint16     uint16_t
  * ctypedef npy_uint32     uint32_t
  * ctypedef npy_uint64     uint64_t             # <<<<<<<<<<<<<<
@@ -1181,7 +1181,7 @@ typedef npy_uint32 __pyx_t_5numpy_uint32_t;
  */
 typedef npy_uint64 __pyx_t_5numpy_uint64_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":704
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":703
  * #ctypedef npy_uint128    uint128_t
  *
  * ctypedef npy_float32    float32_t             # <<<<<<<<<<<<<<
@@ -1190,7 +1190,7 @@ typedef npy_uint64 __pyx_t_5numpy_uint64_t;
  */
 typedef npy_float32 __pyx_t_5numpy_float32_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":705
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":704
  *
  * ctypedef npy_float32    float32_t
  * ctypedef npy_float64    float64_t             # <<<<<<<<<<<<<<
@@ -1199,7 +1199,7 @@ typedef npy_float32 __pyx_t_5numpy_float32_t;
  */
 typedef npy_float64 __pyx_t_5numpy_float64_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":714
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":713
  * # The int types are mapped a bit surprising --
  * # numpy.int corresponds to 'l' and numpy.long to 'q'
  * ctypedef npy_long       int_t             # <<<<<<<<<<<<<<
@@ -1208,7 +1208,7 @@ typedef npy_float64 __pyx_t_5numpy_float64_t;
  */
 typedef npy_long __pyx_t_5numpy_int_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":715
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":714
  * # numpy.int corresponds to 'l' and numpy.long to 'q'
  * ctypedef npy_long       int_t
  * ctypedef npy_longlong   long_t             # <<<<<<<<<<<<<<
@@ -1217,7 +1217,7 @@ typedef npy_long __pyx_t_5numpy_int_t;
  */
 typedef npy_longlong __pyx_t_5numpy_long_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":716
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":715
  * ctypedef npy_long       int_t
  * ctypedef npy_longlong   long_t
  * ctypedef npy_longlong   longlong_t             # <<<<<<<<<<<<<<
@@ -1226,7 +1226,7 @@ typedef npy_longlong __pyx_t_5numpy_long_t;
  */
 typedef npy_longlong __pyx_t_5numpy_longlong_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":718
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":717
  * ctypedef npy_longlong   longlong_t
  *
  * ctypedef npy_ulong      uint_t             # <<<<<<<<<<<<<<
@@ -1235,7 +1235,7 @@ typedef npy_longlong __pyx_t_5numpy_longlong_t;
  */
 typedef npy_ulong __pyx_t_5numpy_uint_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":719
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":718
  *
  * ctypedef npy_ulong      uint_t
  * ctypedef npy_ulonglong  ulong_t             # <<<<<<<<<<<<<<
@@ -1244,7 +1244,7 @@ typedef npy_ulong __pyx_t_5numpy_uint_t;
  */
 typedef npy_ulonglong __pyx_t_5numpy_ulong_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":720
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":719
  * ctypedef npy_ulong      uint_t
  * ctypedef npy_ulonglong  ulong_t
  * ctypedef npy_ulonglong  ulonglong_t             # <<<<<<<<<<<<<<
@@ -1253,7 +1253,7 @@ typedef npy_ulonglong __pyx_t_5numpy_ulong_t;
  */
 typedef npy_ulonglong __pyx_t_5numpy_ulonglong_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":722
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":721
  * ctypedef npy_ulonglong  ulonglong_t
  *
  * ctypedef npy_intp       intp_t             # <<<<<<<<<<<<<<
@@ -1262,7 +1262,7 @@ typedef npy_ulonglong __pyx_t_5numpy_ulonglong_t;
  */
 typedef npy_intp __pyx_t_5numpy_intp_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":723
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":722
  *
  * ctypedef npy_intp       intp_t
  * ctypedef npy_uintp      uintp_t             # <<<<<<<<<<<<<<
@@ -1271,7 +1271,7 @@ typedef npy_intp __pyx_t_5numpy_intp_t;
  */
 typedef npy_uintp __pyx_t_5numpy_uintp_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":725
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":724
  * ctypedef npy_uintp      uintp_t
  *
  * ctypedef npy_double     float_t             # <<<<<<<<<<<<<<
@@ -1280,7 +1280,7 @@ typedef npy_uintp __pyx_t_5numpy_uintp_t;
  */
 typedef npy_double __pyx_t_5numpy_float_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":726
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":725
  *
  * ctypedef npy_double     float_t
  * ctypedef npy_double     double_t             # <<<<<<<<<<<<<<
@@ -1289,7 +1289,7 @@ typedef npy_double __pyx_t_5numpy_float_t;
  */
 typedef npy_double __pyx_t_5numpy_double_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":727
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":726
  * ctypedef npy_double     float_t
  * ctypedef npy_double     double_t
  * ctypedef npy_longdouble longdouble_t             # <<<<<<<<<<<<<<
@@ -1328,7 +1328,7 @@ struct __pyx_MemviewEnum_obj;
 struct __pyx_memoryview_obj;
 struct __pyx_memoryviewslice_obj;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":729
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":728
  * ctypedef npy_longdouble longdouble_t
  *
  * ctypedef npy_cfloat      cfloat_t             # <<<<<<<<<<<<<<
@@ -1337,7 +1337,7 @@ struct __pyx_memoryviewslice_obj;
  */
 typedef npy_cfloat __pyx_t_5numpy_cfloat_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":730
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":729
  *
  * ctypedef npy_cfloat      cfloat_t
  * ctypedef npy_cdouble     cdouble_t             # <<<<<<<<<<<<<<
@@ -1346,7 +1346,7 @@ typedef npy_cfloat __pyx_t_5numpy_cfloat_t;
  */
 typedef npy_cdouble __pyx_t_5numpy_cdouble_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":731
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":730
  * ctypedef npy_cfloat      cfloat_t
  * ctypedef npy_cdouble     cdouble_t
  * ctypedef npy_clongdouble clongdouble_t             # <<<<<<<<<<<<<<
@@ -1355,7 +1355,7 @@ typedef npy_cdouble __pyx_t_5numpy_cdouble_t;
  */
 typedef npy_clongdouble __pyx_t_5numpy_clongdouble_t;
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":733
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":732
  * ctypedef npy_clongdouble clongdouble_t
  *
  * ctypedef npy_cdouble     complex_t             # <<<<<<<<<<<<<<
@@ -2097,6 +2097,9 @@ static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_lon
 #endif
 
 /* ObjectToMemviewSlice.proto */
+static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_double__const__(PyObject *, int writable_flag);
+
+/* ObjectToMemviewSlice.proto */
 static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(PyObject *, int writable_flag);
 
 /* ObjectToMemviewSlice.proto */
@@ -2297,6 +2300,7 @@ static int __pyx_memoryview_thread_locks_used;
 static PyThread_type_lock __pyx_memoryview_thread_locks[8];
 static PyObject *__pyx_f_4smol_12correlations_corr_from_occupancy(__Pyx_memviewslice, int const , PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memviewslice, __Pyx_memviewslice, int const , PyObject *, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, int const , PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, int const , int __pyx_skip_dispatch); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
 static void *__pyx_align_pointer(void *, size_t); /*proto*/
@@ -2355,6 +2359,7 @@ static const char __pyx_k_np[] = "np";
 static const char __pyx_k_new[] = "__new__";
 static const char __pyx_k_obj[] = "obj";
 static const char __pyx_k_base[] = "base";
+static const char __pyx_k_corr[] = "corr";
 static const char __pyx_k_dict[] = "__dict__";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_mode[] = "mode";
@@ -2484,6 +2489,7 @@ static PyObject *__pyx_n_s_class;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_kp_s_contiguous_and_direct;
 static PyObject *__pyx_kp_s_contiguous_and_indirect;
+static PyObject *__pyx_n_s_corr;
 static PyObject *__pyx_n_s_dict;
 static PyObject *__pyx_n_s_dtype_is_object;
 static PyObject *__pyx_n_s_encode;
@@ -2555,7 +2561,8 @@ static PyObject *__pyx_n_s_update;
 static PyObject *__pyx_n_s_zeros;
 static PyObject *__pyx_pf_4smol_12correlations_corr_from_occupancy(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu, int __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list); /* proto */
 static PyObject *__pyx_pf_4smol_12correlations_2delta_corr_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list); /* proto */
-static PyObject *__pyx_pf_4smol_12correlations_4delta_ewald_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_ewald_matrix, __Pyx_memviewslice __pyx_v_ewald_indices, int __pyx_v_site_ind); /* proto */
+static PyObject *__pyx_pf_4smol_12correlations_4delta_corr_dist_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_corr, int __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list); /* proto */
+static PyObject *__pyx_pf_4smol_12correlations_6delta_ewald_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_ewald_matrix, __Pyx_memviewslice __pyx_v_ewald_indices, int __pyx_v_site_ind); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(struct __pyx_array_obj *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_array___pyx_pf_15View_dot_MemoryView_5array_4__dealloc__(struct __pyx_array_obj *__pyx_v_self); /* proto */
@@ -3036,7 +3043,7 @@ static PyObject *__pyx_f_4smol_12correlations_corr_from_occupancy(__Pyx_memviews
 
 /* Python wrapper */
 static PyObject *__pyx_pw_4smol_12correlations_1corr_from_occupancy(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4smol_12correlations_corr_from_occupancy[] = "Computes the correlation vector for a given encoded occupancy string.\n\n    Args:\n        occu (ndarray):\n            encoded occupancy vector\n        num_corr_functions (int):\n            total number of bit orderings in expansion.\n        orbit_list:\n            Information of all orbits.\n            (orbit id, flat tensor index array, flat correlation tensor,\n             site indices of clusters)\n\n    Returns: array\n        correlation vector for given occupancy\n    ";
+static char __pyx_doc_4smol_12correlations_corr_from_occupancy[] = "Computes the correlation vector for a given encoded occupancy string.\n\n    Args:\n        occu (ndarray):\n            encoded occupancy array\n        num_corr_functions (int):\n            total number of bit orderings in expansion.\n        orbit_list:\n            Information of all orbits.\n            (orbit id, flat tensor index array, flat correlation tensor,\n             site indices of clusters)\n\n    Returns: array\n        correlation vector for given occupancy\n    ";
 static PyObject *__pyx_pw_4smol_12correlations_1corr_from_occupancy(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_occu = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_v_num_corr_functions;
@@ -3203,19 +3210,19 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("delta_corr_single_flip", 0);
 
-  /* "smol/correlations.pyx":89
+  /* "smol/correlations.pyx":88
  *     cdef const long[::1] tensor_indices
  *     cdef const double[:, ::1] corr_tensors
  *     out = np.zeros(num_corr_functions)             # <<<<<<<<<<<<<<
  *     cdef double[::1] o_view = out
  *
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_corr_functions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_corr_functions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -3230,25 +3237,25 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 88, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_out = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "smol/correlations.pyx":90
+  /* "smol/correlations.pyx":89
  *     cdef const double[:, ::1] corr_tensors
  *     out = np.zeros(num_corr_functions)
  *     cdef double[::1] o_view = out             # <<<<<<<<<<<<<<
  *
  *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:
  */
-  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 90, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 89, __pyx_L1_error)
   __pyx_v_o_view = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "smol/correlations.pyx":92
+  /* "smol/correlations.pyx":91
  *     cdef double[::1] o_view = out
  *
  *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:             # <<<<<<<<<<<<<<
@@ -3257,15 +3264,15 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
  */
   if (unlikely(__pyx_v_site_orbit_list == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    __PYX_ERR(0, 92, __pyx_L1_error)
+    __PYX_ERR(0, 91, __pyx_L1_error)
   }
   __pyx_t_1 = __pyx_v_site_orbit_list; __Pyx_INCREF(__pyx_t_1); __pyx_t_6 = 0;
   for (;;) {
     if (__pyx_t_6 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 92, __pyx_L1_error)
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 91, __pyx_L1_error)
     #else
-    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 91, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     #endif
     if ((likely(PyTuple_CheckExact(__pyx_t_3))) || (PyList_CheckExact(__pyx_t_3))) {
@@ -3274,7 +3281,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
       if (unlikely(size != 5)) {
         if (size > 5) __Pyx_RaiseTooManyValuesError(5);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 92, __pyx_L1_error)
+        __PYX_ERR(0, 91, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -3300,7 +3307,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
         Py_ssize_t i;
         PyObject** temps[5] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_7,&__pyx_t_8,&__pyx_t_9};
         for (i=0; i < 5; i++) {
-          PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 92, __pyx_L1_error)
+          PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 91, __pyx_L1_error)
           __Pyx_GOTREF(item);
           *(temps[i]) = item;
         }
@@ -3310,7 +3317,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
     } else {
       Py_ssize_t index = -1;
       PyObject** temps[5] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_7,&__pyx_t_8,&__pyx_t_9};
-      __pyx_t_10 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 92, __pyx_L1_error)
+      __pyx_t_10 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 91, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_t_11 = Py_TYPE(__pyx_t_10)->tp_iternext;
@@ -3319,7 +3326,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
         __Pyx_GOTREF(item);
         *(temps[index]) = item;
       }
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_11(__pyx_t_10), 5) < 0) __PYX_ERR(0, 92, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_11(__pyx_t_10), 5) < 0) __PYX_ERR(0, 91, __pyx_L1_error)
       __pyx_t_11 = NULL;
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       goto __pyx_L6_unpacking_done;
@@ -3327,18 +3334,18 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __pyx_t_11 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 92, __pyx_L1_error)
+      __PYX_ERR(0, 91, __pyx_L1_error)
       __pyx_L6_unpacking_done:;
     }
-    __pyx_t_12 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 92, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 91, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 92, __pyx_L1_error)
+    __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 91, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_7, 0); if (unlikely(!__pyx_t_14.memview)) __PYX_ERR(0, 92, __pyx_L1_error)
+    __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_7, 0); if (unlikely(!__pyx_t_14.memview)) __PYX_ERR(0, 91, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 92, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 91, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_9, 0); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 92, __pyx_L1_error)
+    __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_9, 0); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 91, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __pyx_v_n = __pyx_t_12;
     __pyx_v_ratio = __pyx_t_13;
@@ -3355,7 +3362,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
     __pyx_t_16.memview = NULL;
     __pyx_t_16.data = NULL;
 
-    /* "smol/correlations.pyx":93
+    /* "smol/correlations.pyx":92
  *
  *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:
  *         M = corr_tensors.shape[0] # index of bit combos             # <<<<<<<<<<<<<<
@@ -3364,7 +3371,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
  */
     __pyx_v_M = (__pyx_v_corr_tensors.shape[0]);
 
-    /* "smol/correlations.pyx":94
+    /* "smol/correlations.pyx":93
  *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:
  *         M = corr_tensors.shape[0] # index of bit combos
  *         I = indices.shape[0] # cluster index             # <<<<<<<<<<<<<<
@@ -3373,7 +3380,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
  */
     __pyx_v_I = (__pyx_v_indices.shape[0]);
 
-    /* "smol/correlations.pyx":95
+    /* "smol/correlations.pyx":94
  *         M = corr_tensors.shape[0] # index of bit combos
  *         I = indices.shape[0] # cluster index
  *         J = indices.shape[1] # index within cluster             # <<<<<<<<<<<<<<
@@ -3382,7 +3389,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
  */
     __pyx_v_J = (__pyx_v_indices.shape[1]);
 
-    /* "smol/correlations.pyx":96
+    /* "smol/correlations.pyx":95
  *         I = indices.shape[0] # cluster index
  *         J = indices.shape[1] # index within cluster
  *         for m in range(M):             # <<<<<<<<<<<<<<
@@ -3394,7 +3401,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
     for (__pyx_t_18 = 0; __pyx_t_18 < __pyx_t_17; __pyx_t_18+=1) {
       __pyx_v_m = __pyx_t_18;
 
-      /* "smol/correlations.pyx":97
+      /* "smol/correlations.pyx":96
  *         J = indices.shape[1] # index within cluster
  *         for m in range(M):
  *             p = 0             # <<<<<<<<<<<<<<
@@ -3403,7 +3410,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
  */
       __pyx_v_p = 0.0;
 
-      /* "smol/correlations.pyx":98
+      /* "smol/correlations.pyx":97
  *         for m in range(M):
  *             p = 0
  *             for i in range(I):             # <<<<<<<<<<<<<<
@@ -3415,7 +3422,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
       for (__pyx_t_21 = 0; __pyx_t_21 < __pyx_t_20; __pyx_t_21+=1) {
         __pyx_v_i = __pyx_t_21;
 
-        /* "smol/correlations.pyx":99
+        /* "smol/correlations.pyx":98
  *             p = 0
  *             for i in range(I):
  *                 ind_i, ind_f = 0, 0             # <<<<<<<<<<<<<<
@@ -3427,7 +3434,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
         __pyx_v_ind_i = __pyx_t_22;
         __pyx_v_ind_f = __pyx_t_23;
 
-        /* "smol/correlations.pyx":100
+        /* "smol/correlations.pyx":99
  *             for i in range(I):
  *                 ind_i, ind_f = 0, 0
  *                 for j in range(J):             # <<<<<<<<<<<<<<
@@ -3439,7 +3446,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
         for (__pyx_t_24 = 0; __pyx_t_24 < __pyx_t_22; __pyx_t_24+=1) {
           __pyx_v_j = __pyx_t_24;
 
-          /* "smol/correlations.pyx":101
+          /* "smol/correlations.pyx":100
  *                 ind_i, ind_f = 0, 0
  *                 for j in range(J):
  *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]             # <<<<<<<<<<<<<<
@@ -3452,7 +3459,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
           __pyx_t_28 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_26 * __pyx_v_indices.strides[0]) )) + __pyx_t_27)) )));
           __pyx_v_ind_i = (__pyx_v_ind_i + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_25)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_28)) )))));
 
-          /* "smol/correlations.pyx":102
+          /* "smol/correlations.pyx":101
  *                 for j in range(J):
  *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
  *                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]             # <<<<<<<<<<<<<<
@@ -3466,7 +3473,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
           __pyx_v_ind_f = (__pyx_v_ind_f + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_27)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_25)) )))));
         }
 
-        /* "smol/correlations.pyx":103
+        /* "smol/correlations.pyx":102
  *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
  *                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]
  *                 p += (corr_tensors[m, ind_f] - corr_tensors[m, ind_i])             # <<<<<<<<<<<<<<
@@ -3480,7 +3487,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
         __pyx_v_p = (__pyx_v_p + ((*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_corr_tensors.data + __pyx_t_28 * __pyx_v_corr_tensors.strides[0]) )) + __pyx_t_26)) ))) - (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_corr_tensors.data + __pyx_t_25 * __pyx_v_corr_tensors.strides[0]) )) + __pyx_t_27)) )))));
       }
 
-      /* "smol/correlations.pyx":104
+      /* "smol/correlations.pyx":103
  *                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]
  *                 p += (corr_tensors[m, ind_f] - corr_tensors[m, ind_i])
  *             o_view[n] = p / ratio / I             # <<<<<<<<<<<<<<
@@ -3490,7 +3497,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
       __pyx_t_27 = __pyx_v_n;
       *((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_o_view.data) + __pyx_t_27)) )) = ((__pyx_v_p / __pyx_v_ratio) / ((double)__pyx_v_I));
 
-      /* "smol/correlations.pyx":105
+      /* "smol/correlations.pyx":104
  *                 p += (corr_tensors[m, ind_f] - corr_tensors[m, ind_i])
  *             o_view[n] = p / ratio / I
  *             n += 1             # <<<<<<<<<<<<<<
@@ -3500,7 +3507,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
       __pyx_v_n = (__pyx_v_n + 1);
     }
 
-    /* "smol/correlations.pyx":92
+    /* "smol/correlations.pyx":91
  *     cdef double[::1] o_view = out
  *
  *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:             # <<<<<<<<<<<<<<
@@ -3510,7 +3517,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "smol/correlations.pyx":106
+  /* "smol/correlations.pyx":105
  *             o_view[n] = p / ratio / I
  *             n += 1
  *     return out             # <<<<<<<<<<<<<<
@@ -3559,7 +3566,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memvi
 
 /* Python wrapper */
 static PyObject *__pyx_pw_4smol_12correlations_3delta_corr_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4smol_12correlations_2delta_corr_single_flip[] = "Computes the correlation difference between two occupancy vectors.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy vector with flip\n        occu_i (ndarray):\n            encoded occupancy vector without flip\n        num_corr_functions (int):\n            total number of bit orderings in expansion.\n        site_orbit_list:\n            Information of all orbits that include the flip site.\n            List of tuples each with\n            (orbit id, cluster ratio, flat tensor index array,\n             flat correlation tensor, site indices of clusters)\n\n\n    Returns:\n        ndarray: correlation vector difference\n    ";
+static char __pyx_doc_4smol_12correlations_2delta_corr_single_flip[] = "Computes the correlation difference between two occupancy arrays.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy array with flip\n        occu_i (ndarray):\n            encoded occupancy array without flip\n        num_corr_functions (int):\n            total number of bit orderings in expansion.\n        site_orbit_list:\n            Information of all orbits that include the flip site.\n            List of tuples each with\n            (orbit id, cluster ratio, flat tensor index array,\n             flat correlation tensor, site indices of clusters)\n\n    Returns:\n        ndarray: correlation vector difference\n    ";
 static PyObject *__pyx_pw_4smol_12correlations_3delta_corr_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_occu_f = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_occu_i = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -3677,7 +3684,570 @@ static PyObject *__pyx_pf_4smol_12correlations_2delta_corr_single_flip(CYTHON_UN
   return __pyx_r;
 }
 
-/* "smol/correlations.pyx":109
+/* "smol/correlations.pyx":108
+ *
+ *
+ * cpdef delta_corr_dist_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
+ *                                   const long[::1] occu_i,
+ *                                   const double[::1] corr,
+ */
+
+static PyObject *__pyx_pw_4smol_12correlations_5delta_corr_dist_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_corr, int const __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  int __pyx_v_i;
+  int __pyx_v_j;
+  int __pyx_v_n;
+  int __pyx_v_m;
+  int __pyx_v_I;
+  int __pyx_v_J;
+  int __pyx_v_M;
+  int __pyx_v_ind_i;
+  int __pyx_v_ind_f;
+  double __pyx_v_p_i;
+  double __pyx_v_p_f;
+  CYTHON_UNUSED double __pyx_v_ratio;
+  __Pyx_memviewslice __pyx_v_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_tensor_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_corr_tensors = { 0, 0, { 0 }, { 0 }, { 0 } };
+  PyObject *__pyx_v_out = NULL;
+  __Pyx_memviewslice __pyx_v_o_view = { 0, 0, { 0 }, { 0 }, { 0 } };
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  __Pyx_memviewslice __pyx_t_5 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  Py_ssize_t __pyx_t_6;
+  PyObject *__pyx_t_7 = NULL;
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *(*__pyx_t_11)(PyObject *);
+  int __pyx_t_12;
+  double __pyx_t_13;
+  __Pyx_memviewslice __pyx_t_14 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_15 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_16 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  int __pyx_t_17;
+  int __pyx_t_18;
+  double __pyx_t_19;
+  int __pyx_t_20;
+  int __pyx_t_21;
+  int __pyx_t_22;
+  int __pyx_t_23;
+  int __pyx_t_24;
+  int __pyx_t_25;
+  Py_ssize_t __pyx_t_26;
+  Py_ssize_t __pyx_t_27;
+  Py_ssize_t __pyx_t_28;
+  Py_ssize_t __pyx_t_29;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("delta_corr_dist_single_flip", 0);
+
+  /* "smol/correlations.pyx":137
+ *     cdef const long[::1] tensor_indices
+ *     cdef const double[:, ::1] corr_tensors
+ *     out = np.zeros(num_corr_functions)             # <<<<<<<<<<<<<<
+ *     cdef double[::1] o_view = out
+ *
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_corr_functions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = NULL;
+  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_3, function);
+    }
+  }
+  __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_v_out = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "smol/correlations.pyx":138
+ *     cdef const double[:, ::1] corr_tensors
+ *     out = np.zeros(num_corr_functions)
+ *     cdef double[::1] o_view = out             # <<<<<<<<<<<<<<
+ *
+ *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:
+ */
+  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 138, __pyx_L1_error)
+  __pyx_v_o_view = __pyx_t_5;
+  __pyx_t_5.memview = NULL;
+  __pyx_t_5.data = NULL;
+
+  /* "smol/correlations.pyx":140
+ *     cdef double[::1] o_view = out
+ *
+ *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:             # <<<<<<<<<<<<<<
+ *         M = corr_tensors.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
+ */
+  if (unlikely(__pyx_v_site_orbit_list == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
+    __PYX_ERR(0, 140, __pyx_L1_error)
+  }
+  __pyx_t_1 = __pyx_v_site_orbit_list; __Pyx_INCREF(__pyx_t_1); __pyx_t_6 = 0;
+  for (;;) {
+    if (__pyx_t_6 >= PyList_GET_SIZE(__pyx_t_1)) break;
+    #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 140, __pyx_L1_error)
+    #else
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 140, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    #endif
+    if ((likely(PyTuple_CheckExact(__pyx_t_3))) || (PyList_CheckExact(__pyx_t_3))) {
+      PyObject* sequence = __pyx_t_3;
+      Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
+      if (unlikely(size != 5)) {
+        if (size > 5) __Pyx_RaiseTooManyValuesError(5);
+        else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+        __PYX_ERR(0, 140, __pyx_L1_error)
+      }
+      #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+      if (likely(PyTuple_CheckExact(sequence))) {
+        __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
+        __pyx_t_4 = PyTuple_GET_ITEM(sequence, 1);
+        __pyx_t_7 = PyTuple_GET_ITEM(sequence, 2);
+        __pyx_t_8 = PyTuple_GET_ITEM(sequence, 3);
+        __pyx_t_9 = PyTuple_GET_ITEM(sequence, 4);
+      } else {
+        __pyx_t_2 = PyList_GET_ITEM(sequence, 0);
+        __pyx_t_4 = PyList_GET_ITEM(sequence, 1);
+        __pyx_t_7 = PyList_GET_ITEM(sequence, 2);
+        __pyx_t_8 = PyList_GET_ITEM(sequence, 3);
+        __pyx_t_9 = PyList_GET_ITEM(sequence, 4);
+      }
+      __Pyx_INCREF(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx_t_7);
+      __Pyx_INCREF(__pyx_t_8);
+      __Pyx_INCREF(__pyx_t_9);
+      #else
+      {
+        Py_ssize_t i;
+        PyObject** temps[5] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_7,&__pyx_t_8,&__pyx_t_9};
+        for (i=0; i < 5; i++) {
+          PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 140, __pyx_L1_error)
+          __Pyx_GOTREF(item);
+          *(temps[i]) = item;
+        }
+      }
+      #endif
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    } else {
+      Py_ssize_t index = -1;
+      PyObject** temps[5] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_7,&__pyx_t_8,&__pyx_t_9};
+      __pyx_t_10 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 140, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_10);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_t_11 = Py_TYPE(__pyx_t_10)->tp_iternext;
+      for (index=0; index < 5; index++) {
+        PyObject* item = __pyx_t_11(__pyx_t_10); if (unlikely(!item)) goto __pyx_L5_unpacking_failed;
+        __Pyx_GOTREF(item);
+        *(temps[index]) = item;
+      }
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_11(__pyx_t_10), 5) < 0) __PYX_ERR(0, 140, __pyx_L1_error)
+      __pyx_t_11 = NULL;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      goto __pyx_L6_unpacking_done;
+      __pyx_L5_unpacking_failed:;
+      __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+      __pyx_t_11 = NULL;
+      if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+      __PYX_ERR(0, 140, __pyx_L1_error)
+      __pyx_L6_unpacking_done:;
+    }
+    __pyx_t_12 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 140, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 140, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_7, 0); if (unlikely(!__pyx_t_14.memview)) __PYX_ERR(0, 140, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 140, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_9, 0); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 140, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    __pyx_v_n = __pyx_t_12;
+    __pyx_v_ratio = __pyx_t_13;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_tensor_indices, 1);
+    __pyx_v_tensor_indices = __pyx_t_14;
+    __pyx_t_14.memview = NULL;
+    __pyx_t_14.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_corr_tensors, 1);
+    __pyx_v_corr_tensors = __pyx_t_15;
+    __pyx_t_15.memview = NULL;
+    __pyx_t_15.data = NULL;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
+    __pyx_v_indices = __pyx_t_16;
+    __pyx_t_16.memview = NULL;
+    __pyx_t_16.data = NULL;
+
+    /* "smol/correlations.pyx":141
+ *
+ *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:
+ *         M = corr_tensors.shape[0] # index of bit combos             # <<<<<<<<<<<<<<
+ *         I = indices.shape[0] # cluster index
+ *         J = indices.shape[1] # index within cluster
+ */
+    __pyx_v_M = (__pyx_v_corr_tensors.shape[0]);
+
+    /* "smol/correlations.pyx":142
+ *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:
+ *         M = corr_tensors.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index             # <<<<<<<<<<<<<<
+ *         J = indices.shape[1] # index within cluster
+ *         for m in range(M):
+ */
+    __pyx_v_I = (__pyx_v_indices.shape[0]);
+
+    /* "smol/correlations.pyx":143
+ *         M = corr_tensors.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
+ *         J = indices.shape[1] # index within cluster             # <<<<<<<<<<<<<<
+ *         for m in range(M):
+ *             p_i, p_f = 0, 0
+ */
+    __pyx_v_J = (__pyx_v_indices.shape[1]);
+
+    /* "smol/correlations.pyx":144
+ *         I = indices.shape[0] # cluster index
+ *         J = indices.shape[1] # index within cluster
+ *         for m in range(M):             # <<<<<<<<<<<<<<
+ *             p_i, p_f = 0, 0
+ *             for i in range(I):
+ */
+    __pyx_t_12 = __pyx_v_M;
+    __pyx_t_17 = __pyx_t_12;
+    for (__pyx_t_18 = 0; __pyx_t_18 < __pyx_t_17; __pyx_t_18+=1) {
+      __pyx_v_m = __pyx_t_18;
+
+      /* "smol/correlations.pyx":145
+ *         J = indices.shape[1] # index within cluster
+ *         for m in range(M):
+ *             p_i, p_f = 0, 0             # <<<<<<<<<<<<<<
+ *             for i in range(I):
+ *                 ind_i, ind_f = 0, 0
+ */
+      __pyx_t_13 = 0.0;
+      __pyx_t_19 = 0.0;
+      __pyx_v_p_i = __pyx_t_13;
+      __pyx_v_p_f = __pyx_t_19;
+
+      /* "smol/correlations.pyx":146
+ *         for m in range(M):
+ *             p_i, p_f = 0, 0
+ *             for i in range(I):             # <<<<<<<<<<<<<<
+ *                 ind_i, ind_f = 0, 0
+ *                 for j in range(J):
+ */
+      __pyx_t_20 = __pyx_v_I;
+      __pyx_t_21 = __pyx_t_20;
+      for (__pyx_t_22 = 0; __pyx_t_22 < __pyx_t_21; __pyx_t_22+=1) {
+        __pyx_v_i = __pyx_t_22;
+
+        /* "smol/correlations.pyx":147
+ *             p_i, p_f = 0, 0
+ *             for i in range(I):
+ *                 ind_i, ind_f = 0, 0             # <<<<<<<<<<<<<<
+ *                 for j in range(J):
+ *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
+ */
+        __pyx_t_23 = 0;
+        __pyx_t_24 = 0;
+        __pyx_v_ind_i = __pyx_t_23;
+        __pyx_v_ind_f = __pyx_t_24;
+
+        /* "smol/correlations.pyx":148
+ *             for i in range(I):
+ *                 ind_i, ind_f = 0, 0
+ *                 for j in range(J):             # <<<<<<<<<<<<<<
+ *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
+ *                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]
+ */
+        __pyx_t_24 = __pyx_v_J;
+        __pyx_t_23 = __pyx_t_24;
+        for (__pyx_t_25 = 0; __pyx_t_25 < __pyx_t_23; __pyx_t_25+=1) {
+          __pyx_v_j = __pyx_t_25;
+
+          /* "smol/correlations.pyx":149
+ *                 ind_i, ind_f = 0, 0
+ *                 for j in range(J):
+ *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]             # <<<<<<<<<<<<<<
+ *                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]
+ *                 p_f += corr_tensors[m, ind_f]
+ */
+          __pyx_t_26 = __pyx_v_j;
+          __pyx_t_27 = __pyx_v_i;
+          __pyx_t_28 = __pyx_v_j;
+          __pyx_t_29 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_27 * __pyx_v_indices.strides[0]) )) + __pyx_t_28)) )));
+          __pyx_v_ind_i = (__pyx_v_ind_i + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_26)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_29)) )))));
+
+          /* "smol/correlations.pyx":150
+ *                 for j in range(J):
+ *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
+ *                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]             # <<<<<<<<<<<<<<
+ *                 p_f += corr_tensors[m, ind_f]
+ *                 p_i += corr_tensors[m, ind_i]
+ */
+          __pyx_t_28 = __pyx_v_j;
+          __pyx_t_27 = __pyx_v_i;
+          __pyx_t_29 = __pyx_v_j;
+          __pyx_t_26 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_27 * __pyx_v_indices.strides[0]) )) + __pyx_t_29)) )));
+          __pyx_v_ind_f = (__pyx_v_ind_f + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_28)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_26)) )))));
+        }
+
+        /* "smol/correlations.pyx":151
+ *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
+ *                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]
+ *                 p_f += corr_tensors[m, ind_f]             # <<<<<<<<<<<<<<
+ *                 p_i += corr_tensors[m, ind_i]
+ *             o_view[n] = abs(p_f / I - corr[n]) - abs(p_i / I - corr[n])
+ */
+        __pyx_t_29 = __pyx_v_m;
+        __pyx_t_27 = __pyx_v_ind_f;
+        __pyx_v_p_f = (__pyx_v_p_f + (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_corr_tensors.data + __pyx_t_29 * __pyx_v_corr_tensors.strides[0]) )) + __pyx_t_27)) ))));
+
+        /* "smol/correlations.pyx":152
+ *                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]
+ *                 p_f += corr_tensors[m, ind_f]
+ *                 p_i += corr_tensors[m, ind_i]             # <<<<<<<<<<<<<<
+ *             o_view[n] = abs(p_f / I - corr[n]) - abs(p_i / I - corr[n])
+ *             n += 1
+ */
+        __pyx_t_27 = __pyx_v_m;
+        __pyx_t_29 = __pyx_v_ind_i;
+        __pyx_v_p_i = (__pyx_v_p_i + (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_corr_tensors.data + __pyx_t_27 * __pyx_v_corr_tensors.strides[0]) )) + __pyx_t_29)) ))));
+      }
+
+      /* "smol/correlations.pyx":153
+ *                 p_f += corr_tensors[m, ind_f]
+ *                 p_i += corr_tensors[m, ind_i]
+ *             o_view[n] = abs(p_f / I - corr[n]) - abs(p_i / I - corr[n])             # <<<<<<<<<<<<<<
+ *             n += 1
+ *     return out
+ */
+      __pyx_t_29 = __pyx_v_n;
+      __pyx_t_27 = __pyx_v_n;
+      __pyx_t_26 = __pyx_v_n;
+      *((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_o_view.data) + __pyx_t_26)) )) = (fabs(((__pyx_v_p_f / ((double)__pyx_v_I)) - (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_corr.data) + __pyx_t_29)) ))))) - fabs(((__pyx_v_p_i / ((double)__pyx_v_I)) - (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_corr.data) + __pyx_t_27)) ))))));
+
+      /* "smol/correlations.pyx":154
+ *                 p_i += corr_tensors[m, ind_i]
+ *             o_view[n] = abs(p_f / I - corr[n]) - abs(p_i / I - corr[n])
+ *             n += 1             # <<<<<<<<<<<<<<
+ *     return out
+ *
+ */
+      __pyx_v_n = (__pyx_v_n + 1);
+    }
+
+    /* "smol/correlations.pyx":140
+ *     cdef double[::1] o_view = out
+ *
+ *     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:             # <<<<<<<<<<<<<<
+ *         M = corr_tensors.shape[0] # index of bit combos
+ *         I = indices.shape[0] # cluster index
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "smol/correlations.pyx":155
+ *             o_view[n] = abs(p_f / I - corr[n]) - abs(p_i / I - corr[n])
+ *             n += 1
+ *     return out             # <<<<<<<<<<<<<<
+ *
+ *
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_out);
+  __pyx_r = __pyx_v_out;
+  goto __pyx_L0;
+
+  /* "smol/correlations.pyx":108
+ *
+ *
+ * cpdef delta_corr_dist_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
+ *                                   const long[::1] occu_i,
+ *                                   const double[::1] corr,
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_10);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_14, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_15, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_16, 1);
+  __Pyx_AddTraceback("smol.correlations.delta_corr_dist_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_tensor_indices, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_corr_tensors, 1);
+  __Pyx_XDECREF(__pyx_v_out);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_o_view, 1);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_4smol_12correlations_5delta_corr_dist_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_4smol_12correlations_4delta_corr_dist_single_flip[] = "Computes the difference in the absolute distance of two correlation vectors\n    separated by a single flip and a given correlation vector.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy array with flip\n        occu_i (ndarray):\n            encoded occupancy array without flip\n        num_corr_functions (int):\n            total number of bit orderings in expansion.\n        site_orbit_list:\n            Information of all orbits that include the flip site.\n            List of tuples each with\n            (orbit id, cluster ratio, flat tensor index array,\n             flat correlation tensor, site indices of clusters)\n\n    Returns:\n        ndarray: correlation vector difference\n    ";
+static PyObject *__pyx_pw_4smol_12correlations_5delta_corr_dist_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  __Pyx_memviewslice __pyx_v_occu_f = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_occu_i = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_corr = { 0, 0, { 0 }, { 0 }, { 0 } };
+  int __pyx_v_num_corr_functions;
+  PyObject *__pyx_v_site_orbit_list = 0;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("delta_corr_dist_single_flip (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_occu_f,&__pyx_n_s_occu_i,&__pyx_n_s_corr,&__pyx_n_s_num_corr_functions,&__pyx_n_s_site_orbit_list,0};
+    PyObject* values[5] = {0,0,0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+        CYTHON_FALLTHROUGH;
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_occu_f)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_occu_i)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("delta_corr_dist_single_flip", 1, 5, 5, 1); __PYX_ERR(0, 108, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_corr)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("delta_corr_dist_single_flip", 1, 5, 5, 2); __PYX_ERR(0, 108, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_corr_functions)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("delta_corr_dist_single_flip", 1, 5, 5, 3); __PYX_ERR(0, 108, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  4:
+        if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_site_orbit_list)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("delta_corr_dist_single_flip", 1, 5, 5, 4); __PYX_ERR(0, 108, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "delta_corr_dist_single_flip") < 0)) __PYX_ERR(0, 108, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+      values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
+    }
+    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 108, __pyx_L3_error)
+    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 109, __pyx_L3_error)
+    __pyx_v_corr = __Pyx_PyObject_to_MemoryviewSlice_dc_double__const__(values[2], 0); if (unlikely(!__pyx_v_corr.memview)) __PYX_ERR(0, 110, __pyx_L3_error)
+    __pyx_v_num_corr_functions = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_num_corr_functions == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 111, __pyx_L3_error)
+    __pyx_v_site_orbit_list = ((PyObject*)values[4]);
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("delta_corr_dist_single_flip", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 108, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("smol.correlations.delta_corr_dist_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_site_orbit_list), (&PyList_Type), 1, "site_orbit_list", 1))) __PYX_ERR(0, 112, __pyx_L1_error)
+  __pyx_r = __pyx_pf_4smol_12correlations_4delta_corr_dist_single_flip(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_corr, __pyx_v_num_corr_functions, __pyx_v_site_orbit_list);
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_4smol_12correlations_4delta_corr_dist_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_corr, int __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("delta_corr_dist_single_flip", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_corr, __pyx_v_num_corr_functions, __pyx_v_site_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("smol.correlations.delta_corr_dist_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __PYX_XDEC_MEMVIEW(&__pyx_v_occu_f, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_occu_i, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_corr, 1);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "smol/correlations.pyx":158
  *
  *
  * cpdef delta_ewald_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
@@ -3685,7 +4255,7 @@ static PyObject *__pyx_pf_4smol_12correlations_2delta_corr_single_flip(CYTHON_UN
  *                               const double[:, ::1] ewald_matrix,
  */
 
-static PyObject *__pyx_pw_4smol_12correlations_5delta_ewald_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_4smol_12correlations_7delta_ewald_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_ewald_matrix, __Pyx_memviewslice __pyx_v_ewald_indices, int const __pyx_v_site_ind, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_i;
   int __pyx_v_j;
@@ -3710,7 +4280,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("delta_ewald_single_flip", 0);
 
-  /* "smol/correlations.pyx":134
+  /* "smol/correlations.pyx":183
  *     cdef int i, j, k, add, sub
  *     cdef bint ok
  *     cdef double out = 0             # <<<<<<<<<<<<<<
@@ -3719,7 +4289,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
  */
   __pyx_v_out = 0.0;
 
-  /* "smol/correlations.pyx":138
+  /* "smol/correlations.pyx":187
  *
  *     # values of -1 are vacancies and hence don't have ewald indices
  *     add = ewald_indices[site_ind, occu_f[site_ind]]             # <<<<<<<<<<<<<<
@@ -3731,7 +4301,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
   __pyx_t_3 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_1)) )));
   __pyx_v_add = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_indices.data + __pyx_t_2 * __pyx_v_ewald_indices.strides[0]) )) + __pyx_t_3)) )));
 
-  /* "smol/correlations.pyx":139
+  /* "smol/correlations.pyx":188
  *     # values of -1 are vacancies and hence don't have ewald indices
  *     add = ewald_indices[site_ind, occu_f[site_ind]]
  *     sub = ewald_indices[site_ind, occu_i[site_ind]]             # <<<<<<<<<<<<<<
@@ -3743,7 +4313,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
   __pyx_t_2 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_1)) )));
   __pyx_v_sub = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_indices.data + __pyx_t_3 * __pyx_v_ewald_indices.strides[0]) )) + __pyx_t_2)) )));
 
-  /* "smol/correlations.pyx":141
+  /* "smol/correlations.pyx":190
  *     sub = ewald_indices[site_ind, occu_i[site_ind]]
  *
  *     for k in range(occu_f.shape[0]):             # <<<<<<<<<<<<<<
@@ -3755,7 +4325,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
   for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
     __pyx_v_k = __pyx_t_6;
 
-    /* "smol/correlations.pyx":142
+    /* "smol/correlations.pyx":191
  *
  *     for k in range(occu_f.shape[0]):
  *         i = ewald_indices[k, occu_f[k]]             # <<<<<<<<<<<<<<
@@ -3767,7 +4337,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
     __pyx_t_3 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_1)) )));
     __pyx_v_i = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_indices.data + __pyx_t_2 * __pyx_v_ewald_indices.strides[0]) )) + __pyx_t_3)) )));
 
-    /* "smol/correlations.pyx":143
+    /* "smol/correlations.pyx":192
  *     for k in range(occu_f.shape[0]):
  *         i = ewald_indices[k, occu_f[k]]
  *         out_k = 0             # <<<<<<<<<<<<<<
@@ -3776,7 +4346,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
  */
     __pyx_v_out_k = 0.0;
 
-    /* "smol/correlations.pyx":144
+    /* "smol/correlations.pyx":193
  *         i = ewald_indices[k, occu_f[k]]
  *         out_k = 0
  *         if i != -1 and add != -1:             # <<<<<<<<<<<<<<
@@ -3794,7 +4364,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
     __pyx_L6_bool_binop_done:;
     if (__pyx_t_7) {
 
-      /* "smol/correlations.pyx":145
+      /* "smol/correlations.pyx":194
  *         out_k = 0
  *         if i != -1 and add != -1:
  *             if i != add:             # <<<<<<<<<<<<<<
@@ -3804,7 +4374,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
       __pyx_t_7 = ((__pyx_v_i != __pyx_v_add) != 0);
       if (__pyx_t_7) {
 
-        /* "smol/correlations.pyx":146
+        /* "smol/correlations.pyx":195
  *         if i != -1 and add != -1:
  *             if i != add:
  *                 out_k = out_k + 2 * ewald_matrix[i, add]             # <<<<<<<<<<<<<<
@@ -3815,7 +4385,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
         __pyx_t_3 = __pyx_v_add;
         __pyx_v_out_k = (__pyx_v_out_k + (2.0 * (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_ewald_matrix.data + __pyx_t_1 * __pyx_v_ewald_matrix.strides[0]) )) + __pyx_t_3)) )))));
 
-        /* "smol/correlations.pyx":145
+        /* "smol/correlations.pyx":194
  *         out_k = 0
  *         if i != -1 and add != -1:
  *             if i != add:             # <<<<<<<<<<<<<<
@@ -3825,7 +4395,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
         goto __pyx_L8;
       }
 
-      /* "smol/correlations.pyx":148
+      /* "smol/correlations.pyx":197
  *                 out_k = out_k + 2 * ewald_matrix[i, add]
  *             else:
  *                 out_k = out_k + ewald_matrix[i, add]             # <<<<<<<<<<<<<<
@@ -3839,7 +4409,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
       }
       __pyx_L8:;
 
-      /* "smol/correlations.pyx":144
+      /* "smol/correlations.pyx":193
  *         i = ewald_indices[k, occu_f[k]]
  *         out_k = 0
  *         if i != -1 and add != -1:             # <<<<<<<<<<<<<<
@@ -3848,7 +4418,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
  */
     }
 
-    /* "smol/correlations.pyx":150
+    /* "smol/correlations.pyx":199
  *                 out_k = out_k + ewald_matrix[i, add]
  *
  *         j = ewald_indices[k, occu_i[k]]             # <<<<<<<<<<<<<<
@@ -3860,7 +4430,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
     __pyx_t_2 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_1)) )));
     __pyx_v_j = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_indices.data + __pyx_t_3 * __pyx_v_ewald_indices.strides[0]) )) + __pyx_t_2)) )));
 
-    /* "smol/correlations.pyx":151
+    /* "smol/correlations.pyx":200
  *
  *         j = ewald_indices[k, occu_i[k]]
  *         if j != -1 and sub != -1:             # <<<<<<<<<<<<<<
@@ -3878,7 +4448,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
     __pyx_L10_bool_binop_done:;
     if (__pyx_t_7) {
 
-      /* "smol/correlations.pyx":152
+      /* "smol/correlations.pyx":201
  *         j = ewald_indices[k, occu_i[k]]
  *         if j != -1 and sub != -1:
  *             if j != sub:             # <<<<<<<<<<<<<<
@@ -3888,7 +4458,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
       __pyx_t_7 = ((__pyx_v_j != __pyx_v_sub) != 0);
       if (__pyx_t_7) {
 
-        /* "smol/correlations.pyx":153
+        /* "smol/correlations.pyx":202
  *         if j != -1 and sub != -1:
  *             if j != sub:
  *                 out_k = out_k - 2 * ewald_matrix[j, sub]             # <<<<<<<<<<<<<<
@@ -3899,7 +4469,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
         __pyx_t_2 = __pyx_v_sub;
         __pyx_v_out_k = (__pyx_v_out_k - (2.0 * (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_ewald_matrix.data + __pyx_t_1 * __pyx_v_ewald_matrix.strides[0]) )) + __pyx_t_2)) )))));
 
-        /* "smol/correlations.pyx":152
+        /* "smol/correlations.pyx":201
  *         j = ewald_indices[k, occu_i[k]]
  *         if j != -1 and sub != -1:
  *             if j != sub:             # <<<<<<<<<<<<<<
@@ -3909,7 +4479,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
         goto __pyx_L12;
       }
 
-      /* "smol/correlations.pyx":155
+      /* "smol/correlations.pyx":204
  *                 out_k = out_k - 2 * ewald_matrix[j, sub]
  *             else:
  *                 out_k = out_k - ewald_matrix[j, sub]             # <<<<<<<<<<<<<<
@@ -3923,7 +4493,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
       }
       __pyx_L12:;
 
-      /* "smol/correlations.pyx":151
+      /* "smol/correlations.pyx":200
  *
  *         j = ewald_indices[k, occu_i[k]]
  *         if j != -1 and sub != -1:             # <<<<<<<<<<<<<<
@@ -3932,30 +4502,28 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
  */
     }
 
-    /* "smol/correlations.pyx":156
+    /* "smol/correlations.pyx":205
  *             else:
  *                 out_k = out_k - ewald_matrix[j, sub]
  *         out += out_k             # <<<<<<<<<<<<<<
  *     return out
- *
  */
     __pyx_v_out = (__pyx_v_out + __pyx_v_out_k);
   }
 
-  /* "smol/correlations.pyx":157
+  /* "smol/correlations.pyx":206
  *                 out_k = out_k - ewald_matrix[j, sub]
  *         out += out_k
  *     return out             # <<<<<<<<<<<<<<
- *
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_out); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 157, __pyx_L1_error)
+  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_out); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 206, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __pyx_r = __pyx_t_9;
   __pyx_t_9 = 0;
   goto __pyx_L0;
 
-  /* "smol/correlations.pyx":109
+  /* "smol/correlations.pyx":158
  *
  *
  * cpdef delta_ewald_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
@@ -3975,9 +4543,9 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4smol_12correlations_5delta_ewald_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4smol_12correlations_4delta_ewald_single_flip[] = "Compute the change in electrostatic interaction energy from a flip.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy vector with flip\n        occu_i (ndarray):\n            encoded occupancy vector without flip\n        ewald_matrix (ndarray):\n            Ewald matrix for electrostatic interactions\n        ewald_indices (ndarray):\n            2D array of indices corresponding to a specific site occupation\n            in the ewald matrix\n        site_ind (int):\n            site index for site being flipped\n\n    Returns:\n        float: electrostatic interaction energy difference\n    ";
-static PyObject *__pyx_pw_4smol_12correlations_5delta_ewald_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_4smol_12correlations_7delta_ewald_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_4smol_12correlations_6delta_ewald_single_flip[] = "Compute the change in electrostatic interaction energy from a flip.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy array with flip\n        occu_i (ndarray):\n            encoded occupancy array without flip\n        ewald_matrix (ndarray):\n            Ewald matrix for electrostatic interactions\n        ewald_indices (ndarray):\n            2D array of indices corresponding to a specific site occupation\n            in the ewald matrix\n        site_ind (int):\n            site index for site being flipped\n\n    Returns:\n        float: electrostatic interaction energy difference\n    ";
+static PyObject *__pyx_pw_4smol_12correlations_7delta_ewald_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_occu_f = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_occu_i = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_ewald_matrix = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -4018,29 +4586,29 @@ static PyObject *__pyx_pw_4smol_12correlations_5delta_ewald_single_flip(PyObject
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_occu_i)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 1); __PYX_ERR(0, 109, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 1); __PYX_ERR(0, 158, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_ewald_matrix)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 2); __PYX_ERR(0, 109, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 2); __PYX_ERR(0, 158, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_ewald_indices)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 3); __PYX_ERR(0, 109, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 3); __PYX_ERR(0, 158, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_site_ind)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 4); __PYX_ERR(0, 109, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 4); __PYX_ERR(0, 158, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "delta_ewald_single_flip") < 0)) __PYX_ERR(0, 109, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "delta_ewald_single_flip") < 0)) __PYX_ERR(0, 158, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
       goto __pyx_L5_argtuple_error;
@@ -4051,28 +4619,28 @@ static PyObject *__pyx_pw_4smol_12correlations_5delta_ewald_single_flip(PyObject
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
     }
-    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 109, __pyx_L3_error)
-    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 110, __pyx_L3_error)
-    __pyx_v_ewald_matrix = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(values[2], 0); if (unlikely(!__pyx_v_ewald_matrix.memview)) __PYX_ERR(0, 111, __pyx_L3_error)
-    __pyx_v_ewald_indices = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(values[3], 0); if (unlikely(!__pyx_v_ewald_indices.memview)) __PYX_ERR(0, 112, __pyx_L3_error)
-    __pyx_v_site_ind = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_site_ind == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 113, __pyx_L3_error)
+    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 158, __pyx_L3_error)
+    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 159, __pyx_L3_error)
+    __pyx_v_ewald_matrix = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(values[2], 0); if (unlikely(!__pyx_v_ewald_matrix.memview)) __PYX_ERR(0, 160, __pyx_L3_error)
+    __pyx_v_ewald_indices = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(values[3], 0); if (unlikely(!__pyx_v_ewald_indices.memview)) __PYX_ERR(0, 161, __pyx_L3_error)
+    __pyx_v_site_ind = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_site_ind == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 162, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 109, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 158, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("smol.correlations.delta_ewald_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4smol_12correlations_4delta_ewald_single_flip(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_ewald_matrix, __pyx_v_ewald_indices, __pyx_v_site_ind);
+  __pyx_r = __pyx_pf_4smol_12correlations_6delta_ewald_single_flip(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_ewald_matrix, __pyx_v_ewald_indices, __pyx_v_site_ind);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4smol_12correlations_4delta_ewald_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_ewald_matrix, __Pyx_memviewslice __pyx_v_ewald_indices, int __pyx_v_site_ind) {
+static PyObject *__pyx_pf_4smol_12correlations_6delta_ewald_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_ewald_matrix, __Pyx_memviewslice __pyx_v_ewald_indices, int __pyx_v_site_ind) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4081,7 +4649,7 @@ static PyObject *__pyx_pf_4smol_12correlations_4delta_ewald_single_flip(CYTHON_U
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("delta_ewald_single_flip", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_4smol_12correlations_delta_ewald_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_ewald_matrix, __pyx_v_ewald_indices, __pyx_v_site_ind, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 109, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_4smol_12correlations_delta_ewald_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_ewald_matrix, __pyx_v_ewald_indices, __pyx_v_site_ind, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 158, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4102,7 +4670,7 @@ static PyObject *__pyx_pf_4smol_12correlations_4delta_ewald_single_flip(CYTHON_U
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":735
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":734
  * ctypedef npy_cdouble     complex_t
  *
  * cdef inline object PyArray_MultiIterNew1(a):             # <<<<<<<<<<<<<<
@@ -4119,7 +4687,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew1", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":736
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":735
  *
  * cdef inline object PyArray_MultiIterNew1(a):
  *     return PyArray_MultiIterNew(1, <void*>a)             # <<<<<<<<<<<<<<
@@ -4127,13 +4695,13 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
  * cdef inline object PyArray_MultiIterNew2(a, b):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyArray_MultiIterNew(1, ((void *)__pyx_v_a)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 736, __pyx_L1_error)
+  __pyx_t_1 = PyArray_MultiIterNew(1, ((void *)__pyx_v_a)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 735, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":735
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":734
  * ctypedef npy_cdouble     complex_t
  *
  * cdef inline object PyArray_MultiIterNew1(a):             # <<<<<<<<<<<<<<
@@ -4152,7 +4720,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":738
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":737
  *     return PyArray_MultiIterNew(1, <void*>a)
  *
  * cdef inline object PyArray_MultiIterNew2(a, b):             # <<<<<<<<<<<<<<
@@ -4169,7 +4737,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew2", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":739
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":738
  *
  * cdef inline object PyArray_MultiIterNew2(a, b):
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)             # <<<<<<<<<<<<<<
@@ -4177,13 +4745,13 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
  * cdef inline object PyArray_MultiIterNew3(a, b, c):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyArray_MultiIterNew(2, ((void *)__pyx_v_a), ((void *)__pyx_v_b)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 739, __pyx_L1_error)
+  __pyx_t_1 = PyArray_MultiIterNew(2, ((void *)__pyx_v_a), ((void *)__pyx_v_b)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 738, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":738
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":737
  *     return PyArray_MultiIterNew(1, <void*>a)
  *
  * cdef inline object PyArray_MultiIterNew2(a, b):             # <<<<<<<<<<<<<<
@@ -4202,7 +4770,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":741
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":740
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)
  *
  * cdef inline object PyArray_MultiIterNew3(a, b, c):             # <<<<<<<<<<<<<<
@@ -4219,7 +4787,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew3", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":742
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":741
  *
  * cdef inline object PyArray_MultiIterNew3(a, b, c):
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)             # <<<<<<<<<<<<<<
@@ -4227,13 +4795,13 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyArray_MultiIterNew(3, ((void *)__pyx_v_a), ((void *)__pyx_v_b), ((void *)__pyx_v_c)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 742, __pyx_L1_error)
+  __pyx_t_1 = PyArray_MultiIterNew(3, ((void *)__pyx_v_a), ((void *)__pyx_v_b), ((void *)__pyx_v_c)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 741, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":741
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":740
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)
  *
  * cdef inline object PyArray_MultiIterNew3(a, b, c):             # <<<<<<<<<<<<<<
@@ -4252,7 +4820,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":744
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":743
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)
  *
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):             # <<<<<<<<<<<<<<
@@ -4269,7 +4837,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew4", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":745
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":744
  *
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)             # <<<<<<<<<<<<<<
@@ -4277,13 +4845,13 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyArray_MultiIterNew(4, ((void *)__pyx_v_a), ((void *)__pyx_v_b), ((void *)__pyx_v_c), ((void *)__pyx_v_d)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 745, __pyx_L1_error)
+  __pyx_t_1 = PyArray_MultiIterNew(4, ((void *)__pyx_v_a), ((void *)__pyx_v_b), ((void *)__pyx_v_c), ((void *)__pyx_v_d)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 744, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":744
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":743
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)
  *
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):             # <<<<<<<<<<<<<<
@@ -4302,7 +4870,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":747
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":746
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)
  *
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):             # <<<<<<<<<<<<<<
@@ -4319,7 +4887,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("PyArray_MultiIterNew5", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":748
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":747
  *
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)             # <<<<<<<<<<<<<<
@@ -4327,13 +4895,13 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__
  * cdef inline tuple PyDataType_SHAPE(dtype d):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyArray_MultiIterNew(5, ((void *)__pyx_v_a), ((void *)__pyx_v_b), ((void *)__pyx_v_c), ((void *)__pyx_v_d), ((void *)__pyx_v_e)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 748, __pyx_L1_error)
+  __pyx_t_1 = PyArray_MultiIterNew(5, ((void *)__pyx_v_a), ((void *)__pyx_v_b), ((void *)__pyx_v_c), ((void *)__pyx_v_d), ((void *)__pyx_v_e)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 747, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":747
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":746
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)
  *
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):             # <<<<<<<<<<<<<<
@@ -4352,7 +4920,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":750
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":749
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
  *
  * cdef inline tuple PyDataType_SHAPE(dtype d):             # <<<<<<<<<<<<<<
@@ -4366,7 +4934,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyDataType_SHAPE(PyArray_Descr *__
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("PyDataType_SHAPE", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":751
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":750
  *
  * cdef inline tuple PyDataType_SHAPE(dtype d):
  *     if PyDataType_HASSUBARRAY(d):             # <<<<<<<<<<<<<<
@@ -4376,7 +4944,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyDataType_SHAPE(PyArray_Descr *__
   __pyx_t_1 = (PyDataType_HASSUBARRAY(__pyx_v_d) != 0);
   if (__pyx_t_1) {
 
-    /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":752
+    /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":751
  * cdef inline tuple PyDataType_SHAPE(dtype d):
  *     if PyDataType_HASSUBARRAY(d):
  *         return <tuple>d.subarray.shape             # <<<<<<<<<<<<<<
@@ -4388,7 +4956,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyDataType_SHAPE(PyArray_Descr *__
     __pyx_r = ((PyObject*)__pyx_v_d->subarray->shape);
     goto __pyx_L0;
 
-    /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":751
+    /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":750
  *
  * cdef inline tuple PyDataType_SHAPE(dtype d):
  *     if PyDataType_HASSUBARRAY(d):             # <<<<<<<<<<<<<<
@@ -4397,7 +4965,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyDataType_SHAPE(PyArray_Descr *__
  */
   }
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":754
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":753
  *         return <tuple>d.subarray.shape
  *     else:
  *         return ()             # <<<<<<<<<<<<<<
@@ -4411,7 +4979,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyDataType_SHAPE(PyArray_Descr *__
     goto __pyx_L0;
   }
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":750
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":749
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
  *
  * cdef inline tuple PyDataType_SHAPE(dtype d):             # <<<<<<<<<<<<<<
@@ -4426,7 +4994,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyDataType_SHAPE(PyArray_Descr *__
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":929
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":928
  *     int _import_umath() except -1
  *
  * cdef inline void set_array_base(ndarray arr, object base):             # <<<<<<<<<<<<<<
@@ -4438,7 +5006,7 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("set_array_base", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":930
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":929
  *
  * cdef inline void set_array_base(ndarray arr, object base):
  *     Py_INCREF(base) # important to do this before stealing the reference below!             # <<<<<<<<<<<<<<
@@ -4447,7 +5015,7 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
  */
   Py_INCREF(__pyx_v_base);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":931
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":930
  * cdef inline void set_array_base(ndarray arr, object base):
  *     Py_INCREF(base) # important to do this before stealing the reference below!
  *     PyArray_SetBaseObject(arr, base)             # <<<<<<<<<<<<<<
@@ -4456,7 +5024,7 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
  */
   (void)(PyArray_SetBaseObject(__pyx_v_arr, __pyx_v_base));
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":929
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":928
  *     int _import_umath() except -1
  *
  * cdef inline void set_array_base(ndarray arr, object base):             # <<<<<<<<<<<<<<
@@ -4468,7 +5036,7 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
   __Pyx_RefNannyFinishContext();
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":933
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":932
  *     PyArray_SetBaseObject(arr, base)
  *
  * cdef inline object get_array_base(ndarray arr):             # <<<<<<<<<<<<<<
@@ -4483,7 +5051,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
   int __pyx_t_1;
   __Pyx_RefNannySetupContext("get_array_base", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":934
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":933
  *
  * cdef inline object get_array_base(ndarray arr):
  *     base = PyArray_BASE(arr)             # <<<<<<<<<<<<<<
@@ -4492,7 +5060,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
  */
   __pyx_v_base = PyArray_BASE(__pyx_v_arr);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":935
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":934
  * cdef inline object get_array_base(ndarray arr):
  *     base = PyArray_BASE(arr)
  *     if base is NULL:             # <<<<<<<<<<<<<<
@@ -4502,7 +5070,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
   __pyx_t_1 = ((__pyx_v_base == NULL) != 0);
   if (__pyx_t_1) {
 
-    /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":936
+    /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":935
  *     base = PyArray_BASE(arr)
  *     if base is NULL:
  *         return None             # <<<<<<<<<<<<<<
@@ -4513,7 +5081,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
 
-    /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":935
+    /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":934
  * cdef inline object get_array_base(ndarray arr):
  *     base = PyArray_BASE(arr)
  *     if base is NULL:             # <<<<<<<<<<<<<<
@@ -4522,7 +5090,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
  */
   }
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":937
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":936
  *     if base is NULL:
  *         return None
  *     return <object>base             # <<<<<<<<<<<<<<
@@ -4534,7 +5102,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
   __pyx_r = ((PyObject *)__pyx_v_base);
   goto __pyx_L0;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":933
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":932
  *     PyArray_SetBaseObject(arr, base)
  *
  * cdef inline object get_array_base(ndarray arr):             # <<<<<<<<<<<<<<
@@ -4549,7 +5117,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":941
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":940
  * # Versions of the import_* functions which are more suitable for
  * # Cython code.
  * cdef inline int import_array() except -1:             # <<<<<<<<<<<<<<
@@ -4573,7 +5141,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("import_array", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":942
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":941
  * # Cython code.
  * cdef inline int import_array() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4589,16 +5157,16 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":943
+      /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":942
  * cdef inline int import_array() except -1:
  *     try:
  *         __pyx_import_array()             # <<<<<<<<<<<<<<
  *     except Exception:
  *         raise ImportError("numpy.core.multiarray failed to import")
  */
-      __pyx_t_4 = _import_array(); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(1, 943, __pyx_L3_error)
+      __pyx_t_4 = _import_array(); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(1, 942, __pyx_L3_error)
 
-      /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":942
+      /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":941
  * # Cython code.
  * cdef inline int import_array() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4612,7 +5180,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
     goto __pyx_L8_try_end;
     __pyx_L3_error:;
 
-    /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":944
+    /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":943
  *     try:
  *         __pyx_import_array()
  *     except Exception:             # <<<<<<<<<<<<<<
@@ -4622,28 +5190,28 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
     __pyx_t_4 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])));
     if (__pyx_t_4) {
       __Pyx_AddTraceback("numpy.import_array", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(1, 944, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(1, 943, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_GOTREF(__pyx_t_7);
 
-      /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":945
+      /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":944
  *         __pyx_import_array()
  *     except Exception:
  *         raise ImportError("numpy.core.multiarray failed to import")             # <<<<<<<<<<<<<<
  *
  * cdef inline int import_umath() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 945, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 944, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __PYX_ERR(1, 945, __pyx_L5_except_error)
+      __PYX_ERR(1, 944, __pyx_L5_except_error)
     }
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":942
+    /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":941
  * # Cython code.
  * cdef inline int import_array() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4658,7 +5226,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
     __pyx_L8_try_end:;
   }
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":941
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":940
  * # Versions of the import_* functions which are more suitable for
  * # Cython code.
  * cdef inline int import_array() except -1:             # <<<<<<<<<<<<<<
@@ -4681,7 +5249,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":947
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":946
  *         raise ImportError("numpy.core.multiarray failed to import")
  *
  * cdef inline int import_umath() except -1:             # <<<<<<<<<<<<<<
@@ -4705,7 +5273,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("import_umath", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":948
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":947
  *
  * cdef inline int import_umath() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4721,16 +5289,16 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":949
+      /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":948
  * cdef inline int import_umath() except -1:
  *     try:
  *         _import_umath()             # <<<<<<<<<<<<<<
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")
  */
-      __pyx_t_4 = _import_umath(); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(1, 949, __pyx_L3_error)
+      __pyx_t_4 = _import_umath(); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(1, 948, __pyx_L3_error)
 
-      /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":948
+      /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":947
  *
  * cdef inline int import_umath() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4744,7 +5312,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
     goto __pyx_L8_try_end;
     __pyx_L3_error:;
 
-    /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":950
+    /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":949
  *     try:
  *         _import_umath()
  *     except Exception:             # <<<<<<<<<<<<<<
@@ -4754,28 +5322,28 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
     __pyx_t_4 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])));
     if (__pyx_t_4) {
       __Pyx_AddTraceback("numpy.import_umath", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(1, 950, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(1, 949, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_GOTREF(__pyx_t_7);
 
-      /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":951
+      /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":950
  *         _import_umath()
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  *
  * cdef inline int import_ufunc() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 951, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 950, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __PYX_ERR(1, 951, __pyx_L5_except_error)
+      __PYX_ERR(1, 950, __pyx_L5_except_error)
     }
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":948
+    /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":947
  *
  * cdef inline int import_umath() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4790,7 +5358,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
     __pyx_L8_try_end:;
   }
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":947
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":946
  *         raise ImportError("numpy.core.multiarray failed to import")
  *
  * cdef inline int import_umath() except -1:             # <<<<<<<<<<<<<<
@@ -4813,7 +5381,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":953
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":952
  *         raise ImportError("numpy.core.umath failed to import")
  *
  * cdef inline int import_ufunc() except -1:             # <<<<<<<<<<<<<<
@@ -4837,7 +5405,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("import_ufunc", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":954
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":953
  *
  * cdef inline int import_ufunc() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4853,16 +5421,16 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
     __Pyx_XGOTREF(__pyx_t_3);
     /*try:*/ {
 
-      /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":955
+      /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":954
  * cdef inline int import_ufunc() except -1:
  *     try:
  *         _import_umath()             # <<<<<<<<<<<<<<
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")
  */
-      __pyx_t_4 = _import_umath(); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(1, 955, __pyx_L3_error)
+      __pyx_t_4 = _import_umath(); if (unlikely(__pyx_t_4 == ((int)-1))) __PYX_ERR(1, 954, __pyx_L3_error)
 
-      /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":954
+      /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":953
  *
  * cdef inline int import_ufunc() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4876,7 +5444,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
     goto __pyx_L8_try_end;
     __pyx_L3_error:;
 
-    /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":956
+    /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":955
  *     try:
  *         _import_umath()
  *     except Exception:             # <<<<<<<<<<<<<<
@@ -4886,28 +5454,28 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
     __pyx_t_4 = __Pyx_PyErr_ExceptionMatches(((PyObject *)(&((PyTypeObject*)PyExc_Exception)[0])));
     if (__pyx_t_4) {
       __Pyx_AddTraceback("numpy.import_ufunc", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(1, 956, __pyx_L5_except_error)
+      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_6, &__pyx_t_7) < 0) __PYX_ERR(1, 955, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_GOTREF(__pyx_t_7);
 
-      /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":957
+      /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":956
  *         _import_umath()
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  *
  * cdef extern from *:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 957, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 956, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __PYX_ERR(1, 957, __pyx_L5_except_error)
+      __PYX_ERR(1, 956, __pyx_L5_except_error)
     }
     goto __pyx_L5_except_error;
     __pyx_L5_except_error:;
 
-    /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":954
+    /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":953
  *
  * cdef inline int import_ufunc() except -1:
  *     try:             # <<<<<<<<<<<<<<
@@ -4922,7 +5490,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
     __pyx_L8_try_end:;
   }
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":953
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":952
  *         raise ImportError("numpy.core.umath failed to import")
  *
  * cdef inline int import_ufunc() except -1:             # <<<<<<<<<<<<<<
@@ -4945,7 +5513,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":967
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":966
  *
  *
  * cdef inline bint is_timedelta64_object(object obj):             # <<<<<<<<<<<<<<
@@ -4958,7 +5526,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_is_timedelta64_object(PyObject *__pyx_v_
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("is_timedelta64_object", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":979
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":978
  *     bool
  *     """
  *     return PyObject_TypeCheck(obj, &PyTimedeltaArrType_Type)             # <<<<<<<<<<<<<<
@@ -4968,7 +5536,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_is_timedelta64_object(PyObject *__pyx_v_
   __pyx_r = PyObject_TypeCheck(__pyx_v_obj, (&PyTimedeltaArrType_Type));
   goto __pyx_L0;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":967
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":966
  *
  *
  * cdef inline bint is_timedelta64_object(object obj):             # <<<<<<<<<<<<<<
@@ -4982,7 +5550,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_is_timedelta64_object(PyObject *__pyx_v_
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":982
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":981
  *
  *
  * cdef inline bint is_datetime64_object(object obj):             # <<<<<<<<<<<<<<
@@ -4995,7 +5563,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_is_datetime64_object(PyObject *__pyx_v_o
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("is_datetime64_object", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":994
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":993
  *     bool
  *     """
  *     return PyObject_TypeCheck(obj, &PyDatetimeArrType_Type)             # <<<<<<<<<<<<<<
@@ -5005,7 +5573,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_is_datetime64_object(PyObject *__pyx_v_o
   __pyx_r = PyObject_TypeCheck(__pyx_v_obj, (&PyDatetimeArrType_Type));
   goto __pyx_L0;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":982
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":981
  *
  *
  * cdef inline bint is_datetime64_object(object obj):             # <<<<<<<<<<<<<<
@@ -5019,7 +5587,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_is_datetime64_object(PyObject *__pyx_v_o
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":997
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":996
  *
  *
  * cdef inline npy_datetime get_datetime64_value(object obj) nogil:             # <<<<<<<<<<<<<<
@@ -5030,7 +5598,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_is_datetime64_object(PyObject *__pyx_v_o
 static CYTHON_INLINE npy_datetime __pyx_f_5numpy_get_datetime64_value(PyObject *__pyx_v_obj) {
   npy_datetime __pyx_r;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":1004
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":1003
  *     also needed.  That can be found using `get_datetime64_unit`.
  *     """
  *     return (<PyDatetimeScalarObject*>obj).obval             # <<<<<<<<<<<<<<
@@ -5040,7 +5608,7 @@ static CYTHON_INLINE npy_datetime __pyx_f_5numpy_get_datetime64_value(PyObject *
   __pyx_r = ((PyDatetimeScalarObject *)__pyx_v_obj)->obval;
   goto __pyx_L0;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":997
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":996
  *
  *
  * cdef inline npy_datetime get_datetime64_value(object obj) nogil:             # <<<<<<<<<<<<<<
@@ -5053,7 +5621,7 @@ static CYTHON_INLINE npy_datetime __pyx_f_5numpy_get_datetime64_value(PyObject *
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":1007
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":1006
  *
  *
  * cdef inline npy_timedelta get_timedelta64_value(object obj) nogil:             # <<<<<<<<<<<<<<
@@ -5064,7 +5632,7 @@ static CYTHON_INLINE npy_datetime __pyx_f_5numpy_get_datetime64_value(PyObject *
 static CYTHON_INLINE npy_timedelta __pyx_f_5numpy_get_timedelta64_value(PyObject *__pyx_v_obj) {
   npy_timedelta __pyx_r;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":1011
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":1010
  *     returns the int64 value underlying scalar numpy timedelta64 object
  *     """
  *     return (<PyTimedeltaScalarObject*>obj).obval             # <<<<<<<<<<<<<<
@@ -5074,7 +5642,7 @@ static CYTHON_INLINE npy_timedelta __pyx_f_5numpy_get_timedelta64_value(PyObject
   __pyx_r = ((PyTimedeltaScalarObject *)__pyx_v_obj)->obval;
   goto __pyx_L0;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":1007
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":1006
  *
  *
  * cdef inline npy_timedelta get_timedelta64_value(object obj) nogil:             # <<<<<<<<<<<<<<
@@ -5087,7 +5655,7 @@ static CYTHON_INLINE npy_timedelta __pyx_f_5numpy_get_timedelta64_value(PyObject
   return __pyx_r;
 }
 
-/* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":1014
+/* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":1013
  *
  *
  * cdef inline NPY_DATETIMEUNIT get_datetime64_unit(object obj) nogil:             # <<<<<<<<<<<<<<
@@ -5098,7 +5666,7 @@ static CYTHON_INLINE npy_timedelta __pyx_f_5numpy_get_timedelta64_value(PyObject
 static CYTHON_INLINE NPY_DATETIMEUNIT __pyx_f_5numpy_get_datetime64_unit(PyObject *__pyx_v_obj) {
   NPY_DATETIMEUNIT __pyx_r;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":1018
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":1017
  *     returns the unit part of the dtype for a numpy datetime64 object.
  *     """
  *     return <NPY_DATETIMEUNIT>(<PyDatetimeScalarObject*>obj).obmeta.base             # <<<<<<<<<<<<<<
@@ -5106,7 +5674,7 @@ static CYTHON_INLINE NPY_DATETIMEUNIT __pyx_f_5numpy_get_datetime64_unit(PyObjec
   __pyx_r = ((NPY_DATETIMEUNIT)((PyDatetimeScalarObject *)__pyx_v_obj)->obmeta.base);
   goto __pyx_L0;
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":1014
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":1013
  *
  *
  * cdef inline NPY_DATETIMEUNIT get_datetime64_unit(object obj) nogil:             # <<<<<<<<<<<<<<
@@ -18890,7 +19458,8 @@ static PyTypeObject __pyx_type___pyx_memoryviewslice = {
 static PyMethodDef __pyx_methods[] = {
   {"corr_from_occupancy", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_4smol_12correlations_1corr_from_occupancy, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4smol_12correlations_corr_from_occupancy},
   {"delta_corr_single_flip", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_4smol_12correlations_3delta_corr_single_flip, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4smol_12correlations_2delta_corr_single_flip},
-  {"delta_ewald_single_flip", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_4smol_12correlations_5delta_ewald_single_flip, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4smol_12correlations_4delta_ewald_single_flip},
+  {"delta_corr_dist_single_flip", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_4smol_12correlations_5delta_corr_dist_single_flip, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4smol_12correlations_4delta_corr_dist_single_flip},
+  {"delta_ewald_single_flip", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_4smol_12correlations_7delta_ewald_single_flip, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4smol_12correlations_6delta_ewald_single_flip},
   {0, 0, 0, 0}
 };
 
@@ -18970,6 +19539,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_kp_s_contiguous_and_direct, __pyx_k_contiguous_and_direct, sizeof(__pyx_k_contiguous_and_direct), 0, 0, 1, 0},
   {&__pyx_kp_s_contiguous_and_indirect, __pyx_k_contiguous_and_indirect, sizeof(__pyx_k_contiguous_and_indirect), 0, 0, 1, 0},
+  {&__pyx_n_s_corr, __pyx_k_corr, sizeof(__pyx_k_corr), 0, 0, 1, 1},
   {&__pyx_n_s_dict, __pyx_k_dict, sizeof(__pyx_k_dict), 0, 0, 1, 1},
   {&__pyx_n_s_dtype_is_object, __pyx_k_dtype_is_object, sizeof(__pyx_k_dtype_is_object), 0, 0, 1, 1},
   {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},
@@ -19043,7 +19613,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 49, __pyx_L1_error)
-  __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(1, 945, __pyx_L1_error)
+  __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(1, 944, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(2, 134, __pyx_L1_error)
   __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(2, 149, __pyx_L1_error)
   __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(2, 152, __pyx_L1_error)
@@ -19060,25 +19630,25 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":945
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":944
  *         __pyx_import_array()
  *     except Exception:
  *         raise ImportError("numpy.core.multiarray failed to import")             # <<<<<<<<<<<<<<
  *
  * cdef inline int import_umath() except -1:
  */
-  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_u_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple_)) __PYX_ERR(1, 945, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_u_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple_)) __PYX_ERR(1, 944, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
-  /* "../../miniconda3/envs/matx_dev/lib/python3.8/site-packages/numpy/__init__.pxd":951
+  /* "../../opt/miniconda3/envs/matx_dev/lib/python3.9/site-packages/numpy/__init__.pxd":950
  *         _import_umath()
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  *
  * cdef inline int import_ufunc() except -1:
  */
-  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_u_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(1, 951, __pyx_L1_error)
+  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_u_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(1, 950, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
 
@@ -19482,38 +20052,38 @@ static int __Pyx_modinit_type_import_code(void) {
   __Pyx_ImportType_CheckSize_Warn);
    if (!__pyx_ptype_7cpython_4type_type) __PYX_ERR(3, 9, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyImport_ImportModule("numpy"); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 200, __pyx_L1_error)
+  __pyx_t_1 = PyImport_ImportModule("numpy"); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 199, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_ptype_5numpy_dtype = __Pyx_ImportType(__pyx_t_1, "numpy", "dtype", sizeof(PyArray_Descr), __Pyx_ImportType_CheckSize_Ignore);
-   if (!__pyx_ptype_5numpy_dtype) __PYX_ERR(1, 200, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_dtype) __PYX_ERR(1, 199, __pyx_L1_error)
   __pyx_ptype_5numpy_flatiter = __Pyx_ImportType(__pyx_t_1, "numpy", "flatiter", sizeof(PyArrayIterObject), __Pyx_ImportType_CheckSize_Ignore);
-   if (!__pyx_ptype_5numpy_flatiter) __PYX_ERR(1, 223, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_flatiter) __PYX_ERR(1, 222, __pyx_L1_error)
   __pyx_ptype_5numpy_broadcast = __Pyx_ImportType(__pyx_t_1, "numpy", "broadcast", sizeof(PyArrayMultiIterObject), __Pyx_ImportType_CheckSize_Ignore);
-   if (!__pyx_ptype_5numpy_broadcast) __PYX_ERR(1, 227, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_broadcast) __PYX_ERR(1, 226, __pyx_L1_error)
   __pyx_ptype_5numpy_ndarray = __Pyx_ImportType(__pyx_t_1, "numpy", "ndarray", sizeof(PyArrayObject), __Pyx_ImportType_CheckSize_Ignore);
-   if (!__pyx_ptype_5numpy_ndarray) __PYX_ERR(1, 239, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_ndarray) __PYX_ERR(1, 238, __pyx_L1_error)
   __pyx_ptype_5numpy_generic = __Pyx_ImportType(__pyx_t_1, "numpy", "generic", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_5numpy_generic) __PYX_ERR(1, 771, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_generic) __PYX_ERR(1, 770, __pyx_L1_error)
   __pyx_ptype_5numpy_number = __Pyx_ImportType(__pyx_t_1, "numpy", "number", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_5numpy_number) __PYX_ERR(1, 773, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_number) __PYX_ERR(1, 772, __pyx_L1_error)
   __pyx_ptype_5numpy_integer = __Pyx_ImportType(__pyx_t_1, "numpy", "integer", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_5numpy_integer) __PYX_ERR(1, 775, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_integer) __PYX_ERR(1, 774, __pyx_L1_error)
   __pyx_ptype_5numpy_signedinteger = __Pyx_ImportType(__pyx_t_1, "numpy", "signedinteger", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_5numpy_signedinteger) __PYX_ERR(1, 777, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_signedinteger) __PYX_ERR(1, 776, __pyx_L1_error)
   __pyx_ptype_5numpy_unsignedinteger = __Pyx_ImportType(__pyx_t_1, "numpy", "unsignedinteger", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_5numpy_unsignedinteger) __PYX_ERR(1, 779, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_unsignedinteger) __PYX_ERR(1, 778, __pyx_L1_error)
   __pyx_ptype_5numpy_inexact = __Pyx_ImportType(__pyx_t_1, "numpy", "inexact", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_5numpy_inexact) __PYX_ERR(1, 781, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_inexact) __PYX_ERR(1, 780, __pyx_L1_error)
   __pyx_ptype_5numpy_floating = __Pyx_ImportType(__pyx_t_1, "numpy", "floating", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_5numpy_floating) __PYX_ERR(1, 783, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_floating) __PYX_ERR(1, 782, __pyx_L1_error)
   __pyx_ptype_5numpy_complexfloating = __Pyx_ImportType(__pyx_t_1, "numpy", "complexfloating", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_5numpy_complexfloating) __PYX_ERR(1, 785, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_complexfloating) __PYX_ERR(1, 784, __pyx_L1_error)
   __pyx_ptype_5numpy_flexible = __Pyx_ImportType(__pyx_t_1, "numpy", "flexible", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_5numpy_flexible) __PYX_ERR(1, 787, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_flexible) __PYX_ERR(1, 786, __pyx_L1_error)
   __pyx_ptype_5numpy_character = __Pyx_ImportType(__pyx_t_1, "numpy", "character", sizeof(PyObject), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_5numpy_character) __PYX_ERR(1, 789, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_character) __PYX_ERR(1, 788, __pyx_L1_error)
   __pyx_ptype_5numpy_ufunc = __Pyx_ImportType(__pyx_t_1, "numpy", "ufunc", sizeof(PyUFuncObject), __Pyx_ImportType_CheckSize_Ignore);
-   if (!__pyx_ptype_5numpy_ufunc) __PYX_ERR(1, 827, __pyx_L1_error)
+   if (!__pyx_ptype_5numpy_ufunc) __PYX_ERR(1, 826, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_RefNannyFinishContext();
   return 0;
@@ -23060,6 +23630,29 @@ __pyx_fail:
         }\
         return (target_type) value;\
     }
+
+/* ObjectToMemviewSlice */
+  static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_double__const__(PyObject *obj, int writable_flag) {
+    __Pyx_memviewslice result = { 0, 0, { 0 }, { 0 }, { 0 } };
+    __Pyx_BufFmt_StackElem stack[1];
+    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_CONTIG) };
+    int retcode;
+    if (obj == Py_None) {
+        result.memview = (struct __pyx_memoryview_obj *) Py_None;
+        return result;
+    }
+    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, __Pyx_IS_C_CONTIG,
+                                                 (PyBUF_C_CONTIGUOUS | PyBUF_FORMAT) | writable_flag, 1,
+                                                 &__Pyx_TypeInfo_double__const__, stack,
+                                                 &result, obj);
+    if (unlikely(retcode == -1))
+        goto __pyx_fail;
+    return result;
+__pyx_fail:
+    result.memview = NULL;
+    result.data = NULL;
+    return result;
+}
 
 /* ObjectToMemviewSlice */
   static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(PyObject *obj, int writable_flag) {
