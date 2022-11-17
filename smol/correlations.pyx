@@ -109,48 +109,52 @@ cpdef delta_corr_dist_single_flip(const long[::1] occu_f,
                                   const long[::1] occu_i,
                                   const double[::1] corr,
                                   const int num_corr_functions,
-                                  list site_orbit_list):
+                                  list orbit_list):
     """Computes the difference in the absolute distance of two correlation vectors
     separated by a single flip and a given correlation vector.
+
+    Unfortunately this scales just as bad as computing the full correlation vector.
 
     Args:
         occu_f (ndarray):
             encoded occupancy array with flip
         occu_i (ndarray):
             encoded occupancy array without flip
+        corr (ndarray):
+            reference correlation vector
         num_corr_functions (int):
             total number of bit orderings in expansion.
-        site_orbit_list:
-            Information of all orbits that include the flip site.
-            List of tuples each with
-            (orbit id, cluster ratio, flat tensor index array,
-             flat correlation tensor, site indices of clusters)
+        orbit_list:
+            Information of all orbits.
+            (orbit id, flat tensor index array, flat correlation tensor,
+             site indices of clusters)
 
     Returns:
         ndarray: correlation vector difference
     """
     cdef int i, j, n, m, I, J, M, ind_i, ind_f
-    cdef double p_i, p_f, ratio
+    cdef double p_i, p_f
     cdef const long[:, ::1] indices
     cdef const long[::1] tensor_indices
     cdef const double[:, ::1] corr_tensors
     out = np.zeros(num_corr_functions)
-    cdef double[::1] o_view = out
+    cdef double[:] o_view = out
+    o_view[0] = 0  # empty cluster always irrelevant
 
-    for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:
-        M = corr_tensors.shape[0] # index of bit combos
+    for n, tensor_indices, corr_tensors, indices in orbit_list:
+        M = corr_tensors.shape[0]  # index of bit combos
         I = indices.shape[0] # cluster index
         J = indices.shape[1] # index within cluster
         for m in range(M):
-            p_i, p_f = 0, 0
+            p_f, p_i = 0, 0
             for i in range(I):
-                ind_i, ind_f = 0, 0
+                ind_f, ind_i = 0, 0
                 for j in range(J):
-                    ind_i += tensor_indices[j] * occu_i[indices[i, j]]
                     ind_f += tensor_indices[j] * occu_f[indices[i, j]]
+                    ind_i += tensor_indices[j] * occu_i[indices[i, j]]
                 p_f += corr_tensors[m, ind_f]
                 p_i += corr_tensors[m, ind_i]
-            o_view[n] = abs(p_f / ratio / I - corr[n]) - abs(p_i / ratio / I - corr[n])
+            o_view[n] = abs(p_f / I - corr[n]) - abs(p_i / I - corr[n])
             n += 1
     return out
 

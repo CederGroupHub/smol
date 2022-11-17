@@ -167,13 +167,12 @@ class ClusterExpansionProcessor(Processor):
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            site_orbit_list = self._orbits_by_sites[f[0]]
             delta_corr += delta_corr_dist_single_flip(
                 occu_f,
                 occu_i,
                 feature_vector,
                 self.num_corr_functions,
-                site_orbit_list,
+                self._orbit_list,
             )
             occu_i = occu_f
 
