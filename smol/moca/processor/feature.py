@@ -40,7 +40,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         cluster_subspace,
         supercell_matrix,
         target_features,
-        match_weight=None,
+        match_weight=1.0,
         target_weights=None,
         **processor_kwargs
     ):
@@ -57,8 +57,8 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
             match_weight (float): optional
                 weight for the in the wL term above. That is how much to weight the
                 largest diameter below which all features are matched exactly.
-                Set to any number >0 to use this term. If None, then the term is
-                ignored.
+                Set to any number >0 to use this term. Default is 1.0. to ignore it
+                set it to zero.
             target_weights (ndarray): optional
                 Weights for the absolute differences each feature when calculating
                 the total distance. If None, then all features are weighted equally.
@@ -67,9 +67,8 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
                 being inherited from.
         """
         self.target = target_features
-        if match_weight is not None:
-            if match_weight <= 0:
-                raise ValueError("The match weight must be a positive number.")
+        if match_weight <= 0:
+            raise ValueError("The match weight must be a positive number.")
         self.match_weight = match_weight
 
         super().__init__(
@@ -130,8 +129,6 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         """
         distance = super().compute_property(occupancy)
         # TODO now need to find the largest diameter with distance == 0 for -wL term
-        if self.match_weight is not None:
-            pass
 
         return distance
 
@@ -152,8 +149,6 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         """
         distance_diff = super().compute_property_change(occupancy, flips)
         # TODO need to find the largest diameter with distance == 0 same as above
-        if self.match_weight is not None:
-            pass
 
         return distance_diff
 
@@ -198,7 +193,7 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
         cluster_subspace,
         supercell_matrix,
         target_correlations=None,
-        match_weight=None,
+        match_weight=1.0,
         target_weights=None,
     ):
         """Initialize a CorrelationDistanceProcessor.
@@ -214,8 +209,8 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
             match_weight (float): optional
                 weight for the in the wL term above. That is how much to weight the
                 largest diameter below which all correlations are matched exactly.
-                Set to any number >0 to use this term. If None, then the term is
-                ignored.
+                Set to any number >0 to use this term. Default is 1.0. to ignore it
+                set it to zero.
             target_weights (ndarray): optional
                 Weights for the absolute differences each correlation when calculating
                 the total distance. If None, then all correlations are weighted equally.
