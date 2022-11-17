@@ -7,177 +7,261 @@ to obtain special structures, such as SQS, SSOS, etc.
 
 __author__ = "Luis Barroso-Luque"
 
+from abc import ABCMeta, abstractmethod
 
 import numpy as np
 
 from smol.cofe.space.clusterspace import ClusterSubspace
+from smol.correlations import delta_corr_dist_single_flip
+from smol.moca.processor import ClusterExpansionProcessor
 from smol.moca.processor.base import Processor
 
-# TODO this feels hacky, better to just make a base class and then inherit from it
 
+class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
+    """FeaturedistanceProcessor abstract class to compute distance from a fixed feature vector.
 
-def create_feature_distance_processor(processor_class):
-    """Create a feature distance processor class derived from a given processor class.
+    The distance used to measure distance is,
 
-    The FeaturedistanceProcessor is derived from the given processor_class, meaning
-    that the features to be computed are those associated with that processor.
+    .. math::
 
-    Args:
-        processor_class (class):
-            processor class to use.
-    Returns:
-        FeaturedistanceProcessor:
-            A FeaturedistancePocessor class derived from the given processor class.
+        d = -wL + ||W^T(f - f_T)||_1
+
+    where f is the feature vector, f_T is the target feature vector, and L is the
+    diameter for which all values of clusters of smaller diameter are exactly
+    equal to the target, and w is a weight for the L term. And W is a diagonal matrix
+    of optional weights for each feature.
+
+    As proposed in the following publication,
+    https://doi.org/10.1016/j.calphad.2013.06.006
     """
-    if not issubclass(processor_class, Processor):
-        raise TypeError("processor_class must be a Processor class")
 
-    class FeatureDistanceProcessor(processor_class):
-        """FeaturedistanceProcessor class to compute distance from a feature vector.
+    def __init__(
+        self,
+        cluster_subspace,
+        supercell_matrix,
+        target_features,
+        match_weight=None,
+        target_weights=None,
+        **processor_kwargs
+    ):
+        """Initialize a TargetfeatureProcessor.
 
-        The distance used to measure distance is,
-        d = -wL + ||f - f_T||_1
-        As proposed in the following publication,
-        https://doi.org/10.1016/j.calphad.2013.06.006
+        Args:
+            cluster_subspace (ClusterSubspace):
+                a cluster subspace
+            supercell_matrix (ndarray):
+                an array representing the supercell matrix with respect to the
+                Cluster Expansion prim structure.
+            target_features (ndarray): optional
+                target feature vector
+            match_weight (float): optional
+                weight for the in the wL term above. That is how much to weight the
+                largest diameter below which all features are matched exactly.
+                Set to any number >0 to use this term. If None, then the term is
+                ignored.
+            target_weights (ndarray): optional
+                Weights for the absolute differences each feature when calculating
+                the total distance. If None, then all features are weighted equally.
+            processor_kwargs (dict): optional
+                additional keyword arguments to instantiate the underlying processor
+                being inherited from.
         """
+        self.target = target_features
+        if match_weight is not None:
+            if match_weight <= 0:
+                raise ValueError("The match weight must be a positive number.")
+        self.match_weight = match_weight
 
-        def __init__(
-            self,
+        super().__init__(
             cluster_subspace,
             supercell_matrix,
-            target_features=None,
-            match_weight=None,
+            coefficients=target_weights,
             **processor_kwargs
-        ):
-            """Initialize a TargetCorrelationProcessor.
+        )
 
-            Args:
-                cluster_subspace (ClusterSubspace):
-                    a cluster subspace
-                supercell_matrix (ndarray):
-                    an array representing the supercell matrix with respect to the
-                    Cluster Expansion prim structure.
-                target_features (ndarray): optional
-                    target feature vector, if None given as vector of zeros is used.
-                match_weight (float): optional
-                    weight for the in the wL term above. That is how much to weight the
-                    largest diameter below which all features are matched exactly.
-                    Set to any number >0 to use this term. If None, then the term is
-                    ignored.
-                processor_kwargs (dict): optional
-                    additional keyword arguments to instantiate the underlying processor
-                    being inherited from.
-            """
-            super().__init__(cluster_subspace, supercell_matrix, **processor_kwargs)
+    @abstractmethod
+    def compute_feature_vector_change(self, occupancy, flips):
+        """
+        Compute the change in the feature vector from a list of flips.
 
-            if target_features is None:
-                self.target = np.zeros(len(self.coefs))
-            else:
-                if len(target_features) != len(self.coefs):
-                    raise ValueError(
-                        "The target feature vector must have the same length as those computed by the processor."
-                    )
-                self.target = target_features
+        The feature vector in this case is normalized per supercell. In
+        other works it is extensive corresponding to the size of the supercell.
 
-            if match_weight is not None:
-                if match_weight <= 0:
-                    raise ValueError("The match weight must be a positive number.")
-            self.match_weight = match_weight
+        Args:
+            occupancy (ndarray):
+                encoded occupancy string
+            flips (list of tuple):
+                list of tuples with two elements. Each tuple represents a
+                single flip where the first element is the index of the site
+                in the occupancy string and the second element is the index
+                for the new species to place at that site.
 
-        def compute_feature_vector(self, occupancy):
-            """
-            Compute the change in the feature vector from a list of flips.
+        Returns:
+            array: change in feature vector
+        """
+        return
 
-            Args:
-                occupancy (ndarray):
-                    encoded occupancy array
-                flips (list of tuple):
-                    list of tuples with two elements. Each tuple represents a
-                    single flip where the first element is the index of the site
-                    in the occupancy array and the second element is the index
-                    for the new species to place at that site.
+    def compute_feature_vector(self, occupancy):
+        """
+        Compute the change in the feature vector from a list of flips.
 
-            Returns:
-                array: change in correlation vector
-            """
-            return np.abs(super().compute_feature_vector(occupancy) - self.target)
+        Args:
+            occupancy (ndarray):
+                encoded occupancy array
+            flips (list of tuple):
+                list of tuples with two elements. Each tuple represents a
+                single flip where the first element is the index of the site
+                in the occupancy array and the second element is the index
+                for the new species to place at that site.
 
-        def compute_feature_vector_change(self, occupancy, flips):
-            """
-            Compute the change in the correlation vector from a list of flips.
+        Returns:
+            array: change in feature vector
+        """
+        return np.abs(super().compute_feature_vector(occupancy) - self.target)
 
-            The correlation vector in this case is normalized per supercell. In
-            other works it is extensive corresponding to the size of the supercell.
+    def compute_property(self, occupancy):
+        """Compute the distance of the feature vector from the target.
 
-            Args:
-                occupancy (ndarray):
-                    encoded occupancy string
-                flips (list of tuple):
-                    list of tuples with two elements. Each tuple represents a
-                    single flip where the first element is the index of the site
-                    in the occupancy string and the second element is the index
-                    for the new species to place at that site.
+        Args:
+            occupancy (ndarray):
+                encoded occupancy array
+        Returns:
+            float: distance from target
+        """
+        distance = super().compute_property(occupancy)
+        # TODO now need to find the largest diameter with distance == 0 for -wL term
+        if self.match_weight is not None:
+            pass
 
-            Returns:
-                array: change in correlation vector
-            """
-            return super().compute_feature_vector_distance_change(
-                self.target, occupancy, flips
+        return distance
+
+    def compute_property_change(self, occupancy, flips):
+        """Compute the change in distance of the feature vector from the target.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy array
+            flips (list of tuple):
+                list of tuples with two elements. Each tuple represents a
+                single flip where the first element is the index of the site
+                in the occupancy array and the second element is the index
+                for the new species to place at that site.
+
+        Returns:
+            float: change in distance from target
+        """
+        distance_diff = super().compute_property_change(occupancy, flips)
+        # TODO need to find the largest diameter with distance == 0 same as above
+        if self.match_weight is not None:
+            pass
+
+        return distance_diff
+
+    def as_dict(self):
+        """Return a dictionary representation of the processor."""
+        d = super().as_dict()
+        d["target"] = self.target.tolist()
+        d["match_weight"] = self.match_weight
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Create a processor from a dictionary representation."""
+        cluster_subspace = ClusterSubspace.from_dict(d.pop("cluster_subspace"))
+        supercell_matrix = np.array(d.pop("supercell_matrix"))
+        target = np.array(d.pop("target"))
+        match_weight = d.pop("match_weight")
+
+        return cls(cluster_subspace, supercell_matrix, target, match_weight, **d)
+
+
+class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionProcessor):
+    """CorrelationDistanceProcessor to compute distances from a fixed correlation vector.
+
+    The distance used to measure distance is,
+
+    .. math::
+
+        d = -wL + ||W^T(f - f_T)||_1
+
+    where f is the correlation vector, f_T is the target correlation vector, and L is the
+    diameter for which all correlation values of clusters of smaller diameter are exactly
+    equal to the target, and w is a weight for the L term. And W is a diagonal matrix
+    of optional weights for each correlation.
+
+    As proposed in the following publication,
+    https://doi.org/10.1016/j.calphad.2013.06.006
+    """
+
+    def __init__(
+        self,
+        cluster_subspace,
+        supercell_matrix,
+        target_correlations=None,
+        match_weight=None,
+        target_weights=None,
+    ):
+        """Initialize a CorrelationDistanceProcessor.
+
+        Args:
+            cluster_subspace (ClusterSubspace):
+                a cluster subspace
+            supercell_matrix (ndarray):
+                an array representing the supercell matrix with respect to the
+                Cluster Expansion prim structure.
+            target_correlations (ndarray): optional
+                target correaltion vector, if None given as vector of zeros is used.
+            match_weight (float): optional
+                weight for the in the wL term above. That is how much to weight the
+                largest diameter below which all correlations are matched exactly.
+                Set to any number >0 to use this term. If None, then the term is
+                ignored.
+            target_weights (ndarray): optional
+                Weights for the absolute differences each correlation when calculating
+                the total distance. If None, then all correlations are weighted equally.
+        """
+        if target_correlations is None:
+            target_correlations = np.zeros(len(cluster_subspace))
+
+        if target_weights is None:
+            target_weights = np.ones(len(cluster_subspace))
+
+        super().__init__(
+            cluster_subspace,
+            supercell_matrix,
+            target_features=target_correlations,
+            match_weight=match_weight,
+            target_weights=target_weights,
+        )
+
+    def compute_feature_vector_change(self, occupancy, flips):
+        """
+        Compute the change of correlation vector differences from a fixed vector from a list of flips.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy string
+            flips (list of tuple):
+                list of tuples with two elements. Each tuple represents a
+                single flip where the first element is the index of the site
+                in the occupancy string and the second element is the index
+                for the new species to place at that site.
+
+        Returns:
+            array: change in feature vector
+        """
+        occu_i = occupancy
+        delta_corr = np.zeros(self.num_corr_functions)
+        for f in flips:
+            occu_f = occu_i.copy()
+            occu_f[f[0]] = f[1]
+            delta_corr += delta_corr_dist_single_flip(
+                occu_f,
+                occu_i,
+                self.target,
+                self.num_corr_functions,
+                self._orbit_list,
             )
+            occu_i = occu_f
 
-        def compute_property(self, occupancy):
-            """Compute the distance of the feature vector from the target.
-
-            Args:
-                occupancy (ndarray):
-                    encoded occupancy array
-            Returns:
-                float: distance from target
-            """
-            distance = super().compute_property(occupancy)
-            # TODO now need to find the largest diameter with distance == 0 for -wL term
-            if self.match_weight is not None:
-                pass
-
-            return distance
-
-        def compute_property_change(self, occupancy, flips):
-            """Compute the change in distance of the feature vector from the target.
-
-            Args:
-                occupancy (ndarray):
-                    encoded occupancy array
-                flips (list of tuple):
-                    list of tuples with two elements. Each tuple represents a
-                    single flip where the first element is the index of the site
-                    in the occupancy array and the second element is the index
-                    for the new species to place at that site.
-
-            Returns:
-                float: change in distance from target
-            """
-            distance_diff = super().compute_property_change(occupancy, flips)
-            # TODO need to find the largest diameter with distance == 0 same as above
-            if self.match_weight is not None:
-                pass
-
-            return distance_diff
-
-        def as_dict(self):
-            """Return a dictionary representation of the processor."""
-            d = super().as_dict()
-            d["target"] = self.target.tolist()
-            d["match_weight"] = self.match_weight
-            return d
-
-        @classmethod
-        def from_dict(cls, d):
-            """Create a processor from a dictionary representation."""
-            cluster_subspace = ClusterSubspace.from_dict(d.pop("cluster_subspace"))
-            supercell_matrix = np.array(d.pop("supercell_matrix"))
-            target = np.array(d.pop("target"))
-            match_weight = d.pop("match_weight")
-
-            return cls(cluster_subspace, supercell_matrix, target, match_weight, **d)
-
-    return FeatureDistanceProcessor
+        return delta_corr * self.size
