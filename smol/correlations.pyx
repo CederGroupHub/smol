@@ -105,13 +105,13 @@ cpdef delta_corr_single_flip(const long[::1] occu_f,
     return out
 
 
-cpdef delta_corr_dist_single_flip(const long[::1] occu_f,
-                                  const long[::1] occu_i,
-                                  const double[::1] corr,
-                                  const int num_corr_functions,
-                                  list orbit_list):
-    """Computes the difference in the absolute distance of two correlation vectors
-    separated by a single flip and a given correlation vector.
+cpdef corr_distance_single_flip(const long[::1] occu_f,
+                                const long[::1] occu_i,
+                                const double[::1] corr,
+                                const int num_corr_functions,
+                                list orbit_list):
+    """Computes the absolute distance of two correlation vectors separated by a single
+    flip and a given correlation vector.
 
     Unfortunately this scales just as bad as computing the full correlation vector.
 
@@ -137,8 +137,8 @@ cpdef delta_corr_dist_single_flip(const long[::1] occu_f,
     cdef const long[:, ::1] indices
     cdef const long[::1] tensor_indices
     cdef const double[:, ::1] corr_tensors
-    out = np.zeros(num_corr_functions)
-    cdef double[:] o_view = out
+    out = np.zeros((2, num_corr_functions))
+    cdef double[:, ::1] o_view = out
     o_view[0] = 0  # empty cluster always irrelevant
 
     for n, tensor_indices, corr_tensors, indices in orbit_list:
@@ -154,7 +154,8 @@ cpdef delta_corr_dist_single_flip(const long[::1] occu_f,
                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
                 p_f += corr_tensors[m, ind_f]
                 p_i += corr_tensors[m, ind_i]
-            o_view[n] = abs(p_f / I - corr[n]) - abs(p_i / I - corr[n])
+            o_view[1, n] = abs(p_f / I - corr[n])
+            o_view[0, n] = abs(p_i / I - corr[n])
             n += 1
     return out
 

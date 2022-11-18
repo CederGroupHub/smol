@@ -2111,6 +2111,9 @@ static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_dou
 /* ObjectToMemviewSlice.proto */
 static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_double(PyObject *, int writable_flag);
 
+/* ObjectToMemviewSlice.proto */
+static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_d_dc_double(PyObject *, int writable_flag);
+
 /* RealImag.proto */
 #if CYTHON_CCOMPLEX
   #ifdef __cplusplus
@@ -2300,7 +2303,7 @@ static int __pyx_memoryview_thread_locks_used;
 static PyThread_type_lock __pyx_memoryview_thread_locks[8];
 static PyObject *__pyx_f_4smol_12correlations_corr_from_occupancy(__Pyx_memviewslice, int const , PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_4smol_12correlations_delta_corr_single_flip(__Pyx_memviewslice, __Pyx_memviewslice, int const , PyObject *, int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, int const , PyObject *, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_4smol_12correlations_corr_distance_single_flip(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, int const , PyObject *, int __pyx_skip_dispatch); /*proto*/
 static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, int const , int __pyx_skip_dispatch); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
 static void *__pyx_align_pointer(void *, size_t); /*proto*/
@@ -2561,7 +2564,7 @@ static PyObject *__pyx_n_s_update;
 static PyObject *__pyx_n_s_zeros;
 static PyObject *__pyx_pf_4smol_12correlations_corr_from_occupancy(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu, int __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list); /* proto */
 static PyObject *__pyx_pf_4smol_12correlations_2delta_corr_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, int __pyx_v_num_corr_functions, PyObject *__pyx_v_site_orbit_list); /* proto */
-static PyObject *__pyx_pf_4smol_12correlations_4delta_corr_dist_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_corr, int __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list); /* proto */
+static PyObject *__pyx_pf_4smol_12correlations_4corr_distance_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_corr, int __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list); /* proto */
 static PyObject *__pyx_pf_4smol_12correlations_6delta_ewald_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_ewald_matrix, __Pyx_memviewslice __pyx_v_ewald_indices, int __pyx_v_site_ind); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(struct __pyx_array_obj *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
@@ -2611,6 +2614,7 @@ static PyObject *__pyx_tp_new_memoryview(PyTypeObject *t, PyObject *a, PyObject 
 static PyObject *__pyx_tp_new__memoryviewslice(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
+static PyObject *__pyx_int_2;
 static PyObject *__pyx_int_112105877;
 static PyObject *__pyx_int_136983863;
 static PyObject *__pyx_int_184977713;
@@ -3687,13 +3691,13 @@ static PyObject *__pyx_pf_4smol_12correlations_2delta_corr_single_flip(CYTHON_UN
 /* "smol/correlations.pyx":108
  *
  *
- * cpdef delta_corr_dist_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
- *                                   const long[::1] occu_i,
- *                                   const double[::1] corr,
+ * cpdef corr_distance_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
+ *                                 const long[::1] occu_i,
+ *                                 const double[::1] corr,
  */
 
-static PyObject *__pyx_pw_4smol_12correlations_5delta_corr_dist_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_corr, int const __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_4smol_12correlations_5corr_distance_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_4smol_12correlations_corr_distance_single_flip(__Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_corr, int const __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_i;
   int __pyx_v_j;
   int __pyx_v_n;
@@ -3717,7 +3721,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
   __Pyx_memviewslice __pyx_t_5 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  Py_ssize_t __pyx_t_6;
+  __Pyx_memviewslice __pyx_t_6 = { 0, 0, { 0 }, { 0 }, { 0 } };
   Py_ssize_t __pyx_t_7;
   PyObject *__pyx_t_8 = NULL;
   PyObject *__pyx_t_9 = NULL;
@@ -3740,16 +3744,17 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
   Py_ssize_t __pyx_t_26;
   Py_ssize_t __pyx_t_27;
   Py_ssize_t __pyx_t_28;
+  Py_ssize_t __pyx_t_29;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("delta_corr_dist_single_flip", 0);
+  __Pyx_RefNannySetupContext("corr_distance_single_flip", 0);
 
   /* "smol/correlations.pyx":140
  *     cdef const long[::1] tensor_indices
  *     cdef const double[:, ::1] corr_tensors
- *     out = np.zeros(num_corr_functions)             # <<<<<<<<<<<<<<
- *     cdef double[:] o_view = out
+ *     out = np.zeros((2, num_corr_functions))             # <<<<<<<<<<<<<<
+ *     cdef double[:, ::1] o_view = out
  *     o_view[0] = 0  # empty cluster always irrelevant
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 140, __pyx_L1_error)
@@ -3759,19 +3764,27 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_corr_functions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 140, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = NULL;
+  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 140, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_INCREF(__pyx_int_2);
+  __Pyx_GIVEREF(__pyx_int_2);
+  PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_int_2);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_2);
+  __pyx_t_2 = 0;
+  __pyx_t_2 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
-    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
-    if (likely(__pyx_t_4)) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
+    if (likely(__pyx_t_2)) {
       PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx_t_2);
       __Pyx_INCREF(function);
       __Pyx_DECREF_SET(__pyx_t_3, function);
     }
   }
-  __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
-  __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 140, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3780,25 +3793,51 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
 
   /* "smol/correlations.pyx":141
  *     cdef const double[:, ::1] corr_tensors
- *     out = np.zeros(num_corr_functions)
- *     cdef double[:] o_view = out             # <<<<<<<<<<<<<<
+ *     out = np.zeros((2, num_corr_functions))
+ *     cdef double[:, ::1] o_view = out             # <<<<<<<<<<<<<<
  *     o_view[0] = 0  # empty cluster always irrelevant
  *
  */
-  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 141, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 141, __pyx_L1_error)
   __pyx_v_o_view = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
   /* "smol/correlations.pyx":142
- *     out = np.zeros(num_corr_functions)
- *     cdef double[:] o_view = out
+ *     out = np.zeros((2, num_corr_functions))
+ *     cdef double[:, ::1] o_view = out
  *     o_view[0] = 0  # empty cluster always irrelevant             # <<<<<<<<<<<<<<
  *
  *     for n, tensor_indices, corr_tensors, indices in orbit_list:
  */
-  __pyx_t_6 = 0;
-  *((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_6 * __pyx_v_o_view.strides[0]) )) = 0.0;
+  __pyx_t_6.data = __pyx_v_o_view.data;
+  __pyx_t_6.memview = __pyx_v_o_view.memview;
+  __PYX_INC_MEMVIEW(&__pyx_t_6, 0);
+  {
+    Py_ssize_t __pyx_tmp_idx = 0;
+    Py_ssize_t __pyx_tmp_stride = __pyx_v_o_view.strides[0];
+        __pyx_t_6.data += __pyx_tmp_idx * __pyx_tmp_stride;
+}
+
+__pyx_t_6.shape[0] = __pyx_v_o_view.shape[1];
+__pyx_t_6.strides[0] = __pyx_v_o_view.strides[1];
+    __pyx_t_6.suboffsets[0] = -1;
+
+{
+      double __pyx_temp_scalar = 0.0;
+      {
+          Py_ssize_t __pyx_temp_extent = __pyx_t_6.shape[0];
+          Py_ssize_t __pyx_temp_idx;
+          double *__pyx_temp_pointer = (double *) __pyx_t_6.data;
+          for (__pyx_temp_idx = 0; __pyx_temp_idx < __pyx_temp_extent; __pyx_temp_idx++) {
+            *((double *) __pyx_temp_pointer) = __pyx_temp_scalar;
+            __pyx_temp_pointer += 1;
+          }
+      }
+  }
+  __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
+  __pyx_t_6.memview = NULL;
+  __pyx_t_6.data = NULL;
 
   /* "smol/correlations.pyx":144
  *     o_view[0] = 0  # empty cluster always irrelevant
@@ -3830,24 +3869,24 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
-        __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
-        __pyx_t_4 = PyTuple_GET_ITEM(sequence, 1);
+        __pyx_t_4 = PyTuple_GET_ITEM(sequence, 0);
+        __pyx_t_2 = PyTuple_GET_ITEM(sequence, 1);
         __pyx_t_8 = PyTuple_GET_ITEM(sequence, 2);
         __pyx_t_9 = PyTuple_GET_ITEM(sequence, 3);
       } else {
-        __pyx_t_2 = PyList_GET_ITEM(sequence, 0);
-        __pyx_t_4 = PyList_GET_ITEM(sequence, 1);
+        __pyx_t_4 = PyList_GET_ITEM(sequence, 0);
+        __pyx_t_2 = PyList_GET_ITEM(sequence, 1);
         __pyx_t_8 = PyList_GET_ITEM(sequence, 2);
         __pyx_t_9 = PyList_GET_ITEM(sequence, 3);
       }
-      __Pyx_INCREF(__pyx_t_2);
       __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx_t_2);
       __Pyx_INCREF(__pyx_t_8);
       __Pyx_INCREF(__pyx_t_9);
       #else
       {
         Py_ssize_t i;
-        PyObject** temps[4] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_8,&__pyx_t_9};
+        PyObject** temps[4] = {&__pyx_t_4,&__pyx_t_2,&__pyx_t_8,&__pyx_t_9};
         for (i=0; i < 4; i++) {
           PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 144, __pyx_L1_error)
           __Pyx_GOTREF(item);
@@ -3858,7 +3897,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else {
       Py_ssize_t index = -1;
-      PyObject** temps[4] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_8,&__pyx_t_9};
+      PyObject** temps[4] = {&__pyx_t_4,&__pyx_t_2,&__pyx_t_8,&__pyx_t_9};
       __pyx_t_10 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 144, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3879,10 +3918,10 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
       __PYX_ERR(0, 144, __pyx_L1_error)
       __pyx_L6_unpacking_done:;
     }
-    __pyx_t_12 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 144, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_13 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_4, 0); if (unlikely(!__pyx_t_13.memview)) __PYX_ERR(0, 144, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 144, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_t_13 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_2, 0); if (unlikely(!__pyx_t_13.memview)) __PYX_ERR(0, 144, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_14.memview)) __PYX_ERR(0, 144, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_9, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 144, __pyx_L1_error)
@@ -3995,11 +4034,11 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
  *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
  *                 p_f += corr_tensors[m, ind_f]
  */
-          __pyx_t_6 = __pyx_v_j;
-          __pyx_t_26 = __pyx_v_i;
-          __pyx_t_27 = __pyx_v_j;
-          __pyx_t_28 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_26 * __pyx_v_indices.strides[0]) )) + __pyx_t_27)) )));
-          __pyx_v_ind_f = (__pyx_v_ind_f + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_6)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_28)) )))));
+          __pyx_t_26 = __pyx_v_j;
+          __pyx_t_27 = __pyx_v_i;
+          __pyx_t_28 = __pyx_v_j;
+          __pyx_t_29 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_27 * __pyx_v_indices.strides[0]) )) + __pyx_t_28)) )));
+          __pyx_v_ind_f = (__pyx_v_ind_f + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_26)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_29)) )))));
 
           /* "smol/correlations.pyx":154
  *                 for j in range(J):
@@ -4008,11 +4047,11 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
  *                 p_f += corr_tensors[m, ind_f]
  *                 p_i += corr_tensors[m, ind_i]
  */
-          __pyx_t_27 = __pyx_v_j;
-          __pyx_t_26 = __pyx_v_i;
           __pyx_t_28 = __pyx_v_j;
-          __pyx_t_6 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_26 * __pyx_v_indices.strides[0]) )) + __pyx_t_28)) )));
-          __pyx_v_ind_i = (__pyx_v_ind_i + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_27)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_6)) )))));
+          __pyx_t_27 = __pyx_v_i;
+          __pyx_t_29 = __pyx_v_j;
+          __pyx_t_26 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_27 * __pyx_v_indices.strides[0]) )) + __pyx_t_29)) )));
+          __pyx_v_ind_i = (__pyx_v_ind_i + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_28)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_26)) )))));
         }
 
         /* "smol/correlations.pyx":155
@@ -4020,39 +4059,51 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
  *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
  *                 p_f += corr_tensors[m, ind_f]             # <<<<<<<<<<<<<<
  *                 p_i += corr_tensors[m, ind_i]
- *             o_view[n] = abs(p_f / I - corr[n]) - abs(p_i / I - corr[n])
+ *             o_view[1, n] = abs(p_f / I - corr[n])
  */
-        __pyx_t_28 = __pyx_v_m;
-        __pyx_t_26 = __pyx_v_ind_f;
-        __pyx_v_p_f = (__pyx_v_p_f + (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_corr_tensors.data + __pyx_t_28 * __pyx_v_corr_tensors.strides[0]) )) + __pyx_t_26)) ))));
+        __pyx_t_29 = __pyx_v_m;
+        __pyx_t_27 = __pyx_v_ind_f;
+        __pyx_v_p_f = (__pyx_v_p_f + (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_corr_tensors.data + __pyx_t_29 * __pyx_v_corr_tensors.strides[0]) )) + __pyx_t_27)) ))));
 
         /* "smol/correlations.pyx":156
  *                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
  *                 p_f += corr_tensors[m, ind_f]
  *                 p_i += corr_tensors[m, ind_i]             # <<<<<<<<<<<<<<
- *             o_view[n] = abs(p_f / I - corr[n]) - abs(p_i / I - corr[n])
- *             n += 1
+ *             o_view[1, n] = abs(p_f / I - corr[n])
+ *             o_view[0, n] = abs(p_i / I - corr[n])
  */
-        __pyx_t_26 = __pyx_v_m;
-        __pyx_t_28 = __pyx_v_ind_i;
-        __pyx_v_p_i = (__pyx_v_p_i + (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_corr_tensors.data + __pyx_t_26 * __pyx_v_corr_tensors.strides[0]) )) + __pyx_t_28)) ))));
+        __pyx_t_27 = __pyx_v_m;
+        __pyx_t_29 = __pyx_v_ind_i;
+        __pyx_v_p_i = (__pyx_v_p_i + (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_corr_tensors.data + __pyx_t_27 * __pyx_v_corr_tensors.strides[0]) )) + __pyx_t_29)) ))));
       }
 
       /* "smol/correlations.pyx":157
  *                 p_f += corr_tensors[m, ind_f]
  *                 p_i += corr_tensors[m, ind_i]
- *             o_view[n] = abs(p_f / I - corr[n]) - abs(p_i / I - corr[n])             # <<<<<<<<<<<<<<
+ *             o_view[1, n] = abs(p_f / I - corr[n])             # <<<<<<<<<<<<<<
+ *             o_view[0, n] = abs(p_i / I - corr[n])
  *             n += 1
- *     return out
  */
-      __pyx_t_28 = __pyx_v_n;
+      __pyx_t_29 = __pyx_v_n;
+      __pyx_t_27 = 1;
       __pyx_t_26 = __pyx_v_n;
-      __pyx_t_6 = __pyx_v_n;
-      *((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_6 * __pyx_v_o_view.strides[0]) )) = (fabs(((__pyx_v_p_f / ((double)__pyx_v_I)) - (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_corr.data) + __pyx_t_28)) ))))) - fabs(((__pyx_v_p_i / ((double)__pyx_v_I)) - (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_corr.data) + __pyx_t_26)) ))))));
+      *((double *) ( /* dim=1 */ ((char *) (((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_27 * __pyx_v_o_view.strides[0]) )) + __pyx_t_26)) )) = fabs(((__pyx_v_p_f / ((double)__pyx_v_I)) - (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_corr.data) + __pyx_t_29)) )))));
 
       /* "smol/correlations.pyx":158
  *                 p_i += corr_tensors[m, ind_i]
- *             o_view[n] = abs(p_f / I - corr[n]) - abs(p_i / I - corr[n])
+ *             o_view[1, n] = abs(p_f / I - corr[n])
+ *             o_view[0, n] = abs(p_i / I - corr[n])             # <<<<<<<<<<<<<<
+ *             n += 1
+ *     return out
+ */
+      __pyx_t_29 = __pyx_v_n;
+      __pyx_t_26 = 0;
+      __pyx_t_27 = __pyx_v_n;
+      *((double *) ( /* dim=1 */ ((char *) (((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_26 * __pyx_v_o_view.strides[0]) )) + __pyx_t_27)) )) = fabs(((__pyx_v_p_i / ((double)__pyx_v_I)) - (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_corr.data) + __pyx_t_29)) )))));
+
+      /* "smol/correlations.pyx":159
+ *             o_view[1, n] = abs(p_f / I - corr[n])
+ *             o_view[0, n] = abs(p_i / I - corr[n])
  *             n += 1             # <<<<<<<<<<<<<<
  *     return out
  *
@@ -4070,8 +4121,8 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "smol/correlations.pyx":159
- *             o_view[n] = abs(p_f / I - corr[n]) - abs(p_i / I - corr[n])
+  /* "smol/correlations.pyx":160
+ *             o_view[0, n] = abs(p_i / I - corr[n])
  *             n += 1
  *     return out             # <<<<<<<<<<<<<<
  *
@@ -4085,9 +4136,9 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
   /* "smol/correlations.pyx":108
  *
  *
- * cpdef delta_corr_dist_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
- *                                   const long[::1] occu_i,
- *                                   const double[::1] corr,
+ * cpdef corr_distance_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
+ *                                 const long[::1] occu_i,
+ *                                 const double[::1] corr,
  */
 
   /* function exit code */
@@ -4097,13 +4148,14 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __PYX_XDEC_MEMVIEW(&__pyx_t_5, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
   __Pyx_XDECREF(__pyx_t_10);
   __PYX_XDEC_MEMVIEW(&__pyx_t_13, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_14, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_15, 1);
-  __Pyx_AddTraceback("smol.correlations.delta_corr_dist_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("smol.correlations.corr_distance_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
@@ -4117,9 +4169,9 @@ static PyObject *__pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__Pyx_
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_4smol_12correlations_5delta_corr_dist_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4smol_12correlations_4delta_corr_dist_single_flip[] = "Computes the difference in the absolute distance of two correlation vectors\n    separated by a single flip and a given correlation vector.\n\n    Unfortunately this scales just as bad as computing the full correlation vector.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy array with flip\n        occu_i (ndarray):\n            encoded occupancy array without flip\n        corr (ndarray):\n            reference correlation vector\n        num_corr_functions (int):\n            total number of bit orderings in expansion.\n        orbit_list:\n            Information of all orbits.\n            (orbit id, flat tensor index array, flat correlation tensor,\n             site indices of clusters)\n\n    Returns:\n        ndarray: correlation vector difference\n    ";
-static PyObject *__pyx_pw_4smol_12correlations_5delta_corr_dist_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_4smol_12correlations_5corr_distance_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_4smol_12correlations_4corr_distance_single_flip[] = "Computes the absolute distance of two correlation vectors separated by a single\n    flip and a given correlation vector.\n\n    Unfortunately this scales just as bad as computing the full correlation vector.\n\n    Args:\n        occu_f (ndarray):\n            encoded occupancy array with flip\n        occu_i (ndarray):\n            encoded occupancy array without flip\n        corr (ndarray):\n            reference correlation vector\n        num_corr_functions (int):\n            total number of bit orderings in expansion.\n        orbit_list:\n            Information of all orbits.\n            (orbit id, flat tensor index array, flat correlation tensor,\n             site indices of clusters)\n\n    Returns:\n        ndarray: correlation vector difference\n    ";
+static PyObject *__pyx_pw_4smol_12correlations_5corr_distance_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_occu_f = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_occu_i = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_corr = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -4130,7 +4182,7 @@ static PyObject *__pyx_pw_4smol_12correlations_5delta_corr_dist_single_flip(PyOb
   int __pyx_clineno = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("delta_corr_dist_single_flip (wrapper)", 0);
+  __Pyx_RefNannySetupContext("corr_distance_single_flip (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_occu_f,&__pyx_n_s_occu_i,&__pyx_n_s_corr,&__pyx_n_s_num_corr_functions,&__pyx_n_s_orbit_list,0};
     PyObject* values[5] = {0,0,0,0,0};
@@ -4160,29 +4212,29 @@ static PyObject *__pyx_pw_4smol_12correlations_5delta_corr_dist_single_flip(PyOb
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_occu_i)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_corr_dist_single_flip", 1, 5, 5, 1); __PYX_ERR(0, 108, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("corr_distance_single_flip", 1, 5, 5, 1); __PYX_ERR(0, 108, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_corr)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_corr_dist_single_flip", 1, 5, 5, 2); __PYX_ERR(0, 108, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("corr_distance_single_flip", 1, 5, 5, 2); __PYX_ERR(0, 108, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_corr_functions)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_corr_dist_single_flip", 1, 5, 5, 3); __PYX_ERR(0, 108, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("corr_distance_single_flip", 1, 5, 5, 3); __PYX_ERR(0, 108, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_orbit_list)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_corr_dist_single_flip", 1, 5, 5, 4); __PYX_ERR(0, 108, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("corr_distance_single_flip", 1, 5, 5, 4); __PYX_ERR(0, 108, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "delta_corr_dist_single_flip") < 0)) __PYX_ERR(0, 108, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "corr_distance_single_flip") < 0)) __PYX_ERR(0, 108, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
       goto __pyx_L5_argtuple_error;
@@ -4201,14 +4253,14 @@ static PyObject *__pyx_pw_4smol_12correlations_5delta_corr_dist_single_flip(PyOb
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("delta_corr_dist_single_flip", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 108, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("corr_distance_single_flip", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 108, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("smol.correlations.delta_corr_dist_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("smol.correlations.corr_distance_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_orbit_list), (&PyList_Type), 1, "orbit_list", 1))) __PYX_ERR(0, 112, __pyx_L1_error)
-  __pyx_r = __pyx_pf_4smol_12correlations_4delta_corr_dist_single_flip(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_corr, __pyx_v_num_corr_functions, __pyx_v_orbit_list);
+  __pyx_r = __pyx_pf_4smol_12correlations_4corr_distance_single_flip(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_corr, __pyx_v_num_corr_functions, __pyx_v_orbit_list);
 
   /* function exit code */
   goto __pyx_L0;
@@ -4219,16 +4271,16 @@ static PyObject *__pyx_pw_4smol_12correlations_5delta_corr_dist_single_flip(PyOb
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4smol_12correlations_4delta_corr_dist_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_corr, int __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list) {
+static PyObject *__pyx_pf_4smol_12correlations_4corr_distance_single_flip(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_corr, int __pyx_v_num_corr_functions, PyObject *__pyx_v_orbit_list) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("delta_corr_dist_single_flip", 0);
+  __Pyx_RefNannySetupContext("corr_distance_single_flip", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_4smol_12correlations_delta_corr_dist_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_corr, __pyx_v_num_corr_functions, __pyx_v_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 108, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_4smol_12correlations_corr_distance_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_corr, __pyx_v_num_corr_functions, __pyx_v_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 108, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4237,7 +4289,7 @@ static PyObject *__pyx_pf_4smol_12correlations_4delta_corr_dist_single_flip(CYTH
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("smol.correlations.delta_corr_dist_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("smol.correlations.corr_distance_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_occu_f, 1);
@@ -4248,7 +4300,7 @@ static PyObject *__pyx_pf_4smol_12correlations_4delta_corr_dist_single_flip(CYTH
   return __pyx_r;
 }
 
-/* "smol/correlations.pyx":162
+/* "smol/correlations.pyx":163
  *
  *
  * cpdef delta_ewald_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
@@ -4281,7 +4333,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("delta_ewald_single_flip", 0);
 
-  /* "smol/correlations.pyx":187
+  /* "smol/correlations.pyx":188
  *     cdef int i, j, k, add, sub
  *     cdef bint ok
  *     cdef double out = 0             # <<<<<<<<<<<<<<
@@ -4290,7 +4342,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
  */
   __pyx_v_out = 0.0;
 
-  /* "smol/correlations.pyx":191
+  /* "smol/correlations.pyx":192
  *
  *     # values of -1 are vacancies and hence don't have ewald indices
  *     add = ewald_indices[site_ind, occu_f[site_ind]]             # <<<<<<<<<<<<<<
@@ -4302,7 +4354,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
   __pyx_t_3 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_1)) )));
   __pyx_v_add = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_indices.data + __pyx_t_2 * __pyx_v_ewald_indices.strides[0]) )) + __pyx_t_3)) )));
 
-  /* "smol/correlations.pyx":192
+  /* "smol/correlations.pyx":193
  *     # values of -1 are vacancies and hence don't have ewald indices
  *     add = ewald_indices[site_ind, occu_f[site_ind]]
  *     sub = ewald_indices[site_ind, occu_i[site_ind]]             # <<<<<<<<<<<<<<
@@ -4314,7 +4366,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
   __pyx_t_2 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_1)) )));
   __pyx_v_sub = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_indices.data + __pyx_t_3 * __pyx_v_ewald_indices.strides[0]) )) + __pyx_t_2)) )));
 
-  /* "smol/correlations.pyx":194
+  /* "smol/correlations.pyx":195
  *     sub = ewald_indices[site_ind, occu_i[site_ind]]
  *
  *     for k in range(occu_f.shape[0]):             # <<<<<<<<<<<<<<
@@ -4326,7 +4378,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
   for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
     __pyx_v_k = __pyx_t_6;
 
-    /* "smol/correlations.pyx":195
+    /* "smol/correlations.pyx":196
  *
  *     for k in range(occu_f.shape[0]):
  *         i = ewald_indices[k, occu_f[k]]             # <<<<<<<<<<<<<<
@@ -4338,7 +4390,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
     __pyx_t_3 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_1)) )));
     __pyx_v_i = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_indices.data + __pyx_t_2 * __pyx_v_ewald_indices.strides[0]) )) + __pyx_t_3)) )));
 
-    /* "smol/correlations.pyx":196
+    /* "smol/correlations.pyx":197
  *     for k in range(occu_f.shape[0]):
  *         i = ewald_indices[k, occu_f[k]]
  *         out_k = 0             # <<<<<<<<<<<<<<
@@ -4347,7 +4399,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
  */
     __pyx_v_out_k = 0.0;
 
-    /* "smol/correlations.pyx":197
+    /* "smol/correlations.pyx":198
  *         i = ewald_indices[k, occu_f[k]]
  *         out_k = 0
  *         if i != -1 and add != -1:             # <<<<<<<<<<<<<<
@@ -4365,7 +4417,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
     __pyx_L6_bool_binop_done:;
     if (__pyx_t_7) {
 
-      /* "smol/correlations.pyx":198
+      /* "smol/correlations.pyx":199
  *         out_k = 0
  *         if i != -1 and add != -1:
  *             if i != add:             # <<<<<<<<<<<<<<
@@ -4375,7 +4427,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
       __pyx_t_7 = ((__pyx_v_i != __pyx_v_add) != 0);
       if (__pyx_t_7) {
 
-        /* "smol/correlations.pyx":199
+        /* "smol/correlations.pyx":200
  *         if i != -1 and add != -1:
  *             if i != add:
  *                 out_k = out_k + 2 * ewald_matrix[i, add]             # <<<<<<<<<<<<<<
@@ -4386,7 +4438,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
         __pyx_t_3 = __pyx_v_add;
         __pyx_v_out_k = (__pyx_v_out_k + (2.0 * (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_ewald_matrix.data + __pyx_t_1 * __pyx_v_ewald_matrix.strides[0]) )) + __pyx_t_3)) )))));
 
-        /* "smol/correlations.pyx":198
+        /* "smol/correlations.pyx":199
  *         out_k = 0
  *         if i != -1 and add != -1:
  *             if i != add:             # <<<<<<<<<<<<<<
@@ -4396,7 +4448,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
         goto __pyx_L8;
       }
 
-      /* "smol/correlations.pyx":201
+      /* "smol/correlations.pyx":202
  *                 out_k = out_k + 2 * ewald_matrix[i, add]
  *             else:
  *                 out_k = out_k + ewald_matrix[i, add]             # <<<<<<<<<<<<<<
@@ -4410,7 +4462,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
       }
       __pyx_L8:;
 
-      /* "smol/correlations.pyx":197
+      /* "smol/correlations.pyx":198
  *         i = ewald_indices[k, occu_f[k]]
  *         out_k = 0
  *         if i != -1 and add != -1:             # <<<<<<<<<<<<<<
@@ -4419,7 +4471,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
  */
     }
 
-    /* "smol/correlations.pyx":203
+    /* "smol/correlations.pyx":204
  *                 out_k = out_k + ewald_matrix[i, add]
  *
  *         j = ewald_indices[k, occu_i[k]]             # <<<<<<<<<<<<<<
@@ -4431,7 +4483,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
     __pyx_t_2 = (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_1)) )));
     __pyx_v_j = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_ewald_indices.data + __pyx_t_3 * __pyx_v_ewald_indices.strides[0]) )) + __pyx_t_2)) )));
 
-    /* "smol/correlations.pyx":204
+    /* "smol/correlations.pyx":205
  *
  *         j = ewald_indices[k, occu_i[k]]
  *         if j != -1 and sub != -1:             # <<<<<<<<<<<<<<
@@ -4449,7 +4501,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
     __pyx_L10_bool_binop_done:;
     if (__pyx_t_7) {
 
-      /* "smol/correlations.pyx":205
+      /* "smol/correlations.pyx":206
  *         j = ewald_indices[k, occu_i[k]]
  *         if j != -1 and sub != -1:
  *             if j != sub:             # <<<<<<<<<<<<<<
@@ -4459,7 +4511,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
       __pyx_t_7 = ((__pyx_v_j != __pyx_v_sub) != 0);
       if (__pyx_t_7) {
 
-        /* "smol/correlations.pyx":206
+        /* "smol/correlations.pyx":207
  *         if j != -1 and sub != -1:
  *             if j != sub:
  *                 out_k = out_k - 2 * ewald_matrix[j, sub]             # <<<<<<<<<<<<<<
@@ -4470,7 +4522,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
         __pyx_t_2 = __pyx_v_sub;
         __pyx_v_out_k = (__pyx_v_out_k - (2.0 * (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_ewald_matrix.data + __pyx_t_1 * __pyx_v_ewald_matrix.strides[0]) )) + __pyx_t_2)) )))));
 
-        /* "smol/correlations.pyx":205
+        /* "smol/correlations.pyx":206
  *         j = ewald_indices[k, occu_i[k]]
  *         if j != -1 and sub != -1:
  *             if j != sub:             # <<<<<<<<<<<<<<
@@ -4480,7 +4532,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
         goto __pyx_L12;
       }
 
-      /* "smol/correlations.pyx":208
+      /* "smol/correlations.pyx":209
  *                 out_k = out_k - 2 * ewald_matrix[j, sub]
  *             else:
  *                 out_k = out_k - ewald_matrix[j, sub]             # <<<<<<<<<<<<<<
@@ -4494,7 +4546,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
       }
       __pyx_L12:;
 
-      /* "smol/correlations.pyx":204
+      /* "smol/correlations.pyx":205
  *
  *         j = ewald_indices[k, occu_i[k]]
  *         if j != -1 and sub != -1:             # <<<<<<<<<<<<<<
@@ -4503,7 +4555,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
  */
     }
 
-    /* "smol/correlations.pyx":209
+    /* "smol/correlations.pyx":210
  *             else:
  *                 out_k = out_k - ewald_matrix[j, sub]
  *         out += out_k             # <<<<<<<<<<<<<<
@@ -4512,19 +4564,19 @@ static PyObject *__pyx_f_4smol_12correlations_delta_ewald_single_flip(__Pyx_memv
     __pyx_v_out = (__pyx_v_out + __pyx_v_out_k);
   }
 
-  /* "smol/correlations.pyx":210
+  /* "smol/correlations.pyx":211
  *                 out_k = out_k - ewald_matrix[j, sub]
  *         out += out_k
  *     return out             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_out); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 210, __pyx_L1_error)
+  __pyx_t_9 = PyFloat_FromDouble(__pyx_v_out); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 211, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __pyx_r = __pyx_t_9;
   __pyx_t_9 = 0;
   goto __pyx_L0;
 
-  /* "smol/correlations.pyx":162
+  /* "smol/correlations.pyx":163
  *
  *
  * cpdef delta_ewald_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
@@ -4587,29 +4639,29 @@ static PyObject *__pyx_pw_4smol_12correlations_7delta_ewald_single_flip(PyObject
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_occu_i)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 1); __PYX_ERR(0, 162, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 1); __PYX_ERR(0, 163, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_ewald_matrix)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 2); __PYX_ERR(0, 162, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 2); __PYX_ERR(0, 163, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_ewald_indices)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 3); __PYX_ERR(0, 162, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 3); __PYX_ERR(0, 163, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_site_ind)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 4); __PYX_ERR(0, 162, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, 4); __PYX_ERR(0, 163, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "delta_ewald_single_flip") < 0)) __PYX_ERR(0, 162, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "delta_ewald_single_flip") < 0)) __PYX_ERR(0, 163, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
       goto __pyx_L5_argtuple_error;
@@ -4620,15 +4672,15 @@ static PyObject *__pyx_pw_4smol_12correlations_7delta_ewald_single_flip(PyObject
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
     }
-    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 162, __pyx_L3_error)
-    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 163, __pyx_L3_error)
-    __pyx_v_ewald_matrix = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(values[2], 0); if (unlikely(!__pyx_v_ewald_matrix.memview)) __PYX_ERR(0, 164, __pyx_L3_error)
-    __pyx_v_ewald_indices = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(values[3], 0); if (unlikely(!__pyx_v_ewald_indices.memview)) __PYX_ERR(0, 165, __pyx_L3_error)
-    __pyx_v_site_ind = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_site_ind == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 166, __pyx_L3_error)
+    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 163, __pyx_L3_error)
+    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 164, __pyx_L3_error)
+    __pyx_v_ewald_matrix = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(values[2], 0); if (unlikely(!__pyx_v_ewald_matrix.memview)) __PYX_ERR(0, 165, __pyx_L3_error)
+    __pyx_v_ewald_indices = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(values[3], 0); if (unlikely(!__pyx_v_ewald_indices.memview)) __PYX_ERR(0, 166, __pyx_L3_error)
+    __pyx_v_site_ind = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_site_ind == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 167, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 162, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("delta_ewald_single_flip", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 163, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("smol.correlations.delta_ewald_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4650,7 +4702,7 @@ static PyObject *__pyx_pf_4smol_12correlations_6delta_ewald_single_flip(CYTHON_U
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("delta_ewald_single_flip", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_4smol_12correlations_delta_ewald_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_ewald_matrix, __pyx_v_ewald_indices, __pyx_v_site_ind, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 162, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_4smol_12correlations_delta_ewald_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_ewald_matrix, __pyx_v_ewald_indices, __pyx_v_site_ind, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 163, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -19459,7 +19511,7 @@ static PyTypeObject __pyx_type___pyx_memoryviewslice = {
 static PyMethodDef __pyx_methods[] = {
   {"corr_from_occupancy", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_4smol_12correlations_1corr_from_occupancy, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4smol_12correlations_corr_from_occupancy},
   {"delta_corr_single_flip", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_4smol_12correlations_3delta_corr_single_flip, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4smol_12correlations_2delta_corr_single_flip},
-  {"delta_corr_dist_single_flip", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_4smol_12correlations_5delta_corr_dist_single_flip, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4smol_12correlations_4delta_corr_dist_single_flip},
+  {"corr_distance_single_flip", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_4smol_12correlations_5corr_distance_single_flip, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4smol_12correlations_4corr_distance_single_flip},
   {"delta_ewald_single_flip", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_4smol_12correlations_7delta_ewald_single_flip, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4smol_12correlations_6delta_ewald_single_flip},
   {0, 0, 0, 0}
 };
@@ -19923,6 +19975,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_2 = PyInt_FromLong(2); if (unlikely(!__pyx_int_2)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_112105877 = PyInt_FromLong(112105877L); if (unlikely(!__pyx_int_112105877)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_136983863 = PyInt_FromLong(136983863L); if (unlikely(!__pyx_int_136983863)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_184977713 = PyInt_FromLong(184977713L); if (unlikely(!__pyx_int_184977713)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -23736,6 +23789,29 @@ __pyx_fail:
     }
     retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, __Pyx_IS_C_CONTIG,
                                                  (PyBUF_C_CONTIGUOUS | PyBUF_FORMAT) | writable_flag, 1,
+                                                 &__Pyx_TypeInfo_double, stack,
+                                                 &result, obj);
+    if (unlikely(retcode == -1))
+        goto __pyx_fail;
+    return result;
+__pyx_fail:
+    result.memview = NULL;
+    result.data = NULL;
+    return result;
+}
+
+/* ObjectToMemviewSlice */
+  static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_d_dc_double(PyObject *obj, int writable_flag) {
+    __Pyx_memviewslice result = { 0, 0, { 0 }, { 0 }, { 0 } };
+    __Pyx_BufFmt_StackElem stack[1];
+    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_FOLLOW), (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_CONTIG) };
+    int retcode;
+    if (obj == Py_None) {
+        result.memview = (struct __pyx_memoryview_obj *) Py_None;
+        return result;
+    }
+    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, __Pyx_IS_C_CONTIG,
+                                                 (PyBUF_C_CONTIGUOUS | PyBUF_FORMAT) | writable_flag, 2,
                                                  &__Pyx_TypeInfo_double, stack,
                                                  &result, obj);
     if (unlikely(retcode == -1))

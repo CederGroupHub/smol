@@ -12,7 +12,7 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 
 from smol.cofe.space.clusterspace import ClusterSubspace
-from smol.correlations import delta_corr_dist_single_flip
+from smol.correlations import corr_distance_single_flip
 from smol.moca.processor import ClusterExpansionProcessor
 from smol.moca.processor.base import Processor
 
@@ -41,6 +41,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         supercell_matrix,
         target_features,
         match_weight=1.0,
+        match_tol=1e-8,
         target_weights=None,
         **processor_kwargs
     ):
@@ -53,12 +54,14 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
                 an array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
             target_features (ndarray): optional
-                target feature vector
+                target feature vector (excluding constant)
             match_weight (float): optional
                 weight for the in the wL term above. That is how much to weight the
                 largest diameter below which all features are matched exactly.
                 Set to any number >0 to use this term. Default is 1.0. to ignore it
                 set it to zero.
+            match_tol (float): optional
+                tolerance for matching features. Default is 1e-8.
             target_weights (ndarray): optional
                 Weights for the absolute differences each feature when calculating
                 the total distance. If None, then all features are weighted equally.
@@ -67,36 +70,40 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
                 being inherited from.
         """
         self.target = target_features
-        if match_weight <= 0:
+        if match_weight < 0:
             raise ValueError("The match weight must be a positive number.")
-        self.match_weight = match_weight
+        self.match_tol = match_tol
 
         super().__init__(
             cluster_subspace,
             supercell_matrix,
-            coefficients=target_weights,
+            coefficients=np.concatenate([[-match_weight], target_weights]),
             **processor_kwargs
         )
 
     @abstractmethod
-    def compute_feature_vector_change(self, occupancy, flips):
-        """
-        Compute the change in the feature vector from a list of flips.
-
-        The feature vector in this case is normalized per supercell. In
-        other works it is extensive corresponding to the size of the supercell.
+    def compute_feature_vector_distances(self, occupancy, flips):
+        """Compute the distance of feature vectors separated by given flips from the target.
 
         Args:
             occupancy (ndarray):
-                encoded occupancy string
-            flips (list of tuple):
-                list of tuples with two elements. Each tuple represents a
-                single flip where the first element is the index of the site
-                in the occupancy string and the second element is the index
-                for the new species to place at that site.
+                encoded occupancy array
 
         Returns:
-            array: change in feature vector
+            ndarray: 2D distance vector where the first row corresponds to correlations before flips
+        """
+
+    @abstractmethod
+    def exact_match_max_diameter(self, distance_vector):
+        """
+        Get the largest diameter for which all features are exactly matched.
+
+        Args:
+            distance_vector (ndarray):
+                feature vector
+
+        Returns:
+            float: largest diameter for which all features are exactly matched.
         """
         return
 
@@ -116,41 +123,44 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         Returns:
             array: change in feature vector
         """
-        return np.abs(super().compute_feature_vector(occupancy) - self.target)
+        feature_vector = (
+            super().compute_feature_vector(occupancy) / self.size
+        )  # remove scaling
+        feature_vector[1:] = np.abs(feature_vector[1:] - self.target)
 
-    def compute_property(self, occupancy):
-        """Compute the distance of the feature vector from the target.
+        if self.coefs[0] > 0:
+            feature_vector[0] = self.exact_match_max_diameter(feature_vector)
+        else:
+            feature_vector[0] = 0.0
 
-        Args:
-            occupancy (ndarray):
-                encoded occupancy array
-        Returns:
-            float: distance from target
+        return feature_vector
+
+    def compute_feature_vector_change(self, occupancy, flips):
         """
-        distance = super().compute_property(occupancy)
-        # TODO now need to find the largest diameter with distance == 0 for -wL term
+        Compute the change in the feature vector from a list of flips.
 
-        return distance
-
-    def compute_property_change(self, occupancy, flips):
-        """Compute the change in distance of the feature vector from the target.
+        The feature vector in this case is normalized per supercell. In
+        other works it is extensive corresponding to the size of the supercell.
 
         Args:
             occupancy (ndarray):
-                encoded occupancy array
+                encoded occupancy string
             flips (list of tuple):
                 list of tuples with two elements. Each tuple represents a
                 single flip where the first element is the index of the site
-                in the occupancy array and the second element is the index
+                in the occupancy string and the second element is the index
                 for the new species to place at that site.
 
         Returns:
-            float: change in distance from target
+            array: change in feature vector
         """
-        distance_diff = super().compute_property_change(occupancy, flips)
-        # TODO need to find the largest diameter with distance == 0 same as above
+        distance_vectors = self.compute_feature_vector_distances(occupancy, flips)
 
-        return distance_diff
+        if self.coefs[0] > 0:
+            distance_vectors[0] = self.exact_match_max_diameter(distance_vectors[0])
+            distance_vectors[1] = self.exact_match_max_diameter(distance_vectors[1])
+
+        return distance_vectors[1] - distance_vectors[0]
 
     def as_dict(self):
         """Return a dictionary representation of the processor."""
@@ -211,15 +221,17 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
                 largest diameter below which all correlations are matched exactly.
                 Set to any number >0 to use this term. Default is 1.0. to ignore it
                 set it to zero.
+            match_tol (float): optional
+                tolerance for matching features. Default is 1e-8.
             target_weights (ndarray): optional
                 Weights for the absolute differences each correlation when calculating
                 the total distance. If None, then all correlations are weighted equally.
         """
         if target_correlations is None:
-            target_correlations = np.zeros(len(cluster_subspace))
+            target_correlations = np.zeros(len(cluster_subspace) - 1)
 
         if target_weights is None:
-            target_weights = np.ones(len(cluster_subspace))
+            target_weights = np.ones(len(cluster_subspace) - 1)
 
         super().__init__(
             cluster_subspace,
@@ -229,28 +241,26 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
             target_weights=target_weights,
         )
 
-    def compute_feature_vector_change(self, occupancy, flips):
-        """
-        Compute the change of correlation vector differences from a fixed vector from a list of flips.
+    def compute_feature_vector_distances(self, occupancy, flips):
+        """Compute the distance of correlation vectors separated by given flips from the target.
 
         Args:
             occupancy (ndarray):
-                encoded occupancy string
+                encoded occupancy array
             flips (list of tuple):
-                list of tuples with two elements. Each tuple represents a
-                single flip where the first element is the index of the site
-                in the occupancy string and the second element is the index
-                for the new species to place at that site.
+                list of tuples with two elements. Each tuple represents a single flip where
+                the first element is the index of the site in the occupancy array and the
+                second element is the index for the new species to place at that site.
 
         Returns:
-            array: change in feature vector
+            ndarray: 2D distance vector where the first row corresponds to correlations before flips
         """
         occu_i = occupancy
-        delta_corr = np.zeros(self.num_corr_functions)
+        corr_distances = np.zeros((2, self.num_corr_functions))
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            delta_corr += delta_corr_dist_single_flip(
+            corr_distances += corr_distance_single_flip(
                 occu_f,
                 occu_i,
                 self.target,
@@ -259,4 +269,29 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
             )
             occu_i = occu_f
 
-        return delta_corr * self.size
+        return corr_distances
+
+    def exact_match_max_diameter(self, distance_vector):
+        """
+        Get the largest diameter for which all features are exactly matched.
+
+        Args:
+            distance_vector (ndarray):
+                feature vector
+
+        Returns:
+            float: largest diameter
+        """
+        max_matched_diameters = {}
+        for size, orbits in self.cluster_subspace.orbits_by_size.items():
+            max_matched_diameters[size] = 0
+            for orbit in orbits:
+                if np.all(
+                    distance_vector[range(orbit.bit_id, orbit.bit_id + len(orbit))]
+                    <= self.match_tol
+                ):
+                    max_matched_diameters[size] = orbit.base_cluster.diameter
+                else:
+                    break
+
+        return min(max_matched_diameters.values())
