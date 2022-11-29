@@ -598,10 +598,8 @@ class WangLandau(MCKernel):
 
         new_enthalpy = self._current_enthalpy + self.trace.delta_trace.enthalpy
 
-        if new_enthalpy < self._window[0]:  # reject
-            self.trace.accepted = np.array(False)
-            new_bin_id = bin_id
-        elif new_enthalpy >= self._window[1]:  # reject
+        # reject if outside of window
+        if new_enthalpy < self._window[0] or new_enthalpy >= self._window[1]:
             self.trace.accepted = np.array(False)
             new_bin_id = bin_id
         else:
