@@ -9,6 +9,7 @@ Use this section to keep track of changes in the works.
 ### Added
 ### Changed
 ### Fixed
+*  Remove size key when all orbits of a certain size have been removed #292 @lbluque
 ### Removed
 ### Deprecated
 
