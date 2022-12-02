@@ -98,12 +98,6 @@ class StepTrace(Trace):
         return step_trace_d
 
 
-# TODO make it easier to have multiple walkers, either have the sampler have
-#  a list of kernel copies or make a multi-kernel class that simply holds
-#  the copies but ow behaves the same, that will really simplify writing kernels!
-#  TODO it is so tedious and unnecessary to have multiple walkers for the WL Kernel !
-
-
 class MCKernel(ABC):
     """Abstract base class for transition kernels.
 
