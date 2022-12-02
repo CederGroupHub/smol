@@ -647,7 +647,9 @@ class WangLandau(MCKernel):
         self.trace.mod_factor = np.array([self._m])
 
         if self._steps_counter % self.check_period == 0:
-            histogram = self._histogram[self._histogram > 0]  # remove zero entries
+            # remove zero entropy entries (use entropy instead of histogram to mask so
+            # that once a state is visited it is always considered there after)
+            histogram = self._histogram[self._entropy > 0]
             # Check that at least two distinct bins have been visited, then check flatness
             if (
                 len(histogram) >= 2
