@@ -488,6 +488,10 @@ class WangLandau(MCKernel):
         """
         if min_enthalpy > max_enthalpy:
             raise ValueError("min_enthalpy can not be larger than max_enthalpy.")
+        if (max_enthalpy - min_enthalpy) / bin_size <= 1:
+            raise ValueError(
+                "The values provided for min and max enthalpy and bin sizer result in a single bin!"
+            )
         if mod_factor <= 0:
             raise ValueError("mod_factor must be greater than 0.")
 
