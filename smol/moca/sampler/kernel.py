@@ -648,13 +648,13 @@ class WangLandau(MCKernel):
 
         if self._steps_counter % self.check_period == 0:
             histogram = self._histogram[self._histogram > 0]  # remove zero entries
-            if (histogram > self.flatness * histogram.mean()).all() and len(
-                histogram
-            ) >= 0.5 * len(self._histogram):
-                # A sufficient portion of histogram must have been populated.
-                # So be careful with your min and max energy setting.
-                self._m = self._mod_update(self._m)
+            # Check that at least two distinct bins have been visited, then check flatness
+            if (
+                len(histogram) >= 2
+                and (histogram > self.flatness * histogram.mean()).all()
+            ):
                 self._histogram[:] = 0  # reset histogram and decrease _m.
+                self._m = self._mod_update(self._m)
 
         return self.trace
 
