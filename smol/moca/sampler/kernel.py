@@ -244,11 +244,6 @@ class MCKernel(ABC):
         trace.accepted = np.array([True])
         return trace
 
-    def iter_steps(self, occupancies):
-        """Iterate steps for each walker over an array of occupancies."""
-        for occupancy in occupancies:
-            yield self.single_step(occupancy)
-
 
 class ThermalKernel(MCKernel):
     """Abstract base class for transition kernels with a set temperature.
