@@ -134,3 +134,17 @@ def test_temperature_setter(single_canonical_ensemble):
     assert metropolis_kernel.beta == 1 / (kB * metropolis_kernel.temperature)
     metropolis_kernel.temperature = 500
     assert metropolis_kernel.beta == 1 / (kB * 500)
+
+
+def test_trace(rng):
+    trace = Trace(first=np.ones(10), second=np.zeros(10))
+    assert all(isinstance(val, np.ndarray) for _, val in trace.items())
+
+    trace.third = rng.random(10)
+    assert all(isinstance(val, np.ndarray) for _, val in trace.items())
+    names = ["first", "second", "third"]
+    assert all(name in names for name in trace.names)
+
+    with pytest.raises(TypeError):
+        trace.fourth = "blabla"
+        Trace(one=np.zeros(40), two=66)
