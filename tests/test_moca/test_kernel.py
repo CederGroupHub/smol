@@ -148,3 +148,19 @@ def test_trace(rng):
     with pytest.raises(TypeError):
         trace.fourth = "blabla"
         Trace(one=np.zeros(40), two=66)
+
+def test_step_trace(rng):
+    steptrace = StepTrace(one=np.zeros(10))
+    assert isinstance(steptrace.delta_trace, Trace)
+    with pytest.raises(ValueError):
+        steptrace.delta_trace = np.ones(10)
+        StepTrace(delta_trace=np.ones(10))
+
+    with pytest.raises(TypeError):
+        steptrace.fourth = "blabla"
+        StepTrace(one=np.zeros(40), two=66)
+
+    # check saving
+    steptrace_d = steptrace.__dict__.copy()
+    steptrace_d["delta_trace"] = steptrace_d["delta_trace"].__dict__.copy()
+    assert steptrace.as_dict() == steptrace_d
