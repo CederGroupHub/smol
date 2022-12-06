@@ -32,9 +32,10 @@ def mckernel(ensemble, request):
     if issubclass(kernel_class, ThermalKernel):
         kwargs["temperature"] = 5000
     if kernel_class == WangLandau:
-        kwargs["min_enthalpy"] = 0
-        kwargs["max_enthalpy"] = 100
-        kwargs["bin_size"] = 1
+        kwargs["min_enthalpy"] = -5000
+        kwargs["max_enthalpy"] = 5000
+        kwargs["bin_size"] = 10
+        kwargs["check_period"] = 5
 
     if step_type == "MultiStep":
         kwargs["mcusher"] = choice(
@@ -111,14 +112,21 @@ def test_trace(rng):
 
 
 def test_single_step(mckernel):
-    occu_ = gen_random_occupancy(mckernel._usher.sublattices)
-    for _ in range(20):
+    mckernel.set_aux_state(gen_random_occupancy(mckernel._usher.sublattices))
+    for _ in range(100):
+        occu_ = gen_random_occupancy(mckernel._usher.sublattices)
         trace = mckernel.single_step(occu_.copy())
+
         if trace.accepted:
             assert not np.array_equal(trace.occupancy, occu_)
         else:
             npt.assert_array_equal(trace.occupancy, occu_)
         if isinstance(mckernel, WangLandau):
+            assert mckernel.bin_size > 0
+            assert isinstance(mckernel.levels, np.ndarray)
+            assert isinstance(mckernel.entropy, np.ndarray)
+            assert isinstance(mckernel.histogram, np.ndarray)
+
             assert "histogram" in trace.names
             assert "occurrences" in trace.names
             assert "entropy" in trace.names
@@ -127,12 +135,12 @@ def test_single_step(mckernel):
 
 
 def test_single_step_bias(mckernel_bias):
-    occu = gen_random_occupancy(mckernel_bias._usher.sublattices)
-    for _ in range(20):
+    mckernel_bias.set_aux_state(gen_random_occupancy(mckernel_bias._usher.sublattices))
+    for _ in range(100):
+        occu = gen_random_occupancy(mckernel_bias._usher.sublattices)
         trace = mckernel_bias.single_step(occu.copy())
         # assert delta bias is there and recorded
         assert isinstance(trace.delta_trace.bias, np.ndarray)
-        print(trace.delta_trace.bias)
         assert len(trace.delta_trace.bias.shape) == 0  # 0 dimensional
         if trace.accepted:
             assert not np.array_equal(trace.occupancy, occu)
