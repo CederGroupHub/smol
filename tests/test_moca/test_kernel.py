@@ -77,32 +77,6 @@ def test_constructor(ensemble, step_type, mcusher):
     assert "bias" in kernel.trace.delta_trace.names
 
 
-def test_trace(rng):
-    trace = Trace(first=np.ones(10), second=np.zeros(10))
-    assert all(isinstance(val, np.ndarray) for _, val in trace.items())
-
-    trace.third = rng.random(10)
-    assert all(isinstance(val, np.ndarray) for _, val in trace.items())
-    names = ["first", "second", "third"]
-    assert all(name in names for name in trace.names)
-
-    with pytest.raises(TypeError):
-        trace.fourth = "blabla"
-        Trace(one=np.zeros(40), two=66)
-
-    steptrace = StepTrace(one=np.zeros(10))
-    assert isinstance(steptrace.delta_trace, Trace)
-    with pytest.raises(ValueError):
-        steptrace.delta_trace = np.ones(10)
-        StepTrace(delta_trace=np.ones(10))
-
-    # check saving
-    assert trace.as_dict() == trace.__dict__
-    steptrace_d = steptrace.__dict__.copy()
-    steptrace_d["delta_trace"] = steptrace_d["delta_trace"].__dict__.copy()
-    assert steptrace.as_dict() == steptrace_d
-
-
 def test_single_step(mckernel):
     occu_ = gen_random_occupancy(mckernel._usher.sublattices)
     for _ in range(20):
@@ -149,7 +123,6 @@ def test_trace(rng):
         trace.fourth = "blabla"
         Trace(one=np.zeros(40), two=66)
 
-def test_step_trace(rng):
     steptrace = StepTrace(one=np.zeros(10))
     assert isinstance(steptrace.delta_trace, Trace)
     with pytest.raises(ValueError):
@@ -161,6 +134,7 @@ def test_step_trace(rng):
         StepTrace(one=np.zeros(40), two=66)
 
     # check saving
+    assert trace.as_dict() == trace.__dict__
     steptrace_d = steptrace.__dict__.copy()
     steptrace_d["delta_trace"] = steptrace_d["delta_trace"].__dict__.copy()
     assert steptrace.as_dict() == steptrace_d
