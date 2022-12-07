@@ -128,3 +128,15 @@ cite the following publications,
     `Cluster expansions of multicomponent ionic materials: Formalism and methodology.
     <https://doi.org/10.1103/PhysRevB.106.144202>`_.
     Phys. Rev. B 106, 144202 (2022).
+
+
+Wang-Landau sampling
+====================
+
+If you use Wang-Landau sampling to estimate density of states and derivative properties
+we recommend citing the original publications,
+
+    Wang, F. & Landau, D. P.
+    `Efficient, Multiple-Range Random Walk Algorithm to Calculate the Density of States.
+    <https://doi.org/10.1103/PhysRevLett.86.2050>`_.
+    Phys. Rev. Lett. 86, 2050–2053 (2001).
