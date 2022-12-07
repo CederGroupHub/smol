@@ -112,7 +112,7 @@ please cite the following work,
 
 Coulomb electrostatic interactions
 ==================================
-When using :class:`EwaldTerm` as an additional term in a lattice Hamiltonian, please
+When using an :class:`EwaldTerm` as an additional term in a lattice Hamiltonian, please
 cite the following publications,
 
     Seko, A. & Tanaka, I. `Cluster expansion of multicomponent ionic systems with
