@@ -15,6 +15,8 @@ import os
 import sys
 from datetime import date
 
+import smol
+
 sys.path.insert(0, os.path.abspath("../../smol"))
 sys.path.insert(0, os.path.abspath("notebooks"))
 
@@ -25,8 +27,8 @@ copyright = f"2022-{date.today().year}, Ceder Group"
 author = "Luis Barroso-Luque"
 
 # The full version, including alpha/beta/rc tags
-release = "v0.0.1"  # smol.__version__
-version = "v0.0.1"  # smol.__version__
+release = smol.__version__
+version = smol.__version__
 
 
 # -- General configuration ---------------------------------------------------
