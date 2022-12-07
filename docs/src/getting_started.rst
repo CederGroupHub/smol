@@ -174,6 +174,7 @@ Basic Examples
 - `Running Semigrand Canonical Monte Carlo`_
 - `Running Charge Neutral Semigrand Canonical Monte Carlo`_
 - `Preparing cluster expansion training data`_
+- `Preparing cluster expansion training data`_
 
 .. _Creating a basic cluster expansion: notebooks/creating-a-ce.ipynb
 
@@ -186,6 +187,8 @@ Basic Examples
 .. _Running Semigrand Canonical Monte Carlo: notebooks/running-semigrand-mc.ipynb
 
 .. _Running Charge Neutral Semigrand Canonical Monte Carlo: notebooks/running-charge-balanced-gcmc.ipynb
+
+.. _Wang-Landau sampling of an FCC Ising model: notebooks/wang-landau-ising.ipynb
 
 .. _Preparing cluster expansion training data: notebooks/training-data-preparation.ipynb
 
