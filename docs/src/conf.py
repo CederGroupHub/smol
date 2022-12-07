@@ -15,8 +15,6 @@ import os
 import sys
 from datetime import date
 
-import smol
-
 sys.path.insert(0, os.path.abspath("../../smol"))
 sys.path.insert(0, os.path.abspath("notebooks"))
 
@@ -27,8 +25,8 @@ copyright = f"2022-{date.today().year}, Ceder Group"
 author = "Luis Barroso-Luque"
 
 # The full version, including alpha/beta/rc tags
-release = smol.__version__
-version = smol.__version__
+release = "v0.0.1"  # smol.__version__
+version = "v0.0.1"  # smol.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -103,7 +101,7 @@ html_theme_options = {
     # "navbar_center": ["navbar-nav", "navbar-version"],  # Just for testing
     "navigation_depth": 2,
     "show_nav_level": 2,
-    "navbar_end": ["version-switcher", "navbar-icon-links"],  #
+    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],  #
     # "left_sidebar_end": ["custom-template.html", "sidebar-ethical-ads.html"],
     # "footer_items": ["copyright", "sphinx-version", ""]
     "switcher": {
@@ -129,6 +127,7 @@ html_context = {
     "github_version": "main",
     "doc_path": "docs/src",
     "source_suffix": source_suffix,
+    "default_mode": "auto",
 }
 
 # Custom sidebar templates, maps page names to templates.
