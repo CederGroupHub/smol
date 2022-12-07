@@ -130,9 +130,11 @@ class MCUsher(ABC):
 
     def update_aux_state(self, step, *args, **kwargs):
         """Update any auxiliary state information based on an accepted step."""
+        return
 
-    def set_aux_state(self, state, *args, **kwargs):
-        """Set the auxiliary state from a checkpoint value."""
+    def set_aux_state(self, occupancies, *args, **kwargs):
+        """Set the auxiliary occupancies from a checkpoint values."""
+        return
 
     def get_random_sublattice(self):
         """Return a random sublattice based on given probabilities."""

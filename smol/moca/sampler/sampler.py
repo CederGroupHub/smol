@@ -110,6 +110,7 @@ class Sampler:
             )
             for seed in seeds
         ]
+
         # get a trial trace to initialize sample container trace
         _trace = mckernels[0].compute_initial_trace(
             np.zeros(ensemble.num_sites, dtype=int)
@@ -202,7 +203,7 @@ class Sampler:
         trace = Trace()
         traces = list(map(self._kernels[0].compute_initial_trace, occupancies))
         for name in traces[0].names:
-            stack = np.vstack([getattr(tr, name) for tr in traces])
+            stack = np.stack([getattr(tr, name) for tr in traces], axis=0)
             setattr(trace, name, stack)
 
         # Initialise progress bar
