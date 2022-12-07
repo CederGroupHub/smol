@@ -625,7 +625,7 @@ class WangLandau(MCKernel):
                 / (total + 1)
                 * (self._current_features + total * self._mean_features[bin_id, :])
             )
-            # check if histograms are flat and reset accordingly
+            # update histogram, entropy and occurrences each update_period steps
             if self._steps_counter % self.update_period == 0:
                 # Add to DOS and histogram
                 self._entropy[bin_id] += self._m
@@ -648,7 +648,8 @@ class WangLandau(MCKernel):
                 len(histogram) >= 2
                 and (histogram > self.flatness * histogram.mean()).all()
             ):
-                self._histogram[:] = 0  # reset histogram and decrease _m.
+                # reset histogram and decrease modification factor
+                self._histogram[:] = 0
                 self._m = self._mod_update(self._m)
 
         return self.trace
