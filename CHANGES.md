@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* `WangLandau` kernel class for density of states sampling. #294 @qchempku2017 & @lbluque
 ### Changed
 ### Fixed
-*  Remove size key when all orbits of a certain size have been removed #292 @lbluque
+*  Remove size key when all orbits of a certain size have been removed. #292 @lbluque
 ### Removed
 ### Deprecated
 
