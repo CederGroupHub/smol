@@ -261,6 +261,9 @@ class SquareChargeBias(MCBias):
             table[sublatt.sites[:, None], sublatt.encoding] = cs[None, :]
         self._c_table = table
 
+        # record specifications
+        self.spec.penalty = penalty
+
     def compute_bias(self, occupancy):
         """Compute bias from occupancy.
 
@@ -335,6 +338,11 @@ class SquareHyperplaneBias(MCBias):
         self._b = np.array(hyperplane_intercepts, dtype=int)
         self._dim_ids_table = get_dim_ids_table(self.sublattices)
         self.d = sum(len(sublatt.species) for sublatt in sublattices)
+
+        # record specifications
+        self.spec.penalty = penalty
+        self.spec.hyperplane_normals = self._A.tolist()
+        self.spec.hyperplane_intercepts = self._b.tolist()
 
     def compute_bias(self, occupancy):
         """Compute bias from occupancy.

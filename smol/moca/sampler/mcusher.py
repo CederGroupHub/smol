@@ -14,6 +14,7 @@ import warnings
 from abc import ABC, abstractmethod
 
 import numpy as np
+from monty.json import jsanitize
 from scipy.special import gammaln
 
 from smol.moca.composition import CompositionSpace
@@ -536,6 +537,15 @@ class TableFlip(MCUsher):
         self._swapper = Swap(self.sublattices)
         self._dim_ids_table = get_dim_ids_table(self.sublattices, active_only=True)
         self._dim_ids_full = get_dim_ids_table(self.sublattices, active_only=False)
+
+        # record specifications
+        self.spec.flip_table = self.flip_table.tolist()
+        self.spec.flip_weights = self.flip_weights.tolist()
+        self.spec.other_constraints = jsanitize(other_constraints)
+        self.spec.charge_balanced = charge_balanced
+        self.spec.optimize_basis = optimize_basis
+        self.spec.table_ergodic = table_ergodic
+        self.spec.swap_weight = swap_weight
 
     def propose_step(self, occupancy):
         """Propose a single random flip step.
