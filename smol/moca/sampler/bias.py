@@ -14,6 +14,7 @@ import numpy as np
 
 from smol.cofe.space.domain import get_species
 from smol.moca.composition import get_oxi_state
+from smol.moca.sampler.namespace import MCSpec
 from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
 from smol.utils import class_name_from_str, derived_class_factory
 
@@ -21,8 +22,9 @@ from smol.utils import class_name_from_str, derived_class_factory
 class MCBias(ABC):
     """Base bias term class.
 
-    Note: Any MCBias should be implemented as beta*E-bias
+    Note: Any MCBias should be implemented as beta * E - bias
     will be minimized in thermodynamics kernel.
+
     Attributes:
         sublattices (List[Sublattice]):
             list of sublattices with active sites.
@@ -48,6 +50,14 @@ class MCBias(ABC):
             sublatt for sublatt in self.sublattices if sublatt.is_active
         ]
         self._rng = np.random.default_rng(rng)
+
+        self.spec = MCSpec(
+            cls_name=self.__class__.__name__,
+            sublattices=[
+                sublatt.site_space.as_dict()["composition"]
+                for sublatt in self.sublattices
+            ],
+        )
 
     @abstractmethod
     def compute_bias(self, occupancy):
@@ -126,6 +136,9 @@ class FugacityBias(MCBias):
                 dict(sublatt.site_space) for sublatt in self.active_sublattices
             ]
         self.fugacity_fractions = fugacity_fractions
+
+        # update spec
+        self.spec.fugacity_fractions = fugacity_fractions
 
     @property
     def fugacity_fractions(self):
@@ -219,7 +232,7 @@ class SquareChargeBias(MCBias):
     This bias penalizes energy on square of the system net charge.
     """
 
-    def __init__(self, sublattices, penalty=0.5, **kwargs):
+    def __init__(self, sublattices, penalty=0.5):
         """Square charge bias.
 
         Args:

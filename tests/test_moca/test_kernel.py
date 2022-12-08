@@ -14,8 +14,8 @@ from smol.moca.sampler.kernel import (
     UniformlyRandom,
     WangLandau,
 )
-from smol.moca.sampler.namespace import Trace, StepTrace
 from smol.moca.sampler.mcusher import Flip, Swap, TableFlip
+from smol.moca.sampler.namespace import StepTrace, Trace
 from tests.utils import gen_random_occupancy
 
 kernels_with_bias = [UniformlyRandom, Metropolis]

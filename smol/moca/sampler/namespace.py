@@ -27,10 +27,14 @@ class MCSpec(SimpleNamespace):
                 The name of the class for which specifications are being
                 recorded.
             **kwargs:
-                keword arguments specifications.
+                keyword arguments specifications.
         """
         kwargs["type"] = cls_name
         super().__init__(**kwargs)
+
+    def as_dict(self):
+        """Return copy of underlying dictionary."""
+        return self.__dict__.copy()
 
 
 class Trace(SimpleNamespace):

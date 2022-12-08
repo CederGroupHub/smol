@@ -14,7 +14,7 @@ import numpy as np
 from smol.constants import kB
 from smol.moca.sampler.bias import MCBias, mcbias_factory
 from smol.moca.sampler.mcusher import MCUsher, mcusher_factory
-from smol.moca.sampler.namespace import Trace, StepTrace
+from smol.moca.sampler.namespace import MCSpec, StepTrace, Trace
 from smol.utils import class_name_from_str, derived_class_factory, get_subclasses
 
 ALL_MCUSHERS = list(get_subclasses(MCUsher).keys())
@@ -75,22 +75,20 @@ class MCKernel(ABC):
 
         mcusher_name = class_name_from_str(step_type)
         self.mcusher = mcusher_factory(
-            mcusher_name,
-            ensemble.sublattices,
-            *args,
-            rng=self._rng,
-            **kwargs,
+            mcusher_name, ensemble.sublattices, *args, rng=self._rng, **kwargs
+        )
+
+        self.spec = MCSpec(
+            cls_name=self.__class__.__name__, seed=self._seed, step=self.mcusher.spec
         )
 
         if bias_type is not None:
             bias_name = class_name_from_str(bias_type)
             bias_kwargs = {} if bias_kwargs is None else bias_kwargs
             self.bias = mcbias_factory(
-                bias_name,
-                ensemble.sublattices,
-                rng=self._rng,
-                **bias_kwargs,
+                bias_name, ensemble.sublattices, rng=self._rng, **bias_kwargs
             )
+            self.spec.bias = self.bias.spec
 
         # run a initial step to populate trace values
         _ = self.single_step(np.zeros(ensemble.num_sites, dtype=int))
@@ -447,6 +445,15 @@ class WangLandau(MCKernel):
 
         if self.bias is not None:
             raise ValueError("Cannot apply bias to Wang-Landau simulation!")
+
+        # add inputs to specification
+        self.spec.min_enthalpy = min_enthalpy
+        self.spec.max_enthalpy = max_enthalpy
+        self.spec.bin_size = bin_size
+        self.spec.flatness = flatness
+        self.spec.check_period = check_period
+        self.spec.update_period = update_period
+        self.spec.levels = self._levels
 
         # Additional clean-ups.
         self._histogram[:] = 0

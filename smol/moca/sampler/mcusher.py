@@ -17,6 +17,7 @@ import numpy as np
 from scipy.special import gammaln
 
 from smol.moca.composition import CompositionSpace
+from smol.moca.sampler.namespace import MCSpec
 from smol.moca.utils.math import (
     NUM_TOL,
     choose_section_from_partition,
@@ -73,6 +74,14 @@ class MCUsher(ABC):
             self._sublatt_probs = sublattice_probabilities
 
         self._rng = np.random.default_rng(rng)
+        self.spec = MCSpec(
+            cls_name=self.__class__.__name__,
+            sublattices=[
+                sublatt.site_space.as_dict()["composition"]
+                for sublatt in self.sublattices
+            ],
+            sublattice_probabilities=self._sublatt_probs,
+        )
 
     @property
     def sublattice_probabilities(self):
@@ -261,6 +270,11 @@ class MultiStep(MCUsher):
 
         self._mcusher = mcusher
 
+        # update spec
+        self.spec.step = self._mcusher.spec
+        self.spec.step_lengths = self._step_lens
+        self.spec.step_probabilities = self._step_p
+
     @property
     def sublattice_probabilities(self):
         """Get the probabilities of choosing a sublattice."""
@@ -341,6 +355,10 @@ class Composite(MCUsher):
                 )
             self.add_mcusher(usher, weight)
 
+        # update spec
+        self.spec.steps = [mcusher.spec for mcusher in self._mcushers]
+        self.spec.weights = self._weights
+
     @property
     def mcushers(self):
         """Get the list of mcushers."""
@@ -361,11 +379,13 @@ class Composite(MCUsher):
                 The weight associated with the mcusher being added
         """
         self._mcushers.append(mcusher)
+        self.spec.steps.append(mcusher.spec)
         self._update_p(weight)
 
     def _update_p(self, weight):
         """Update the probabilities for each mcuhser based on a new weight."""
         self._weights.append(weight)
+        self.spec.weights = self._weights
         total = sum(self._weights)
         self._p = [weight / total for weight in self._weights]
 
