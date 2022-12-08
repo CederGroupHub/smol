@@ -8,94 +8,17 @@ __author__ = "Luis Barroso-Luque"
 
 from abc import ABC, abstractmethod
 from math import log
-from types import SimpleNamespace
 
 import numpy as np
 
 from smol.constants import kB
 from smol.moca.sampler.bias import MCBias, mcbias_factory
 from smol.moca.sampler.mcusher import MCUsher, mcusher_factory
+from smol.moca.sampler.namespace import MCSpec, StepTrace, Trace
 from smol.utils import class_name_from_str, derived_class_factory, get_subclasses
 
 ALL_MCUSHERS = list(get_subclasses(MCUsher).keys())
 ALL_BIAS = list(get_subclasses(MCBias).keys())
-
-
-class Trace(SimpleNamespace):
-    """Simple Trace class.
-
-    A Trace is a simple namespace to hold states and values to be recorded
-    during MC sampling.
-    """
-
-    def __init__(self, /, **kwargs):  # noqa
-        if not all(isinstance(val, np.ndarray) for val in kwargs.values()):
-            raise TypeError("Trace only supports attributes of type ndarray.")
-        super().__init__(**kwargs)
-
-    @property
-    def names(self):
-        """Get all attribute names."""
-        return tuple(self.__dict__.keys())
-
-    def items(self):
-        """Return generator for (name, attribute)."""
-        yield from self.__dict__.items()
-
-    def __setattr__(self, name, value):
-        """Set only ndarrays as attributes."""
-        if isinstance(value, (float, int)):
-            value = np.array([value])
-
-        if not isinstance(value, np.ndarray):
-            raise TypeError("Trace only supports attributes of type ndarray.")
-        self.__dict__[name] = value
-
-    def as_dict(self):
-        """Return copy of underlying dictionary."""
-        return self.__dict__.copy()
-
-
-class StepTrace(Trace):
-    """StepTrace class.
-
-    Same as Trace above but holds a default "delta_trace" inner trace to hold
-    trace values that represent changes from previous values, to be handled
-    similarly to delta_features and delta_energy.
-
-    A StepTrace object is set as an MCKernel's attribute to record
-    kernel specific values during sampling.
-    """
-
-    def __init__(self, /, **kwargs):  # noqa
-        super().__init__(**kwargs)
-        super(Trace, self).__setattr__("delta_trace", Trace())
-
-    @property
-    def names(self):
-        """Get all field names. Removes delta_trace from field names."""
-        return tuple(name for name in super().names if name != "delta_trace")
-
-    def items(self):
-        """Return generator for (name, attribute). Skips delta_trace."""
-        for name, value in self.__dict__.items():
-            if name == "delta_trace":
-                continue
-            yield name, value
-
-    def __setattr__(self, name, value):
-        """Set only ndarrays as attributes."""
-        if name == "delta_trace":
-            raise ValueError("Attribute name 'delta_trace' is reserved.")
-        if not isinstance(value, np.ndarray):
-            raise TypeError("Trace only supports attributes of type ndarray.")
-        self.__dict__[name] = value
-
-    def as_dict(self):
-        """Return copy of serializable dictionary."""
-        step_trace_d = self.__dict__.copy()
-        step_trace_d["delta_trace"] = step_trace_d["delta_trace"].as_dict()
-        return step_trace_d
 
 
 class MCKernel(ABC):
@@ -152,22 +75,20 @@ class MCKernel(ABC):
 
         mcusher_name = class_name_from_str(step_type)
         self.mcusher = mcusher_factory(
-            mcusher_name,
-            ensemble.sublattices,
-            *args,
-            rng=self._rng,
-            **kwargs,
+            mcusher_name, ensemble.sublattices, *args, rng=self._rng, **kwargs
+        )
+
+        self.spec = MCSpec(
+            cls_name=self.__class__.__name__, seed=self._seed, step=self.mcusher.spec
         )
 
         if bias_type is not None:
             bias_name = class_name_from_str(bias_type)
             bias_kwargs = {} if bias_kwargs is None else bias_kwargs
             self.bias = mcbias_factory(
-                bias_name,
-                ensemble.sublattices,
-                rng=self._rng,
-                **bias_kwargs,
+                bias_name, ensemble.sublattices, rng=self._rng, **bias_kwargs
             )
+            self.spec.bias = self.bias.spec
 
         # run a initial step to populate trace values
         _ = self.single_step(np.zeros(ensemble.num_sites, dtype=int))
@@ -524,6 +445,15 @@ class WangLandau(MCKernel):
 
         if self.bias is not None:
             raise ValueError("Cannot apply bias to Wang-Landau simulation!")
+
+        # add inputs to specification
+        self.spec.min_enthalpy = min_enthalpy
+        self.spec.max_enthalpy = max_enthalpy
+        self.spec.bin_size = bin_size
+        self.spec.flatness = flatness
+        self.spec.check_period = check_period
+        self.spec.update_period = update_period
+        self.spec.levels = self._levels
 
         # Additional clean-ups.
         self._histogram[:] = 0

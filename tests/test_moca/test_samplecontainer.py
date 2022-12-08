@@ -9,7 +9,7 @@ from pymatgen.core.composition import ChemicalPotential, Composition
 
 from smol.cofe.space.domain import SiteSpace, get_species
 from smol.moca.sampler import SampleContainer
-from smol.moca.sampler.kernel import Trace
+from smol.moca.sampler.namespace import Trace
 from smol.moca.sublattice import Sublattice
 from tests.utils import assert_msonable
 
