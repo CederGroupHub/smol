@@ -10,12 +10,11 @@ from smol.moca.sampler.bias import FugacityBias
 from smol.moca.sampler.kernel import (
     ALL_MCUSHERS,
     Metropolis,
-    StepTrace,
     ThermalKernel,
-    Trace,
     UniformlyRandom,
     WangLandau,
 )
+from smol.moca.sampler.namespace import Trace, StepTrace
 from smol.moca.sampler.mcusher import Flip, Swap, TableFlip
 from tests.utils import gen_random_occupancy
 
