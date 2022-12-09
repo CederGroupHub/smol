@@ -76,11 +76,8 @@ class MCUsher(ABC):
 
         self._rng = np.random.default_rng(rng)
         self.spec = MCSpec(
-            cls_name=self.__class__.__name__,
-            sublattices=[
-                sublatt.site_space.as_dict()["composition"]
-                for sublatt in self.sublattices
-            ],
+            self.__class__.__name__,
+            sublattices=[sublatt.species for sublatt in self.sublattices],
             sublattice_probabilities=self._sublatt_probs,
         )
 

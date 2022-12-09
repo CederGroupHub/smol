@@ -16,7 +16,7 @@ import numpy as np
 from monty.dev import requires
 from monty.json import MontyDecoder, MSONable, jsanitize
 
-from smol.moca.sampler.namespace import Trace
+from smol.moca.sampler.namespace import MCSpec, Trace
 from smol.moca.sublattice import Sublattice
 
 try:
@@ -474,6 +474,15 @@ class SampleContainer(MSONable):
         """
         sublattices = [Sublattice.from_dict(s) for s in d["sublattices"]]
         trace = Trace(**{key: np.array(val) for key, val in d["trace"].items()})
+
+        if "kernels" in d["metadata"]:
+            kernel_specs = [
+                MCSpec.from_dict(k) for k in d["metadata"]["kernels"] if "@class" in k
+            ]
+            d["metadata"]["kernels"] = (
+                kernel_specs if len(kernel_specs) > 0 else d["metadata"]["kernels"]
+            )
+
         container = cls(
             sublattices,
             d["natural_parameters"],

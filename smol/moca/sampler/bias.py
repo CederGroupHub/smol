@@ -52,7 +52,7 @@ class MCBias(ABC):
         self._rng = np.random.default_rng(rng)
 
         self.spec = MCSpec(
-            cls_name=self.__class__.__name__,
+            type=self.__class__.__name__,
             sublattices=[
                 sublatt.site_space.as_dict()["composition"]
                 for sublatt in self.sublattices

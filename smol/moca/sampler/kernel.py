@@ -79,7 +79,7 @@ class MCKernel(ABC):
         )
 
         self.spec = MCSpec(
-            cls_name=self.__class__.__name__, seed=self._seed, step=self.mcusher.spec
+            self.__class__.__name__, seed=self._seed, step=self.mcusher.spec
         )
 
         if bias_type is not None:
@@ -453,7 +453,7 @@ class WangLandau(MCKernel):
         self.spec.flatness = flatness
         self.spec.check_period = check_period
         self.spec.update_period = update_period
-        self.spec.levels = self._levels
+        self.spec.levels = self._levels.tolist()
 
         # Additional clean-ups.
         self._histogram[:] = 0

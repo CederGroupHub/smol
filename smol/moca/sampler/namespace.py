@@ -5,9 +5,10 @@ __author__ = "Luis Barroso-Luque"
 from types import SimpleNamespace
 
 import numpy as np
+from monty.json import MontyDecoder, MSONable, jsanitize
 
 
-class MCSpec(SimpleNamespace):
+class MCSpec(SimpleNamespace, MSONable):
     """A simple namespace to hold the specifications of Monte Carlo helper classes.
 
     This class should be used to record the specifications used for an MC run in
@@ -19,22 +20,42 @@ class MCSpec(SimpleNamespace):
         * MCBias
     """
 
-    def __init__(self, cls_name, **kwargs):
+    def __init__(self, spec_type, **kwargs):
         """Initialize the namespace.
 
         Args:
-            cls_name (str):
+            spec_type (str):
                 The name of the class for which specifications are being
                 recorded.
             **kwargs:
                 keyword arguments specifications.
         """
-        kwargs["type"] = cls_name
+        kwargs["spec_type"] = spec_type
         super().__init__(**kwargs)
 
     def as_dict(self):
         """Return copy of underlying dictionary."""
-        return self.__dict__.copy()
+        d = self.__dict__.copy()
+        for k, v in d.items():
+            if isinstance(v, MSONable):
+                d[k] = v.as_dict()
+            else:
+                d[k] = jsanitize(v)
+        d.update(
+            {"@class": self.__class__.__name__, "@module": self.__class__.__module__}
+        )
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        """Initialize from dictionary."""
+        # try to recreate any MSONables in the dictionary
+        decoded = {
+            k: MontyDecoder().process_decoded(v)
+            for k, v in d.items()
+            if not k.startswith("@")
+        }
+        return cls(**decoded)
 
 
 class Trace(SimpleNamespace):

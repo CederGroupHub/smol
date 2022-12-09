@@ -43,8 +43,9 @@ class Sampler:
         """
         self._kernels = kernels
         self._container = container
-        #  Save the seed for reproducibility
-        self._container.metadata["seeds"] = [kernel.seed for kernel in kernels]
+
+        #  Save kernel specifications
+        self._container.metadata["kernels"] = [kernel.spec for kernel in kernels]
 
     @classmethod
     def from_ensemble(
@@ -123,8 +124,7 @@ class Sampler:
             }
         )
 
-        sampling_metadata = {"kernel": kernel_type, "step": step_type}
-        sampling_metadata.update(ensemble.thermo_boundaries)
+        sampling_metadata = ensemble.thermo_boundaries
 
         # Container will be initialized to read all sub-lattices,
         # active or not.
