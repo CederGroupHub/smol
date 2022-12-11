@@ -14,7 +14,7 @@ import numpy as np
 
 from smol.cofe.space.domain import get_species
 from smol.moca.composition import get_oxi_state
-from smol.moca.sampler.namespace import MCSpec
+from smol.moca.sampler.namespace import Metadata
 from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
 from smol.utils import class_name_from_str, derived_class_factory
 
@@ -51,7 +51,7 @@ class MCBias(ABC):
         ]
         self._rng = np.random.default_rng(rng)
 
-        self.spec = MCSpec(
+        self.spec = Metadata(
             type=self.__class__.__name__,
             sublattices=[
                 sublatt.site_space.as_dict()["composition"]

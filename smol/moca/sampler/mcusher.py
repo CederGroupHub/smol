@@ -18,7 +18,7 @@ from monty.json import jsanitize
 from scipy.special import gammaln
 
 from smol.moca.composition import CompositionSpace
-from smol.moca.sampler.namespace import MCSpec
+from smol.moca.sampler.namespace import Metadata
 from smol.moca.utils.math import (
     NUM_TOL,
     choose_section_from_partition,
@@ -75,7 +75,7 @@ class MCUsher(ABC):
             self._sublatt_probs = sublattice_probabilities
 
         self._rng = np.random.default_rng(rng)
-        self.spec = MCSpec(
+        self.spec = Metadata(
             self.__class__.__name__,
             sublattices=[sublatt.species for sublatt in self.sublattices],
             sublattice_probabilities=self._sublatt_probs,

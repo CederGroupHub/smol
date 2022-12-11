@@ -14,7 +14,7 @@ import numpy as np
 from smol.constants import kB
 from smol.moca.sampler.bias import MCBias, mcbias_factory
 from smol.moca.sampler.mcusher import MCUsher, mcusher_factory
-from smol.moca.sampler.namespace import MCSpec, StepTrace, Trace
+from smol.moca.sampler.namespace import Metadata, StepTrace, Trace
 from smol.utils import class_name_from_str, derived_class_factory, get_subclasses
 
 ALL_MCUSHERS = list(get_subclasses(MCUsher).keys())
@@ -78,7 +78,7 @@ class MCKernel(ABC):
             mcusher_name, ensemble.sublattices, *args, rng=self._rng, **kwargs
         )
 
-        self.spec = MCSpec(
+        self.spec = Metadata(
             self.__class__.__name__, seed=self._seed, step=self.mcusher.spec
         )
 

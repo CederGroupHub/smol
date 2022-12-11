@@ -44,8 +44,8 @@ class Sampler:
         self._kernels = kernels
         self._container = container
 
-        #  Save kernel specifications
-        self._container.metadata["kernels"] = [kernel.spec for kernel in kernels]
+        #  Save kernel specifications  #
+        self._container.metadata.kernels = [kernel.spec for kernel in kernels]
 
     @classmethod
     def from_ensemble(

@@ -8,11 +8,13 @@ import numpy as np
 from monty.json import MontyDecoder, MSONable, jsanitize
 
 
-class MCSpec(SimpleNamespace, MSONable):
-    """A simple namespace to hold the specifications of Monte Carlo helper classes.
+class Metadata(SimpleNamespace, MSONable):
+    """A simple namespace to hold the metadata specifications of a class.
 
-    This class should be used to record the specifications used for an MC run in
-    the sampling_metadata dictionary of the SampleContainer.
+    It is an MSONable class well to allow for easy serialization.
+
+    This class should be used to record the specifications used to generate data, for example
+    in the sampling metadata dictionary of the SampleContainer.
 
     Monte Carlo helper classes include:
         * MCKernels
@@ -20,17 +22,19 @@ class MCSpec(SimpleNamespace, MSONable):
         * MCBias
     """
 
-    def __init__(self, spec_type, **kwargs):
+    def __init__(self, cls_name=None, **kwargs):
         """Initialize the namespace.
 
+        # TODO without default cls_name=None deepcopy fails.
+
         Args:
-            spec_type (str):
+            cls_name (str):
                 The name of the class for which specifications are being
                 recorded.
             **kwargs:
                 keyword arguments specifications.
         """
-        kwargs["spec_type"] = spec_type
+        kwargs["cls_name"] = cls_name
         super().__init__(**kwargs)
 
     def as_dict(self):

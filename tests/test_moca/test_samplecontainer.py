@@ -349,6 +349,7 @@ def test_hdf5(container, fake_traces, tmpdir):
 
 @pytest.mark.parametrize("mode", [False, True])
 def test_flush_to_hdf5(container, fake_traces, mode, tmpdir):
+    print(container.metadata)
     flushed_container = deepcopy(container)
     add_samples(container, fake_traces)
     file_path = os.path.join(tmpdir, "test.h5")
