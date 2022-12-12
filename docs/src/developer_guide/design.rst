@@ -64,6 +64,7 @@ In addition, several other classes are defined to enable the various features an
 functionality in the module.
 
 .. image:: ../_static/smol_cofe.svg
+    :class: dark-light p-2
 
 Following the diagram above, the main purpose of the classes depicted is,
 
@@ -128,6 +129,7 @@ and the :class:`Sampler` class. However, a number of helper classes are implemen
 to allow running and implementing a large variety of types of MC calculations.
 
 .. image:: ../_static/smol_moca.svg
+    :class: dark-light p-2
 
 The class descriptions are as follows,
 
