@@ -1,207 +1,232 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Sampling Kernel &#8212; smol 0.1.0 documentation</title>
-    
+    <title>Sampling Kernel &#8212; smol 0.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="../../_static/styles/theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="../../_static/styles/bootstrap.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
 
-    
-  <link rel="stylesheet"
-    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/smol.css" />
-    
+  
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94">
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/moca/sampler.kernel';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2.0';
+        </script>
     <script src="../../_static/require.js"></script>
     <script src="../../_static/custom.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="MCUsher" href="sampler.mcusher.html" />
     <link rel="prev" title="Sampler" href="sampler.sampler.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
-    
-
-    <!-- Google Analytics -->
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-    
-    <div class="container-fluid" id="banner"></div>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="auto">
 
-    
-    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
   <div id="navbar-start">
     
     
+  
 
-<a class="navbar-brand" href="../../index.html">
-  <img src="../../_static/logo.png" class="logo" alt="logo">
+
+<a class="navbar-brand logo" href="../../index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Logo image">
+    <img src="../../_static/logo.png" class="logo__image only-dark" alt="Logo image">
+  
+  
 </a>
-
-
     
   </div>
 
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
   
-  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+  <div class="col-lg-9 navbar-header-items">
     <div id="navbar-center" class="mr-auto">
       
       <div class="navbar-center-item">
-        <ul id="navbar-main-elements" class="navbar-nav">
-    <li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../getting_started.html">
-  Getting Started
- </a>
-</li>
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../user_guide.html">
-  User Guide
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 current active nav-item">
- <a class="reference internal nav-link" href="../index.html">
-  API Reference
- </a>
-</li>
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../citing.html">
-  Citing
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../developer_guide/index.html">
-  Developing
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
 
-    
-    <li class="nav-item">
-        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">Changes<i class="fas fa-external-link-alt"></i></a>
-    </li>
-    
-    <li class="nav-item">
-        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">Issues<i class="fas fa-external-link-alt"></i></a>
-    </li>
-    
-</ul>
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
       </div>
       
     </div>
 
     <div id="navbar-end">
       
+        <div class="navbar-end-item navbar-persistent--container">
+          
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+        </div>
+      
+      
       <div class="navbar-end-item">
-        <div class="dropdown" id="version_switcher">
-    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.1.0  <!-- this text may get changed later by javascript -->
+        <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+        0.2.0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
-    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
     <!-- dropdown will be populated by javascript on page load -->
     </div>
 </div>
-
-<!-- NOTE: this JS must live here (not in our global JS file) because it relies
-     on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/moca/sampler.kernel and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.1.0'}.
--->
-
-<script type="text/javascript">
-// Check if corresponding page path exists in other version of docs
-// and, if so, go there instead of the homepage of the other docs version
-function checkPageExistsAndRedirect(event) {
-    const currentFilePath = "api_reference/moca/sampler.kernel.html",
-          tryUrl = event.target.getAttribute("href");
-    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
-    $.ajax({
-        type: 'HEAD',
-        url: tryUrl,
-        // if the page exists, go there
-        success: function() {
-            location.href = tryUrl;
-        }
-    }).fail(function() {
-        location.href = otherDocsHomepage;
-    });
-    // this prevents the browser from following the href of the clicked node
-    // (which is fine because this function takes care of redirecting)
-    return false;
-}
-
-// Populate the version switcher from the JSON config file
-(function () {
-    $.getJSON("https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json", function(data, textStatus, jqXHR) {
-        const currentFilePath = "api_reference/moca/sampler.kernel.html";
-        // create links to the corresponding page in the other docs versions
-        $.each(data, function(index, entry) {
-            // if no custom name specified (e.g., "latest"), use version string
-            if (!("name" in entry)) {
-                entry.name = entry.version;
-            }
-            // create the node
-            const node = document.createElement("a");
-            node.setAttribute("class", "list-group-item list-group-item-action py-1");
-            node.textContent = `${entry.name}`;
-            node.setAttribute("href", `${entry.url}${currentFilePath}`);
-            // on click, AJAX calls will check if the linked page exists before
-            // trying to redirect, and if not, will redirect to the homepage
-            // for that version of the docs.
-            node.onclick = checkPageExistsAndRedirect;
-            // Add dataset values for the version and name in case people want
-            // to apply CSS styling based on this information.
-            node.dataset["versionName"] = entry.name;
-            node.dataset["version"] = entry.version;
-
-            $("#version_switcher_menu").append(node);
-            // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.1.0 variable.
-            // also highlight the dropdown entry for the currently-viewed
-            // version's entry
-            if (entry.version == "0.1.0") {
-                node.classList.add("active");
-                let btn = document.getElementById("version_switcher_button");
-                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
-                btn.dataset["activeVersion"] = entry.version;
-            }
-        });
-    });
-})();
-</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
       </div>
       
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/CederGroupHub/smol" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
             <label class="sr-only">GitHub</label></a>
         </li>
       </ul>
@@ -209,179 +234,226 @@ function checkPageExistsAndRedirect(event) {
       
     </div>
   </div>
+
+
+  
+  
+    <div class="navbar-persistent--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+    </div>
+  
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
 </div>
-    </nav>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
     
 
-    <div class="container-xl">
-      <div class="row">
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+        0.2.0  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+      </div>
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
           
-            
-            <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar">
-              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-  <div class="bd-toc-item active">
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">
+    Section Navigation
+  </p>
+  <div class="bd-toc-item navbar-nav">
     <ul class="current nav bd-sidenav">
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../cofe/index.html">
-   <strong>
-    cofe
-   </strong>
-   — Cluster-Orbit Function Expansion Module
-  </a>
-  <input checked class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
-  <label for="toctree-checkbox-1">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../cofe/clusterspace.html">
-     Cluster Spaces
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../cofe/space.html">
-     Space
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../cofe/clusterexpansion.html">
-     Expansion
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../cofe/wrangling.html">
-     Wrangling
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../cofe/extern.ewald.html">
-     External Terms
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 current active has-children">
-  <a class="reference internal" href="index.html">
-   <strong>
-    moca
-   </strong>
-   — Monte Carlo Module
-  </a>
-  <input checked class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul class="current">
-   <li class="toctree-l2">
-    <a class="reference internal" href="processors.html">
-     Processors
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="ensemble.html">
-     Ensemble
-    </a>
-   </li>
-   <li class="toctree-l2 current active">
-    <a class="reference internal" href="sampler.html">
-     Sampling
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="sublattice.html">
-     Sublattice
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../io.html">
-   io — Input and Output
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../exceptions.html">
-   Exceptions
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../constants.html">
-   Global constants
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../utils.html">
-   Utility functions
-  </a>
- </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../cofe/index.html"><strong>cofe</strong> — Cluster-Orbit Function Expansion Module</a><input checked class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../cofe/clusterspace.html">Cluster Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cofe/space.html">Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cofe/clusterexpansion.html">Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cofe/wrangling.html">Wrangling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cofe/extern.ewald.html">External Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html"><strong>moca</strong> — Monte Carlo Module</a><input checked class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="processors.html">Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensemble.html">Ensemble</a></li>
+<li class="toctree-l2 current active"><a class="reference internal" href="sampler.html">Sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sublattice.html">Sublattice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../io.html">io — Input and Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../constants.html">Global constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utility functions</a></li>
 </ul>
 
   </div>
 </nav>
-              </div>
-              <div class="sidebar-end-items">
-              </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+  
+  <div id="rtd-footer-container"></div>
+
+      </div>
+      <main id="main-content" class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
             </div>
             
-          
-
-          
-          <div class="d-none d-xl-block col-xl-2 bd-toc">
             
+            <article class="bd-article" role="main">
               
-              <div class="toc-item">
-                
-
-<nav id="bd-toc-nav">
-    
-</nav>
-              </div>
-              
-              <div class="toc-item">
-                
-
-<div class="tocsection editthispage">
-    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/api_reference/moca/sampler.kernel.rst">
-        <i class="fas fa-pencil-alt"></i> Edit this page
-    </a>
-</div>
-
-              </div>
-              
-            
-          </div>
-          
-
-          
-          
-            
-          
-          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
-              
-              <div>
-                
   <section id="module-smol.moca.sampler.kernel">
-<span id="sampling-kernel"></span><h1>Sampling Kernel<a class="headerlink" href="#module-smol.moca.sampler.kernel" title="Permalink to this headline">#</a></h1>
+<span id="sampling-kernel"></span><h1>Sampling Kernel<a class="headerlink" href="#module-smol.moca.sampler.kernel" title="Permalink to this heading">#</a></h1>
 <p>Implementation of MCMC transition kernel classes.</p>
 <p>A kernel essentially is an implementation of the MCMC algorithm that is used
 to generate states for sampling an MCMC chain.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.MCKernel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCKernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCKernel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
-<p>Abtract base class for transition kernels.</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Abstract base class for transition kernels.</p>
 <p>A kernel is used to implement a specific MC algorithm used to sample
 the ensemble classes. For an illustrative example of how to derive from this
 and write a specific kernel see the Metropolis kernel.</p>
 <p>Initialize MCKernel.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="../autogen/moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
 used in computing log probabilities.</p></li>
@@ -409,12 +481,12 @@ corresponding step size.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.MCKernel.compute_initial_trace">
 <span class="sig-name descname"><span class="pre">compute_initial_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCKernel.compute_initial_trace" title="Permalink to this definition">#</a></dt>
-<dd><p>Compute inital values for sample trace given an occupancy.</p>
+<dd><p>Compute initial values for sample trace given an occupancy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – Initial occupancy</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Trace</p>
 </dd>
 </dl>
@@ -434,8 +506,8 @@ corresponding step size.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.MCKernel.set_aux_state">
-<span class="sig-name descname"><span class="pre">set_aux_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCKernel.set_aux_state" title="Permalink to this definition">#</a></dt>
-<dd><p>Set the auxiliary state from initial or checkpoint values.</p>
+<span class="sig-name descname"><span class="pre">set_aux_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancies</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.MCKernel.set_aux_state" title="Permalink to this definition">#</a></dt>
+<dd><p>Set the auxiliary occupancies from initial or checkpoint values.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -445,18 +517,18 @@ corresponding step size.</p></li>
 <p>Returns the next state in the chain and if the attempted step was
 successful.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><dl class="simple">
 <dt>a step trace for states and traced values for a single</dt><dd><p>step</p>
 </dd>
 </dl>
 </p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#smol.moca.sampler.kernel.StepTrace" title="smol.moca.sampler.kernel.StepTrace">StepTrace</a></p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>StepTrace</p>
 </dd>
 </dl>
 </dd></dl>
@@ -476,12 +548,12 @@ successful.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.Metropolis">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Metropolis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Metropolis" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.ThermalKernel" title="smol.moca.sampler.kernel.ThermalKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.kernel.ThermalKernel</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.ThermalKernel" title="smol.moca.sampler.kernel.ThermalKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThermalKernel</span></code></a></p>
 <p>A Metropolis-Hastings kernel.</p>
 <p>The classic and nothing but the classic.</p>
 <p>Initialize ThermalKernel.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="../autogen/moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
 used in computing log probabilities.</p></li>
@@ -498,13 +570,13 @@ corresponding step size.</p></li>
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.Metropolis.single_step">
 <span class="sig-name descname"><span class="pre">single_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Metropolis.single_step" title="Permalink to this definition">#</a></dt>
 <dd><p>Attempt an MC step.</p>
-<p>Returns the next state in the chain and if the attempted step was
+<p>Returns the next occupancies in the chain and if the attempted step was
 successful.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>StepTrace</p>
 </dd>
 </dl>
@@ -523,45 +595,15 @@ successful.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.StepTrace">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StepTrace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.StepTrace" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.Trace" title="smol.moca.sampler.kernel.Trace"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.kernel.Trace</span></code></a></p>
-<p>StepTrace class.</p>
-<p>Same as Trace above but holds a default “delta_trace” inner trace to hold
-trace values that represent changes from previous values, to be handled
-similarly to delta_features and delta_energy.</p>
-<p>A StepTrace object is set as an MCKernel’s attribute to record
-kernel specific values during sampling.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.StepTrace.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.StepTrace.as_dict" title="Permalink to this definition">#</a></dt>
-<dd><p>Return copy of serializable dictionary.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.StepTrace.items">
-<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.StepTrace.items" title="Permalink to this definition">#</a></dt>
-<dd><p>Return generator for (name, attribute). Skips delta_trace.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.StepTrace.names">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">names</span></span><a class="headerlink" href="#smol.moca.sampler.kernel.StepTrace.names" title="Permalink to this definition">#</a></dt>
-<dd><p>Get all field names. Removes delta_trace from field names.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.ThermalKernel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ThermalKernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.ThermalKernel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.kernel.MCKernel</span></code></a></p>
-<p>Abtract base class for transition kernels with a set temperature.</p>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCKernel</span></code></a></p>
+<p>Abstract base class for transition kernels with a set temperature.</p>
 <p>Basically all kernels should derive from this with the exception of those
 for multicanonical sampling and related methods</p>
 <p>Initialize ThermalKernel.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="../autogen/moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
 used in computing log probabilities.</p></li>
@@ -577,15 +619,21 @@ corresponding step size.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.ThermalKernel.compute_initial_trace">
 <span class="sig-name descname"><span class="pre">compute_initial_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.ThermalKernel.compute_initial_trace" title="Permalink to this definition">#</a></dt>
-<dd><p>Compute inital values for sample trace given occupancy.</p>
+<dd><p>Compute initial values for sample trace given occupancy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – Initial occupancy</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Trace</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.ThermalKernel.set_aux_state">
+<span class="sig-name descname"><span class="pre">set_aux_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancies</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.ThermalKernel.set_aux_state" title="Permalink to this definition">#</a></dt>
+<dd><p>Set the auxiliary occupancies from initial or checkpoint values.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -597,36 +645,9 @@ corresponding step size.</p></li>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.Trace">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Trace" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">types.SimpleNamespace</span></code></p>
-<p>Simple Trace class.</p>
-<p>A Trace is a simple namespace to hold states and values to be recorded
-during MC sampling.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.Trace.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Trace.as_dict" title="Permalink to this definition">#</a></dt>
-<dd><p>Return copy of underlying dictionary.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.Trace.items">
-<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.Trace.items" title="Permalink to this definition">#</a></dt>
-<dd><p>Return generator for (name, attribute).</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="smol.moca.sampler.kernel.Trace.names">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">names</span></span><a class="headerlink" href="#smol.moca.sampler.kernel.Trace.names" title="Permalink to this definition">#</a></dt>
-<dd><p>Get all attribute names.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.UniformlyRandom">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UniformlyRandom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.UniformlyRandom" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.kernel.MCKernel</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCKernel</span></code></a></p>
 <p>A Kernel that accepts all proposed steps.</p>
 <p>This kernel samples the random limit distribution where all states have the
 same probability (corresponding to an infinite temperature). If a
@@ -634,7 +655,7 @@ bias is added then the corresponding distribution will be biased
 accordingly.</p>
 <p>Initialize MCKernel.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="../autogen/moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – an Ensemble instance to obtain the features and parameters
 used in computing log probabilities.</p></li>
@@ -657,13 +678,13 @@ corresponding step size.</p></li>
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.UniformlyRandom.single_step">
 <span class="sig-name descname"><span class="pre">single_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.UniformlyRandom.single_step" title="Permalink to this definition">#</a></dt>
 <dd><p>Attempt an MCMC step.</p>
-<p>Returns the next state in the chain and if the attempted step was
+<p>Returns the next occupancies in the chain and if the attempted step was
 successful.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>StepTrace</p>
 </dd>
 </dl>
@@ -681,12 +702,140 @@ successful.</p>
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.WangLandau">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WangLandau</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_enthalpy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_enthalpy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_size</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.WangLandau" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCKernel</span></code></a></p>
+<p>A Wang-Landau sampling kernel.</p>
+<p>Allows wang-landau sampling method. Stores histogram and DOS in its instance.</p>
+<p>Initialize a WangLandau Kernel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="../autogen/moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – The ensemble object to use to generate samples</p></li>
+<li><p><strong>step_type</strong> (<em>str</em>) – An MC step type corresponding to an MCUsher. See valid_mcushers</p></li>
+<li><p><strong>min_enthalpy</strong> (<em>float</em>) – The minimum enthalpy to sample. Enthalpy means the dot product
+of natural parameters and ensemble features. In canonical ensemble,
+it shall be the energy. In semigrand ensemble, it shall be E- mu N.
+Unit is eV scaled at the super-cell.</p></li>
+<li><p><strong>max_enthalpy</strong> (<em>float</em>) – The maximum enthalpy to sample.</p></li>
+<li><p><strong>bin_size</strong> (<em>float</em>) – The enthalpy bin size to determine different states.</p></li>
+<li><p><strong>flatness</strong> (<em>float</em>) – optional
+The flatness factor used when checking histogram flatness.
+Must be between 0 and 1.</p></li>
+<li><p><strong>mod_factor</strong> (<em>float</em>) – log of the initial modification factor used to update the
+DOS/entropy.
+Default is 1, which means the DOS shall be multiplied by e^1.</p></li>
+<li><p><strong>check_period</strong> (<em>int</em>) – optional
+The period in number of steps for the histogram flatness to be
+checked.</p></li>
+<li><p><strong>update_period</strong> (<em>int</em>) – optional
+The period in number of steps to update the histogram and entropy.
+In some cases periods slightly larger than each step, may allow
+more efficient exploration of energy space.</p></li>
+<li><p><strong>mod_update</strong> (<em>float</em><em>|</em><em>Callable</em>) – optional
+A function used to update the fill factor when the histogram
+satisfies the flatness criteria. It must monotonically decrease
+to 0.
+When a number is provided, at each update we will divide the
+mod factor by this number.</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – optional
+non-negative integer to seed the PRNG</p></li>
+<li><p><strong>args</strong> – Positional arguments to instantiate MCUsher.</p></li>
+<li><p><strong>kwargs</strong> – Keyword arguments to instantiate MCUsher.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.WangLandau.bin_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_size</span></span><a class="headerlink" href="#smol.moca.sampler.kernel.WangLandau.bin_size" title="Permalink to this definition">#</a></dt>
+<dd><p>Enthalpy bin size.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.WangLandau.compute_initial_trace">
+<span class="sig-name descname"><span class="pre">compute_initial_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.WangLandau.compute_initial_trace" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute initial values for sample trace given an occupancy.</p>
+<p>Add the micro-canonical entropy and histograms to the trace.
+:param occupancy: Initial occupancy
+:type occupancy: ndarray</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Trace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.WangLandau.dos">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dos</span></span><a class="headerlink" href="#smol.moca.sampler.kernel.WangLandau.dos" title="Permalink to this definition">#</a></dt>
+<dd><p>Density of states on visited levels.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.WangLandau.entropy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">entropy</span></span><a class="headerlink" href="#smol.moca.sampler.kernel.WangLandau.entropy" title="Permalink to this definition">#</a></dt>
+<dd><p>log(dos) on visited levels.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.WangLandau.histogram">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">histogram</span></span><a class="headerlink" href="#smol.moca.sampler.kernel.WangLandau.histogram" title="Permalink to this definition">#</a></dt>
+<dd><p>Histogram on visited levels.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.WangLandau.levels">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">levels</span></span><a class="headerlink" href="#smol.moca.sampler.kernel.WangLandau.levels" title="Permalink to this definition">#</a></dt>
+<dd><p>Visited enthalpy levels.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.WangLandau.mod_factor">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mod_factor</span></span><a class="headerlink" href="#smol.moca.sampler.kernel.WangLandau.mod_factor" title="Permalink to this definition">#</a></dt>
+<dd><p>Mod factor.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.WangLandau.set_aux_state">
+<span class="sig-name descname"><span class="pre">set_aux_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.WangLandau.set_aux_state" title="Permalink to this definition">#</a></dt>
+<dd><p>Set the auxiliary occupancies based on an occupancy.</p>
+<p>This is necessary for WangLandau to work properly because
+it needs to store the current enthalpy and features.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.WangLandau.single_step">
+<span class="sig-name descname"><span class="pre">single_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.WangLandau.single_step" title="Permalink to this definition">#</a></dt>
+<dd><p>Attempt an MC step.</p>
+<p>Returns the next steptrace in the chain.
+:param occupancy: encoded occupancy.
+:type occupancy: ndarray</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>StepTrace</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.WangLandau.valid_bias">
+<span class="sig-name descname"><span class="pre">valid_bias</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#smol.moca.sampler.kernel.WangLandau.valid_bias" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.moca.sampler.kernel.WangLandau.valid_mcushers">
+<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Flip',</span> <span class="pre">'Swap',</span> <span class="pre">'MultiStep',</span> <span class="pre">'Composite',</span> <span class="pre">'TableFlip']</span></em><a class="headerlink" href="#smol.moca.sampler.kernel.WangLandau.valid_mcushers" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.moca.sampler.kernel.mckernel_factory">
 <span class="sig-name descname"><span class="pre">mckernel_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.kernel.mckernel_factory" title="Permalink to this definition">#</a></dt>
 <dd><p>Get a MCMC Kernel from string name.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>kernel_type</strong> (<em>str</em>) – string specifying kernel type to instantiate.</p></li>
 <li><p><strong>ensemble</strong> (<a class="reference internal" href="../autogen/moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – an Ensemble object to create the MCMC kernel from.</p></li>
@@ -695,10 +844,10 @@ successful.</p>
 <li><p><strong>**kwargs</strong> – keyword arguments passed to class constructor</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>instance of derived class.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#smol.moca.sampler.kernel.MCKernel" title="smol.moca.sampler.kernel.MCKernel">MCKernel</a></p>
 </dd>
 </dl>
@@ -707,51 +856,435 @@ successful.</p>
 </section>
 
 
-              </div>
-              
-              
-              <!-- Previous / next buttons -->
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="sampler.sampler.html" title="previous page">
-        <i class="fas fa-angle-left"></i>
-        <div class="prev-next-info">
-            <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Sampler</p>
-        </div>
+  <a class='left-prev' id="prev-link" href="sampler.sampler.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">Sampler</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="sampler.mcusher.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">MCUsher</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.MCKernel">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     MCKernel
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.MCKernel.bias">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCKernel.bias
+      </span>
+     </code>
     </a>
-    <a class='right-next' id="next-link" href="sampler.mcusher.html" title="next page">
-    <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">MCUsher</p>
-    </div>
-    <i class="fas fa-angle-right"></i>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.MCKernel.compute_initial_trace">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCKernel.compute_initial_trace()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.MCKernel.mcusher">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCKernel.mcusher
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.MCKernel.seed">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCKernel.seed
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.MCKernel.set_aux_state">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCKernel.set_aux_state()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.MCKernel.single_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCKernel.single_step()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.MCKernel.valid_bias">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCKernel.valid_bias
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.MCKernel.valid_mcushers">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCKernel.valid_mcushers
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.Metropolis">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Metropolis
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.Metropolis.single_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Metropolis.single_step()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.Metropolis.valid_bias">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Metropolis.valid_bias
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.Metropolis.valid_mcushers">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Metropolis.valid_mcushers
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.ThermalKernel">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ThermalKernel
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.ThermalKernel.compute_initial_trace">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ThermalKernel.compute_initial_trace()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.ThermalKernel.set_aux_state">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ThermalKernel.set_aux_state()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.ThermalKernel.temperature">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ThermalKernel.temperature
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.UniformlyRandom">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     UniformlyRandom
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.UniformlyRandom.single_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       UniformlyRandom.single_step()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.UniformlyRandom.valid_bias">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       UniformlyRandom.valid_bias
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.UniformlyRandom.valid_mcushers">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       UniformlyRandom.valid_mcushers
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.WangLandau">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     WangLandau
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.WangLandau.bin_size">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       WangLandau.bin_size
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.WangLandau.compute_initial_trace">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       WangLandau.compute_initial_trace()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.WangLandau.dos">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       WangLandau.dos
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.WangLandau.entropy">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       WangLandau.entropy
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.WangLandau.histogram">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       WangLandau.histogram
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.WangLandau.levels">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       WangLandau.levels
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.WangLandau.mod_factor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       WangLandau.mod_factor
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.WangLandau.set_aux_state">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       WangLandau.set_aux_state()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.WangLandau.single_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       WangLandau.single_step()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.WangLandau.valid_bias">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       WangLandau.valid_bias
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.WangLandau.valid_mcushers">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       WangLandau.valid_mcushers
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.sampler.kernel.mckernel_factory">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     mckernel_factory()
+    </span>
+   </code>
+  </a>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
+
+<div class="tocsection editthispage">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/api_reference/moca/sampler.kernel.rst">
+        <i class="fa-solid fa-pencil"></i> Edit this page
     </a>
 </div>
-              
-          </main>
-          
 
-      </div>
-    </div>
+</div>
+
+<div class="toc-item">
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-<footer class="footer mt-5 mt-md-0">
-  <div class="container">
-    
-    <div class="footer-item">
-      <p class="copyright">
-    &copy; Copyright 2022-2022, Ceder Group.<br>
-</p>
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+          </div>
+        </footer>
+        
+      </main>
     </div>
-    
-    <div class="footer-item">
-      <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
-</p>
-    </div>
-    
   </div>
-</footer>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright 2022-2022, Ceder Group.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="theme-version">
+    Built with the
+    <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">
+        PyData Sphinx Theme
+    </a>
+    0.12.0.
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
   </body>
 </html>

@@ -1,209 +1,234 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Basis &#8212; smol 0.1.0 documentation</title>
-    
+    <title>Basis &#8212; smol 0.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="../../_static/styles/theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="../../_static/styles/bootstrap.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
 
-    
-  <link rel="stylesheet"
-    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/smol.css" />
-    
+  
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94">
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/cofe/space.basis';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2.0';
+        </script>
     <script src="../../_static/require.js"></script>
     <script src="../../_static/custom.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Cluster" href="space.cluster.html" />
     <link rel="prev" title="Space" href="space.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
-    
-
-    <!-- Google Analytics -->
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-    
-    <div class="container-fluid" id="banner"></div>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="auto">
 
-    
-    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
   <div id="navbar-start">
     
     
+  
 
-<a class="navbar-brand" href="../../index.html">
-  <img src="../../_static/logo.png" class="logo" alt="logo">
+
+<a class="navbar-brand logo" href="../../index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Logo image">
+    <img src="../../_static/logo.png" class="logo__image only-dark" alt="Logo image">
+  
+  
 </a>
-
-
     
   </div>
 
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
   
-  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+  <div class="col-lg-9 navbar-header-items">
     <div id="navbar-center" class="mr-auto">
       
       <div class="navbar-center-item">
-        <ul id="navbar-main-elements" class="navbar-nav">
-    <li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../getting_started.html">
-  Getting Started
- </a>
-</li>
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../user_guide.html">
-  User Guide
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 current active nav-item">
- <a class="reference internal nav-link" href="../index.html">
-  API Reference
- </a>
-</li>
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../citing.html">
-  Citing
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../developer_guide/index.html">
-  Developing
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
 
-    
-    <li class="nav-item">
-        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">Changes<i class="fas fa-external-link-alt"></i></a>
-    </li>
-    
-    <li class="nav-item">
-        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">Issues<i class="fas fa-external-link-alt"></i></a>
-    </li>
-    
-</ul>
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
       </div>
       
     </div>
 
     <div id="navbar-end">
       
+        <div class="navbar-end-item navbar-persistent--container">
+          
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+        </div>
+      
+      
       <div class="navbar-end-item">
-        <div class="dropdown" id="version_switcher">
-    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.1.0  <!-- this text may get changed later by javascript -->
+        <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+        0.2.0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
-    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
     <!-- dropdown will be populated by javascript on page load -->
     </div>
 </div>
-
-<!-- NOTE: this JS must live here (not in our global JS file) because it relies
-     on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/cofe/space.basis and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.1.0'}.
--->
-
-<script type="text/javascript">
-// Check if corresponding page path exists in other version of docs
-// and, if so, go there instead of the homepage of the other docs version
-function checkPageExistsAndRedirect(event) {
-    const currentFilePath = "api_reference/cofe/space.basis.html",
-          tryUrl = event.target.getAttribute("href");
-    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
-    $.ajax({
-        type: 'HEAD',
-        url: tryUrl,
-        // if the page exists, go there
-        success: function() {
-            location.href = tryUrl;
-        }
-    }).fail(function() {
-        location.href = otherDocsHomepage;
-    });
-    // this prevents the browser from following the href of the clicked node
-    // (which is fine because this function takes care of redirecting)
-    return false;
-}
-
-// Populate the version switcher from the JSON config file
-(function () {
-    $.getJSON("https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json", function(data, textStatus, jqXHR) {
-        const currentFilePath = "api_reference/cofe/space.basis.html";
-        // create links to the corresponding page in the other docs versions
-        $.each(data, function(index, entry) {
-            // if no custom name specified (e.g., "latest"), use version string
-            if (!("name" in entry)) {
-                entry.name = entry.version;
-            }
-            // create the node
-            const node = document.createElement("a");
-            node.setAttribute("class", "list-group-item list-group-item-action py-1");
-            node.textContent = `${entry.name}`;
-            node.setAttribute("href", `${entry.url}${currentFilePath}`);
-            // on click, AJAX calls will check if the linked page exists before
-            // trying to redirect, and if not, will redirect to the homepage
-            // for that version of the docs.
-            node.onclick = checkPageExistsAndRedirect;
-            // Add dataset values for the version and name in case people want
-            // to apply CSS styling based on this information.
-            node.dataset["versionName"] = entry.name;
-            node.dataset["version"] = entry.version;
-
-            $("#version_switcher_menu").append(node);
-            // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.1.0 variable.
-            // also highlight the dropdown entry for the currently-viewed
-            // version's entry
-            if (entry.version == "0.1.0") {
-                node.classList.add("active");
-                let btn = document.getElementById("version_switcher_button");
-                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
-                btn.dataset["activeVersion"] = entry.version;
-            }
-        });
-    });
-})();
-</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
       </div>
       
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/CederGroupHub/smol" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
             <label class="sr-only">GitHub</label></a>
         </li>
       </ul>
@@ -211,165 +236,212 @@ function checkPageExistsAndRedirect(event) {
       
     </div>
   </div>
+
+
+  
+  
+    <div class="navbar-persistent--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+    </div>
+  
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
 </div>
-    </nav>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
     
 
-    <div class="container-xl">
-      <div class="row">
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+        0.2.0  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+      </div>
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
           
-            
-            <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar">
-              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-  <div class="bd-toc-item active">
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">
+    Section Navigation
+  </p>
+  <div class="bd-toc-item navbar-nav">
     <ul class="current nav bd-sidenav">
- <li class="toctree-l1 current active has-children">
-  <a class="reference internal" href="index.html">
-   <strong>
-    cofe
-   </strong>
-   — Cluster-Orbit Function Expansion Module
-  </a>
-  <input checked class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
-  <label for="toctree-checkbox-1">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul class="current">
-   <li class="toctree-l2">
-    <a class="reference internal" href="clusterspace.html">
-     Cluster Spaces
-    </a>
-   </li>
-   <li class="toctree-l2 current active">
-    <a class="reference internal" href="space.html">
-     Space
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="clusterexpansion.html">
-     Expansion
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="wrangling.html">
-     Wrangling
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="extern.ewald.html">
-     External Terms
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../moca/index.html">
-   <strong>
-    moca
-   </strong>
-   — Monte Carlo Module
-  </a>
-  <input checked class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../moca/processors.html">
-     Processors
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../moca/ensemble.html">
-     Ensemble
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../moca/sampler.html">
-     Sampling
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../moca/sublattice.html">
-     Sublattice
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../io.html">
-   io — Input and Output
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../exceptions.html">
-   Exceptions
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../constants.html">
-   Global constants
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../utils.html">
-   Utility functions
-  </a>
- </li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html"><strong>cofe</strong> — Cluster-Orbit Function Expansion Module</a><input checked class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="clusterspace.html">Cluster Spaces</a></li>
+<li class="toctree-l2 current active"><a class="reference internal" href="space.html">Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clusterexpansion.html">Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wrangling.html">Wrangling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extern.ewald.html">External Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../moca/index.html"><strong>moca</strong> — Monte Carlo Module</a><input checked class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../moca/processors.html">Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moca/ensemble.html">Ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moca/sampler.html">Sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moca/sublattice.html">Sublattice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../io.html">io — Input and Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../constants.html">Global constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utility functions</a></li>
 </ul>
 
   </div>
 </nav>
-              </div>
-              <div class="sidebar-end-items">
-              </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+  
+  <div id="rtd-footer-container"></div>
+
+      </div>
+      <main id="main-content" class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
             </div>
             
-          
-
-          
-          <div class="d-none d-xl-block col-xl-2 bd-toc">
             
+            <article class="bd-article" role="main">
               
-              <div class="toc-item">
-                
-
-<nav id="bd-toc-nav">
-    
-</nav>
-              </div>
-              
-              <div class="toc-item">
-                
-
-<div class="tocsection editthispage">
-    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/api_reference/cofe/space.basis.rst">
-        <i class="fas fa-pencil-alt"></i> Edit this page
-    </a>
-</div>
-
-              </div>
-              
-            
-          </div>
-          
-
-          
-          
-            
-          
-          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
-              
-              <div>
-                
   <section id="module-smol.cofe.space.basis">
-<span id="basis"></span><h1>Basis<a class="headerlink" href="#module-smol.cofe.space.basis" title="Permalink to this headline">#</a></h1>
+<span id="basis"></span><h1>Basis<a class="headerlink" href="#module-smol.cofe.space.basis" title="Permalink to this heading">#</a></h1>
 <p>Definitions for basis functions over a site function space.</p>
 <p>The product of single site functions make up a cluster/orbit function used to
 obtain correlation vectors. The domain of a site function is a site space,
@@ -378,7 +450,7 @@ the concentration of the species in the random structure.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.basis.BasisIterator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BasisIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.BasisIterator" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Iterator</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></p>
 <p>Abstract basis iterator class.</p>
 <p>A basis iterator iterates through all non-constant site basis functions,
 i.e. for basis <span class="math notranslate nohighlight">\(\phi_0 = 1, \phi_1, ..., \phi_{n-1}\)</span>,
@@ -388,7 +460,7 @@ the iterator will iterate through <span class="math notranslate nohighlight">\(\
 <span class="sig-name descname"><span class="pre">flavor</span></span><a class="headerlink" href="#smol.cofe.space.basis.BasisIterator.flavor" title="Permalink to this definition">#</a></dt>
 <dd><p>Name specifying the type of basis that is generated.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -396,7 +468,7 @@ the iterator will iterate through <span class="math notranslate nohighlight">\(\
 
 <p>Initialize a BasisIterator.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p>
 </dd>
 </dl>
@@ -409,12 +481,12 @@ the iterator will iterate through <span class="math notranslate nohighlight">\(\
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.basis.ChebyshevIterator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ChebyshevIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.ChebyshevIterator" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.NumpyPolyIterator" title="smol.cofe.space.basis.NumpyPolyIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.NumpyPolyIterator</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ChebyshevIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.ChebyshevIterator" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.NumpyPolyIterator" title="smol.cofe.space.basis.NumpyPolyIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">NumpyPolyIterator</span></code></a></p>
 <p>Chebyshev polynomial basis set iterator.</p>
 <p>Initialize a NumpyPolyIterator.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p></li>
 <li><p><strong>low</strong> (<em>float</em>) – optional
@@ -440,7 +512,7 @@ higher limit of interval for encoding</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.basis.DiscreteBasis">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DiscreteBasis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">site_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis_functions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.DiscreteBasis" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
 <p>Abstract class to represent a basis set over a discrete finite domain.</p>
 <p>In our case the domain is a site space which can take on values of the
 allowed species.</p>
@@ -450,7 +522,7 @@ creating one like so for use in production and not debugging, know that
 it will break MSONable methods in classes that use these, and at any
 point, compatibility with OrderedDicts could be removed.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>site_space</strong> (<em>OrderedDict</em><em> or </em><a class="reference internal" href="../autogen/cofe.space.html#cofe.space.domain.SiteSpace" title="cofe.space.domain.SiteSpace"><em>SiteSpace</em></a>) – Dict representing site space (Specie, measure) or a SiteSpace
 object.</p></li>
@@ -470,13 +542,13 @@ the values of species in the site space as input.</p></li>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.DiscreteBasis.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Create a DiscreteBasis from dict representation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – MSONable dict representation</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A subclass of DiscreteBasis</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#smol.cofe.space.basis.DiscreteBasis" title="smol.cofe.space.basis.DiscreteBasis">DiscreteBasis</a></p>
 </dd>
 </dl>
@@ -532,18 +604,18 @@ over which the site functions are defined.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.basis.IndicatorBasis">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IndicatorBasis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">site_space</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.IndicatorBasis" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.DiscreteBasis" title="smol.cofe.space.basis.DiscreteBasis"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.DiscreteBasis</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.DiscreteBasis" title="smol.cofe.space.basis.DiscreteBasis"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiscreteBasis</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
 <p>Class that represents a full indicator basis for a site space.</p>
-<p>This class represents the “trivial” indicator basis, wihch includes an
+<p>This class represents the “trivial” indicator basis, which includes an
 indicator function for every species in the site space, and does NOT
-include a contant function.
+include a constant function.
 NOT to be confused with a cluster indicator basis used for a Cluster
 Expansion (that is represented in smol by a StandardBasis with an
 IndicatorIterator).</p>
 <p>&#64;lbluque takes full responsibility for the confusing terminology…</p>
 <p>Initialize an indicator basis for given site space.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>site_space</strong> (<em>OrderedDict</em><em> or </em><a class="reference internal" href="../autogen/cofe.space.html#cofe.space.domain.SiteSpace" title="cofe.space.domain.SiteSpace"><em>SiteSpace</em></a>) – dict representing site space (Specie, measure) or a SiteSpace
 object.</p>
 </dd>
@@ -553,10 +625,10 @@ object.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.IndicatorBasis.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Create a SiteSpace from dict representation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – MSONable dict representation</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>StandardBasis</p>
 </dd>
 </dl>
@@ -567,12 +639,12 @@ object.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.basis.IndicatorIterator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IndicatorIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.IndicatorIterator" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.BasisIterator" title="smol.cofe.space.basis.BasisIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.BasisIterator</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.BasisIterator" title="smol.cofe.space.basis.BasisIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasisIterator</span></code></a></p>
 <p>Iterator for cluster indicator site basis functions.</p>
 <p>The basis generated as defined is not orthogonal for any number of species.</p>
 <p>Initialize a BasisIterator.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p>
 </dd>
 </dl>
@@ -585,12 +657,12 @@ object.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.basis.LegendreIterator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LegendreIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.LegendreIterator" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.NumpyPolyIterator" title="smol.cofe.space.basis.NumpyPolyIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.NumpyPolyIterator</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LegendreIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.LegendreIterator" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.NumpyPolyIterator" title="smol.cofe.space.basis.NumpyPolyIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">NumpyPolyIterator</span></code></a></p>
 <p>Legendre polynomial basis set iterator.</p>
 <p>Initialize a NumpyPolyIterator.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p></li>
 <li><p><strong>low</strong> (<em>float</em>) – optional
@@ -615,12 +687,12 @@ higher limit of interval for encoding</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.basis.NumpyPolyIterator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NumpyPolyIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.NumpyPolyIterator" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.BasisIterator" title="smol.cofe.space.basis.BasisIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.BasisIterator</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NumpyPolyIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.NumpyPolyIterator" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.BasisIterator" title="smol.cofe.space.basis.BasisIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasisIterator</span></code></a></p>
 <p>Class to quickly implement polynomial basis sets included in numpy.</p>
 <p>Initialize a NumpyPolyIterator.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p></li>
 <li><p><strong>low</strong> (<em>float</em>) – optional
@@ -645,12 +717,12 @@ higher limit of interval for encoding</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.basis.PolynomialIterator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PolynomialIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.PolynomialIterator" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.NumpyPolyIterator" title="smol.cofe.space.basis.NumpyPolyIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.NumpyPolyIterator</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PolynomialIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.PolynomialIterator" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.NumpyPolyIterator" title="smol.cofe.space.basis.NumpyPolyIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">NumpyPolyIterator</span></code></a></p>
 <p>A standard polynomial basis set iterator.</p>
 <p>Initialize a NumpyPolyIterator.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p></li>
 <li><p><strong>low</strong> (<em>float</em>) – optional
@@ -676,7 +748,7 @@ higher limit of interval for encoding</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.basis.SinusoidIterator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SinusoidIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.SinusoidIterator" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.BasisIterator" title="smol.cofe.space.basis.BasisIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.BasisIterator</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.BasisIterator" title="smol.cofe.space.basis.BasisIterator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasisIterator</span></code></a></p>
 <p>Iterator for sinusoid (trig basis) as proposed by A. van de Walle.</p>
 <ol class="upperalpha simple">
 <li><p>van de Walle, Calphad. 33, 266–278 (2009).</p></li>
@@ -685,7 +757,7 @@ higher limit of interval for encoding</p></li>
 the box, but it is not orthonormal for allowed species &gt; 2.</p>
 <p>Initialize a SinusoidIterator.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>species</strong> (<em>tuple</em>) – tuple of allowed species in site spaces</p>
 </dd>
 </dl>
@@ -699,7 +771,7 @@ the box, but it is not orthonormal for allowed species &gt; 2.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.basis.StandardBasis">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StandardBasis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">site_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis_functions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.StandardBasis" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.DiscreteBasis" title="smol.cofe.space.basis.DiscreteBasis"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.basis.DiscreteBasis</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.basis.DiscreteBasis" title="smol.cofe.space.basis.DiscreteBasis"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiscreteBasis</span></code></a></p>
 <p>Class that represents the basis for a site function space.</p>
 <p>Note that all StandardBasis in theory have the first basis function
 <span class="math notranslate nohighlight">\(\phi_0 = 1\)</span>, but this should not be defined since it is handled
@@ -716,7 +788,7 @@ one like so for use in production and not debugging, know that it will
 break MSONable methods in classes that use these, and at any
 point, compatibility with OrderedDicts could be removed.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>site_space</strong> (<em>OrderedDict</em><em> or </em><a class="reference internal" href="../autogen/cofe.space.html#cofe.space.domain.SiteSpace" title="cofe.space.domain.SiteSpace"><em>SiteSpace</em></a>) – Dict representing site space (Specie, measure) or a SiteSpace
 object.</p></li>
@@ -736,10 +808,10 @@ the values of species in the site space as input.</p></li>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.StandardBasis.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Create a StandardBasis from dict representation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – MSONable dict representation</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>StandardBasis</p>
 </dd>
 </dl>
@@ -785,7 +857,7 @@ at your own peril with non-orthogonal basis sets.</p>
 multiply by -1, regardless of the indices or angle provided. Think
 about what it means to rotate in this case…</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>angle</strong> (<em>float</em>) – angle to rotate in radians</p></li>
 <li><p><strong>index1</strong> (<em>int</em>) – index of first basis vector in function_array</p></li>
@@ -802,13 +874,13 @@ about what it means to rotate in this case…</p>
 <span class="sig-name descname"><span class="pre">basis_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_space</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.basis_factory" title="Permalink to this definition">#</a></dt>
 <dd><p>Create a site basis for the given basis name.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>basis_name</strong> (<em>str</em>) – name of the basis.</p></li>
 <li><p><strong>site_space</strong> (<em>Sequence</em><em> or </em><em>OrderedDict</em>) – SiteSpace over which the basis set is defined.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>StandardBasis</p>
 </dd>
 </dl>
@@ -825,7 +897,7 @@ about what it means to rotate in this case…</p>
 <span class="sig-name descname"><span class="pre">encode_domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoding</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.basis.encode_domain" title="Permalink to this definition">#</a></dt>
 <dd><p>Decorate a function with an encoding for its domain.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>encoding</strong> (<em>dict</em>) – dictionary for encoding.</p>
 </dd>
 </dl>
@@ -852,51 +924,535 @@ about what it means to rotate in this case…</p>
 </section>
 
 
-              </div>
-              
-              
-              <!-- Previous / next buttons -->
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="space.html" title="previous page">
-        <i class="fas fa-angle-left"></i>
-        <div class="prev-next-info">
-            <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Space</p>
-        </div>
+  <a class='left-prev' id="prev-link" href="space.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">Space</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="space.cluster.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">Cluster</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.BasisIterator">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     BasisIterator
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.BasisIterator.flavor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       BasisIterator.flavor
+      </span>
+     </code>
     </a>
-    <a class='right-next' id="next-link" href="space.cluster.html" title="next page">
-    <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Cluster</p>
-    </div>
-    <i class="fas fa-angle-right"></i>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id0">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       BasisIterator.flavor
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.ChebyshevIterator">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ChebyshevIterator
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.ChebyshevIterator.flavor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ChebyshevIterator.flavor
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.ChebyshevIterator.polyval">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ChebyshevIterator.polyval
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.DiscreteBasis">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     DiscreteBasis
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.DiscreteBasis.as_dict">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DiscreteBasis.as_dict()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.DiscreteBasis.from_dict">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DiscreteBasis.from_dict()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.DiscreteBasis.function_array">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DiscreteBasis.function_array
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.DiscreteBasis.is_orthogonal">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DiscreteBasis.is_orthogonal
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.DiscreteBasis.is_orthonormal">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DiscreteBasis.is_orthonormal
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.DiscreteBasis.measure_array">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DiscreteBasis.measure_array
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.DiscreteBasis.measure_vector">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DiscreteBasis.measure_vector
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.DiscreteBasis.site_space">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DiscreteBasis.site_space
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.DiscreteBasis.species">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DiscreteBasis.species
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.IndicatorBasis">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     IndicatorBasis
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.IndicatorBasis.from_dict">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       IndicatorBasis.from_dict()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.IndicatorIterator">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     IndicatorIterator
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.IndicatorIterator.flavor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       IndicatorIterator.flavor
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.LegendreIterator">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     LegendreIterator
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.LegendreIterator.flavor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       LegendreIterator.flavor
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.LegendreIterator.polyval">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       LegendreIterator.polyval
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.NumpyPolyIterator">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     NumpyPolyIterator
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.NumpyPolyIterator.flavor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumpyPolyIterator.flavor
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.NumpyPolyIterator.polyval">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumpyPolyIterator.polyval
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.PolynomialIterator">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     PolynomialIterator
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.PolynomialIterator.flavor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PolynomialIterator.flavor
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.PolynomialIterator.polyval">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PolynomialIterator.polyval
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.SinusoidIterator">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     SinusoidIterator
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.SinusoidIterator.flavor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       SinusoidIterator.flavor
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.StandardBasis">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     StandardBasis
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.StandardBasis.as_dict">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       StandardBasis.as_dict()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.StandardBasis.from_dict">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       StandardBasis.from_dict()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.StandardBasis.function_array">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       StandardBasis.function_array
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.StandardBasis.orthonormalization_array">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       StandardBasis.orthonormalization_array
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.StandardBasis.orthonormalize">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       StandardBasis.orthonormalize()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.basis.StandardBasis.rotate">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       StandardBasis.rotate()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.basis_factory">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     basis_factory()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.cos_f">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     cos_f()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.encode_domain">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     encode_domain()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.indicator">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     indicator()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.sin_f">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     sin_f()
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.cofe.space.basis.sinusoid_factory">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     sinusoid_factory()
+    </span>
+   </code>
+  </a>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
+
+<div class="tocsection editthispage">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/api_reference/cofe/space.basis.rst">
+        <i class="fa-solid fa-pencil"></i> Edit this page
     </a>
 </div>
-              
-          </main>
-          
 
-      </div>
-    </div>
+</div>
+
+<div class="toc-item">
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-<footer class="footer mt-5 mt-md-0">
-  <div class="container">
-    
-    <div class="footer-item">
-      <p class="copyright">
-    &copy; Copyright 2022-2022, Ceder Group.<br>
-</p>
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+          </div>
+        </footer>
+        
+      </main>
     </div>
-    
-    <div class="footer-item">
-      <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
-</p>
-    </div>
-    
   </div>
-</footer>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright 2022-2022, Ceder Group.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="theme-version">
+    Built with the
+    <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">
+        PyData Sphinx Theme
+    </a>
+    0.12.0.
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
   </body>
 </html>

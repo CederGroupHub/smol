@@ -1,207 +1,232 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>MCUsher &#8212; smol 0.1.0 documentation</title>
-    
+    <title>MCUsher &#8212; smol 0.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="../../_static/styles/theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="../../_static/styles/bootstrap.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
 
-    
-  <link rel="stylesheet"
-    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/smol.css" />
-    
+  
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94">
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/moca/sampler.mcusher';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2.0';
+        </script>
     <script src="../../_static/require.js"></script>
     <script src="../../_static/custom.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Sample Container" href="sampler.container.html" />
     <link rel="prev" title="Sampling Kernel" href="sampler.kernel.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
-    
-
-    <!-- Google Analytics -->
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-    
-    <div class="container-fluid" id="banner"></div>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="auto">
 
-    
-    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
   <div id="navbar-start">
     
     
+  
 
-<a class="navbar-brand" href="../../index.html">
-  <img src="../../_static/logo.png" class="logo" alt="logo">
+
+<a class="navbar-brand logo" href="../../index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Logo image">
+    <img src="../../_static/logo.png" class="logo__image only-dark" alt="Logo image">
+  
+  
 </a>
-
-
     
   </div>
 
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
   
-  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+  <div class="col-lg-9 navbar-header-items">
     <div id="navbar-center" class="mr-auto">
       
       <div class="navbar-center-item">
-        <ul id="navbar-main-elements" class="navbar-nav">
-    <li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../getting_started.html">
-  Getting Started
- </a>
-</li>
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../user_guide.html">
-  User Guide
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 current active nav-item">
- <a class="reference internal nav-link" href="../index.html">
-  API Reference
- </a>
-</li>
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../citing.html">
-  Citing
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../developer_guide/index.html">
-  Developing
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
 
-    
-    <li class="nav-item">
-        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">Changes<i class="fas fa-external-link-alt"></i></a>
-    </li>
-    
-    <li class="nav-item">
-        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">Issues<i class="fas fa-external-link-alt"></i></a>
-    </li>
-    
-</ul>
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
       </div>
       
     </div>
 
     <div id="navbar-end">
       
+        <div class="navbar-end-item navbar-persistent--container">
+          
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+        </div>
+      
+      
       <div class="navbar-end-item">
-        <div class="dropdown" id="version_switcher">
-    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.1.0  <!-- this text may get changed later by javascript -->
+        <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+        0.2.0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
-    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
     <!-- dropdown will be populated by javascript on page load -->
     </div>
 </div>
-
-<!-- NOTE: this JS must live here (not in our global JS file) because it relies
-     on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/moca/sampler.mcusher and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.1.0'}.
--->
-
-<script type="text/javascript">
-// Check if corresponding page path exists in other version of docs
-// and, if so, go there instead of the homepage of the other docs version
-function checkPageExistsAndRedirect(event) {
-    const currentFilePath = "api_reference/moca/sampler.mcusher.html",
-          tryUrl = event.target.getAttribute("href");
-    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
-    $.ajax({
-        type: 'HEAD',
-        url: tryUrl,
-        // if the page exists, go there
-        success: function() {
-            location.href = tryUrl;
-        }
-    }).fail(function() {
-        location.href = otherDocsHomepage;
-    });
-    // this prevents the browser from following the href of the clicked node
-    // (which is fine because this function takes care of redirecting)
-    return false;
-}
-
-// Populate the version switcher from the JSON config file
-(function () {
-    $.getJSON("https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json", function(data, textStatus, jqXHR) {
-        const currentFilePath = "api_reference/moca/sampler.mcusher.html";
-        // create links to the corresponding page in the other docs versions
-        $.each(data, function(index, entry) {
-            // if no custom name specified (e.g., "latest"), use version string
-            if (!("name" in entry)) {
-                entry.name = entry.version;
-            }
-            // create the node
-            const node = document.createElement("a");
-            node.setAttribute("class", "list-group-item list-group-item-action py-1");
-            node.textContent = `${entry.name}`;
-            node.setAttribute("href", `${entry.url}${currentFilePath}`);
-            // on click, AJAX calls will check if the linked page exists before
-            // trying to redirect, and if not, will redirect to the homepage
-            // for that version of the docs.
-            node.onclick = checkPageExistsAndRedirect;
-            // Add dataset values for the version and name in case people want
-            // to apply CSS styling based on this information.
-            node.dataset["versionName"] = entry.name;
-            node.dataset["version"] = entry.version;
-
-            $("#version_switcher_menu").append(node);
-            // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.1.0 variable.
-            // also highlight the dropdown entry for the currently-viewed
-            // version's entry
-            if (entry.version == "0.1.0") {
-                node.classList.add("active");
-                let btn = document.getElementById("version_switcher_button");
-                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
-                btn.dataset["activeVersion"] = entry.version;
-            }
-        });
-    });
-})();
-</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
       </div>
       
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/CederGroupHub/smol" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
             <label class="sr-only">GitHub</label></a>
         </li>
       </ul>
@@ -209,165 +234,212 @@ function checkPageExistsAndRedirect(event) {
       
     </div>
   </div>
+
+
+  
+  
+    <div class="navbar-persistent--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+    </div>
+  
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
 </div>
-    </nav>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
     
 
-    <div class="container-xl">
-      <div class="row">
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+        0.2.0  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+      </div>
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
           
-            
-            <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar">
-              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-  <div class="bd-toc-item active">
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">
+    Section Navigation
+  </p>
+  <div class="bd-toc-item navbar-nav">
     <ul class="current nav bd-sidenav">
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../cofe/index.html">
-   <strong>
-    cofe
-   </strong>
-   — Cluster-Orbit Function Expansion Module
-  </a>
-  <input checked class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
-  <label for="toctree-checkbox-1">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../cofe/clusterspace.html">
-     Cluster Spaces
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../cofe/space.html">
-     Space
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../cofe/clusterexpansion.html">
-     Expansion
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../cofe/wrangling.html">
-     Wrangling
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../cofe/extern.ewald.html">
-     External Terms
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 current active has-children">
-  <a class="reference internal" href="index.html">
-   <strong>
-    moca
-   </strong>
-   — Monte Carlo Module
-  </a>
-  <input checked class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul class="current">
-   <li class="toctree-l2">
-    <a class="reference internal" href="processors.html">
-     Processors
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="ensemble.html">
-     Ensemble
-    </a>
-   </li>
-   <li class="toctree-l2 current active">
-    <a class="reference internal" href="sampler.html">
-     Sampling
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="sublattice.html">
-     Sublattice
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../io.html">
-   io — Input and Output
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../exceptions.html">
-   Exceptions
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../constants.html">
-   Global constants
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../utils.html">
-   Utility functions
-  </a>
- </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../cofe/index.html"><strong>cofe</strong> — Cluster-Orbit Function Expansion Module</a><input checked class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../cofe/clusterspace.html">Cluster Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cofe/space.html">Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cofe/clusterexpansion.html">Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cofe/wrangling.html">Wrangling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cofe/extern.ewald.html">External Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html"><strong>moca</strong> — Monte Carlo Module</a><input checked class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="processors.html">Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ensemble.html">Ensemble</a></li>
+<li class="toctree-l2 current active"><a class="reference internal" href="sampler.html">Sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sublattice.html">Sublattice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../io.html">io — Input and Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../constants.html">Global constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utility functions</a></li>
 </ul>
 
   </div>
 </nav>
-              </div>
-              <div class="sidebar-end-items">
-              </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+  
+  <div id="rtd-footer-container"></div>
+
+      </div>
+      <main id="main-content" class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
             </div>
             
-          
-
-          
-          <div class="d-none d-xl-block col-xl-2 bd-toc">
             
+            <article class="bd-article" role="main">
               
-              <div class="toc-item">
-                
-
-<nav id="bd-toc-nav">
-    
-</nav>
-              </div>
-              
-              <div class="toc-item">
-                
-
-<div class="tocsection editthispage">
-    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/api_reference/moca/sampler.mcusher.rst">
-        <i class="fas fa-pencil-alt"></i> Edit this page
-    </a>
-</div>
-
-              </div>
-              
-            
-          </div>
-          
-
-          
-          
-            
-          
-          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
-              
-              <div>
-                
   <section id="module-smol.moca.sampler.mcusher">
-<span id="mcusher"></span><h1>MCUsher<a class="headerlink" href="#module-smol.moca.sampler.mcusher" title="Permalink to this headline">#</a></h1>
+<span id="mcusher"></span><h1>MCUsher<a class="headerlink" href="#module-smol.moca.sampler.mcusher" title="Permalink to this heading">#</a></h1>
 <p>Implementations of MCMC Usher classes.</p>
 <p>An usher is used to generate step proposals for MC Monte Carlo sampling.
 For example a Flipper simply proposes a change of the identity of a species
@@ -377,20 +449,20 @@ between species at two sites for use in Canonical ensemble simulations.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.mcusher.Composite">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Composite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcushers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcusher_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Composite" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCUsher</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCUsher</span></code></a></p>
 <p>A composite usher for chaining different step types.</p>
 <p>This can be used to mix step types for all sublattices or to create hybrid
 ensembles where different sublattices have different allowed steps.</p>
 <p>Initialize the composite usher.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of active Sublattices to propose steps for. Active
+<li><p><strong>sublattices</strong> (<em>list</em><em> of </em><a class="reference internal" href="../autogen/moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice"><em>Sublattice</em></a>) – list of active Sublattices to propose steps for. Active
 sublattices are those that include sites with configuration
 degrees of freedom DOFs, only occupancy on active sub-lattices’ active sites
 are allowed to change.</p></li>
-<li><p><strong>mcushers</strong> (<em>list of MCUsher</em>) – A list of mcushers to add to the composite.</p></li>
-<li><p><strong>mcusher_weights</strong> (<em>list of float</em>) – A list of the weights associated with each mcusher passed. With this
+<li><p><strong>mcushers</strong> (<em>list</em><em> of </em><a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><em>MCUsher</em></a>) – A list of mcushers to add to the composite.</p></li>
+<li><p><strong>mcusher_weights</strong> (<em>list</em><em> of </em><em>float</em>) – A list of the weights associated with each mcusher passed. With this
 the corresponding probabilities for each mcusher to be picked are
 generated. Must be in the same order as the mcusher list.</p></li>
 <li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
@@ -404,7 +476,7 @@ any bias terms, otherwise reproducibility will be compromised.</p></li>
 <span class="sig-name descname"><span class="pre">add_mcusher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mcusher</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Composite.add_mcusher" title="Permalink to this definition">#</a></dt>
 <dd><p>Add an MCUsher to the Composite usher.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mcusher</strong> (<a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><em>MCUsher</em></a>) – The MCUsher to add</p></li>
 <li><p><strong>weight</strong> (<em>float</em>) – The weight associated with the mcusher being added</p></li>
@@ -436,17 +508,17 @@ any bias terms, otherwise reproducibility will be compromised.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.mcusher.Flip">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Flip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Flip" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCUsher</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCUsher</span></code></a></p>
 <p>Implementation of a simple flip step at a random site.</p>
 <p>Initialize MCMCStep.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of active Sublattices to propose steps for. Active
+<li><p><strong>sublattices</strong> (<em>list</em><em> of </em><a class="reference internal" href="../autogen/moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice"><em>Sublattice</em></a>) – list of active Sublattices to propose steps for. Active
 sublattices are those that include sites with configuration
 degrees of freedom DOFs, only occupancy on active sub-lattices’
 active sites are allowed to change.</p></li>
-<li><p><strong>sublattice_probabilities</strong> (<em>list of float</em>) – optional
+<li><p><strong>sublattice_probabilities</strong> (<em>list</em><em> of </em><em>float</em>) – optional
 list of probabilities to pick a site from specific active
 sublattices.</p></li>
 <li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
@@ -462,13 +534,13 @@ any bias terms, otherwise reproducibility will be compromised.</p></li>
 <p>A step is given as a sequence of tuples, where each tuple is of the
 form (site index, species code to set)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of tuples each with (index, code)</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list(tuple)</p>
 </dd>
 </dl>
@@ -479,17 +551,17 @@ form (site index, species code to set)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.mcusher.MCUsher">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCUsher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCUsher" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>Abstract base class for MC usher classes.</p>
 <p>Initialize MCMCStep.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of active Sublattices to propose steps for. Active
+<li><p><strong>sublattices</strong> (<em>list</em><em> of </em><a class="reference internal" href="../autogen/moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice"><em>Sublattice</em></a>) – list of active Sublattices to propose steps for. Active
 sublattices are those that include sites with configuration
 degrees of freedom DOFs, only occupancy on active sub-lattices’
 active sites are allowed to change.</p></li>
-<li><p><strong>sublattice_probabilities</strong> (<em>list of float</em>) – optional
+<li><p><strong>sublattice_probabilities</strong> (<em>list</em><em> of </em><em>float</em>) – optional
 list of probabilities to pick a site from specific active
 sublattices.</p></li>
 <li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
@@ -506,16 +578,16 @@ any bias terms, otherwise reproducibility will be compromised.</p></li>
 metropolis proposal methods. Return log of the factor for numerical
 accuracy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p></li>
 <li><p><strong>step</strong> (<em>list</em><em>[</em><em>tuple</em><em>]</em>) – Metropolis step. list of tuples each with (index, code).</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>log of a-priori adjustment weight.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -534,13 +606,13 @@ accuracy.</p>
 <p>A step is given as a sequence of tuples, where each tuple is of the
 form (site index, species code to set)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>tuple of tuples each with (index, code)</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list(tuple)</p>
 </dd>
 </dl>
@@ -548,8 +620,8 @@ form (site index, species code to set)</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.sampler.mcusher.MCUsher.set_aux_state">
-<span class="sig-name descname"><span class="pre">set_aux_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCUsher.set_aux_state" title="Permalink to this definition">#</a></dt>
-<dd><p>Set the auxiliary state from a checkpoint value.</p>
+<span class="sig-name descname"><span class="pre">set_aux_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancies</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MCUsher.set_aux_state" title="Permalink to this definition">#</a></dt>
+<dd><p>Set the auxiliary occupancies from a checkpoint values.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -569,26 +641,26 @@ form (site index, species code to set)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.mcusher.MultiStep">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultiStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcusher</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_lengths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.MultiStep" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCUsher</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCUsher</span></code></a></p>
 <p>A multistep usher to generate steps of several flips.</p>
 <p>Any usher can be used to chain steps, ie create multi flip steps, multi swap steps
 even multi composite steps, etc.</p>
 <p>Initialize a multistep usher.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of active Sublattices to propose steps for. Active
+<li><p><strong>sublattices</strong> (<em>list</em><em> of </em><a class="reference internal" href="../autogen/moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice"><em>Sublattice</em></a>) – list of active Sublattices to propose steps for. Active
 sublattices are those that include sites with configuration
 degrees of freedom DOFs, only occupancy on active sub-lattices’ active sites
 are allowed to change.</p></li>
 <li><p><strong>mcusher</strong> (<a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><em>MCUsher</em></a>) – An instantiated MCUsher to use to create multisteps.</p></li>
-<li><p><strong>step_lengths</strong> (<em>int</em><em> or </em><em>Sequence of int</em>) – The length or lengths of steps. If given a sequence of sizes, a size
-is choosen at each proposal according to step_probabilities. The step
+<li><p><strong>step_lengths</strong> (<em>int</em><em> or </em><em>Sequence</em><em> of </em><em>int</em>) – The length or lengths of steps. If given a sequence of sizes, a size
+is chosen at each proposal according to step_probabilities. The step
 length proposed may be less in cases where the same site is chosen
 more than once. This should become less and less likely for larger
 supercells.</p></li>
-<li><p><strong>step_probabilities</strong> (<em>Sequence of float</em>) – optional
-A sequence of probabilites corresponding to the step lengths provided.
+<li><p><strong>step_probabilities</strong> (<em>Sequence</em><em> of </em><em>float</em>) – optional
+A sequence of probabilities corresponding to the step lengths provided.
 If none is given, then a uniform probability is used.</p></li>
 <li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
 The given PRNG must be the same instance as that used by the kernel and
@@ -613,17 +685,17 @@ any bias terms, otherwise reproducibility will be compromised.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.mcusher.Swap">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Swap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattice_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.Swap" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCUsher</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCUsher</span></code></a></p>
 <p>Implementation of a simple swap step for two random sites.</p>
 <p>Initialize MCMCStep.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of active Sublattices to propose steps for. Active
+<li><p><strong>sublattices</strong> (<em>list</em><em> of </em><a class="reference internal" href="../autogen/moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice"><em>Sublattice</em></a>) – list of active Sublattices to propose steps for. Active
 sublattices are those that include sites with configuration
 degrees of freedom DOFs, only occupancy on active sub-lattices’
 active sites are allowed to change.</p></li>
-<li><p><strong>sublattice_probabilities</strong> (<em>list of float</em>) – optional
+<li><p><strong>sublattice_probabilities</strong> (<em>list</em><em> of </em><em>float</em>) – optional
 list of probabilities to pick a site from specific active
 sublattices.</p></li>
 <li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
@@ -639,13 +711,13 @@ any bias terms, otherwise reproducibility will be compromised.</p></li>
 <p>A step is given as a sequence of tuples, where each tuple is of the
 form (site index, species code to set)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of tuples each with (index, code)</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list(tuple)</p>
 </dd>
 </dl>
@@ -656,7 +728,7 @@ form (site index, species code to set)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.sampler.mcusher.TableFlip">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TableFlip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip_table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge_balanced</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize_basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_ergodic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swap_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.TableFlip" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.moca.sampler.mcusher.MCUsher</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCUsher</span></code></a></p>
 <p>Implementation of table flips.</p>
 <p>Use user-specified or auto-calculated flip tables. Does not
 check the correctness of the flip tables.</p>
@@ -667,9 +739,9 @@ dict form of the flip table is not very easy to read and
 write.</p>
 <p>Initialize TableFlip.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of Sublattices to propose steps for. Must
+<li><p><strong>sublattices</strong> (<em>list</em><em> of </em><a class="reference internal" href="../autogen/moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice"><em>Sublattice</em></a>) – list of Sublattices to propose steps for. Must
 be all sublattices, including active and inactive
 ones.</p></li>
 <li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
@@ -678,7 +750,7 @@ kernel and any bias terms, otherwise reproducibility will be
 compromised.</p></li>
 <li><p><strong>flip_table</strong> (<em>2D np.ndarray</em><em>[</em><em>int</em><em>]</em>) – Flip vectors in “n” format, as generated by a CompositionSpace.
 If not given, we will initialize a CompositionSpace from
-sublattice informations, and calculate the flip table
+sublattice information, and calculate the flip table
 with that CompositionSpace.
 Notice:
 1, We suggest you provide a pre-computed flip table, unless
@@ -744,10 +816,10 @@ numerical accuracy.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>log of a-priori adjustment ratio.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>float</p>
 </dd>
 </dl>
@@ -773,13 +845,13 @@ form (site index, species code to set)</p>
 by minimal table flips. This method does not take care of that, please
 be careful when choosing starting compositions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of tuples each with (idex, code).</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list(tuple)</p>
 </dd>
 </dl>
@@ -792,18 +864,18 @@ be careful when choosing starting compositions.</p>
 <span class="sig-name descname"><span class="pre">mcusher_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">usher_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.sampler.mcusher.mcusher_factory" title="Permalink to this definition">#</a></dt>
 <dd><p>Get a MC Usher from string name.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>usher_type</strong> (<em>str</em>) – string specifying step to instantiate.</p></li>
-<li><p><strong>sublattices</strong> (<em>list of Sublattice</em>) – list of Sublattices to propose steps for.</p></li>
+<li><p><strong>sublattices</strong> (<em>list</em><em> of </em><a class="reference internal" href="../autogen/moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice"><em>Sublattice</em></a>) – list of Sublattices to propose steps for.</p></li>
 <li><p><strong>*args</strong> – positional arguments passed to class constructor</p></li>
 <li><p><strong>**kwargs</strong> – keyword arguments passed to class constructor</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>instance of derived class.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#smol.moca.sampler.mcusher.MCUsher" title="smol.moca.sampler.mcusher.MCUsher">MCUsher</a></p>
 </dd>
 </dl>
@@ -812,51 +884,338 @@ be careful when choosing starting compositions.</p>
 </section>
 
 
-              </div>
-              
-              
-              <!-- Previous / next buttons -->
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="sampler.kernel.html" title="previous page">
-        <i class="fas fa-angle-left"></i>
-        <div class="prev-next-info">
-            <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Sampling Kernel</p>
-        </div>
+  <a class='left-prev' id="prev-link" href="sampler.kernel.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">Sampling Kernel</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="sampler.container.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">Sample Container</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.Composite">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Composite
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.Composite.add_mcusher">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Composite.add_mcusher()
+      </span>
+     </code>
     </a>
-    <a class='right-next' id="next-link" href="sampler.container.html" title="next page">
-    <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Sample Container</p>
-    </div>
-    <i class="fas fa-angle-right"></i>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.Composite.mcushers">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Composite.mcushers
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.Composite.propose_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Composite.propose_step()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.Composite.weight">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Composite.weight
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.Flip">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Flip
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.Flip.propose_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Flip.propose_step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.MCUsher">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     MCUsher
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.MCUsher.compute_log_priori_factor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCUsher.compute_log_priori_factor()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.MCUsher.get_random_sublattice">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCUsher.get_random_sublattice()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.MCUsher.propose_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCUsher.propose_step()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.MCUsher.set_aux_state">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCUsher.set_aux_state()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.MCUsher.sublattice_probabilities">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCUsher.sublattice_probabilities
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.MCUsher.update_aux_state">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MCUsher.update_aux_state()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.MultiStep">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     MultiStep
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.MultiStep.propose_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MultiStep.propose_step()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.MultiStep.sublattice_probabilities">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       MultiStep.sublattice_probabilities
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.Swap">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     Swap
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.Swap.propose_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       Swap.propose_step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.TableFlip">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     TableFlip
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.TableFlip.compute_log_priori_factor">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       TableFlip.compute_log_priori_factor()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.TableFlip.propose_step">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       TableFlip.propose_step()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.sampler.mcusher.mcusher_factory">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     mcusher_factory()
+    </span>
+   </code>
+  </a>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
+
+<div class="tocsection editthispage">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/api_reference/moca/sampler.mcusher.rst">
+        <i class="fa-solid fa-pencil"></i> Edit this page
     </a>
 </div>
-              
-          </main>
-          
 
-      </div>
-    </div>
+</div>
+
+<div class="toc-item">
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-<footer class="footer mt-5 mt-md-0">
-  <div class="container">
-    
-    <div class="footer-item">
-      <p class="copyright">
-    &copy; Copyright 2022-2022, Ceder Group.<br>
-</p>
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+          </div>
+        </footer>
+        
+      </main>
     </div>
-    
-    <div class="footer-item">
-      <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
-</p>
-    </div>
-    
   </div>
-</footer>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright 2022-2022, Ceder Group.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="theme-version">
+    Built with the
+    <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">
+        PyData Sphinx Theme
+    </a>
+    0.12.0.
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
   </body>
 </html>

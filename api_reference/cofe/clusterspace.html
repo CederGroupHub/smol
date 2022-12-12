@@ -1,209 +1,234 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Cluster Spaces &#8212; smol 0.1.0 documentation</title>
-    
+    <title>Cluster Spaces &#8212; smol 0.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="../../_static/styles/theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="../../_static/styles/bootstrap.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
 
-    
-  <link rel="stylesheet"
-    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/smol.css" />
-    
+  
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94">
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/cofe/clusterspace';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2.0';
+        </script>
     <script src="../../_static/require.js"></script>
     <script src="../../_static/custom.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Space" href="space.html" />
     <link rel="prev" title="cofe — Cluster-Orbit Function Expansion Module" href="index.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
-    
-
-    <!-- Google Analytics -->
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-    
-    <div class="container-fluid" id="banner"></div>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="auto">
 
-    
-    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
   <div id="navbar-start">
     
     
+  
 
-<a class="navbar-brand" href="../../index.html">
-  <img src="../../_static/logo.png" class="logo" alt="logo">
+
+<a class="navbar-brand logo" href="../../index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Logo image">
+    <img src="../../_static/logo.png" class="logo__image only-dark" alt="Logo image">
+  
+  
 </a>
-
-
     
   </div>
 
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
   
-  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+  <div class="col-lg-9 navbar-header-items">
     <div id="navbar-center" class="mr-auto">
       
       <div class="navbar-center-item">
-        <ul id="navbar-main-elements" class="navbar-nav">
-    <li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../getting_started.html">
-  Getting Started
- </a>
-</li>
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../user_guide.html">
-  User Guide
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 current active nav-item">
- <a class="reference internal nav-link" href="../index.html">
-  API Reference
- </a>
-</li>
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../citing.html">
-  Citing
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="../../developer_guide/index.html">
-  Developing
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
 
-    
-    <li class="nav-item">
-        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">Changes<i class="fas fa-external-link-alt"></i></a>
-    </li>
-    
-    <li class="nav-item">
-        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">Issues<i class="fas fa-external-link-alt"></i></a>
-    </li>
-    
-</ul>
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
       </div>
       
     </div>
 
     <div id="navbar-end">
       
+        <div class="navbar-end-item navbar-persistent--container">
+          
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+        </div>
+      
+      
       <div class="navbar-end-item">
-        <div class="dropdown" id="version_switcher">
-    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.1.0  <!-- this text may get changed later by javascript -->
+        <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+        0.2.0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
-    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
     <!-- dropdown will be populated by javascript on page load -->
     </div>
 </div>
-
-<!-- NOTE: this JS must live here (not in our global JS file) because it relies
-     on being processed by Jinja before it is run (specifically for replacing
-     variables api_reference/cofe/clusterspace and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.1.0'}.
--->
-
-<script type="text/javascript">
-// Check if corresponding page path exists in other version of docs
-// and, if so, go there instead of the homepage of the other docs version
-function checkPageExistsAndRedirect(event) {
-    const currentFilePath = "api_reference/cofe/clusterspace.html",
-          tryUrl = event.target.getAttribute("href");
-    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
-    $.ajax({
-        type: 'HEAD',
-        url: tryUrl,
-        // if the page exists, go there
-        success: function() {
-            location.href = tryUrl;
-        }
-    }).fail(function() {
-        location.href = otherDocsHomepage;
-    });
-    // this prevents the browser from following the href of the clicked node
-    // (which is fine because this function takes care of redirecting)
-    return false;
-}
-
-// Populate the version switcher from the JSON config file
-(function () {
-    $.getJSON("https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json", function(data, textStatus, jqXHR) {
-        const currentFilePath = "api_reference/cofe/clusterspace.html";
-        // create links to the corresponding page in the other docs versions
-        $.each(data, function(index, entry) {
-            // if no custom name specified (e.g., "latest"), use version string
-            if (!("name" in entry)) {
-                entry.name = entry.version;
-            }
-            // create the node
-            const node = document.createElement("a");
-            node.setAttribute("class", "list-group-item list-group-item-action py-1");
-            node.textContent = `${entry.name}`;
-            node.setAttribute("href", `${entry.url}${currentFilePath}`);
-            // on click, AJAX calls will check if the linked page exists before
-            // trying to redirect, and if not, will redirect to the homepage
-            // for that version of the docs.
-            node.onclick = checkPageExistsAndRedirect;
-            // Add dataset values for the version and name in case people want
-            // to apply CSS styling based on this information.
-            node.dataset["versionName"] = entry.name;
-            node.dataset["version"] = entry.version;
-
-            $("#version_switcher_menu").append(node);
-            // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.1.0 variable.
-            // also highlight the dropdown entry for the currently-viewed
-            // version's entry
-            if (entry.version == "0.1.0") {
-                node.classList.add("active");
-                let btn = document.getElementById("version_switcher_button");
-                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
-                btn.dataset["activeVersion"] = entry.version;
-            }
-        });
-    });
-})();
-</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
       </div>
       
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/CederGroupHub/smol" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
             <label class="sr-only">GitHub</label></a>
         </li>
       </ul>
@@ -211,180 +236,212 @@ function checkPageExistsAndRedirect(event) {
       
     </div>
   </div>
+
+
+  
+  
+    <div class="navbar-persistent--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+    </div>
+  
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
 </div>
-    </nav>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
     
 
-    <div class="container-xl">
-      <div class="row">
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+        0.2.0  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+</div>
+      </div>
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
           
-            
-            <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar">
-              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-  <div class="bd-toc-item active">
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">
+    Section Navigation
+  </p>
+  <div class="bd-toc-item navbar-nav">
     <ul class="current nav bd-sidenav">
- <li class="toctree-l1 current active has-children">
-  <a class="reference internal" href="index.html">
-   <strong>
-    cofe
-   </strong>
-   — Cluster-Orbit Function Expansion Module
-  </a>
-  <input checked class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
-  <label for="toctree-checkbox-1">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul class="current">
-   <li class="toctree-l2 current active">
-    <a class="current reference internal" href="#">
-     Cluster Spaces
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="space.html">
-     Space
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="clusterexpansion.html">
-     Expansion
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="wrangling.html">
-     Wrangling
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="extern.ewald.html">
-     External Terms
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1 has-children">
-  <a class="reference internal" href="../moca/index.html">
-   <strong>
-    moca
-   </strong>
-   — Monte Carlo Module
-  </a>
-  <input checked class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
-   <i class="fas fa-chevron-down">
-   </i>
-  </label>
-  <ul>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../moca/processors.html">
-     Processors
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../moca/ensemble.html">
-     Ensemble
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../moca/sampler.html">
-     Sampling
-    </a>
-   </li>
-   <li class="toctree-l2">
-    <a class="reference internal" href="../moca/sublattice.html">
-     Sublattice
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../io.html">
-   io — Input and Output
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../exceptions.html">
-   Exceptions
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../constants.html">
-   Global constants
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../utils.html">
-   Utility functions
-  </a>
- </li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html"><strong>cofe</strong> — Cluster-Orbit Function Expansion Module</a><input checked class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Cluster Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="space.html">Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clusterexpansion.html">Expansion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wrangling.html">Wrangling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extern.ewald.html">External Terms</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../moca/index.html"><strong>moca</strong> — Monte Carlo Module</a><input checked class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../moca/processors.html">Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moca/ensemble.html">Ensemble</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moca/sampler.html">Sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../moca/sublattice.html">Sublattice</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../io.html">io — Input and Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exceptions.html">Exceptions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../constants.html">Global constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utility functions</a></li>
 </ul>
 
   </div>
 </nav>
-              </div>
-              <div class="sidebar-end-items">
-              </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+  
+  <div id="rtd-footer-container"></div>
+
+      </div>
+      <main id="main-content" class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
             </div>
             
-          
-
-          
-          <div class="d-none d-xl-block col-xl-2 bd-toc">
             
+            <article class="bd-article" role="main">
               
-              <div class="toc-item">
-                
-<div class="tocsection onthispage mt-5 pt-1 pb-3">
-    <i class="fas fa-list"></i> On this page
-</div>
-
-<nav id="bd-toc-nav">
-    <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#clustersubspace">
-   ClusterSubspace
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#pottssubspace">
-   PottsSubspace
-  </a>
- </li>
-</ul>
-
-</nav>
-              </div>
-              
-              <div class="toc-item">
-                
-
-<div class="tocsection editthispage">
-    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/api_reference/cofe/clusterspace.rst">
-        <i class="fas fa-pencil-alt"></i> Edit this page
-    </a>
-</div>
-
-              </div>
-              
-            
-          </div>
-          
-
-          
-          
-            
-          
-          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
-              
-              <div>
-                
   <section id="cluster-spaces">
-<span id="cluster-space"></span><h1>Cluster Spaces<a class="headerlink" href="#cluster-spaces" title="Permalink to this headline">#</a></h1>
+<span id="cluster-space"></span><h1>Cluster Spaces<a class="headerlink" href="#cluster-spaces" title="Permalink to this heading">#</a></h1>
 <p>Implementation of ClusterSubspace and related PottsSubspace classes.</p>
 <p><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> is the workhorse for generating the objects and
 information necessary for a cluster expansion. It contains the finite set
@@ -392,11 +449,11 @@ of orbits and orbit basis functions to be included in the cluster expansion.
 The <code class="xref py py-class docutils literal notranslate"><span class="pre">PottsSubspace</span></code> is an (experimental) class that is similar, but
 diverges from the CE mathematic formalism.</p>
 <section id="clustersubspace">
-<h2>ClusterSubspace<a class="headerlink" href="#clustersubspace" title="Permalink to this headline">#</a></h2>
+<h2>ClusterSubspace<a class="headerlink" href="#clustersubspace" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">monty.json.MSONable</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
 <p>ClusterSubspace represents a subspace of functions of configuration.</p>
 <p>A <a class="reference internal" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a> is the main work horse used in constructing a
 cluster expansion. It is necessary to define the terms to be included in a
@@ -418,7 +475,7 @@ which will auto-generate the orbits from diameter cutoffs.</p>
 <span class="sig-name descname"><span class="pre">symops</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.symops" title="Permalink to this definition">#</a></dt>
 <dd><p>Symmetry operations of structure.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of SymmOp</p>
 </dd>
 </dl>
@@ -430,7 +487,7 @@ which will auto-generate the orbits from diameter cutoffs.</p>
 <dd><p>Total number of correlation functions (orbit basis functions)
 included in the subspace.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -442,7 +499,7 @@ included in the subspace.</p>
 <dd><p>Total number of crystallographic orbits included in the subspace.
 This includes the empty orbit.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -454,7 +511,7 @@ This includes the empty orbit.</p>
 <dd><p>Total number of clusters in the primitive cell that are included
 in the subspace.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -466,13 +523,13 @@ constructor.
 Look at the class method <code class="code docutils literal notranslate"><span class="pre">from_cutoffs</span></code> for the “better” way to
 instantiate a ClusterSubspace.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – Structure to define the cluster space. Typically the primitive
 cell. Includes all species regardless of partial occupation.</p></li>
 <li><p><strong>expansion_structure</strong> (<em>Structure</em>) – Structure including only sites that will be included in the
 Cluster space (i.e. only those with partial occupancy)</p></li>
-<li><p><strong>symops</strong> (<em>list of Symmop</em>) – list of Symmops for the given structure.</p></li>
+<li><p><strong>symops</strong> (<em>list</em><em> of </em><em>Symmop</em>) – list of Symmops for the given structure.</p></li>
 <li><p><strong>orbits</strong> (<em>dict</em>) – {size: list of Orbits}
 Dictionary with size (number of sites) as keys and list of
 Orbits as values.</p></li>
@@ -480,13 +537,13 @@ Orbits as values.</p></li>
 StructureMatcher used to find supercell matrices
 relating the prim structure to other structures. If you pass
 this directly you should know how to set the matcher up,
-otherwise matching your relaxed structures can fail, alot.</p></li>
+otherwise matching your relaxed structures can fail, a lot.</p></li>
 <li><p><strong>site_matcher</strong> (<em>StructureMatcher</em>) – optional
 StructureMatcher used to find site mappings
 relating the sites of a given structure to an appropriate
 supercell of the prim structure . If you pass this directly you
 should know how to set the matcher up, otherwise matching your
-relaxed structures can fail, alot.</p></li>
+relaxed structures can fail, a lot.</p></li>
 <li><p><strong>matcher_kwargs</strong> – ltol, stol, angle_tol, supercell_size: parameters to pass
 through to the StructureMatchers. Structures that don’t match
 to the primitive cell under these tolerances won’t be included
@@ -505,7 +562,7 @@ more details.</p></li>
 terms. External term classes must be MSONable and implement a method
 to obtain a “correlation”. See smol.cofe.extern for notebooks.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>term</strong> (<em>ExternalTerm</em>) – An instance of an external term. Currently only EwaldTerm is
 implemented.</p>
 </dd>
@@ -517,7 +574,7 @@ implemented.</p>
 <span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.as_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>MSONable dict</p>
 </dd>
 </dl>
@@ -546,7 +603,7 @@ implemented.</p>
 <span class="sig-name descname"><span class="pre">change_site_bases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.change_site_bases" title="Permalink to this definition">#</a></dt>
 <dd><p>Change the type of site basis used in the site basis functions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>new_basis</strong> (<em>str</em>) – name of new basis for all site bases</p></li>
 <li><p><strong>orthonormal</strong> (<em>bool</em>) – option to orthonormalize all new site basis sets</p></li>
@@ -571,7 +628,7 @@ determine the mappings between sites to create the occupancy
 string and also determine the orbit mappings to evaluate the
 corresponding cluster functions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – Structure to compute correlation from</p></li>
 <li><p><strong>normalized</strong> (<em>bool</em>) – return the correlation vector normalized by the prim cell size.
@@ -591,10 +648,10 @@ of the matching sites to the prim structure. If you pass this
 option, you are fully responsible that the mappings are correct!</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>correlation vector for given structure</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array</p>
 </dd>
 </dl>
@@ -633,7 +690,7 @@ that orbit.</p>
 <p>This is the best (and the only easy) way to create a
 <a class="reference internal" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – disordered structure to build a cluster expansion for.
 Typically the primitive cell</p></li>
@@ -656,13 +713,13 @@ subspace centered about the prim composition.</p></li>
 StructureMatcher used to find supercell matrices
 relating the prim structure to other structures. If you pass
 this directly you should know how to set the matcher up,
-otherwise matching your relaxed structures will fail, alot.</p></li>
+otherwise matching your relaxed structures will fail, a lot.</p></li>
 <li><p><strong>site_matcher</strong> (<em>StructureMatcher</em>) – optional
 StructureMatcher used to find site mappings
 relating the sites of a given structure to an appropriate
 supercell of the prim structure . If you pass this directly you
 should know how to set the matcher up, otherwise matching your
-relaxed structures will fail, alot.</p></li>
+relaxed structures will fail, a lot.</p></li>
 <li><p><strong>matcher_kwargs</strong> – ltol, stol, angle_tol, supercell_size: parameters to pass
 through to the StructureMatchers. Structures that don’t match
 to the primitive cell under these tolerances won’t be included
@@ -670,7 +727,7 @@ in the expansion. Easiest option for supercell_size is usually
 to use a species that has a constant amount per formula unit.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>ClusterSubspace</p>
 </dd>
 </dl>
@@ -691,7 +748,7 @@ functions and “sub” correlation functions (i.e. a correlation function is
 a “sub” correlation factor or included in higher degree correlation function if
 it is a factor of a higher degree correlation function.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>level</strong> (<em>int</em>) – optional
 how many levels down to look for suborbits. If all suborbits
@@ -704,12 +761,12 @@ hierarchy. Invert= True will invert the hierarchy into low to
 high</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>each element of the inner lists is the bit id for
 all correlation functions corresponding to the corr function at the given
 outer list index.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of list</p>
 </dd>
 </dl>
@@ -726,7 +783,7 @@ outer list index.</p>
 <span class="sig-name descname"><span class="pre">function_inds_from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_from_cutoffs" title="Permalink to this definition">#</a></dt>
 <dd><p>Get indices of correlation functions by cluster cutoffs.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>upper</strong> (<em>float</em><em> or </em><em>dict</em>) – upper diameter for clusters to include. If a single float
 is given then that cutoff is used for all orbit sizes.
@@ -741,10 +798,10 @@ orbit cluster sizes,
 i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of correlation function indices for clusters within cutoffs</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -791,7 +848,7 @@ supercell matrix.</p>
 <p>This is a helper function for the correlation vector computation and most
 often called internally.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>scmatrix</strong> (<em>ndarray</em>) – supercell matrix.</p>
 </dd>
 </dl>
@@ -815,15 +872,15 @@ evaluate to the same value, leading to feature matrix rank deficiency and
 potentially unphysical ECI.</p>
 <p>This method will detect most cases of orbit degeneracy, but not some edge cases.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>sc_matrix</strong> – (array):
 array relating a supercell with the primitive matrix</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>(orbit_id i, orbit_id j, …) list of tuples containing the orbits
 that are aliased.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of tuples</p>
 </dd>
 </dl>
@@ -840,7 +897,7 @@ clusters of the clusters over which the given corr function acts on).</p>
 <p>In other words, think of it as an orbit of function-labeled subclusters
 of a given orbit of function-labeled clusters…a mouthful…</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>corr_id</strong> (<em>int</em>) – id of orbit to get sub orbit id for</p></li>
 <li><p><strong>level</strong> (<em>int</em>) – optional
@@ -850,10 +907,10 @@ are needed make level large enough or set to None.</p></li>
 minimum size of clusters in sub orbits to include</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list containing ids of sub correlation functions</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of ints</p>
 </dd>
 </dl>
@@ -864,7 +921,7 @@ minimum size of clusters in sub orbits to include</p></li>
 <span class="sig-name descname"><span class="pre">get_sub_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_orbits" title="Permalink to this definition">#</a></dt>
 <dd><p>Get sub orbits of the orbit for the corresponding orbit_id.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>orbit_id</strong> (<em>int</em>) – id of orbit to get sub orbit id for</p></li>
 <li><p><strong>level</strong> (<em>int</em>) – optional
@@ -874,10 +931,10 @@ are needed make level large enough or set to None.</p></li>
 minimum size of clusters in sub orbits to include</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list containing ids of suborbits</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of ints</p>
 </dd>
 </dl>
@@ -912,7 +969,7 @@ used here as in the instance of the processor class for the simulation.
 Although it is recommended to use the similar function in Processor
 classes.)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – structure to obtain a occupancy string for</p></li>
 <li><p><strong>scmatrix</strong> (<em>array</em>) – optional
@@ -932,10 +989,10 @@ in the expansion structure site spaces, rather than the
 species itself.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>occupancy string for structure.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -948,7 +1005,7 @@ species itself.</p></li>
 <p>The orbit hierarchy represents in inclusion relationships between orbits and
 their suborbits.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>level</strong> (<em>int</em>) – optional
 how many levels down to look for suborbits. If all suborbits
@@ -957,12 +1014,12 @@ are needed make level large enough or set to None.</p></li>
 minimum size of clusters in sub orbits to include</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>each element of the inner lists is the orbit id for
 all suborbits corresponding to the orbit at the given outer list
 index.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of list</p>
 </dd>
 </dl>
@@ -991,7 +1048,7 @@ index.</p>
 <span class="sig-name descname"><span class="pre">orbits_from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_from_cutoffs" title="Permalink to this definition">#</a></dt>
 <dd><p>Get orbits with clusters within given diameter cutoffs (inclusive).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>upper</strong> (<em>float</em><em> or </em><em>dict</em>) – upper diameter for clusters to include. If a single float
 is given then that cutoff is used for all orbit sizes.
@@ -1006,7 +1063,7 @@ orbit cluster sizes,
 i.e. {2: pair_cutoff, 3: triplet_cutoff, …}</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of Orbits</p>
 </dd>
 </dl>
@@ -1019,7 +1076,7 @@ i.e. {2: pair_cutoff, 3: triplet_cutoff, …}</p></li>
 <p>Refine a (relaxed) structure to a perfect supercell structure of the
 the prim structure (aka the corresponding “unrelaxed” structure).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – structure to refine to a perfect multiple of the prim</p></li>
 <li><p><strong>scmatrix</strong> (<em>ndarray</em>) – optional
@@ -1033,10 +1090,10 @@ of the matching sites to the prim structure. Again you are
 responsible.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the refined structure</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Structure</p>
 </dd>
 </dl>
@@ -1059,7 +1116,7 @@ obvious what it means to remove certain combinations of an n-body
 interaction term, and not the whole term itself…so tread lighlty with your
 model interpretations.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>corr_ids</strong> (<em>list</em>) – list of correlation function ids to remove</p>
 </dd>
 </dl>
@@ -1081,7 +1138,7 @@ than one orbit functions (for all the possible bit orderings or function-
 labeled orbit configurations) and removing an orbit will remove more than
 one element in the correlation vector.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>orbit_ids</strong> (<em>list</em>) – list of orbit ids to be removed</p>
 </dd>
 </dl>
@@ -1094,13 +1151,13 @@ one element in the correlation vector.</p>
 <p>Obtain the supercell structure matrix to convert the prim structure
 to a supercell equivalent to given structure.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>structure</strong> (<em>Structure</em>) – a pymatgen Structure.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>matrix relating given structure and prim structure.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>ndarray</p>
 </dd>
 </dl>
@@ -1119,16 +1176,16 @@ to a supercell equivalent to given structure.</p>
 <p>Returns the mapping between sites in the given structure and a prim
 supercell of the corresponding size.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>supercell</strong> (<em>Structure</em>) – supercell of prim structure with same size as other structure.</p></li>
 <li><p><strong>structure</strong> (<em>Structure</em>) – Structure to obtain site mappings to supercell of prim</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>site mappings of structure to supercell</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -1141,15 +1198,15 @@ supercell of the corresponding size.</p>
 <p>Return the orbit mappings for a specific supercell of the prim
 structure represented by the given matrix</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>scmatrix</strong> (<em>array</em>) – array relating a supercell with the primitive matrix</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>(orbit, indices) list of tuples with orbits and the
 site indices for all equivalent orbits in a supercell obtained
 from the given matrix.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of tuples</p>
 </dd>
 </dl>
@@ -1159,14 +1216,14 @@ from the given matrix.</p>
 
 </section>
 <section id="pottssubspace">
-<h2>PottsSubspace<a class="headerlink" href="#pottssubspace" title="Permalink to this headline">#</a></h2>
+<h2>PottsSubspace<a class="headerlink" href="#pottssubspace" title="Permalink to this heading">#</a></h2>
 <p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">PottsSubspace</span></code> implements the following expansion:</p>
 <div class="math notranslate nohighlight">
 \[H(\sigma) = \sum_{\alpha\in D[N]} m_{\alpha}\mathbf{1}_{\alpha}(\sigma)\]</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.PottsSubspace">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PottsSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">without_last_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">smol.cofe.space.clusterspace.ClusterSubspace</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a></p>
 <p>PottsSubspace represents a subspace of functions using only indicator functions.</p>
 <p>A PottsSubspace is a related model to a standard ClusterSubspace used to build
 a standard cluster expansion. The only difference is that the single site functions
@@ -1191,13 +1248,13 @@ constructor.
 Look at the class method <code class="code docutils literal notranslate"><span class="pre">from_cutoffs</span></code> for the “better” way to
 instantiate a ClusterSubspace.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – Structure to define the cluster space. Typically the primitive
 cell. Includes all species regardless of partial occupation.</p></li>
 <li><p><strong>expansion_structure</strong> (<em>Structure</em>) – Structure including only sites that will be included in the
 Cluster space. (only those with partial occupancy)</p></li>
-<li><p><strong>symops</strong> (<em>list of Symmop</em>) – list of Symmops for the given structure.</p></li>
+<li><p><strong>symops</strong> (<em>list</em><em> of </em><em>Symmop</em>) – list of Symmops for the given structure.</p></li>
 <li><p><strong>orbits</strong> (<em>dict</em>) – {size: list of Orbits}
 Dictionary with size (number of sites) as keys and list of
 Orbits as values.</p></li>
@@ -1207,13 +1264,13 @@ whether last cluster labeling is removed from each orbit.</p></li>
 StructureMatcher used to find supercell matrices
 relating the prim structure to other structures. If you pass
 this directly you should know how to set the matcher up,
-otherwise matching your relaxed structures can fail, alot.</p></li>
+otherwise matching your relaxed structures can fail, a lot.</p></li>
 <li><p><strong>site_matcher</strong> (<em>StructureMatcher</em>) – (optional)
 StructureMatcher used to find site mappings
 relating the sites of a given structure to an appropriate
 supercell of the prim structure . If you pass this directly you
 should know how to set the matcher up, otherwise matching your
-relaxed structures can fail, alot.</p></li>
+relaxed structures can fail, a lot.</p></li>
 <li><p><strong>matcher_kwargs</strong> – ltol, stol, angle_tol, supercell_size: parameters to pass
 through to the StructureMatchers. Structures that don’t match
 to the primitive cell under these tolerances won’t be included
@@ -1229,7 +1286,7 @@ more details.</p></li>
 <span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace.as_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>MSONable dict</p>
 </dd>
 </dl>
@@ -1244,7 +1301,7 @@ diameter smaller than or equal to the given value. The diameter of an
 orbit is the maximum distance between any two sites of a cluster of
 that orbit.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>structure</strong> (<em>Structure</em>) – disordered structure to build a cluster expansion for.
 Typically the primitive cell</p></li>
@@ -1264,13 +1321,13 @@ removing the last is similar to working in concentration space.</p></li>
 StructureMatcher used to find supercell matrices
 relating the prim structure to other structures. If you pass
 this directly you should know how to set the matcher up,
-otherwise matching your relaxed structures will fail, alot.</p></li>
+otherwise matching your relaxed structures will fail, a lot.</p></li>
 <li><p><strong>site_matcher</strong> (<em>StructureMatcher</em>) – (optional)
 StructureMatcher used to find site mappings
 relating the sites of a given structure to an appropriate
 supercell of the prim structure . If you pass this directly you
 should know how to set the matcher up, otherwise matching your
-relaxed structures will fail, alot.</p></li>
+relaxed structures will fail, a lot.</p></li>
 <li><p><strong>matcher_kwargs</strong> – ltol, stol, angle_tol, supercell_size: parameters to pass
 through to the StructureMatchers. Structures that don’t match
 to the primitive cell under these tolerances won’t be included
@@ -1278,7 +1335,7 @@ in the expansion. Easiest option for supercell_size is usually
 to use a species that has a constant amount per formula unit.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>PottsSubSpace</p>
 </dd>
 </dl>
@@ -1297,14 +1354,14 @@ to use a species that has a constant amount per formula unit.</p></li>
 <p>When using an indicator site basis there is 1 to 1 equivalence between
 correlation functions and species decorations.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>int</em>) – index of orbit function in correlation vector</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of tuples of symmetrically equivalent
 Species/Elements.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of tuples</p>
 </dd>
 </dl>
@@ -1315,14 +1372,14 @@ Species/Elements.</p>
 <span class="sig-name descname"><span class="pre">get_orbit_decorations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace.get_orbit_decorations" title="Permalink to this definition">#</a></dt>
 <dd><p>Get all decorations/labellings of species in an orbit.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>orbit_id</strong> (<em>int</em>) – ID of orbit</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>list of lists of symmetrically equivalent
 Species/Elements.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of list</p>
 </dd>
 </dl>
@@ -1334,51 +1391,578 @@ Species/Elements.</p>
 </section>
 
 
-              </div>
-              
-              
-              <!-- Previous / next buttons -->
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="index.html" title="previous page">
-        <i class="fas fa-angle-left"></i>
-        <div class="prev-next-info">
-            <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title"><strong>cofe</strong> — Cluster-Orbit Function Expansion Module</p>
-        </div>
+  <a class='left-prev' id="prev-link" href="index.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title"><strong>cofe</strong> — Cluster-Orbit Function Expansion Module</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="space.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">Space</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#clustersubspace">
+   ClusterSubspace
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ClusterSubspace
+      </span>
+     </code>
     </a>
-    <a class='right-next' id="next-link" href="space.html" title="next page">
-    <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Space</p>
-    </div>
-    <i class="fas fa-angle-right"></i>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.symops">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.symops
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_corr_functions">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.num_corr_functions
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_orbits">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.num_orbits
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_clusters">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.num_clusters
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.add_external_term">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.add_external_term()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.as_dict">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.as_dict()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_orthogonal">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.basis_orthogonal
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_orthonormal">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.basis_orthonormal
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_type">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.basis_type
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.change_site_bases">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.change_site_bases()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.copy">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.copy()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.corr_from_structure">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.corr_from_structure()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.cutoffs">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.cutoffs
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.expansion_structure">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.expansion_structure
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.external_terms">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.external_terms
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.from_cutoffs">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.from_cutoffs()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.from_dict">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.from_dict()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_hierarchy">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.function_hierarchy()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.function_inds_by_size
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_from_cutoffs">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.function_inds_from_cutoffs()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_orbit_ids">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.function_orbit_ids
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_ordering_multiplicities">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.function_ordering_multiplicities
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_total_multiplicities">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.function_total_multiplicities
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.gen_orbit_list">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.gen_orbit_list()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.get_aliased_orbits">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.get_aliased_orbits()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_function_ids">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.get_sub_function_ids()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_orbits">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.get_sub_orbits()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_functions_per_orbit">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.num_functions_per_orbit
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_prims_from_matrix">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.num_prims_from_matrix()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.occupancy_from_structure">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.occupancy_from_structure()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbit_hierarchy">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.orbit_hierarchy()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbit_multiplicities">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.orbit_multiplicities
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.orbits
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.orbits_by_size
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_from_cutoffs">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.orbits_from_cutoffs()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.refine_structure">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.refine_structure()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.remove_corr_functions">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.remove_corr_functions()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.remove_orbits">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.remove_orbits()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.scmatrix_from_structure()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.structure">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.structure
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.structure_site_mapping">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.structure_site_mapping()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.ClusterSubspace.supercell_orbit_mappings">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.supercell_orbit_mappings()
+        </span>
+       </code>
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#pottssubspace">
+   PottsSubspace
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.PottsSubspace">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       PottsSubspace
+      </span>
+     </code>
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.PottsSubspace.as_dict">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         PottsSubspace.as_dict()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.PottsSubspace.from_cutoffs">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         PottsSubspace.from_cutoffs()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.PottsSubspace.from_dict">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         PottsSubspace.from_dict()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.PottsSubspace.get_function_decoration">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         PottsSubspace.get_function_decoration()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#smol.cofe.space.clusterspace.PottsSubspace.get_orbit_decorations">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         PottsSubspace.get_orbit_decorations()
+        </span>
+       </code>
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
+
+<div class="tocsection editthispage">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/api_reference/cofe/clusterspace.rst">
+        <i class="fa-solid fa-pencil"></i> Edit this page
     </a>
 </div>
-              
-          </main>
-          
 
-      </div>
-    </div>
+</div>
+
+<div class="toc-item">
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-<footer class="footer mt-5 mt-md-0">
-  <div class="container">
-    
-    <div class="footer-item">
-      <p class="copyright">
-    &copy; Copyright 2022-2022, Ceder Group.<br>
-</p>
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+          </div>
+        </footer>
+        
+      </main>
     </div>
-    
-    <div class="footer-item">
-      <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
-</p>
-    </div>
-    
   </div>
-</footer>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright 2022-2022, Ceder Group.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="theme-version">
+    Built with the
+    <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">
+        PyData Sphinx Theme
+    </a>
+    0.12.0.
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
   </body>
 </html>

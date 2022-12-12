@@ -2,7 +2,7 @@
 #
 # ### Installation
 #
-# **smol** is purposedly light on dependencies which should make the installation
+# **smol** is purposely light on dependencies which should make the installation
 # process headache free. Using `pip`:
 #
 # ```
@@ -68,7 +68,7 @@ reg = LinearRegression(fit_intercept=False)
 reg.fit(wrangler.feature_matrix, wrangler.get_property_vector("energy"))
 
 # Finally, create a cluster expansion for prediction of new structures and
-# eventual Monte Carlo sampling. We recommed saving the details used to fit the
+# eventual Monte Carlo sampling. We recommend saving the details used to fit the
 # expansion for future reproducibility (although this is not strictly necessary).
 
 from smol.cofe import ClusterExpansion, RegressionData
@@ -103,7 +103,7 @@ structure.make_supercell(sc_matrix)
 structure = transformation.apply_transformation(structure)
 
 # Finally, the ordered structure can be used to generate an initial configuration
-# to run MC sampling interations.
+# to run MC sampling.
 
 init_occu = ensemble.processor.occupancy_from_structure(structure)
 sampler.run(100000, initial_occupancy=init_occu)
@@ -111,7 +111,7 @@ sampler.run(100000, initial_occupancy=init_occu)
 # # Saving the generated objects and data
 #
 # To save the generated objects for the previous workflow we can simply use the
-# provided convenience io functionaltiy. However, all main classes are
+# provided convenience io functionality. However, all main classes are
 # serializable just as pymatgen and so can be saved as json dictionaries or
 # using the [monty](https://guide.materialsvirtuallab.org/monty//) python
 # package.
@@ -133,11 +133,13 @@ save_work("CuAu_ce_mc.json", wrangler, expansion, ensemble, sampler.samples)
 #
 # * Visualizing clusters
 #
-# * Running Canonical Monte Carlo
+# * Running canonical Monte Carlo
 #
-# * Running Semigrand Canonical Monte Carlo
+# * Running semigrand canonical Monte Carlo
 #
-# * Running Charge Neutral Semigrand Canonical Monte Carlo
+# * Running charge neutral semigrand canonical Monte Carlo
+#
+# * Wang-Landau sampling of an FCC Ising model
 #
 # * Preparing cluster expansion training data
 #

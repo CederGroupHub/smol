@@ -1,207 +1,232 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Getting Started &#8212; smol 0.1.0 documentation</title>
-    
+    <title>Getting Started &#8212; smol 0.2.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="_static/styles/theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="_static/styles/bootstrap.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
 
-    
-  <link rel="stylesheet"
-    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin
-    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/css/smol.css" />
-    
+  
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94">
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2.0';
+        </script>
     <script src="_static/require.js"></script>
     <script src="_static/custom.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="User Guide" href="user_guide.html" />
     <link rel="prev" title="Statistical Mechanics on Lattices" href="index.html" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="docsearch:language" content="None">
-    
-
-    <!-- Google Analytics -->
-    
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="en">
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-    
-    <div class="container-fluid" id="banner"></div>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="auto">
 
-    
-    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
   <div id="navbar-start">
     
     
+  
 
-<a class="navbar-brand" href="index.html">
-  <img src="_static/logo.png" class="logo" alt="logo">
+
+<a class="navbar-brand logo" href="index.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image">
+    <img src="_static/logo.png" class="logo__image only-dark" alt="Logo image">
+  
+  
 </a>
-
-
     
   </div>
 
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
   
-  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+  <div class="col-lg-9 navbar-header-items">
     <div id="navbar-center" class="mr-auto">
       
       <div class="navbar-center-item">
-        <ul id="navbar-main-elements" class="navbar-nav">
-    <li class="toctree-l1 current active nav-item">
- <a class="current reference internal nav-link" href="#">
-  Getting Started
- </a>
-</li>
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Getting Started
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="user_guide.html">
-  User Guide
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="api_reference/index.html">
-  API Reference
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="citing.html">
-  Citing
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
 
-<li class="toctree-l1 nav-item">
- <a class="reference internal nav-link" href="developer_guide/index.html">
-  Developing
- </a>
-</li>
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
 
-    
-    <li class="nav-item">
-        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">Changes<i class="fas fa-external-link-alt"></i></a>
-    </li>
-    
-    <li class="nav-item">
-        <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">Issues<i class="fas fa-external-link-alt"></i></a>
-    </li>
-    
-</ul>
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
       </div>
       
     </div>
 
     <div id="navbar-end">
       
+        <div class="navbar-end-item navbar-persistent--container">
+          
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+        </div>
+      
+      
       <div class="navbar-end-item">
-        <div class="dropdown" id="version_switcher">
-    <button type="button" class="btn btn-primary btn-sm navbar-btn dropdown-toggle" id="version_switcher_button" data-toggle="dropdown">
-        0.1.0  <!-- this text may get changed later by javascript -->
+        <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+        0.2.0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
-    <div id="version_switcher_menu" class="dropdown-menu list-group-flush py-0" aria-labelledby="version_switcher_button">
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
     <!-- dropdown will be populated by javascript on page load -->
     </div>
 </div>
-
-<!-- NOTE: this JS must live here (not in our global JS file) because it relies
-     on being processed by Jinja before it is run (specifically for replacing
-     variables getting_started and {'json_url': 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json', 'url_template': 'https://pydata-sphinx-theme.readthedocs.io/en/v{version}/', 'version_match': '0.1.0'}.
--->
-
-<script type="text/javascript">
-// Check if corresponding page path exists in other version of docs
-// and, if so, go there instead of the homepage of the other docs version
-function checkPageExistsAndRedirect(event) {
-    const currentFilePath = "getting_started.html",
-          tryUrl = event.target.getAttribute("href");
-    let otherDocsHomepage = tryUrl.replace(currentFilePath, "");
-    $.ajax({
-        type: 'HEAD',
-        url: tryUrl,
-        // if the page exists, go there
-        success: function() {
-            location.href = tryUrl;
-        }
-    }).fail(function() {
-        location.href = otherDocsHomepage;
-    });
-    // this prevents the browser from following the href of the clicked node
-    // (which is fine because this function takes care of redirecting)
-    return false;
-}
-
-// Populate the version switcher from the JSON config file
-(function () {
-    $.getJSON("https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json", function(data, textStatus, jqXHR) {
-        const currentFilePath = "getting_started.html";
-        // create links to the corresponding page in the other docs versions
-        $.each(data, function(index, entry) {
-            // if no custom name specified (e.g., "latest"), use version string
-            if (!("name" in entry)) {
-                entry.name = entry.version;
-            }
-            // create the node
-            const node = document.createElement("a");
-            node.setAttribute("class", "list-group-item list-group-item-action py-1");
-            node.textContent = `${entry.name}`;
-            node.setAttribute("href", `${entry.url}${currentFilePath}`);
-            // on click, AJAX calls will check if the linked page exists before
-            // trying to redirect, and if not, will redirect to the homepage
-            // for that version of the docs.
-            node.onclick = checkPageExistsAndRedirect;
-            // Add dataset values for the version and name in case people want
-            // to apply CSS styling based on this information.
-            node.dataset["versionName"] = entry.name;
-            node.dataset["version"] = entry.version;
-
-            $("#version_switcher_menu").append(node);
-            // replace dropdown button text with the preferred display name of
-            // this version, rather than using sphinx's 0.1.0 variable.
-            // also highlight the dropdown entry for the currently-viewed
-            // version's entry
-            if (entry.version == "0.1.0") {
-                node.classList.add("active");
-                let btn = document.getElementById("version_switcher_button");
-                btn.innerText = btn.dataset["activeVersionName"] = entry.name;
-                btn.dataset["activeVersion"] = entry.version;
-            }
-        });
-    });
-})();
-</script>
+      </div>
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
       </div>
       
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/CederGroupHub/smol" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
             <label class="sr-only">GitHub</label></a>
         </li>
       </ul>
@@ -209,42 +234,379 @@ function checkPageExistsAndRedirect(event) {
       
     </div>
   </div>
-</div>
-    </nav>
-    
 
-    <div class="container-xl">
-      <div class="row">
-          
-            
-            <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar">
-              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
-  <i class="icon fas fa-search"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
-</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-  <div class="bd-toc-item active">
+
+  
+  
+    <div class="navbar-persistent--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+    </div>
+  
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
+</div>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
     
-  </div>
-</nav>
-              </div>
-              <div class="sidebar-end-items">
-              </div>
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
             </div>
             
-          
+    </ul>
+</nav>
+      </div>
+      
+      </div>
+    
 
-          
-          <div class="d-none d-xl-block col-xl-2 bd-toc">
-            
-              
-              <div class="toc-item">
-                
-<div class="tocsection onthispage mt-5 pt-1 pb-3">
-    <i class="fas fa-list"></i> On this page
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
+        0.2.0  <!-- this text may get changed later by javascript -->
+        <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
 </div>
+      </div>
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
 
-<nav id="bd-toc-nav">
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+  
+  <div id="rtd-footer-container"></div>
+
+      </div>
+      <main id="main-content" class="bd-main">
+        
+        
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
+            </div>
+            
+            
+            <article class="bd-article" role="main">
+              
+  <section id="getting-started">
+<span id="geting-started"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading">#</a></h1>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h2>
+<p><strong>smol</strong> is purposely light on dependencies which should make the installation
+process headache free. Using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">smol</span>
+</pre></div>
+</div>
+<p>Although <strong>smol</strong> is not tested on Windows platforms, it should still run on Windows
+since there aren’t any platform specific dependencies. The only known installation issue
+is building <em>pymatgen</em> dependencies. If simply running <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">smol</span></code> fails, try
+installing <em>pymatgen</em> with conda first:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">pymatgen</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">smol</span>
+</pre></div>
+</div>
+</section>
+<section id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">#</a></h2>
+<p><strong>smol</strong> is designed to be simple and intuitive to use. Here is the most
+basic example of creating a Cluster Expansion for a binary alloy and
+subsequently using it to run Monte Carlo sampling.</p>
+<section id="creating-a-cluster-subspace">
+<h3>Creating a cluster subspace<a class="headerlink" href="#creating-a-cluster-subspace" title="Permalink to this heading">#</a></h3>
+<p>Create a cluster subspace for a AuCu binary FCC alloy to define the cluster
+expansion terms and compute the corresponding correlation functions.</p>
+<p>Start by creating a disordered primitive structure.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">Lattice</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">species</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Au&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;Cu&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prim</span> <span class="o">=</span> <span class="n">Structure</span><span class="o">.</span><span class="n">from_spacegroup</span><span class="p">(</span><span class="s2">&quot;Fm-3m&quot;</span><span class="p">,</span> <span class="n">Lattice</span><span class="o">.</span><span class="n">cubic</span><span class="p">(</span><span class="mf">3.6</span><span class="p">),</span> <span class="p">[</span><span class="n">species</span><span class="p">],</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>Now create a cluster subspace for that structure including pair, triplet and
+quadruplet clusters up to given cluster diameter cutoffs.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cutoffs</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">prim</span><span class="p">,</span> <span class="n">cutoffs</span><span class="o">=</span><span class="n">cutoffs</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="preparing-training-data">
+<h3>Preparing training data<a class="headerlink" href="#preparing-training-data" title="Permalink to this heading">#</a></h3>
+<p>Load and use data computed for a training set of ordered structures to
+generate the necessary fitting data (formation energy and correlation vector
+for each training structure). Training data is added as instances of
+<a class="reference external" href="https://pymatgen.org/pymatgen.entries.computed_entries.html?highlight=computedstructureentry#pymatgen.entries.computed_entries.ComputedStructureEntry">ComputedStructureEntry</a></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">StructureWrangler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">entries</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s2">&quot;path_to_file.json&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrangler</span> <span class="o">=</span> <span class="n">StructureWrangler</span><span class="p">(</span><span class="n">subspace</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+<span class="go">        wrangler.add_entry(entry)</span>
+</pre></div>
+</div>
+</section>
+<section id="fitting-and-creating-a-cluster-expansion">
+<h3>Fitting and creating a cluster expansion<a class="headerlink" href="#fitting-and-creating-a-cluster-expansion" title="Permalink to this heading">#</a></h3>
+<p>Using the generated feature matrix and property vector fit a cluster expansion.
+In this case we use simple linear regression, although for most cases this will
+not be appropriate and a regularized regression model will yield a much better
+fit.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reg</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s2">&quot;energy&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Finally, create a cluster expansion for prediction of new structures and
+eventual Monte Carlo sampling. We recommend saving the details used to fit the
+expansion for future reproducibility (although this is not strictly necessary).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterExpansion</span><span class="p">,</span> <span class="n">RegressionData</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reg_data</span> <span class="o">=</span> <span class="n">RegressionData</span><span class="o">.</span><span class="n">from_sklearn</span><span class="p">(</span>
+<span class="go">        estimator=reg,</span>
+<span class="go">        feature_matrix=wrangler.feature_matrix,</span>
+<span class="go">        property_vector=wrangler.get_property_vector(&#39;energy&#39;)</span>
+<span class="go">    )</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expansion</span> <span class="o">=</span> <span class="n">ClusterExpansion</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">coefficients</span><span class="o">=</span><span class="n">reg</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">regression_data</span><span class="o">=</span><span class="n">reg_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="creating-an-ensemble-for-monte-carlo-sampling">
+<h3>Creating an ensemble for Monte Carlo Sampling<a class="headerlink" href="#creating-an-ensemble-for-monte-carlo-sampling" title="Permalink to this heading">#</a></h3>
+<p>Creating an ensemble only requires the cluster expansion and a supercell matrix
+to define the sampling domain.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Ensemble</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc_matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ensemble</span> <span class="o">=</span> <span class="n">Ensemble</span><span class="o">.</span><span class="n">from_cluster_expansion</span><span class="p">(</span><span class="n">expansion</span><span class="p">,</span> <span class="n">supercell_matrix</span><span class="o">=</span><span class="n">sc_matrix</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="running-monte-carlo-sampling">
+<h3>Running Monte Carlo sampling<a class="headerlink" href="#running-monte-carlo-sampling" title="Permalink to this heading">#</a></h3>
+<p>To generate MC samples for the ensemble, we need to create a sampler
+object.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Sampler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">from_ensemble</span><span class="p">(</span><span class="n">ensemble</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In order to begin an MC simulation, an initial configuration must be provided.
+In this case we use pymatgen’s functionality to provide an ordered structure
+given a disordered one.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pymatgen.transformations.standard_transformations</span> <span class="kn">import</span> <span class="n">OrderDisorderedStructureTransformation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">transformation</span> <span class="o">=</span> <span class="n">OrderDisorderedStructureTransformation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">structure</span> <span class="o">=</span> <span class="n">expansion</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">structure</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">(</span><span class="n">sc_matrix</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">structure</span> <span class="o">=</span> <span class="n">transformation</span><span class="o">.</span><span class="n">apply_transformation</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, the ordered structure can be used to generate an initial configuration
+to run MC sampling.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">init_occu</span> <span class="o">=</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">occupancy_from_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">100000</span><span class="p">,</span> <span class="n">initial_occupancy</span><span class="o">=</span><span class="n">init_occu</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="saving-the-generated-objects-and-data">
+<h3>Saving the generated objects and data<a class="headerlink" href="#saving-the-generated-objects-and-data" title="Permalink to this heading">#</a></h3>
+<p>To save the generated objects for the previous workflow we can simply use the
+provided convenience io functionality. However, all main classes are
+serializable just as pymatgen and so can be saved as json dictionaries or
+using the <a class="reference external" href="https://guide.materialsvirtuallab.org/monty//">monty</a> python
+package.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">save_work</span><span class="p">(</span><span class="s2">&quot;CuAu_ce_mc.json&quot;</span><span class="p">,</span> <span class="n">wrangler</span><span class="p">,</span> <span class="n">expansion</span><span class="p">,</span> <span class="n">ensemble</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><a class="reference download internal" href="getting_started.py">Download this page as a Python code file</a>.</p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference download internal" href="getting_started.ipynb">Download this page as a Jupyter notebook (no outputs)</a>.</p></li>
+</ul>
+</section>
+</section>
+<section id="example-notebooks">
+<h2>Example Notebooks<a class="headerlink" href="#example-notebooks" title="Permalink to this heading">#</a></h2>
+<p>For more detailed examples on how to use <strong>smol</strong> have a look at the following
+Jupyter notebooks.</p>
+<p>You can run the notebooks interactively on Binder.</p>
+<a class="reference external image-reference" href="https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb"><img alt="https://mybinder.org/badge_logo.svg" src="https://mybinder.org/badge_logo.svg" /></a>
+<section id="basic-examples">
+<h3>Basic Examples<a class="headerlink" href="#basic-examples" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="notebooks/creating-a-ce.html"><span class="doc">Creating a basic cluster expansion</span></a></p></li>
+<li><p><a class="reference internal" href="notebooks/creating-a-ce-w-electrostatics.html"><span class="doc">Creating a cluster expansion with electrostatics</span></a></p></li>
+<li><p><a class="reference internal" href="notebooks/cluster-visualization.html"><span class="doc">Visualizing clusters</span></a></p></li>
+<li><p><a class="reference internal" href="notebooks/running-canonical-mc.html"><span class="doc">Running canonical Monte Carlo</span></a></p></li>
+<li><p><a class="reference internal" href="notebooks/running-semigrand-mc.html"><span class="doc">Running semigrand canonical Monte Carlo</span></a></p></li>
+<li><p><a class="reference internal" href="notebooks/running-charge-balanced-gcmc.html"><span class="doc">Running charge neutral semigrand canonical Monte Carlo</span></a></p></li>
+<li><p><a class="reference internal" href="notebooks/wang-landau-ising.html"><span class="doc">Wang-Landau sampling of an FCC Ising model</span></a></p></li>
+<li><p><a class="reference internal" href="notebooks/training-data-preparation.html"><span class="doc">Preparing cluster expansion training data</span></a></p></li>
+</ul>
+</section>
+<section id="advanced-examples">
+<h3>Advanced Examples<a class="headerlink" href="#advanced-examples" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="notebooks/ce-fit-w-centering.html"><span class="doc">Centering training data in stage-wise fit with electrostatics</span></a></p></li>
+<li><p><a class="reference internal" href="notebooks/adding-structures-in-parallel.html"><span class="doc">Adding structures to a StructureWrangler in parallel</span></a></p></li>
+<li><p><a class="reference internal" href="notebooks/running-ewald-sim_anneal.html"><span class="doc">Simulated annealing with point electrostatics</span></a></p></li>
+<li><p><a class="reference internal" href="notebooks/lmo-drx-ce-mc.html"><span class="doc">Li-Mn-O DRX cluster expansion and sampling</span></a></p></li>
+</ul>
+<p>More to come…</p>
+</section>
+</section>
+</section>
+
+
+            </article>
+            
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="index.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">Statistical Mechanics on Lattices</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="user_guide.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">User Guide</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
     <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#installation">
@@ -308,241 +670,79 @@ function checkPageExistsAndRedirect(event) {
 </ul>
 
 </nav>
-              </div>
-              
-              <div class="toc-item">
-                
+</div>
+
+<div class="toc-item">
+  
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
 
 <div class="tocsection editthispage">
     <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/getting_started.rst">
-        <i class="fas fa-pencil-alt"></i> Edit this page
+        <i class="fa-solid fa-pencil"></i> Edit this page
     </a>
 </div>
 
-              </div>
-              
+</div>
+
+<div class="toc-item">
+  
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
             
           </div>
-          
-
-          
-          
-            
-          
-          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
-              
-              <div>
-                
-  <section id="getting-started">
-<span id="geting-started"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">#</a></h1>
-<section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h2>
-<p><strong>smol</strong> is purposedly light on dependencies which should make the installation
-process headache free. Using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">smol</span>
-</pre></div>
-</div>
-<p>Although <strong>smol</strong> is not tested on Windows platforms, it should still run on Windows
-since there aren’t any platform specific dependencies. The only known installation issue
-is building <em>pymatgen</em> dependencies. If simply running <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">smol</span></code> fails, try
-installing <em>pymatgen</em> with conda first:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">pymatgen</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="n">smol</span>
-</pre></div>
-</div>
-</section>
-<section id="basic-usage">
-<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">#</a></h2>
-<p><strong>smol</strong> is designed to be simple and intuitive to use. Here is the most
-basic example of creating a Cluster Expansion for a binary alloy and
-subsequently using it to run Monte Carlo sampling.</p>
-<section id="creating-a-cluster-subspace">
-<h3>Creating a cluster subspace<a class="headerlink" href="#creating-a-cluster-subspace" title="Permalink to this headline">#</a></h3>
-<p>Create a cluster subspace for a AuCu binary FCC alloy to define the cluster
-expansion terms and compute the corresponding correlation functions.</p>
-<p>Start by creating a disordered primitive structure.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">Lattice</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">species</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Au&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;Cu&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">prim</span> <span class="o">=</span> <span class="n">Structure</span><span class="o">.</span><span class="n">from_spacegroup</span><span class="p">(</span><span class="s2">&quot;Fm-3m&quot;</span><span class="p">,</span> <span class="n">Lattice</span><span class="o">.</span><span class="n">cubic</span><span class="p">(</span><span class="mf">3.6</span><span class="p">),</span> <span class="p">[</span><span class="n">species</span><span class="p">],</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
-</pre></div>
-</div>
-<p>Now create a cluster subspace for that structure including pair, triplet and
-quadruplet clusters up to given cluster diameter cutoffs.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cutoffs</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">subspace</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span><span class="n">prim</span><span class="p">,</span> <span class="n">cutoffs</span><span class="o">=</span><span class="n">cutoffs</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="preparing-training-data">
-<h3>Preparing training data<a class="headerlink" href="#preparing-training-data" title="Permalink to this headline">#</a></h3>
-<p>Load and use data computed for a training set of ordered structures to
-generate the necessary fitting data (formation energy and correlation vector
-for each training structure). Training data is added as instances of
-<a class="reference external" href="https://pymatgen.org/pymatgen.entries.computed_entries.html?highlight=computedstructureentry#pymatgen.entries.computed_entries.ComputedStructureEntry">ComputedStructureEntry</a></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">StructureWrangler</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">entries</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s2">&quot;path_to_file.json&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">wrangler</span> <span class="o">=</span> <span class="n">StructureWrangler</span><span class="p">(</span><span class="n">subspace</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
-<span class="go">        wrangler.add_entry(entry)</span>
-</pre></div>
-</div>
-</section>
-<section id="fitting-and-creating-a-cluster-expansion">
-<h3>Fitting and creating a cluster expansion<a class="headerlink" href="#fitting-and-creating-a-cluster-expansion" title="Permalink to this headline">#</a></h3>
-<p>Using the generated feature matrix and property vector fit a cluster expansion.
-In this case we use simple linear regression, although for most cases this will
-not be appropriate and a regularized regression model will yield a much better
-fit.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">reg</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s2">&quot;energy&quot;</span><span class="p">))</span>
-</pre></div>
-</div>
-<p>Finally, create a cluster expansion for prediction of new structures and
-eventual Monte Carlo sampling. We recommed saving the details used to fit the
-expansion for future reproducibility (although this is not strictly necessary).</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterExpansion</span><span class="p">,</span> <span class="n">RegressionData</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">reg_data</span> <span class="o">=</span> <span class="n">RegressionData</span><span class="o">.</span><span class="n">from_sklearn</span><span class="p">(</span>
-<span class="go">        estimator=reg,</span>
-<span class="go">        feature_matrix=wrangler.feature_matrix,</span>
-<span class="go">        property_vector=wrangler.get_property_vector(&#39;energy&#39;)</span>
-<span class="go">    )</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">expansion</span> <span class="o">=</span> <span class="n">ClusterExpansion</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">coefficients</span><span class="o">=</span><span class="n">reg</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">regression_data</span><span class="o">=</span><span class="n">reg_data</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="creating-an-ensemble-for-monte-carlo-sampling">
-<h3>Creating an ensemble for Monte Carlo Sampling<a class="headerlink" href="#creating-an-ensemble-for-monte-carlo-sampling" title="Permalink to this headline">#</a></h3>
-<p>Creating an ensemble only requires the cluster expansion and a supercell matrix
-to define the sampling domain.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Ensemble</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sc_matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ensemble</span> <span class="o">=</span> <span class="n">Ensemble</span><span class="o">.</span><span class="n">from_cluster_expansion</span><span class="p">(</span><span class="n">expansion</span><span class="p">,</span> <span class="n">supercell_matrix</span><span class="o">=</span><span class="n">sc_matrix</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="running-monte-carlo-sampling">
-<h3>Running Monte Carlo sampling<a class="headerlink" href="#running-monte-carlo-sampling" title="Permalink to this headline">#</a></h3>
-<p>To generate MC samples for the ensemble, we need to create a sampler
-object.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Sampler</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span> <span class="o">=</span> <span class="n">Sampler</span><span class="o">.</span><span class="n">from_ensemble</span><span class="p">(</span><span class="n">ensemble</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>In order to begin an MC simulation, an initial configuration must be provided.
-In this case we use pymatgen’s functionality to provide an ordered structure
-given a disordered one.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pymatgen.transformations.standard_transformations</span> <span class="kn">import</span> <span class="n">OrderDisorderedStructureTransformation</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">transformation</span> <span class="o">=</span> <span class="n">OrderDisorderedStructureTransformation</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">structure</span> <span class="o">=</span> <span class="n">expansion</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">structure</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">(</span><span class="n">sc_matrix</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">structure</span> <span class="o">=</span> <span class="n">transformation</span><span class="o">.</span><span class="n">apply_transformation</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Finally, the ordered structure can be used to generate an initial configuration
-to run MC sampling interations.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">init_occu</span> <span class="o">=</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">occupancy_from_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">100000</span><span class="p">,</span> <span class="n">initial_occupancy</span><span class="o">=</span><span class="n">init_occu</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="saving-the-generated-objects-and-data">
-<h3>Saving the generated objects and data<a class="headerlink" href="#saving-the-generated-objects-and-data" title="Permalink to this headline">#</a></h3>
-<p>To save the generated objects for the previous workflow we can simply use the
-provided convenience io functionaltiy. However, all main classes are
-serializable just as pymatgen and so can be saved as json dictionaries or
-using the <a class="reference external" href="https://guide.materialsvirtuallab.org/monty//">monty</a> python
-package.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">save_work</span><span class="p">(</span><span class="s2">&quot;CuAu_ce_mc.json&quot;</span><span class="p">,</span> <span class="n">wrangler</span><span class="p">,</span> <span class="n">expansion</span><span class="p">,</span> <span class="n">ensemble</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p><a class="reference download internal" href="getting_started.py">Download this page as a Python code file</a>.</p></li>
-</ul>
-<ul class="simple">
-<li><p><a class="reference download internal" href="getting_started.ipynb">Download this page as a Jupyter notebook (no outputs)</a>.</p></li>
-</ul>
-</section>
-</section>
-<section id="example-notebooks">
-<h2>Example Notebooks<a class="headerlink" href="#example-notebooks" title="Permalink to this headline">#</a></h2>
-<p>For more detailed examples on how to use <strong>smol</strong> have a look at the following
-Jupyter notebooks.</p>
-<p>You can run the notebooks interactively on Binder.</p>
-<a class="reference external image-reference" href="https://mybinder.org/v2/gh/CederGroupHub/smol/HEAD?labpath=docs%2Fsrc%2Fnotebooks%2Findex.ipynb"><img alt="https://mybinder.org/badge_logo.svg" src="https://mybinder.org/badge_logo.svg" /></a>
-<section id="basic-examples">
-<h3>Basic Examples<a class="headerlink" href="#basic-examples" title="Permalink to this headline">#</a></h3>
-<ul class="simple">
-<li><p><a class="reference internal" href="notebooks/creating-a-ce.html"><span class="doc">Creating a basic cluster expansion</span></a></p></li>
-<li><p><a class="reference internal" href="notebooks/creating-a-ce-w-electrostatics.html"><span class="doc">Creating a cluster expansion with electrostatics</span></a></p></li>
-<li><p><a class="reference internal" href="notebooks/cluster-visualization.html"><span class="doc">Visualizing clusters</span></a></p></li>
-<li><p><a class="reference internal" href="notebooks/running-canonical-mc.html"><span class="doc">Running Canonical Monte Carlo</span></a></p></li>
-<li><p><a class="reference internal" href="notebooks/running-semigrand-mc.html"><span class="doc">Running Semigrand Canonical Monte Carlo</span></a></p></li>
-<li><p><a class="reference internal" href="notebooks/running-charge-balanced-gcmc.html"><span class="doc">Running Charge Neutral Semigrand Canonical Monte Carlo</span></a></p></li>
-<li><p><a class="reference internal" href="notebooks/training-data-preparation.html"><span class="doc">Preparing cluster expansion training data</span></a></p></li>
-</ul>
-</section>
-<section id="advanced-examples">
-<h3>Advanced Examples<a class="headerlink" href="#advanced-examples" title="Permalink to this headline">#</a></h3>
-<ul class="simple">
-<li><p><a class="reference internal" href="notebooks/ce-fit-w-centering.html"><span class="doc">Centering training data in stage-wise fit with electrostatics</span></a></p></li>
-<li><p><a class="reference internal" href="notebooks/adding-structures-in-parallel.html"><span class="doc">Adding structures to a StructureWrangler in parallel</span></a></p></li>
-<li><p><a class="reference internal" href="notebooks/running-ewald-sim_anneal.html"><span class="doc">Simulated annealing with point electrostatics</span></a></p></li>
-<li><p><a class="reference internal" href="notebooks/lmo-drx-ce-mc.html"><span class="doc">Li-Mn-O DRX cluster expansion and sampling</span></a></p></li>
-</ul>
-<p>More to come…</p>
-</section>
-</section>
-</section>
-
-
-              </div>
-              
-              
-              <!-- Previous / next buttons -->
-<div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="index.html" title="previous page">
-        <i class="fas fa-angle-left"></i>
-        <div class="prev-next-info">
-            <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Statistical Mechanics on Lattices</p>
-        </div>
-    </a>
-    <a class='right-next' id="next-link" href="user_guide.html" title="next page">
-    <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">User Guide</p>
+        </footer>
+        
+      </main>
     </div>
-    <i class="fas fa-angle-right"></i>
-    </a>
-</div>
-              
-          </main>
-          
-
-      </div>
-    </div>
-  
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-<footer class="footer mt-5 mt-md-0">
-  <div class="container">
-    
-    <div class="footer-item">
-      <p class="copyright">
-    &copy; Copyright 2022-2022, Ceder Group.<br>
-</p>
-    </div>
-    
-    <div class="footer-item">
-      <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
-</p>
-    </div>
-    
   </div>
-</footer>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94"></script>
+
+  <footer class="bd-footer"><div class="bd-footer__inner container">
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright 2022-2022, Ceder Group.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="theme-version">
+    Built with the
+    <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">
+        PyData Sphinx Theme
+    </a>
+    0.12.0.
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+</p>
+
+  </div>
+  
+</div>
+  </footer>
   </body>
 </html>
