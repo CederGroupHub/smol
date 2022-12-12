@@ -27,7 +27,7 @@ def sampler(ensemble, rng, request):
 
 
 def test_from_ensemble(sampler):
-    if "chemical_potentials" in sampler.samples.metadata:
+    if hasattr(sampler.samples.metadata, "chemical_potentials"):
         assert isinstance(sampler.mckernels[0]._usher, Flip)
     else:
         assert isinstance(sampler.mckernels[0]._usher, Swap)

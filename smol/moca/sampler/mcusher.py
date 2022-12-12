@@ -340,11 +340,13 @@ class Composite(MCUsher):
         self._mcushers = []
         self._weights = []
         self._p = []
+        self.spec.steps = []
 
         if mcusher_weights is None:
             mcusher_weights = len(mcushers) * [
                 1,
             ]
+
         for weight, usher in zip(mcusher_weights, mcushers):
             if isinstance(usher, str):
                 usher = mcusher_factory(
@@ -352,9 +354,9 @@ class Composite(MCUsher):
                     self.sublattices,
                 )
             self.add_mcusher(usher, weight)
+            self.spec.steps.append(usher.spec)
 
         # update spec
-        self.spec.steps = [mcusher.spec for mcusher in self._mcushers]
         self.spec.weights = self._weights
 
     @property
