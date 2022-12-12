@@ -9,7 +9,7 @@ from pymatgen.core.composition import ChemicalPotential, Composition
 
 from smol.cofe.space.domain import SiteSpace, get_species
 from smol.moca.sampler import SampleContainer
-from smol.moca.sampler.kernel import Trace
+from smol.moca.sampler.namespace import Trace
 from smol.moca.sublattice import Sublattice
 from tests.utils import assert_msonable
 
@@ -349,6 +349,7 @@ def test_hdf5(container, fake_traces, tmpdir):
 
 @pytest.mark.parametrize("mode", [False, True])
 def test_flush_to_hdf5(container, fake_traces, mode, tmpdir):
+    print(container.metadata)
     flushed_container = deepcopy(container)
     add_samples(container, fake_traces)
     file_path = os.path.join(tmpdir, "test.h5")
