@@ -112,7 +112,7 @@ please cite the following work,
 
 Coulomb electrostatic interactions
 ==================================
-When using :class:`EwaldTerm` as an additional term in a lattice Hamiltonian, please
+When using an :class:`EwaldTerm` as an additional term in a lattice Hamiltonian, please
 cite the following publications,
 
     Seko, A. & Tanaka, I. `Cluster expansion of multicomponent ionic systems with
@@ -128,3 +128,15 @@ cite the following publications,
     `Cluster expansions of multicomponent ionic materials: Formalism and methodology.
     <https://doi.org/10.1103/PhysRevB.106.144202>`_.
     Phys. Rev. B 106, 144202 (2022).
+
+
+Wang-Landau sampling
+====================
+
+If you use Wang-Landau sampling to estimate density of states and derivative properties
+we recommend citing the original publications,
+
+    Wang, F. & Landau, D. P.
+    `Efficient, Multiple-Range Random Walk Algorithm to Calculate the Density of States.
+    <https://doi.org/10.1103/PhysRevLett.86.2050>`_.
+    Phys. Rev. Lett. 86, 2050–2053 (2001).

@@ -13,7 +13,8 @@ from warnings import warn
 import numpy as np
 
 from smol.moca.sampler.container import SampleContainer
-from smol.moca.sampler.kernel import Trace, mckernel_factory
+from smol.moca.sampler.kernel import mckernel_factory
+from smol.moca.sampler.namespace import Trace
 from smol.utils import progress_bar
 
 
@@ -42,8 +43,9 @@ class Sampler:
         """
         self._kernels = kernels
         self._container = container
-        #  Save the seed for reproducibility
-        self._container.metadata["seeds"] = [kernel.seed for kernel in kernels]
+
+        #  Save kernel specifications  #
+        self._container.metadata.kernels = [kernel.spec for kernel in kernels]
 
     @classmethod
     def from_ensemble(
@@ -110,6 +112,7 @@ class Sampler:
             )
             for seed in seeds
         ]
+
         # get a trial trace to initialize sample container trace
         _trace = mckernels[0].compute_initial_trace(
             np.zeros(ensemble.num_sites, dtype=int)
@@ -121,8 +124,7 @@ class Sampler:
             }
         )
 
-        sampling_metadata = {"kernel": kernel_type, "step": step_type}
-        sampling_metadata.update(ensemble.thermo_boundaries)
+        sampling_metadata = ensemble.thermo_boundaries
 
         # Container will be initialized to read all sub-lattices,
         # active or not.
@@ -202,7 +204,7 @@ class Sampler:
         trace = Trace()
         traces = list(map(self._kernels[0].compute_initial_trace, occupancies))
         for name in traces[0].names:
-            stack = np.vstack([getattr(tr, name) for tr in traces])
+            stack = np.stack([getattr(tr, name) for tr in traces], axis=0)
             setattr(trace, name, stack)
 
         # Initialise progress bar

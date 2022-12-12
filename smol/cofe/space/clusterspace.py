@@ -946,6 +946,13 @@ class ClusterSubspace(MSONable):
                 orbit for orbit in orbits if orbit.id not in orbit_ids
             ]
 
+        # remove any empty keys if all orbits of a given size were removed
+        for size in list(
+            self._orbits.keys()
+        ):  # cast to list bc .keys() behaves like an iterator
+            if len(self._orbits[size]) == 0:
+                del self._orbits[size]
+
         self._assign_orbit_ids()  # Re-assign ids
         # Clear the cached supercell orbit mappings
         self._supercell_orb_inds = {}
