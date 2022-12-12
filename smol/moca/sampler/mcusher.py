@@ -14,9 +14,11 @@ import warnings
 from abc import ABC, abstractmethod
 
 import numpy as np
+from monty.json import jsanitize
 from scipy.special import gammaln
 
 from smol.moca.composition import CompositionSpace
+from smol.moca.sampler.namespace import Metadata
 from smol.moca.utils.math import (
     NUM_TOL,
     choose_section_from_partition,
@@ -73,6 +75,11 @@ class MCUsher(ABC):
             self._sublatt_probs = sublattice_probabilities
 
         self._rng = np.random.default_rng(rng)
+        self.spec = Metadata(
+            self.__class__.__name__,
+            sublattices=[sublatt.species for sublatt in self.sublattices],
+            sublattice_probabilities=self._sublatt_probs,
+        )
 
     @property
     def sublattice_probabilities(self):
@@ -130,9 +137,11 @@ class MCUsher(ABC):
 
     def update_aux_state(self, step, *args, **kwargs):
         """Update any auxiliary state information based on an accepted step."""
+        return
 
-    def set_aux_state(self, state, *args, **kwargs):
-        """Set the auxiliary state from a checkpoint value."""
+    def set_aux_state(self, occupancies, *args, **kwargs):
+        """Set the auxiliary occupancies from a checkpoint values."""
+        return
 
     def get_random_sublattice(self):
         """Return a random sublattice based on given probabilities."""
@@ -259,6 +268,11 @@ class MultiStep(MCUsher):
 
         self._mcusher = mcusher
 
+        # update spec
+        self.spec.step = self._mcusher.spec
+        self.spec.step_lengths = self._step_lens
+        self.spec.step_probabilities = self._step_p
+
     @property
     def sublattice_probabilities(self):
         """Get the probabilities of choosing a sublattice."""
@@ -326,11 +340,13 @@ class Composite(MCUsher):
         self._mcushers = []
         self._weights = []
         self._p = []
+        self.spec.steps = []
 
         if mcusher_weights is None:
             mcusher_weights = len(mcushers) * [
                 1,
             ]
+
         for weight, usher in zip(mcusher_weights, mcushers):
             if isinstance(usher, str):
                 usher = mcusher_factory(
@@ -338,6 +354,10 @@ class Composite(MCUsher):
                     self.sublattices,
                 )
             self.add_mcusher(usher, weight)
+            self.spec.steps.append(usher.spec)
+
+        # update spec
+        self.spec.weights = self._weights
 
     @property
     def mcushers(self):
@@ -359,11 +379,13 @@ class Composite(MCUsher):
                 The weight associated with the mcusher being added
         """
         self._mcushers.append(mcusher)
+        self.spec.steps.append(mcusher.spec)
         self._update_p(weight)
 
     def _update_p(self, weight):
         """Update the probabilities for each mcuhser based on a new weight."""
         self._weights.append(weight)
+        self.spec.weights = self._weights
         total = sum(self._weights)
         self._p = [weight / total for weight in self._weights]
 
@@ -514,6 +536,15 @@ class TableFlip(MCUsher):
         self._swapper = Swap(self.sublattices)
         self._dim_ids_table = get_dim_ids_table(self.sublattices, active_only=True)
         self._dim_ids_full = get_dim_ids_table(self.sublattices, active_only=False)
+
+        # record specifications
+        self.spec.flip_table = self.flip_table.tolist()
+        self.spec.flip_weights = self.flip_weights.tolist()
+        self.spec.other_constraints = jsanitize(other_constraints)
+        self.spec.charge_balanced = charge_balanced
+        self.spec.optimize_basis = optimize_basis
+        self.spec.table_ergodic = table_ergodic
+        self.spec.swap_weight = swap_weight
 
     def propose_step(self, occupancy):
         """Propose a single random flip step.

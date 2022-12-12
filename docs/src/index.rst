@@ -63,8 +63,8 @@ Functionality
   from local updates in order to quickly compute properties and changes in
   properties for specified supercells.
 - Flexible toolset to sample cluster expansions using Monte Carlo with
-  canonical and semigrand canonical and charge neutral semigrand canonical ensembles
-  using a Metropolis sampler.
+  canonical, semigrand canonical, and charge neutral semigrand canonical ensembles
+  using a Metropolis or a Wang-Landau sampler.
 
 **smol** is built on top of `pymatgen <https://pymatgen.org/>`_ so any pre/post
 structure analysis can be done seamlessly using the various functionality

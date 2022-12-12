@@ -23,6 +23,7 @@ An overview diagram of the main classes and data inputs necessary to build and s
 a lattice model is shown below.
 
 .. image:: _static/smol_workflow.svg
+    :class: dark-light p-2
 
 Following the diagram above, the general workflow to construct, fit and sample a lattice
 model is as follows,

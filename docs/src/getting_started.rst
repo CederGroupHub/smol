@@ -170,9 +170,10 @@ Basic Examples
 - `Creating a basic cluster expansion`_
 - `Creating a cluster expansion with electrostatics`_
 - `Visualizing clusters`_
-- `Running Canonical Monte Carlo`_
-- `Running Semigrand Canonical Monte Carlo`_
-- `Running Charge Neutral Semigrand Canonical Monte Carlo`_
+- `Running canonical Monte Carlo`_
+- `Running semigrand canonical Monte Carlo`_
+- `Running charge neutral semigrand canonical Monte Carlo`_
+- `Wang-Landau sampling of an FCC Ising model`_
 - `Preparing cluster expansion training data`_
 
 .. _Creating a basic cluster expansion: notebooks/creating-a-ce.ipynb
@@ -186,6 +187,8 @@ Basic Examples
 .. _Running Semigrand Canonical Monte Carlo: notebooks/running-semigrand-mc.ipynb
 
 .. _Running Charge Neutral Semigrand Canonical Monte Carlo: notebooks/running-charge-balanced-gcmc.ipynb
+
+.. _Wang-Landau sampling of an FCC Ising model: notebooks/wang-landau-ising.ipynb
 
 .. _Preparing cluster expansion training data: notebooks/training-data-preparation.ipynb
 
