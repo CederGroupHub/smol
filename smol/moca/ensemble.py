@@ -104,8 +104,7 @@ class Ensemble(MSONable):
     Attributes:
         thermo_boundaries (dict):
             Dictionary with corresponding thermodynamic boundaries, i.e.
-            chemical potentials or fugacity fractions. This is kept only for
-            descriptive purposes.
+            chemical potentials. This is kept only for descriptive purposes.
     """
 
     chemical_potentials = ChemicalPotentialManager()

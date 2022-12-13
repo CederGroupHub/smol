@@ -103,7 +103,7 @@ html_theme_options = {
     # "navbar_center": ["navbar-nav", "navbar-version"],  # Just for testing
     "navigation_depth": 2,
     "show_nav_level": 2,
-    "navbar_end": ["version-switcher", "navbar-icon-links"],  #
+    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],  #
     # "left_sidebar_end": ["custom-template.html", "sidebar-ethical-ads.html"],
     # "footer_items": ["copyright", "sphinx-version", ""]
     "switcher": {
@@ -129,6 +129,7 @@ html_context = {
     "github_version": "main",
     "doc_path": "docs/src",
     "source_suffix": source_suffix,
+    "default_mode": "auto",
 }
 
 # Custom sidebar templates, maps page names to templates.
