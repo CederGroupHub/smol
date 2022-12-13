@@ -2,6 +2,6 @@ nbgitpuller
 numpy>=1.20.1
 monty==2022.9.9
 pymatgen==2022.11.1
-scikit-learn==1.1.3
+scikit-learn==1.2.0
 h5py==3.7.0
 crystal_toolkit
