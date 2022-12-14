@@ -18,9 +18,9 @@ import numpy as np
 from monty.json import MSONable
 from pymatgen.core import PeriodicSite, Structure
 
+from smol._utils import get_subclasses
 from smol.cofe.space import Vacancy, get_allowed_species, get_site_spaces
 from smol.moca.sublattice import Sublattice
-from smol.utils import get_subclasses
 
 
 class Processor(MSONable, metaclass=ABCMeta):

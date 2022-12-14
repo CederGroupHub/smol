@@ -29,6 +29,7 @@ from pymatgen.util.coord import (
     lattice_points_in_supercell,
 )
 
+from smol._exceptions import SYMMETRY_ERROR_MESSAGE, StructureMatchError, SymmetryError
 from smol.cofe.space import (
     Orbit,
     Vacancy,
@@ -39,7 +40,6 @@ from smol.cofe.space import (
 from smol.cofe.space.basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
 from smol.correlations import corr_from_occupancy
-from smol.exceptions import SYMMETRY_ERROR_MESSAGE, StructureMatchError, SymmetryError
 
 __author__ = "Luis Barroso-Luque, William Davidson Richards"
 

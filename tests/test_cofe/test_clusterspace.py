@@ -11,12 +11,12 @@ from pymatgen.analysis.structure_matcher import (
 from pymatgen.core import Species, Structure
 from pymatgen.util.coord import is_coord_subset_pbc
 
+from smol._exceptions import StructureMatchError
 from smol.cofe import ClusterSubspace, PottsSubspace
 from smol.cofe.space.clusterspace import get_complete_mapping, invert_mapping
 from smol.cofe.space.constants import SITE_TOL
 from smol.cofe.space.domain import Vacancy, get_allowed_species
 from smol.correlations import corr_from_occupancy
-from smol.exceptions import StructureMatchError
 from tests.utils import assert_msonable, gen_random_structure
 
 pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")

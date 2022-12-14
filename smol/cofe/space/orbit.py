@@ -14,7 +14,7 @@ from pymatgen.core import Lattice
 from pymatgen.core.operations import SymmOp
 from pymatgen.util.coord import coord_list_mapping, is_coord_subset
 
-from smol.exceptions import SYMMETRY_ERROR_MESSAGE, SymmetryError
+from smol._exceptions import SYMMETRY_ERROR_MESSAGE, SymmetryError
 
 from .basis import DiscreteBasis, basis_factory
 from .cluster import Cluster

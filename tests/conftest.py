@@ -5,6 +5,7 @@ import pytest
 from monty.serialization import loadfn
 from pymatgen.core import Structure
 
+from smol._utils import get_subclasses
 from smol.cofe import ClusterSubspace, StructureWrangler
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.basis import BasisIterator
@@ -14,7 +15,6 @@ from smol.moca import (
     Ensemble,
     EwaldProcessor,
 )
-from smol.utils import get_subclasses
 from tests.utils import gen_fake_training_data
 
 SEED = None

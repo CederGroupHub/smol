@@ -17,6 +17,7 @@ import numpy as np
 from monty.json import jsanitize
 from scipy.special import gammaln
 
+from smol._utils import class_name_from_str, derived_class_factory
 from smol.moca.composition import CompositionSpace
 from smol.moca.sampler.namespace import Metadata
 from smol.moca.utils.math import (
@@ -31,7 +32,6 @@ from smol.moca.utils.occu import (
     occu_to_counts,
     occu_to_species_list,
 )
-from smol.utils import class_name_from_str, derived_class_factory
 
 
 class MCUsher(ABC):

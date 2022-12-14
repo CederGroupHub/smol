@@ -19,7 +19,7 @@ from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
 from numpy.polynomial.polynomial import polyval
 
-from smol.utils import derived_class_factory, get_subclasses
+from smol._utils import derived_class_factory, get_subclasses
 
 from .domain import SiteSpace
 
