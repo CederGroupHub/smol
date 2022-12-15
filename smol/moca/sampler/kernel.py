@@ -170,26 +170,32 @@ class MCKernel(ABC):
         return trace
 
 
-class CompositeKernel(MCKernel):
-    """CompositeKernel class.
+class MulticellKernelMixin(MCKernel):
+    """MulticellKernelMixin class.
+
+    This class should not be instantiated, but be used as a Mixin class in other Kernel
+    class definitions. See MulticellMetropolis for an example.
 
     Use this to create kernels that apart from proposing new occupancy states, jumping
     among different kernels is also allowed.
 
     This is useful for example when one wants to sample over different supercell shapes,
-    for generating special quasi-random structures.
+    i.e. for generating special quasi-random structures.
 
     The ensembles in all kernels must have supercells of the same size, only the shape
-    can change. All ensembles must be created from the same Hamiltonian.
+    can change. All ensembles must be created from the same Hamiltonian. And all kernels
+    must be of the same kind.
 
-    There is no requirement for the Kernels to be of the same kind, have the same
-    step type or bias, which allows very flexible sampling strategies. However, users
-    should are responsible for ensuring that the overall sampling strategy is correct
-    (i.e. satisfies balance or detailed balance).
+    There is no requirement for the individual kernels to have the same step type, bias,
+    or any other setup parameter, which allows very flexible sampling strategies.
+    However, users are responsible for ensuring that the overall sampling strategy is
+    correct! (i.e. satisfies balance or detailed balance).
 
     Sampling is slower since the property difference of a kernel to kernel jump requires
     complete re-computation of the feature vector.
     """
+
+    valid_bias = None  # currently no bias allowed for kernel hops
 
     def __init__(
         self,
@@ -221,7 +227,7 @@ class CompositeKernel(MCKernel):
             kernel_hop_periods (int or Sequence of ints): optional
                 number of steps between kernel hop attempts.
             kernel_hop_probabilities (Sequence of floats): optional
-                probabilities of for choosing a the specified hop periods.
+                probabilities for choosing each of the specified hop periods.
             args:
                 positional arguments to instantiate the MCUsher for the
                 corresponding step size.
@@ -229,6 +235,9 @@ class CompositeKernel(MCKernel):
                 keyword arguments to instantiate the MCUsher for the
                 corresponding step size.
         """
+        if any(not isinstance(kernel, type(mckernels[0])) for kernel in mckernels):
+            raise ValueError("All kernels must be of the same type.")
+
         if any(
             not kernel.ensemble.num_sites != mckernels[0].ensemble.num_sites
             for kernel in mckernels
@@ -241,15 +250,46 @@ class CompositeKernel(MCKernel):
         ):
             raise ValueError("All ensembles must have the same natural parameters.")
 
-        self._kernels = mckernels
-        self._current_kernel = mckernels[0]
-        self._kernel_period = kernel_hop_periods
-        self._kernel_hop_counter = 0
+        if kernel_probabilities is not None:
+            if sum(kernel_probabilities) != 1.0:
+                raise ValueError("The kernel_probabilities do not sum to 1.")
+            if len(kernel_probabilities) != len(mckernels):
+                raise ValueError(
+                    "The length of kernel_probabilities must be equal to the number of mckernels."
+                )
+            self.kernel_p = np.array(kernel_probabilities)
+        else:
+            self._kernel_p = np.array(
+                [1.0 / len(mckernels) for _ in range(len(mckernels))]
+            )
+
+        if isinstance(kernel_hop_periods, int):
+            self._hop_periods = np.array([kernel_hop_periods], dtype=int)
+        else:
+            self._hop_periods = np.array(kernel_hop_periods, dtype=int)
+
+        if kernel_hop_probabilities is not None:
+            if sum(kernel_hop_probabilities) != 1.0:
+                raise ValueError("The kernel_hop_probabilities do not sum to 1.")
+            if len(kernel_hop_probabilities) != len(kernel_hop_periods):
+                raise ValueError(
+                    "The length of kernel_hop_periods and kernel_hop_probabilities does not match."
+                )
+            self._hop_p = np.array(kernel_hop_probabilities)
+        else:
+            self._hop_p = np.array(
+                [1.0 / len(self._hop_periods) for _ in range(len(self._hop_periods))]
+            )
 
         self._seed = seed if seed is not None else np.random.SeedSequence().entropy
         self._rng = np.random.default_rng(self._seed)
-        # self._compute_features = ensemble.compute_feature_vector
-        # self._feature_change = ensemble.compute_feature_vector_change
+
+        self._kernels = mckernels
+        self._current_kernel_index = 0
+        self._current_hop_period = self._rng.choice(self._hop_periods, p=self._hop_p)
+        self._kernel_hop_counter = 0
+        self._current_enthalpy = np.inf
+
         self.trace = StepTrace(accepted=np.array([True]))
 
         # run a initial step to populate trace values
@@ -263,15 +303,21 @@ class CompositeKernel(MCKernel):
         return self._kernels
 
     @property
+    def ensemble(self):
+        """Return the ensemble instance."""
+        return self.kernels[self._current_kernel_index].ensemble
+
+    @property
     def mcusher(self):
         """Get the MCUsher."""
-        return self._current_kernel.mcusher
+        return self.kernels[self._current_kernel_index].mcusher
 
     @mcusher.setter
     def mcusher(self, usher):
         """Set the MCUsher."""
         raise RuntimeError(
-            "Cannot set the MCUsher for a CompositeKernel. \n You must set it for an individual kernel."
+            "Cannot set the MCUsher for a CompositeKernel.\n"
+            "You must set it for an individual kernel."
         )
 
     @property
@@ -283,7 +329,8 @@ class CompositeKernel(MCKernel):
     def bias(self, bias):
         """Set the bias."""
         raise RuntimeError(
-            "Cannot set the bias for a CompositeKernel. \n You must set it for an individual kernel."
+            "Cannot set the bias for a CompositeKernel.\n"
+            "You must set it for an individual kernel."
         )
 
     def single_step(self, occupancy):
@@ -300,6 +347,46 @@ class CompositeKernel(MCKernel):
             StepTrace: a step trace for states and traced values for a single
                        step
         """
+        # check if we should attempt to hop kernels
+        if self._kernel_hop_counter % self._current_hop_period == 0:
+            # new_kernel_index = self._rng.choice(
+            #    range(len(self._kernels)), p=self._kernel_p
+            # )  # uncomment this line
+            # TODO do the acceptance stuff and set new trace values based on the
+            # mixin class!
+            # this will require to separate the single_step method into computing
+            # necessary values, then doing the acceptance, then setting the trace
+
+            # choose new hop period and reset counter
+            self._current_hop_period = self._rng.choice(
+                self._hop_periods, p=self._hop_p
+            )
+            self._kernel_hop_counter = 0
+        # if not do a single step with current kernel
+        else:
+            self.trace = self._current_kernel.single_step(occupancy)
+            self._kernel_hop_counter += 1
+
+        # for this we need to save the latest property...
+        self._current_enthalpy += self.trace.delta_trace.enthalpy
+
+        return self.trace
+
+    def set_aux_state(self, occupancy, *args, **kwargs):
+        """Set the auxiliary occupancies based on an occupancy.
+
+        This is necessary for WangLandau to work properly because
+        it needs to store the current enthalpy and features.
+        """
+        self._current_enthalpy = np.dot(
+            np.array(self.ensemble.compute_feature_vector(occupancy)),
+            self.natural_params,
+        )
+        self._usher.set_aux_state(occupancy)
+
+    def compute_initial_trace(self, occupancy):
+        """Compute the initial trace for a given occupancy."""
+        # TODO finish this... set the current kernel index
         return self.trace
 
 
