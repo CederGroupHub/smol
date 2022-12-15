@@ -7,8 +7,8 @@ import numpy as np
 from smol._math import yield_hermite_normal_forms
 
 
-def gen_supercell_matrices(size, symmops, tol=1e-4):
-    """Generate all symmetrically distinct supercell matrices with given size.
+def gen_supercell_matrices(sizes, symmops, tol=1e-5):
+    """Generate all symmetrically distinct supercell matrices of given sizes.
 
     Matrices are given in Hermite normal form following the following work:
 
@@ -16,8 +16,8 @@ def gen_supercell_matrices(size, symmops, tol=1e-4):
     * https://link.aps.org/doi/10.1103/PhysRevB.80.014120
 
     Args:
-        size (int):
-            size of the supercell
+        sizes (Sequence of int):
+            sizes of the supercell in multiples of the primitive cell
         symmops (list of SymmOps):
             symmetry operations
         tol (float): optional
@@ -26,17 +26,18 @@ def gen_supercell_matrices(size, symmops, tol=1e-4):
         list of ndarray: list of supercell matrices with given size
     """
     supercell_matrices = []
-    for hnf in yield_hermite_normal_forms(size):
-        for symop in symmops:
-            hnf_rot = np.linalg.inv(hnf) @ symop.rotation_matrix
-            for scm in supercell_matrices:
-                unimod = hnf_rot @ scm
-                if (abs(unimod - np.round(unimod)) < tol).all():
-                    break
+    for size in sizes:
+        for hnf in yield_hermite_normal_forms(size):
+            for symop in symmops:
+                hnf_rot = np.linalg.inv(hnf) @ symop.rotation_matrix
+                for scm in supercell_matrices:
+                    unimod = hnf_rot @ scm
+                    if (abs(unimod - np.round(unimod)) < tol).all():
+                        break
+                else:
+                    continue
+                break
             else:
-                continue
-            break
-        else:
-            supercell_matrices.append(hnf)
+                supercell_matrices.append(hnf)
 
     return supercell_matrices
