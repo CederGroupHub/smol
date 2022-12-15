@@ -126,7 +126,7 @@ class MCKernel(ABC):
 
     def set_aux_state(self, occupancies, *args, **kwargs):
         """Set the auxiliary occupancies from initial or checkpoint values."""
-        self._usher.set_aux_state(occupancies, *args, **kwargs)
+        self.mcusher.set_aux_state(occupancies, *args, **kwargs)
 
     @abstractmethod
     def single_step(self, occupancy):
@@ -164,6 +164,139 @@ class MCKernel(ABC):
             trace.bias = np.array([self.bias.compute_bias(occupancy)])
         trace.accepted = np.array([True])
         return trace
+
+
+class CompositeKernel(MCKernel):
+    """CompositeKernel class.
+
+    Use this to create kernels that apart from proposing new occupancy states, jumping
+    among different kernels is also allowed.
+
+    This is useful for example when one wants to sample over different supercell shapes,
+    for generating special quasi-random structures.
+
+    The ensembles in all kernels must have supercells of the same size, only the shape
+    can change. All ensembles must be created from the same Hamiltonian.
+
+    There is no requirement for the Kernels to be of the same kind, have the same
+    step type or bias, which allows very flexible sampling strategies. However, users
+    should are responsible for ensuring that the overall sampling strategy is correct
+    (i.e. satisfies balance or detailed balance).
+
+    Sampling is slower since the property difference of a kernel to kernel jump requires
+    complete re-computation of the feature vector.
+    """
+
+    def __init__(
+        self,
+        mckernels,
+        kernel_probabilities=None,
+        kernel_hop_periods=1,
+        kernel_hop_probabilities=None,
+        *args,
+        seed=None,
+        bias_type=None,
+        bias_kwargs=None,
+        **kwargs,
+    ):
+        """Initialize MCKernel.
+
+        Args:
+            mckernels (list of MCKernels):
+                a list of MCKernels instances to obtain the features and parameters
+                used in computing log probabilities.
+            seed (int): optional
+                non-negative integer to seed the PRNG
+            bias_type (str): optional
+                name for bias type instance.
+            bias_kwargs (dict): optional
+                dictionary of keyword arguments to pass for the bias
+                constructor.
+            kernel_probabilities (Sequence of floats): optional
+                Probability for choosing each of the supplied kernels
+            kernel_hop_periods (int or Sequence of ints): optional
+                number of steps between kernel hop attempts.
+            kernel_hop_probabilities (Sequence of floats): optional
+                probabilities of for choosing a the specified hop periods.
+            args:
+                positional arguments to instantiate the MCUsher for the
+                corresponding step size.
+            kwargs:
+                keyword arguments to instantiate the MCUsher for the
+                corresponding step size.
+        """
+        if any(
+            not kernel.ensemble.num_sites != mckernels[0].ensemble.num_sites
+            for kernel in mckernels
+        ):
+            raise ValueError("All ensembles must have the same number of sites.")
+
+        if any(
+            not np.allclose(kernel.natural_params, mckernels[0].natural_params)
+            for kernel in mckernels
+        ):
+            raise ValueError("All ensembles must have the same natural parameters.")
+
+        self._kernels = mckernels
+        self._current_kernel = mckernels[0]
+        self._kernel_period = kernel_hop_periods
+        self._kernel_hop_counter = 0
+
+        self._seed = seed if seed is not None else np.random.SeedSequence().entropy
+        self._rng = np.random.default_rng(self._seed)
+        # self._compute_features = ensemble.compute_feature_vector
+        # self._feature_change = ensemble.compute_feature_vector_change
+        self.trace = StepTrace(accepted=np.array([True]))
+
+        # run a initial step to populate trace values
+        _ = self.single_step(
+            np.zeros(self._current_kernel.ensemble.num_sites, dtype=int)
+        )
+
+    @property
+    def mckernels(self):
+        """Get the MCKernels."""
+        return self._kernels
+
+    @property
+    def mcusher(self):
+        """Get the MCUsher."""
+        return self._current_kernel.mcusher
+
+    @mcusher.setter
+    def mcusher(self, usher):
+        """Set the MCUsher."""
+        raise RuntimeError(
+            "Cannot set the MCUsher for a CompositeKernel. \n You must set it for an individual kernel."
+        )
+
+    @property
+    def bias(self):
+        """Get the bias."""
+        return self._current_kernel.bias
+
+    @bias.setter
+    def bias(self, bias):
+        """Set the bias."""
+        raise RuntimeError(
+            "Cannot set the bias for a CompositeKernel. \n You must set it for an individual kernel."
+        )
+
+    def single_step(self, occupancy):
+        """Attempt an MCMC step.
+
+        Returns the next state in the chain and if the attempted step was
+        successful.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy.
+
+        Returns:
+            StepTrace: a step trace for states and traced values for a single
+                       step
+        """
+        return self.trace
 
 
 class ThermalKernel(MCKernel):
