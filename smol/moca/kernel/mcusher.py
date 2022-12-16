@@ -18,20 +18,20 @@ from monty.json import jsanitize
 from scipy.special import gammaln
 
 from smol._utils import class_name_from_str, derived_class_factory
-from smol.moca.composition import CompositionSpace
-from smol.moca.sampler.namespace import Metadata
-from smol.moca.utils.math import (
+from smol.moca._utils.math import (
     NUM_TOL,
     choose_section_from_partition,
     flip_weights_mask,
 )
-from smol.moca.utils.occu import (
+from smol.moca._utils.occu import (
     delta_counts_from_step,
     get_dim_ids_by_sublattice,
     get_dim_ids_table,
     occu_to_counts,
     occu_to_species_list,
 )
+from smol.moca.composition import CompositionSpace
+from smol.moca.metadata import Metadata
 
 
 class MCUsher(ABC):

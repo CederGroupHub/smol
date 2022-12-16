@@ -7,7 +7,7 @@ import numpy.testing as npt
 import pytest
 
 from smol.moca.composition import get_oxi_state
-from smol.moca.sampler.bias import (
+from smol.moca.kernel.bias import (
     FugacityBias,
     SquareChargeBias,
     SquareHyperplaneBias,

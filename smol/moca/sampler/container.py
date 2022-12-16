@@ -16,7 +16,8 @@ import numpy as np
 from monty.dev import requires
 from monty.json import MontyDecoder, MontyEncoder, MSONable, jsanitize
 
-from smol.moca.sampler.namespace import Metadata, Trace
+from smol.moca.kernel._trace import Trace
+from smol.moca.metadata import Metadata
 from smol.moca.sublattice import Sublattice
 
 try:

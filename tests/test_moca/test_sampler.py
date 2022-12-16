@@ -5,8 +5,8 @@ import numpy.testing as npt
 import pytest
 
 from smol.moca import SampleContainer, Sampler
-from smol.moca.sampler.kernel import Metropolis
-from smol.moca.sampler.mcusher import Flip, Swap
+from smol.moca.kernel import Metropolis
+from smol.moca.kernel.mcusher import Flip, Swap
 from tests.utils import gen_random_occupancy
 
 TEMPERATURE = 5000
@@ -72,7 +72,7 @@ def test_run(sampler, thin, rng):
             np.vstack(
                 list(
                     map(
-                        sampler.mckernels[0]._compute_features,
+                        sampler.mckernels[0].ensemble.compute_feature_vector,
                         sampler.samples.get_occupancies(flat=False)[i],
                     )
                 )

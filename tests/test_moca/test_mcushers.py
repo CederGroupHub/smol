@@ -8,9 +8,9 @@ import pytest
 from pymatgen.core import Composition
 
 from smol.cofe.space.domain import SiteSpace
-from smol.moca.sampler import mcusher
-from smol.moca.sampler.bias import SquareChargeBias
-from smol.moca.sampler.kernel import ALL_MCUSHERS
+from smol.moca.kernel import mcusher
+from smol.moca.kernel._base import ALL_MCUSHERS
+from smol.moca.kernel.bias import SquareChargeBias
 from smol.moca.sublattice import Sublattice
 from tests.utils import gen_random_neutral_occupancy, gen_random_occupancy
 

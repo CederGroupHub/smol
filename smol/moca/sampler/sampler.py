@@ -13,9 +13,9 @@ from warnings import warn
 import numpy as np
 
 from smol._utils import progress_bar
+from smol.moca.kernel import mckernel_factory
+from smol.moca.kernel._trace import Trace
 from smol.moca.sampler.container import SampleContainer
-from smol.moca.sampler.kernel import mckernel_factory
-from smol.moca.sampler.namespace import Trace
 
 
 class Sampler:

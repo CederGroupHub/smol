@@ -1,11 +1,11 @@
-"""Test smol.moca.utils.occu_utils."""
+"""Test smol.moca._utils.occu_utils."""
 import itertools
 
 import numpy as np
 import numpy.testing as npt
 import pytest
 
-from smol.moca.utils.occu import (
+from smol.moca._utils.occu import (
     delta_counts_from_step,
     get_dim_ids_by_sublattice,
     get_dim_ids_table,
