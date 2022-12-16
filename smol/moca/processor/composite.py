@@ -12,7 +12,7 @@ __author__ = "Luis Barroso-Luque"
 import numpy as np
 
 from smol.cofe.space.clusterspace import ClusterSubspace
-from smol.moca.processor.base import Processor
+from smol.moca.processor._base import Processor
 
 
 class CompositeProcessor(Processor):

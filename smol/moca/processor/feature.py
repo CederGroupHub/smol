@@ -14,7 +14,7 @@ import numpy as np
 from smol.cofe.space.clusterspace import ClusterSubspace
 from smol.correlations import corr_distance_single_flip
 from smol.moca.processor import ClusterExpansionProcessor
-from smol.moca.processor.base import Processor
+from smol.moca.processor._base import Processor
 
 
 class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):

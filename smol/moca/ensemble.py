@@ -14,7 +14,7 @@ from smol.moca.processor import (
     CompositeProcessor,
     EwaldProcessor,
 )
-from smol.moca.processor.base import Processor
+from smol.moca.processor._base import Processor
 from smol.moca.sublattice import Sublattice
 
 

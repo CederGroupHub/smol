@@ -10,7 +10,7 @@ from smol.moca.processor import (
     CompositeProcessor,
     EwaldProcessor,
 )
-from smol.moca.processor.base import Processor
+from smol.moca.processor._base import Processor
 from tests.utils import assert_msonable, gen_random_occupancy, gen_random_structure
 
 pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
