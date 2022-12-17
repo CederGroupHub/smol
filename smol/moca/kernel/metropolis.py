@@ -35,10 +35,10 @@ class Metropolis(ThermalKernel):
         Returns:
             StepTrace
         """
-        step = self._usher.propose_step(occupancy)
+        step = self.mcusher.propose_step(occupancy)
         self._compute_step_trace(occupancy, step)
 
-        log_factor = self._usher.compute_log_priori_factor(occupancy, step)
+        log_factor = self.mcusher.compute_log_priori_factor(occupancy, step)
         exponent = -self.beta * self.trace.delta_trace.enthalpy + log_factor
         if self._bias is not None:
             exponent += self.trace.delta_trace.bias
@@ -50,7 +50,7 @@ class Metropolis(ThermalKernel):
         if self.trace.accepted:
             for tup in step:
                 occupancy[tup[0]] = tup[1]
-            self._usher.update_aux_state(step)
+            self.mcusher.update_aux_state(step)
         self.trace.occupancy = occupancy
 
         return self.trace
@@ -81,10 +81,10 @@ class UniformlyRandom(MCKernel):
         Returns:
             StepTrace
         """
-        step = self._usher.propose_step(occupancy)
+        step = self.mcusher.propose_step(occupancy)
         self._compute_step_trace(occupancy, step)
 
-        exponent = self._usher.compute_log_priori_factor(occupancy, step)
+        exponent = self.mcusher.compute_log_priori_factor(occupancy, step)
         if self._bias is not None:
             exponent += self.trace.delta_trace.bias
 
@@ -95,7 +95,7 @@ class UniformlyRandom(MCKernel):
         if self.trace.accepted:
             for tup in step:
                 occupancy[tup[0]] = tup[1]
-            self._usher.update_aux_state(step)
+            self.mcusher.update_aux_state(step)
 
         self.trace.occupancy = occupancy
         return self.trace

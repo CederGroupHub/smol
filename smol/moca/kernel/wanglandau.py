@@ -191,7 +191,7 @@ class WangLandau(MCKernel):
         Returns:
             StepTrace
         """
-        step = self._usher.propose_step(occupancy)
+        step = self.mcusher.propose_step(occupancy)
         self._compute_step_trace(occupancy, step)
 
         bin_id = self._get_bin_id(self._current_enthalpy)
@@ -205,7 +205,7 @@ class WangLandau(MCKernel):
             new_bin_id = self._get_bin_id(new_enthalpy)
             entropy = self._entropy[bin_id]
             new_entropy = self._entropy[new_bin_id]
-            log_factor = self._usher.compute_log_priori_factor(occupancy, step)
+            log_factor = self.mcusher.compute_log_priori_factor(occupancy, step)
             exponent = entropy - new_entropy + log_factor
             self.trace.accepted = np.array(
                 True if exponent >= 0 else exponent > log(self._rng.random())
@@ -218,7 +218,7 @@ class WangLandau(MCKernel):
             bin_id = new_bin_id
             self._current_features += self.trace.delta_trace.features
             self._current_enthalpy = new_enthalpy
-            self._usher.update_aux_state(step)
+            self.mcusher.update_aux_state(step)
         self.trace.occupancy = occupancy
 
         # Only if bin_id is valid, because bin_id is not checked.
@@ -292,4 +292,4 @@ class WangLandau(MCKernel):
         enthalpy = np.dot(features, self.natural_params)
         self._current_features = features
         self._current_enthalpy = enthalpy
-        self._usher.set_aux_state(occupancy)
+        self.mcusher.set_aux_state(occupancy)

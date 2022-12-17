@@ -248,7 +248,7 @@ class ThermalKernel(MCKernel):
 
     def set_aux_state(self, occupancies, *args, **kwargs):
         """Set the auxiliary occupancies from initial or checkpoint values."""
-        self._usher.set_aux_state(occupancies, *args, **kwargs)
+        self.mcusher.set_aux_state(occupancies, *args, **kwargs)
 
 
 class MulticellKernelMixin(MCKernel):
@@ -460,7 +460,7 @@ class MulticellKernelMixin(MCKernel):
             self.trace.kernel_index = self._rng.choice(
                 range(len(self._kernels)), p=self._kernel_p
             )
-            super().single_step(occupancy)
+            super().single_step(occupancy)  # does this call non mixin parent????
             # choose new hop period and reset counter
             if self.trace.accepted:
                 kernel_index = self.trace.kernel_index
@@ -513,9 +513,12 @@ class MulticellKernelMixin(MCKernel):
         self._new_enthalpies = np.dot(self._new_features, self.natural_params)
         self._prev_features = self._new_features.copy()
         self._new_enthalpies = self._new_enthalpies.copy()
-        self._usher.set_aux_state(occupancy)
+
+        for kernel in self._kernels:
+            kernel.set_aux_state(occupancy, *args, **kwargs)
 
     def compute_initial_trace(self, occupancy):
         """Compute the initial trace for a given occupancy."""
-        # TODO finish this... set the current kernel index
+        self.trace = self.current_kernel.compute_initial_trace(occupancy)
+        self.trace.kernel_index = self._current_kernel_index
         return self.trace
