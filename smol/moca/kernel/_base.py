@@ -353,7 +353,15 @@ class MulticellKernelMixin(MCKernel):
         self._kernels = mckernels
         self._current_hop_period = self._rng.choice(self._hop_periods, p=self._hop_p)
         self._kernel_hop_counter = 0
-        self._current_enthalpy = np.inf
+        self._new_enthalpies = np.full(len(mckernels), np.inf)
+        self._new_features = np.zeros(
+            (len(mckernels), self._kernels[0].natural_params.shape)
+        )
+        self._prev_enthalpies = np.full(len(mckernels), np.inf)
+        self._prev_features = np.zeros(
+            (len(mckernels), self._kernels[0].natural_params.shape)
+        )
+        self._current_kernel_index = 0
 
         self.trace = StepTrace(
             accepted=np.array(True), kernel_index=np.array(0, dtype=int)
@@ -405,6 +413,33 @@ class MulticellKernelMixin(MCKernel):
             "You must set it for an individual kernel."
         )
 
+    def _compute_step_trace(self, occupancy, step):
+        """Compute the step trace.
+
+        Args:
+            occupancy (np.ndarray): the current occupancy
+            step (np.ndarray): the proposed step
+
+        Returns:
+            StepTrace: the step trace
+        """
+        # Use the previous kernel of the kernel attempting to hop to
+        delta_features = self.ensemble.compute_feature_vector_change(
+            self.current_kernel.trace.occupancy, step
+        )
+        self._new_features[self.trace.kernel_index] += delta_features
+        new_features = self._new_features[self.trace.kernel_index]
+        prev_features = self._prev_features[self._current_kernel_index]
+        self.trace.delta_trace.features = new_features - prev_features
+
+        new_enthalpy = np.dot(
+            self._new_features[self.trace.kernel_index],
+            self.current_kernel.natural_params,
+        )
+        self._new_enthalpies[self.trace.kernel_index] = new_enthalpy
+        prev_enthalpy = self._new_enthalpies[self._current_kernel_index]
+        self.trace.delta_trace.enthalpy = new_enthalpy - prev_enthalpy
+
     def single_step(self, occupancy):
         """Attempt an MCMC step.
 
@@ -421,26 +456,44 @@ class MulticellKernelMixin(MCKernel):
         """
         # check if we should attempt to hop kernels
         if self._kernel_hop_counter % self._current_hop_period == 0:
-            # new_kernel_index = self._rng.choice(
-            #    range(len(self._kernels)), p=self._kernel_p
-            # )  # uncomment this line
-            # TODO do the acceptance stuff and set new trace values based on the
-            # mixin class!
-            # this will require to separate the single_step method into computing
-            # necessary values, then doing the acceptance, then setting the trace
-
+            # this is the new kernel index (the one attempting to hop to)
+            self.trace.kernel_index = self._rng.choice(
+                range(len(self._kernels)), p=self._kernel_p
+            )
+            super().single_step(occupancy)
             # choose new hop period and reset counter
+            if self.trace.accepted:
+                kernel_index = self.trace.kernel_index
+                # set previous values to the new values
+                self._prev_enthalpies[kernel_index] = self._new_enthalpies[kernel_index]
+                self._prev_features[kernel_index] = self._new_features[kernel_index]
+            else:
+                kernel_index = self._current_kernel_index
+                # set the new values back to the previous values
+                self._new_features[self.trace.kernel_index] = self._prev_features[
+                    self.trace.kernel_index
+                ]
+                self._new_enthalpies[self.trace.kernel_index] = self._prev_enthalpies[
+                    self.trace.kernel_index
+                ]
+
             self._current_hop_period = self._rng.choice(
                 self._hop_periods, p=self._hop_p
             )
             self._kernel_hop_counter = 0
         # if not do a single step with current kernel
         else:
+            kernel_index = self.trace.kernel_index
             self.trace = self.current_kernel.single_step(occupancy)
             self._kernel_hop_counter += 1
 
+        # set the index
+        self.trace.kernel_index = kernel_index
+        self._current_kernel_index = kernel_index
+
         # for this we need to save the latest property...
-        self._current_enthalpy += self.trace.delta_trace.enthalpy
+        self._new_features[kernel_index] += self.trace.delta_trace.features
+        self._new_enthalpies[kernel_index] += self.trace.delta_trace.enthalpy
 
         return self.trace
 
@@ -450,10 +503,16 @@ class MulticellKernelMixin(MCKernel):
         This is necessary for WangLandau to work properly because
         it needs to store the current enthalpy and features.
         """
-        self._current_enthalpy = np.dot(
-            np.array(self.ensemble.compute_feature_vector(occupancy)),
-            self.natural_params,
+        # set the current and previous values based on given occupancy
+        self._new_features = np.vstack(
+            [
+                kernel.ensemble.compute_feature_vector(occupancy)
+                for kernel in self._kernels
+            ]
         )
+        self._new_enthalpies = np.dot(self._new_features, self.natural_params)
+        self._prev_features = self._new_features.copy()
+        self._new_enthalpies = self._new_enthalpies.copy()
         self._usher.set_aux_state(occupancy)
 
     def compute_initial_trace(self, occupancy):
