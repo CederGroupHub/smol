@@ -65,7 +65,7 @@ class MCKernel(ABC):
         self._seed = seed if seed is not None else np.random.SeedSequence().entropy
         self._rng = np.random.default_rng(self._seed)
         self._ensemble = ensemble
-        self.trace = StepTrace(accepted=np.array([True]))
+        self.trace = StepTrace(accepted=np.array(True))
         self._usher, self._bias = None, None
 
         mcusher_name = class_name_from_str(step_type)
@@ -284,11 +284,7 @@ class MulticellKernelMixin(MCKernel):
         kernel_probabilities=None,
         kernel_hop_periods=1,
         kernel_hop_probabilities=None,
-        *args,
         seed=None,
-        bias_type=None,
-        bias_kwargs=None,
-        **kwargs,
     ):
         """Initialize MCKernel.
 
@@ -298,23 +294,12 @@ class MulticellKernelMixin(MCKernel):
                 used in computing log probabilities.
             seed (int): optional
                 non-negative integer to seed the PRNG
-            bias_type (str): optional
-                name for bias type instance.
-            bias_kwargs (dict): optional
-                dictionary of keyword arguments to pass for the bias
-                constructor.
             kernel_probabilities (Sequence of floats): optional
                 Probability for choosing each of the supplied kernels
             kernel_hop_periods (int or Sequence of ints): optional
                 number of steps between kernel hop attempts.
             kernel_hop_probabilities (Sequence of floats): optional
                 probabilities for choosing each of the specified hop periods.
-            args:
-                positional arguments to instantiate the MCUsher for the
-                corresponding step size.
-            kwargs:
-                keyword arguments to instantiate the MCUsher for the
-                corresponding step size.
         """
         if any(not isinstance(kernel, type(mckernels[0])) for kernel in mckernels):
             raise ValueError("All kernels must be of the same type.")
@@ -366,16 +351,17 @@ class MulticellKernelMixin(MCKernel):
         self._rng = np.random.default_rng(self._seed)
 
         self._kernels = mckernels
-        self._current_kernel_index = 0
         self._current_hop_period = self._rng.choice(self._hop_periods, p=self._hop_p)
         self._kernel_hop_counter = 0
         self._current_enthalpy = np.inf
 
-        self.trace = StepTrace(accepted=np.array([True]))
+        self.trace = StepTrace(
+            accepted=np.array(True), kernel_index=np.array(0, dtype=int)
+        )
 
         # run a initial step to populate trace values
         _ = self.single_step(
-            np.zeros(self._current_kernel.ensemble.num_sites, dtype=int)
+            np.zeros(self.current_kernel.ensemble.num_sites, dtype=int)
         )
 
     @property
@@ -384,14 +370,19 @@ class MulticellKernelMixin(MCKernel):
         return self._kernels
 
     @property
+    def current_kernel(self):
+        """Get the current kernel."""
+        return self._kernels[self.trace.kernel_index]
+
+    @property
     def ensemble(self):
         """Return the ensemble instance."""
-        return self.kernels[self._current_kernel_index].ensemble
+        return self.current_kernel.ensemble
 
     @property
     def mcusher(self):
         """Get the MCUsher."""
-        return self.kernels[self._current_kernel_index].mcusher
+        return self.current_kernel.mcusher
 
     @mcusher.setter
     def mcusher(self, usher):
@@ -404,7 +395,7 @@ class MulticellKernelMixin(MCKernel):
     @property
     def bias(self):
         """Get the bias."""
-        return self._current_kernel.bias
+        return self.current_kernel.bias
 
     @bias.setter
     def bias(self, bias):
@@ -445,7 +436,7 @@ class MulticellKernelMixin(MCKernel):
             self._kernel_hop_counter = 0
         # if not do a single step with current kernel
         else:
-            self.trace = self._current_kernel.single_step(occupancy)
+            self.trace = self.current_kernel.single_step(occupancy)
             self._kernel_hop_counter += 1
 
         # for this we need to save the latest property...
