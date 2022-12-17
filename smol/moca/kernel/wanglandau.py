@@ -191,15 +191,10 @@ class WangLandau(MCKernel):
         Returns:
             StepTrace
         """
-        bin_id = self._get_bin_id(self._current_enthalpy)
         step = self._usher.propose_step(occupancy)
-        self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
-            occupancy, step
-        )
-        self.trace.delta_trace.enthalpy = np.array(
-            np.dot(self.natural_params, self.trace.delta_trace.features)
-        )
+        self._compute_step_trace(occupancy, step)
 
+        bin_id = self._get_bin_id(self._current_enthalpy)
         new_enthalpy = self._current_enthalpy + self.trace.delta_trace.enthalpy
 
         # reject if outside of window

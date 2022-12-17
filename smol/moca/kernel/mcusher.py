@@ -133,7 +133,7 @@ class MCUsher(ABC):
         Returns:
             float: log of a-priori adjustment weight.
         """
-        return 0
+        return 0.0
 
     def update_aux_state(self, step, *args, **kwargs):
         """Update any auxiliary state information based on an accepted step."""

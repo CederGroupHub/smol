@@ -36,26 +36,12 @@ class Metropolis(ThermalKernel):
             StepTrace
         """
         step = self._usher.propose_step(occupancy)
+        self._compute_step_trace(occupancy, step)
+
         log_factor = self._usher.compute_log_priori_factor(occupancy, step)
-        self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
-            occupancy, step
-        )
-        self.trace.delta_trace.enthalpy = np.array(
-            np.dot(self.natural_params, self.trace.delta_trace.features)
-        )
-
+        exponent = -self.beta * self.trace.delta_trace.enthalpy + log_factor
         if self._bias is not None:
-            self.trace.delta_trace.bias = np.array(
-                self._bias.compute_bias_change(occupancy, step)
-            )
-            exponent = (
-                -self.beta * self.trace.delta_trace.enthalpy
-                + self.trace.delta_trace.bias
-                + log_factor
-            )
-
-        else:
-            exponent = -self.beta * self.trace.delta_trace.enthalpy + log_factor
+            exponent += self.trace.delta_trace.bias
 
         self.trace.accepted = np.array(
             True if exponent >= 0 else exponent > log(self._rng.random())
@@ -96,21 +82,11 @@ class UniformlyRandom(MCKernel):
             StepTrace
         """
         step = self._usher.propose_step(occupancy)
-        log_factor = self._usher.compute_log_priori_factor(occupancy, step)
-        self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
-            occupancy, step
-        )
-        self.trace.delta_trace.enthalpy = np.array(
-            np.dot(self.natural_params, self.trace.delta_trace.features)
-        )
+        self._compute_step_trace(occupancy, step)
 
+        exponent = self._usher.compute_log_priori_factor(occupancy, step)
         if self._bias is not None:
-            self.trace.delta_trace.bias = np.array(
-                self._bias.compute_bias_change(occupancy, step)
-            )
-            exponent = self.trace.delta_trace.bias + log_factor
-        else:
-            exponent = log_factor
+            exponent += self.trace.delta_trace.bias
 
         self.trace.accepted = np.array(
             True if exponent >= 0 else exponent > log(self._rng.random())

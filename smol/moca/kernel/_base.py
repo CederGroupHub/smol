@@ -128,6 +128,29 @@ class MCKernel(ABC):
         """Set the auxiliary occupancies from initial or checkpoint values."""
         self.mcusher.set_aux_state(occupancies, *args, **kwargs)
 
+    def _compute_step_trace(self, occupancy, step):
+        """Compute the trace for a single step.
+
+        Args:
+            occupancy (ndarray):
+                Current occupancy
+
+        """
+        self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
+            occupancy, step
+        )
+        self.trace.delta_trace.enthalpy = np.array(
+            np.dot(self.natural_params, self.trace.delta_trace.features),
+            dtype=np.float64,
+        )
+        if self._bias is not None:
+            self.trace.delta_trace.bias = np.array(
+                self._bias.compute_bias_change(occupancy, step),
+                dtype=np.float64,
+            )
+        # TODO consider adding bias = 0 when no bias is set to simplify code in
+        #  single_step of kernels. may be faster maybe not...
+
     @abstractmethod
     def single_step(self, occupancy):
         """Attempt an MCMC step.
@@ -159,10 +182,12 @@ class MCKernel(ABC):
         trace.occupancy = occupancy
         trace.features = self.ensemble.compute_feature_vector(occupancy)
         # set scalar values into shape (1,) array for sampling consistency.
-        trace.enthalpy = np.array([np.dot(self.natural_params, trace.features)])
+        trace.enthalpy = np.array(
+            [np.dot(self.natural_params, trace.features)], dtype=np.float64
+        )
         if self.bias is not None:
-            trace.bias = np.array([self.bias.compute_bias(occupancy)])
-        trace.accepted = np.array([True])
+            trace.bias = np.array([self.bias.compute_bias(occupancy)], dtype=np.float64)
+        trace.accepted = np.array([True], dtype=np.bool)
         return trace
 
 
@@ -204,7 +229,7 @@ class ThermalKernel(MCKernel):
     @temperature.setter
     def temperature(self, temperature):
         """Set the temperature and beta accordingly."""
-        self.trace.temperature = np.array(temperature)
+        self.trace.temperature = np.array(temperature, dtype=np.float64)
         self.beta = 1.0 / (kB * temperature)
 
     def compute_initial_trace(self, occupancy):
@@ -218,7 +243,7 @@ class ThermalKernel(MCKernel):
             Trace
         """
         trace = super().compute_initial_trace(occupancy)
-        trace.temperature = np.array([self.trace.temperature])
+        trace.temperature = np.array([self.trace.temperature], dtype=np.float64)
         return trace
 
     def set_aux_state(self, occupancies, *args, **kwargs):
