@@ -5,7 +5,7 @@ to generate states for sampling an MCMC chain.
 """
 
 from smol._utils import class_name_from_str, derived_class_factory
-from smol.moca.kernel._base import MCKernel
+from smol.moca.kernel._base import MCKernelInterface
 from smol.moca.kernel.metropolis import Metropolis, UniformlyRandom
 from smol.moca.kernel.wanglandau import WangLandau
 
@@ -32,5 +32,5 @@ def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
     """
     kernel_name = class_name_from_str(kernel_type)
     return derived_class_factory(
-        kernel_name, MCKernel, ensemble, step_type, *args, **kwargs
+        kernel_name, MCKernelInterface, ensemble, step_type, *args, **kwargs
     )

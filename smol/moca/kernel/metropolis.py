@@ -34,7 +34,7 @@ class MetropolisCriterionMixin:
         log_factor = self.mcusher.compute_log_priori_factor(occupancy, step)
         exponent = -self.beta * self.trace.delta_trace.enthalpy + log_factor
 
-        if self._bias is not None:
+        if self.bias is not None:
             exponent += self.trace.delta_trace.bias
 
         self.trace.accepted = np.array(

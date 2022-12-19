@@ -2,7 +2,7 @@
 
 __author__ = "Luis Barroso-Luque"
 
-from abc import ABC, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
 
 import numpy as np
 
@@ -17,7 +17,68 @@ ALL_MCUSHERS = list(get_subclasses(MCUsher).keys())
 ALL_BIAS = list(get_subclasses(MCBias).keys())
 
 
-class MCKernel(ABC):
+class MCKernelInterface(metaclass=ABCMeta):
+    """MCKernelInterface for defining Monte Carlo Kernels.
+
+    This interface defines the bare minimum methods and properties that must be
+    implemented in MCKernel.
+    """
+
+    @property
+    @abstractmethod
+    def trace(self) -> StepTrace:
+        """Return the StepTrace object used to record the values for the propsed MC step.
+
+        The trace most often holds the occupancy, an acceptance value, the change in
+        features and change in generalized enthalpy from the previous step.
+
+        Basically, any value that is needed to compute thermodynamic properties
+        from a MC sample should be recorded here.
+        """
+
+    @property
+    @abstractmethod
+    def spec(self) -> Metadata:
+        """Return the Metadata object recording sampling specifications.
+
+        Specifications should record all the necessary information to be able to
+        reproduce the same results.
+        """
+
+    @abstractmethod
+    def single_step(self, occupancy) -> StepTrace:
+        """Carry out a single MC step.
+
+        It is recommended to use a breakup of single step into methods as is done in
+        the MCKernel base class:
+        1) _compute_step_trace(occupancy, step)
+        2) _accept_step(occupancy, step)
+        3) _do_post_step()
+
+        The above is not a hard requirement, as long as the StepTrace recording
+        necessary values is returned.
+        """
+
+    @abstractmethod
+    def compute_initial_trace(self, occupancy) -> Trace:
+        """Compute an initial Trace.
+
+        This function myst compute an initial Trace recording all the necessary absolute
+        values that would be recorded during sampling using single_step. That is, this
+        should not include "delta" or changes in values, but the absolute values of
+        properties corresponding to the given occupancy.
+        """
+
+    @abstractmethod
+    def set_aux_state(self, occupancies, *args, **kwargs):
+        """Set the auxiliary occupancies from initial or checkpoint values.
+
+        This class should be used to setup any auxiliary values that are not recorded
+        in the traced values.
+        """
+
+
+class MCKernel(MCKernelInterface, ABC):
     """Abstract base class for transition kernels.
 
     A kernel is used to implement a specific MC algorithm used to sample
@@ -65,7 +126,7 @@ class MCKernel(ABC):
         self._seed = seed if seed is not None else np.random.SeedSequence().entropy
         self._rng = np.random.default_rng(self._seed)
         self._ensemble = ensemble
-        self.trace = StepTrace(accepted=np.array(True))
+        self._trace = StepTrace(accepted=np.array(True))
         self._usher, self._bias = None, None
 
         mcusher_name = class_name_from_str(step_type)
@@ -73,20 +134,30 @@ class MCKernel(ABC):
             mcusher_name, ensemble.sublattices, *args, rng=self._rng, **kwargs
         )
 
-        self.spec = Metadata(
+        self._spec = Metadata(
             self.__class__.__name__, seed=self._seed, step=self.mcusher.spec
         )
 
         if bias_type is not None:
             bias_name = class_name_from_str(bias_type)
             bias_kwargs = {} if bias_kwargs is None else bias_kwargs
-            self.bias = mcbias_factory(
+            self._bias = mcbias_factory(
                 bias_name, ensemble.sublattices, rng=self._rng, **bias_kwargs
             )
             self.spec.bias = self.bias.spec
 
         # run a initial step to populate trace values
         _ = self.single_step(np.zeros(ensemble.num_sites, dtype=int))
+
+    @property
+    def trace(self):
+        """Return step trace."""
+        return self._trace
+
+    @property
+    def spec(self):
+        """Return sampling specifications."""
+        return self._spec
 
     @property
     def ensemble(self):
@@ -144,9 +215,9 @@ class MCKernel(ABC):
             np.dot(self.natural_params, self.trace.delta_trace.features),
             dtype=np.float64,
         )
-        if self._bias is not None:
+        if self.bias is not None:
             self.trace.delta_trace.bias = np.array(
-                self._bias.compute_bias_change(occupancy, step),
+                self.bias.compute_bias_change(occupancy, step),
                 dtype=np.float64,
             )
         # TODO consider adding bias = 0 when no bias is set to simplify code in
@@ -232,65 +303,7 @@ class MCKernel(ABC):
         return trace
 
 
-class ThermalKernelMixin:
-    """Mixin class for transition kernels with a set temperature.
-
-    Basically all kernels should use this Mixin class with the exception of those
-    for multicanonical sampling and related methods (i.e. see Wang-Landau)
-
-    Never really found a final say regarding Mixins with __init__ and attributes....
-    ...oh well, here's one...
-    """
-
-    def __init__(self, temperature, *args, **kwargs):
-        """Initialize ThermalKernel.
-
-        Args:
-            ensemble (Ensemble):
-                an Ensemble instance to obtain the features and parameters
-                used in computing log probabilities.
-            step_type (str):
-                string specifying the MCMC step type.
-            temperature (float):
-                temperature at which the MCMC sampling will be carried out.
-            args:
-                positional arguments to instantiate the MCUsher for the
-                corresponding step size.
-            kwargs:
-                keyword arguments to instantiate the MCUsher for the
-                corresponding step size.
-        """
-        self.beta = 1.0 / (kB * temperature)
-        super().__init__(*args, **kwargs)
-        self.temperature = temperature
-
-    @property
-    def temperature(self):
-        """Get the temperature of kernel."""
-        return self.trace.temperature
-
-    @temperature.setter
-    def temperature(self, temperature):
-        """Set the temperature and beta accordingly."""
-        self.trace.temperature = np.array(temperature, dtype=np.float64)
-        self.beta = 1.0 / (kB * temperature)
-
-    def compute_initial_trace(self, occupancy):
-        """Compute initial values for sample trace given occupancy.
-
-        Args:
-            occupancy (ndarray):
-                Initial occupancy
-
-        Returns:
-            Trace
-        """
-        trace = super().compute_initial_trace(occupancy)
-        trace.temperature = np.array([self.trace.temperature], dtype=np.float64)
-        return trace
-
-
-class MulticellKernel(ABC):
+class MulticellKernel(MCKernelInterface, ABC):
     """Abstract MulticellKernel class.
 
     Use this to create kernels that apart from proposing new occupancy states, jumping
@@ -555,3 +568,61 @@ class MulticellKernel(ABC):
         self.trace = self.current_kernel.compute_initial_trace(occupancy)
         self.trace.kernel_index = self._current_kernel_index
         return self.trace
+
+
+class ThermalKernelMixin:
+    """Mixin class for transition kernels with a set temperature.
+
+    Basically all kernels should use this Mixin class with the exception of those
+    for multicanonical sampling and related methods (i.e. see Wang-Landau)
+
+    Never really found a final say regarding Mixins with __init__ and attributes....
+    ...oh well, here's one...
+    """
+
+    def __init__(self, temperature, *args, **kwargs):
+        """Initialize ThermalKernel.
+
+        Args:
+            ensemble (Ensemble):
+                an Ensemble instance to obtain the features and parameters
+                used in computing log probabilities.
+            step_type (str):
+                string specifying the MCMC step type.
+            temperature (float):
+                temperature at which the MCMC sampling will be carried out.
+            args:
+                positional arguments to instantiate the MCUsher for the
+                corresponding step size.
+            kwargs:
+                keyword arguments to instantiate the MCUsher for the
+                corresponding step size.
+        """
+        self.beta = 1.0 / (kB * temperature)
+        super().__init__(*args, **kwargs)
+        self.temperature = temperature
+
+    @property
+    def temperature(self):
+        """Get the temperature of kernel."""
+        return self.trace.temperature
+
+    @temperature.setter
+    def temperature(self, temperature):
+        """Set the temperature and beta accordingly."""
+        self.trace.temperature = np.array(temperature, dtype=np.float64)
+        self.beta = 1.0 / (kB * temperature)
+
+    def compute_initial_trace(self, occupancy):
+        """Compute initial values for sample trace given occupancy.
+
+        Args:
+            occupancy (ndarray):
+                Initial occupancy
+
+        Returns:
+            Trace
+        """
+        trace = super().compute_initial_trace(occupancy)
+        trace.temperature = np.array([self.trace.temperature], dtype=np.float64)
+        return trace
