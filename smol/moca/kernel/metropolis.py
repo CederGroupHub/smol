@@ -13,7 +13,37 @@ import numpy as np
 from smol.moca.kernel._base import ALL_BIAS, ALL_MCUSHERS, MCKernel, ThermalKernel
 
 
-class Metropolis(ThermalKernel):
+class MetropolisCriterionMixin:
+    """Metropolis Criterion Mixin class.
+
+    Simple mixin class impolementing the Metropolis-Hastings criterion for reause in
+    MCKernels.
+
+    Must be used in conjunction with inheritance from an MCKernel or derived class.
+    """
+
+    def _accept_step(self, occupancy, step):
+        """Accept/reject a given step and populate trace and aux states accordingly.
+
+        Args:
+            occupancy (ndarray):
+                Current occupancy
+            step (Sequence of tuple):
+                Sequence of tuples of ints representing an MC step
+        """
+        log_factor = self.mcusher.compute_log_priori_factor(occupancy, step)
+        exponent = -self.beta * self.trace.delta_trace.enthalpy + log_factor
+
+        if self._bias is not None:
+            exponent += self.trace.delta_trace.bias
+
+        self.trace.accepted = np.array(
+            True if exponent >= 0 else exponent > log(self._rng.random())
+        )
+        return self.trace.accepted
+
+
+class Metropolis(MetropolisCriterionMixin, ThermalKernel):
     """A Metropolis-Hastings kernel.
 
     The classic and nothing but the classic.
@@ -21,39 +51,6 @@ class Metropolis(ThermalKernel):
 
     valid_mcushers = ALL_MCUSHERS
     valid_bias = ALL_BIAS
-
-    def single_step(self, occupancy):
-        """Attempt an MC step.
-
-        Returns the next occupancies in the chain and if the attempted step was
-        successful.
-
-        Args:
-            occupancy (ndarray):
-                encoded occupancy.
-
-        Returns:
-            StepTrace
-        """
-        step = self.mcusher.propose_step(occupancy)
-        self._compute_step_trace(occupancy, step)
-
-        log_factor = self.mcusher.compute_log_priori_factor(occupancy, step)
-        exponent = -self.beta * self.trace.delta_trace.enthalpy + log_factor
-        if self._bias is not None:
-            exponent += self.trace.delta_trace.bias
-
-        self.trace.accepted = np.array(
-            True if exponent >= 0 else exponent > log(self._rng.random())
-        )
-
-        if self.trace.accepted:
-            for tup in step:
-                occupancy[tup[0]] = tup[1]
-            self.mcusher.update_aux_state(step)
-        self.trace.occupancy = occupancy
-
-        return self.trace
 
 
 class UniformlyRandom(MCKernel):
@@ -68,22 +65,7 @@ class UniformlyRandom(MCKernel):
     valid_mcushers = ALL_MCUSHERS
     valid_bias = ALL_BIAS
 
-    def single_step(self, occupancy):
-        """Attempt an MCMC step.
-
-        Returns the next occupancies in the chain and if the attempted step was
-        successful.
-
-        Args:
-            occupancy (ndarray):
-                encoded occupancy.
-
-        Returns:
-            StepTrace
-        """
-        step = self.mcusher.propose_step(occupancy)
-        self._compute_step_trace(occupancy, step)
-
+    def _accept_step(self, occupancy, step):
         exponent = self.mcusher.compute_log_priori_factor(occupancy, step)
         if self._bias is not None:
             exponent += self.trace.delta_trace.bias
@@ -91,11 +73,4 @@ class UniformlyRandom(MCKernel):
         self.trace.accepted = np.array(
             True if exponent >= 0 else exponent > log(self._rng.random())
         )
-
-        if self.trace.accepted:
-            for tup in step:
-                occupancy[tup[0]] = tup[1]
-            self.mcusher.update_aux_state(step)
-
-        self.trace.occupancy = occupancy
-        return self.trace
+        return self.trace.accepted

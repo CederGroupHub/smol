@@ -181,26 +181,13 @@ class WangLandau(MCKernel):
         """Get enthalpy form bin index."""
         return bin_id * self._window[2] + self._window[0]
 
-    def single_step(self, occupancy):
-        """Attempt an MC step.
-
-        Returns the next steptrace in the chain.
-        Args:
-            occupancy (ndarray):
-                encoded occupancy.
-        Returns:
-            StepTrace
-        """
-        step = self.mcusher.propose_step(occupancy)
-        self._compute_step_trace(occupancy, step)
-
+    def _accept_step(self, occupancy, step):
         bin_id = self._get_bin_id(self._current_enthalpy)
         new_enthalpy = self._current_enthalpy + self.trace.delta_trace.enthalpy
 
         # reject if outside of window
         if new_enthalpy < self._window[0] or new_enthalpy >= self._window[1]:
             self.trace.accepted = np.array(False)
-            new_bin_id = bin_id
         else:
             new_bin_id = self._get_bin_id(new_enthalpy)
             entropy = self._entropy[bin_id]
@@ -210,16 +197,32 @@ class WangLandau(MCKernel):
             self.trace.accepted = np.array(
                 True if exponent >= 0 else exponent > log(self._rng.random())
             )
+        return self.trace.accepted
 
-        if self.trace.accepted:
-            for f in step:
-                occupancy[f[0]] = f[1]
+    def _do_accept_step(self, occupancy, step):
+        """Accept/reject a given step and populate trace and aux states accordingly.
 
-            bin_id = new_bin_id
-            self._current_features += self.trace.delta_trace.features
-            self._current_enthalpy = new_enthalpy
-            self.mcusher.update_aux_state(step)
-        self.trace.occupancy = occupancy
+        Args:
+            occupancy (ndarray):
+                Current occupancy
+            step (Sequence of tuple):
+                Sequence of tuples of ints representing an MC step
+
+        Returns:
+            ndarray: new occupancy
+        """
+        occupancy = super()._do_accept_step(occupancy, step)
+        self._current_features += self.trace.delta_trace.features
+        self._current_enthalpy += self.trace.delta_trace.enthalpy
+
+        return occupancy
+
+    def _do_post_step(self):
+        """Populate trace and aux states for a step regardless of acceptance.
+
+        Populate histogram and entropy, and update counters accordingly.
+        """
+        bin_id = self._get_bin_id(self._current_enthalpy)
 
         # Only if bin_id is valid, because bin_id is not checked.
         if 0 <= bin_id < len(self._levels):

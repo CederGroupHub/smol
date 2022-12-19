@@ -134,7 +134,8 @@ class MCKernel(ABC):
         Args:
             occupancy (ndarray):
                 Current occupancy
-
+            step (Sequence of tuple):
+                Sequence of tuples of ints representing an MC step
         """
         self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
             occupancy, step
@@ -152,6 +153,39 @@ class MCKernel(ABC):
         #  single_step of kernels. may be faster maybe not...
 
     @abstractmethod
+    def _accept_step(self, occupancy, step):
+        """Accept/reject a given step.
+
+        Args:
+            occupancy (ndarray):
+                Current occupancy
+            step (Sequence of tuple):
+                Sequence of tuples of ints representing an MC step
+        """
+        return self.trace.accepted
+
+    def _do_accept_step(self, occupancy, step):
+        """Populate trace and aux states for an accepted step.
+
+        Args:
+            occupancy (ndarray):
+                Current occupancy
+            step (Sequence of tuple):
+                Sequence of tuples of ints representing an MC step
+
+        Returns:
+            ndarray: new occupancy
+        """
+        for site, species in step:
+            occupancy[site] = species
+
+        self.mcusher.update_aux_state(step)
+        return occupancy
+
+    def _do_post_step(self):
+        """Populate trace and aux states for a step regardless of acceptance."""
+        return
+
     def single_step(self, occupancy):
         """Attempt an MCMC step.
 
@@ -163,9 +197,16 @@ class MCKernel(ABC):
                 encoded occupancy.
 
         Returns:
-            StepTrace: a step trace for states and traced values for a single
-                       step
+            StepTrace:
+                A trace for states, traced values, and differences in traced values
+                for the MC step
         """
+        step = self.mcusher.propose_step(occupancy)
+        self._compute_step_trace(occupancy, step)
+        if self._accept_step(occupancy, step):
+            occupancy = self._do_accept_step(occupancy, step)
+        self.trace.occupancy = occupancy
+        self._do_post_step()
         return self.trace
 
     def compute_initial_trace(self, occupancy):
@@ -251,7 +292,9 @@ class ThermalKernel(MCKernel):
         self.mcusher.set_aux_state(occupancies, *args, **kwargs)
 
 
-class MulticellKernelMixin(MCKernel):
+# TODO make a do_accept mixin class for the acceptance criteria and then subclass ThermalKernel
+#  for the MulticellMetropolis
+class MulticellKernelMixin:
     """MulticellKernelMixin class.
 
     This class should not be instantiated, but be used as a Mixin class in other Kernel
@@ -281,10 +324,12 @@ class MulticellKernelMixin(MCKernel):
     def __init__(
         self,
         mckernels,
+        *args,
         kernel_probabilities=None,
         kernel_hop_periods=1,
         kernel_hop_probabilities=None,
         seed=None,
+        **kwargs,
     ):
         """Initialize MCKernel.
 
@@ -292,6 +337,7 @@ class MulticellKernelMixin(MCKernel):
             mckernels (list of MCKernels):
                 a list of MCKernels instances to obtain the features and parameters
                 used in computing log probabilities.
+            *args
             seed (int): optional
                 non-negative integer to seed the PRNG
             kernel_probabilities (Sequence of floats): optional
@@ -300,12 +346,16 @@ class MulticellKernelMixin(MCKernel):
                 number of steps between kernel hop attempts.
             kernel_hop_probabilities (Sequence of floats): optional
                 probabilities for choosing each of the specified hop periods.
+            args:
+                positional arguments passed to Kernel class used with Mixin
+            kwargs:
+                keyword arguments passed to Kernel class used with Mixin
         """
         if any(not isinstance(kernel, type(mckernels[0])) for kernel in mckernels):
             raise ValueError("All kernels must be of the same type.")
 
         if any(
-            not kernel.ensemble.num_sites != mckernels[0].ensemble.num_sites
+            kernel.ensemble.num_sites != mckernels[0].ensemble.num_sites
             for kernel in mckernels
         ):
             raise ValueError("All ensembles must have the same number of sites.")
@@ -347,21 +397,28 @@ class MulticellKernelMixin(MCKernel):
                 [1.0 / len(self._hop_periods) for _ in range(len(self._hop_periods))]
             )
 
-        self._seed = seed if seed is not None else np.random.SeedSequence().entropy
-        self._rng = np.random.default_rng(self._seed)
+        super().__init__(
+            mckernels[0].ensemble,
+            mckernels[0].mcusher.__class__.__name__,
+            *args,
+            seed=seed,
+            **kwargs,
+        )
 
         self._kernels = mckernels
         self._current_hop_period = self._rng.choice(self._hop_periods, p=self._hop_p)
         self._kernel_hop_counter = 0
         self._new_enthalpies = np.full(len(mckernels), np.inf)
         self._new_features = np.zeros(
-            (len(mckernels), self._kernels[0].natural_params.shape)
+            (len(mckernels), len(self._kernels[0].natural_params))
         )
         self._prev_enthalpies = np.full(len(mckernels), np.inf)
         self._prev_features = np.zeros(
-            (len(mckernels), self._kernels[0].natural_params.shape)
+            (len(mckernels), len(self._kernels[0].natural_params))
         )
         self._current_kernel_index = 0
+
+        # TODO set spec
 
         self.trace = StepTrace(
             accepted=np.array(True), kernel_index=np.array(0, dtype=int)
@@ -370,6 +427,10 @@ class MulticellKernelMixin(MCKernel):
         # run a initial step to populate trace values
         _ = self.single_step(
             np.zeros(self.current_kernel.ensemble.num_sites, dtype=int)
+        )
+
+        super().__init__(
+            self.ensemble, step_type=self.mcusher.__class__, *args, seed=seed, **kwargs
         )
 
     @property
@@ -383,22 +444,14 @@ class MulticellKernelMixin(MCKernel):
         return self._kernels[self.trace.kernel_index]
 
     @property
-    def ensemble(self):
+    def current_ensemble(self):
         """Return the ensemble instance."""
         return self.current_kernel.ensemble
 
     @property
-    def mcusher(self):
+    def current_mcusher(self):
         """Get the MCUsher."""
         return self.current_kernel.mcusher
-
-    @mcusher.setter
-    def mcusher(self, usher):
-        """Set the MCUsher."""
-        raise RuntimeError(
-            "Cannot set the MCUsher for a CompositeKernel.\n"
-            "You must set it for an individual kernel."
-        )
 
     @property
     def bias(self):
@@ -457,8 +510,8 @@ class MulticellKernelMixin(MCKernel):
         # check if we should attempt to hop kernels
         if self._kernel_hop_counter % self._current_hop_period == 0:
             # this is the new kernel index (the one attempting to hop to)
-            self.trace.kernel_index = self._rng.choice(
-                range(len(self._kernels)), p=self._kernel_p
+            self.trace.kernel_index = np.array(
+                self._rng.choice(range(len(self._kernels)), p=self._kernel_p)
             )
             super().single_step(occupancy)  # does this call non mixin parent????
             # choose new hop period and reset counter
@@ -510,7 +563,9 @@ class MulticellKernelMixin(MCKernel):
                 for kernel in self._kernels
             ]
         )
-        self._new_enthalpies = np.dot(self._new_features, self.natural_params)
+        self._new_enthalpies = np.dot(
+            self._new_features, self.current_kernel.natural_params
+        )
         self._prev_features = self._new_features.copy()
         self._new_enthalpies = self._new_enthalpies.copy()
 
