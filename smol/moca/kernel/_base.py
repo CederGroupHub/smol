@@ -2,7 +2,7 @@
 
 __author__ = "Luis Barroso-Luque"
 
-from abc import ABC, ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 import numpy as np
 
@@ -232,14 +232,17 @@ class MCKernel(ABC):
         return trace
 
 
-class ThermalKernel(MCKernel, metaclass=ABCMeta):
-    """Abstract base class for transition kernels with a set temperature.
+class ThermalKernelMixin:
+    """Mixin class for transition kernels with a set temperature.
 
-    Basically all kernels should derive from this with the exception of those
-    for multicanonical sampling and related methods
+    Basically all kernels should use this Mixin class with the exception of those
+    for multicanonical sampling and related methods (i.e. see Wang-Landau)
+
+    Never really found a final say regarding Mixins with __init__ and attributes....
+    ...oh well, here's one...
     """
 
-    def __init__(self, ensemble, step_type, temperature, *args, **kwargs):
+    def __init__(self, temperature, *args, **kwargs):
         """Initialize ThermalKernel.
 
         Args:
@@ -257,9 +260,8 @@ class ThermalKernel(MCKernel, metaclass=ABCMeta):
                 keyword arguments to instantiate the MCUsher for the
                 corresponding step size.
         """
-        # hacky for initialization single_step to run
         self.beta = 1.0 / (kB * temperature)
-        super().__init__(ensemble, step_type, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.temperature = temperature
 
     @property
@@ -288,13 +290,8 @@ class ThermalKernel(MCKernel, metaclass=ABCMeta):
         return trace
 
 
-# TODO make a do_accept mixin class for the acceptance criteria and then subclass ThermalKernel
-#  for the MulticellMetropolis
-class MulticellKernelMixin:
-    """MulticellKernelMixin class.
-
-    This class should not be instantiated, but be used as a Mixin class in other Kernel
-    class definitions. See MulticellMetropolis for an example.
+class MulticellKernel(ABC):
+    """Abstract MulticellKernel class.
 
     Use this to create kernels that apart from proposing new occupancy states, jumping
     among different kernels is also allowed.
@@ -315,17 +312,13 @@ class MulticellKernelMixin:
     complete re-computation of the feature vector.
     """
 
-    valid_bias = None  # currently no bias allowed for kernel hops
-
     def __init__(
         self,
         mckernels,
-        *args,
         kernel_probabilities=None,
         kernel_hop_periods=1,
         kernel_hop_probabilities=None,
         seed=None,
-        **kwargs,
     ):
         """Initialize MCKernel.
 
@@ -333,7 +326,6 @@ class MulticellKernelMixin:
             mckernels (list of MCKernels):
                 a list of MCKernels instances to obtain the features and parameters
                 used in computing log probabilities.
-            *args
             seed (int): optional
                 non-negative integer to seed the PRNG
             kernel_probabilities (Sequence of floats): optional
@@ -342,10 +334,6 @@ class MulticellKernelMixin:
                 number of steps between kernel hop attempts.
             kernel_hop_probabilities (Sequence of floats): optional
                 probabilities for choosing each of the specified hop periods.
-            args:
-                positional arguments passed to Kernel class used with Mixin
-            kwargs:
-                keyword arguments passed to Kernel class used with Mixin
         """
         if any(not isinstance(kernel, type(mckernels[0])) for kernel in mckernels):
             raise ValueError("All kernels must be of the same type.")
@@ -393,14 +381,8 @@ class MulticellKernelMixin:
                 [1.0 / len(self._hop_periods) for _ in range(len(self._hop_periods))]
             )
 
-        super().__init__(
-            mckernels[0].ensemble,
-            mckernels[0].mcusher.__class__.__name__,
-            *args,
-            seed=seed,
-            **kwargs,
-        )
-
+        self._seed = seed if seed is not None else np.random.SeedSequence().entropy
+        self._rng = np.random.default_rng(self._seed)
         self._kernels = mckernels
         self._current_hop_period = self._rng.choice(self._hop_periods, p=self._hop_p)
         self._kernel_hop_counter = 0
@@ -419,14 +401,9 @@ class MulticellKernelMixin:
         self.trace = StepTrace(
             accepted=np.array(True), kernel_index=np.array(0, dtype=int)
         )
-
         # run a initial step to populate trace values
         _ = self.single_step(
             np.zeros(self.current_kernel.ensemble.num_sites, dtype=int)
-        )
-
-        super().__init__(
-            self.ensemble, step_type=self.mcusher.__class__, *args, seed=seed, **kwargs
         )
 
     @property
@@ -440,14 +417,19 @@ class MulticellKernelMixin:
         return self._kernels[self.trace.kernel_index]
 
     @property
-    def current_ensemble(self):
+    def ensemble(self):
         """Return the ensemble instance."""
         return self.current_kernel.ensemble
 
     @property
-    def current_mcusher(self):
+    def mcusher(self):
         """Get the MCUsher."""
         return self.current_kernel.mcusher
+
+    @property
+    def seed(self):
+        """Get seed for PRNG."""
+        return self._seed
 
     @property
     def bias(self):

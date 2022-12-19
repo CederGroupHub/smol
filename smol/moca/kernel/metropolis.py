@@ -10,7 +10,7 @@ from math import log
 
 import numpy as np
 
-from smol.moca.kernel._base import ALL_BIAS, ALL_MCUSHERS, MCKernel, ThermalKernel
+from smol.moca.kernel._base import ALL_BIAS, ALL_MCUSHERS, MCKernel, ThermalKernelMixin
 
 
 class MetropolisCriterionMixin:
@@ -43,7 +43,7 @@ class MetropolisCriterionMixin:
         return self.trace.accepted
 
 
-class Metropolis(MetropolisCriterionMixin, ThermalKernel):
+class Metropolis(MetropolisCriterionMixin, ThermalKernelMixin, MCKernel):
     """A Metropolis-Hastings kernel.
 
     The classic and nothing but the classic.
@@ -51,6 +51,46 @@ class Metropolis(MetropolisCriterionMixin, ThermalKernel):
 
     valid_mcushers = ALL_MCUSHERS
     valid_bias = ALL_BIAS
+
+    def __init__(
+        self,
+        ensemble,
+        step_type,
+        temperature,
+        *args,
+        seed=None,
+        bias_type=None,
+        bias_kwargs=None,
+        **kwargs
+    ):
+        """Initialize Metropolis Kernel.
+
+        Args:
+            ensemble (Ensemble):
+                an Ensemble instance to obtain the features and parameters
+                used in computing log probabilities.
+            step_type (str):
+                string specifying the MCMC step type.
+            temperature (float):
+                temperature at which the MCMC sampling will be carried out.
+            args:
+                positional arguments to instantiate the MCUsher for the
+                corresponding step size.
+            kwargs:
+                keyword arguments to instantiate the MCUsher for the
+                corresponding step size.
+        """
+        # order of arguments here matters based on the MRO, temperature must be first
+        super().__init__(
+            temperature,
+            ensemble,
+            step_type,
+            *args,
+            seed=seed,
+            bias_type=bias_type,
+            bias_kwargs=bias_kwargs,
+            **kwargs
+        )
 
 
 class UniformlyRandom(MCKernel):

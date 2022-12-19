@@ -7,7 +7,7 @@ import pytest
 
 from smol.constants import kB
 from smol.moca.kernel import Metropolis, UniformlyRandom, WangLandau
-from smol.moca.kernel._base import ALL_MCUSHERS, ThermalKernel
+from smol.moca.kernel._base import ALL_MCUSHERS, ThermalKernelMixin
 from smol.moca.kernel._trace import StepTrace, Trace
 from smol.moca.kernel.bias import FugacityBias
 from smol.moca.kernel.mcusher import Flip, Swap, TableFlip
@@ -23,7 +23,7 @@ ushers = ALL_MCUSHERS
 def mckernel(ensemble, request):
     kwargs = {}
     kernel_class, step_type = request.param
-    if issubclass(kernel_class, ThermalKernel):
+    if issubclass(kernel_class, ThermalKernelMixin):
         kwargs["temperature"] = 5000
     if kernel_class == WangLandau:
         kwargs["min_enthalpy"] = -5000
@@ -49,7 +49,7 @@ def mckernel(ensemble, request):
 def mckernel_bias(ensemble, request):
     kwargs = {}
     kernel_class, step_type = request.param
-    if issubclass(kernel_class, ThermalKernel):
+    if issubclass(kernel_class, ThermalKernelMixin):
         kwargs["temperature"] = 5000
 
     if step_type == "MultiStep":
