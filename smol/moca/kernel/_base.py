@@ -2,7 +2,7 @@
 
 __author__ = "Luis Barroso-Luque"
 
-from abc import ABC, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
 
 import numpy as np
 
@@ -232,7 +232,7 @@ class MCKernel(ABC):
         return trace
 
 
-class ThermalKernel(MCKernel):
+class ThermalKernel(MCKernel, metaclass=ABCMeta):
     """Abstract base class for transition kernels with a set temperature.
 
     Basically all kernels should derive from this with the exception of those
@@ -286,10 +286,6 @@ class ThermalKernel(MCKernel):
         trace = super().compute_initial_trace(occupancy)
         trace.temperature = np.array([self.trace.temperature], dtype=np.float64)
         return trace
-
-    def set_aux_state(self, occupancies, *args, **kwargs):
-        """Set the auxiliary occupancies from initial or checkpoint values."""
-        self.mcusher.set_aux_state(occupancies, *args, **kwargs)
 
 
 # TODO make a do_accept mixin class for the acceptance criteria and then subclass ThermalKernel
