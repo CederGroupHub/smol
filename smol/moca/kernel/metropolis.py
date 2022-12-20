@@ -10,6 +10,7 @@ from math import log
 
 import numpy as np
 
+from smol.constants import kB
 from smol.moca.kernel._base import (
     ALL_BIAS,
     ALL_MCUSHERS,
@@ -155,6 +156,14 @@ class MulticellMetropolis(MetropolisAcceptMixin, ThermalKernelMixin, MulticellKe
             seed=seed,
             **kwargs
         )
+
+    @ThermalKernelMixin.temperature.setter
+    def temperature(self, temperature):
+        """Set temperature and update all kernels."""
+        self.trace.temperature = np.array(temperature, dtype=np.float64)
+        self.beta = 1.0 / (kB * temperature)
+        for kernel in self.mckernels:
+            kernel.temperature = temperature
 
 
 class UniformlyRandom(MCKernel):
