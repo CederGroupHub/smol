@@ -672,6 +672,8 @@ class ThermalKernelMixin:
     ...oh well, here's one...
     """
 
+    kB: float = kB  # Boltzmann constant in eV/K
+
     def __init__(self, temperature, *args, **kwargs):
         """Initialize ThermalKernel.
 
@@ -703,7 +705,7 @@ class ThermalKernelMixin:
     def temperature(self, temperature):
         """Set the temperature and beta accordingly."""
         self.trace.temperature = np.array(temperature, dtype=np.float64)
-        self.beta = 1.0 / (kB * temperature)
+        self.beta = 1.0 / (self.kB * temperature)
 
     def compute_initial_trace(self, occupancy):
         """Compute initial values for sample trace given occupancy.
