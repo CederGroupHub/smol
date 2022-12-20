@@ -1,7 +1,7 @@
 """Implementation of Metropolis and UniformlyRandom kernels.
 
-A Metropolis-Hastings kernel and a UniformlyRandom kernel (which can be thought of
-as an infinite temperature Metropols kernel).
+A simple Metropolis-Hastings kernel and a Multicell Metropolis kernel that can hop
+among different supercell shapes.
 """
 
 __author__ = "Luis Barroso-Luque"
@@ -116,7 +116,7 @@ class MulticellMetropolis(MetropolisAcceptMixin, ThermalKernelMixin, MulticellKe
     correct! (i.e. satisfies balance or detailed balance).
     """
 
-    valid_mcushers = ALL_MCUSHERS
+    valid_mcushers = None
     valid_bias = None
 
     def __init__(
@@ -164,26 +164,3 @@ class MulticellMetropolis(MetropolisAcceptMixin, ThermalKernelMixin, MulticellKe
         self.beta = 1.0 / (kB * temperature)
         for kernel in self.mckernels:
             kernel.temperature = temperature
-
-
-class UniformlyRandom(MCKernel):
-    """A Kernel that accepts all proposed steps.
-
-    This kernel samples the random limit distribution where all states have the
-    same probability (corresponding to an infinite temperature). If a
-    bias is added then the corresponding distribution will be biased
-    accordingly.
-    """
-
-    valid_mcushers = ALL_MCUSHERS
-    valid_bias = ALL_BIAS
-
-    def _accept_step(self, occupancy, step):
-        exponent = self.mcusher.compute_log_priori_factor(occupancy, step)
-        if self._bias is not None:
-            exponent += self.trace.delta_trace.bias
-
-        self.trace.accepted = np.array(
-            True if exponent >= 0 else exponent > log(self._rng.random())
-        )
-        return self.trace.accepted
