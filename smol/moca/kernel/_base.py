@@ -454,7 +454,7 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         self._rng = np.random.default_rng(self._seed)
         self._kernels = mckernels
         self._current_hop_period = self._rng.choice(self._hop_periods, p=self._hop_p)
-        self._kernel_hop_counter = 0
+        self._kernel_hop_counter = 1
         self._new_enthalpies = np.full(len(mckernels), 0)
         self._new_features = np.zeros(
             (len(mckernels), len(self._kernels[0].natural_params))
@@ -481,6 +481,7 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         _ = self.single_step(
             np.zeros(self.current_kernel.ensemble.num_sites, dtype=int)
         )
+        self._kernel_hop_counter = 1  # reset the counter
 
     @property
     def trace(self):
@@ -615,7 +616,7 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
             self._current_hop_period = self._rng.choice(
                 self._hop_periods, p=self._hop_p
             )
-            self._kernel_hop_counter = 0
+            self._kernel_hop_counter = 1
         # if not do a single step with current kernel
         else:
             kernel_index = self.trace.kernel_index
