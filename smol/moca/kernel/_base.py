@@ -92,17 +92,52 @@ class StandardSingleStepMixin(ABC):
 
     @abstractmethod
     def _compute_step_trace(self, occupancy, step) -> None:
-        pass
+        """Compute the trace for a single step.
+
+        Every quantity that is required to accept/reject should be computed here.
+
+        Args:
+            occupancy (ndarray):
+                Current occupancy
+            step (Sequence of tuple):
+                Sequence of tuples of ints representing an MC step
+        """
 
     @abstractmethod
     def _accept_step(self, occupancy, step) -> bool:
-        pass
+        """Accept/reject a given step.
+
+        Args:
+            occupancy (ndarray):
+                Current occupancy
+            step (Sequence of tuple):
+                Sequence of tuples of ints representing an MC step
+        """
 
     @abstractmethod
     def _do_accept_step(self, occupancy, step) -> np.ndarray:
-        pass
+        """Populate trace and aux states for an accepted step.
+
+        All updates that should be done if a step has been accepted should be done here.
+
+        The updated occupancy is returned.
+
+        Args:
+            occupancy (ndarray):
+                Current occupancy
+            step (Sequence of tuple):
+                Sequence of tuples of ints representing an MC step
+
+        Returns:
+            ndarray: new occupancy
+        """
 
     def _do_post_step(self) -> None:
+        """Do any post step updates.
+
+        Any updates that should be done after a step has been attempted regardless of
+        acceptance should be done here.
+        """
         return
 
     def single_step(self, occupancy):
