@@ -50,7 +50,7 @@ class MCKernelInterface(metaclass=ABCMeta):
         """Carry out a single MC step.
 
         It is recommended to use a breakup of single step into methods as is done in
-        the MCKernel base class:
+        the MCKernel base class, by using StandardSingleStepMixin:
         1) _compute_step_trace(occupancy, step)
         2) _accept_step(occupancy, step)
         3) _do_post_step()
@@ -78,7 +78,58 @@ class MCKernelInterface(metaclass=ABCMeta):
         """
 
 
-class MCKernel(MCKernelInterface, ABC):
+class StandardSingleStepMixin(ABC):
+    """An interface class that breaks up the single_step method of a Kernel.
+
+    The breakup is done using the following methods:
+
+    1) _compute_step_trace(occupancy, step)
+    2) _accept_step(occupancy, step)
+    3) _do_post_step()
+
+    The above methods must be implemented in derived classes.
+    """
+
+    @abstractmethod
+    def _compute_step_trace(self, occupancy, step) -> None:
+        pass
+
+    @abstractmethod
+    def _accept_step(self, occupancy, step) -> bool:
+        pass
+
+    @abstractmethod
+    def _do_accept_step(self, occupancy, step) -> np.ndarray:
+        pass
+
+    def _do_post_step(self) -> None:
+        return
+
+    def single_step(self, occupancy):
+        """Attempt an MCMC step.
+
+        Returns the next state in the chain and if the attempted step was
+        successful.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy.
+
+        Returns:
+            StepTrace:
+                A trace for states, traced values, and differences in traced values
+                for the MC step
+        """
+        step = self.mcusher.propose_step(occupancy)
+        self._compute_step_trace(occupancy, step)
+        if self._accept_step(occupancy, step):
+            occupancy = self._do_accept_step(occupancy, step)
+        self._trace.occupancy = occupancy
+        self._do_post_step()
+        return self.trace
+
+
+class MCKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
     """Abstract base class for transition kernels.
 
     A kernel is used to implement a specific MC algorithm used to sample
@@ -253,33 +304,6 @@ class MCKernel(MCKernelInterface, ABC):
         self.mcusher.update_aux_state(step)
         return occupancy
 
-    def _do_post_step(self):
-        """Populate trace and aux states for a step regardless of acceptance."""
-        return
-
-    def single_step(self, occupancy):
-        """Attempt an MCMC step.
-
-        Returns the next state in the chain and if the attempted step was
-        successful.
-
-        Args:
-            occupancy (ndarray):
-                encoded occupancy.
-
-        Returns:
-            StepTrace:
-                A trace for states, traced values, and differences in traced values
-                for the MC step
-        """
-        step = self.mcusher.propose_step(occupancy)
-        self._compute_step_trace(occupancy, step)
-        if self._accept_step(occupancy, step):
-            occupancy = self._do_accept_step(occupancy, step)
-        self.trace.occupancy = occupancy
-        self._do_post_step()
-        return self.trace
-
     def compute_initial_trace(self, occupancy):
         """Compute initial values for sample trace given an occupancy.
 
@@ -303,7 +327,7 @@ class MCKernel(MCKernelInterface, ABC):
         return trace
 
 
-class MulticellKernel(MCKernelInterface, ABC):
+class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
     """Abstract MulticellKernel class.
 
     Use this to create kernels that apart from proposing new occupancy states, jumping
@@ -320,9 +344,6 @@ class MulticellKernel(MCKernelInterface, ABC):
     or any other setup parameter, which allows very flexible sampling strategies.
     However, users are responsible for ensuring that the overall sampling strategy is
     correct! (i.e. satisfies balance or detailed balance).
-
-    Sampling is slower since the property difference of a kernel to kernel jump requires
-    complete re-computation of the feature vector.
     """
 
     def __init__(
@@ -399,25 +420,42 @@ class MulticellKernel(MCKernelInterface, ABC):
         self._kernels = mckernels
         self._current_hop_period = self._rng.choice(self._hop_periods, p=self._hop_p)
         self._kernel_hop_counter = 0
-        self._new_enthalpies = np.full(len(mckernels), np.inf)
+        self._new_enthalpies = np.full(len(mckernels), 0)
         self._new_features = np.zeros(
             (len(mckernels), len(self._kernels[0].natural_params))
         )
-        self._prev_enthalpies = np.full(len(mckernels), np.inf)
+        self._prev_enthalpies = np.full(len(mckernels), 0)
         self._prev_features = np.zeros(
             (len(mckernels), len(self._kernels[0].natural_params))
         )
         self._current_kernel_index = 0
 
-        # TODO set spec
+        self._spec = Metadata(
+            self.__class__.__name__,
+            seed=self._seed,
+            kernel_probabilities=self._kernel_p,
+            kernel_hop_periods=self._hop_periods,
+            kernel_hop_probabilities=self._hop_p,
+            mckernels=[kernel.spec for kernel in mckernels],
+        )
 
-        self.trace = StepTrace(
+        self._trace = StepTrace(
             accepted=np.array(True), kernel_index=np.array(0, dtype=int)
         )
         # run a initial step to populate trace values
         _ = self.single_step(
             np.zeros(self.current_kernel.ensemble.num_sites, dtype=int)
         )
+
+    @property
+    def trace(self):
+        """Return step trace."""
+        return self._trace
+
+    @property
+    def spec(self):
+        """Return sampling specifications."""
+        return self._spec
 
     @property
     def mckernels(self):
@@ -453,7 +491,7 @@ class MulticellKernel(MCKernelInterface, ABC):
     def bias(self, bias):
         """Set the bias."""
         raise RuntimeError(
-            "Cannot set the bias for a CompositeKernel.\n"
+            "Cannot set the bias for a MultiCellKernel.\n"
             "You must set it for an individual kernel."
         )
 
@@ -484,6 +522,24 @@ class MulticellKernel(MCKernelInterface, ABC):
         prev_enthalpy = self._new_enthalpies[self._current_kernel_index]
         self.trace.delta_trace.enthalpy = new_enthalpy - prev_enthalpy
 
+    def _do_accept_step(self, occupancy, step):
+        """Populate trace and aux states for an accepted step.
+
+        Args:
+            occupancy (ndarray):
+                Current occupancy
+            step (Sequence of tuple):
+                Sequence of tuples of ints representing an MC step
+
+        Returns:
+            ndarray: new occupancy
+        """
+        for site, species in step:
+            self.current_kernel.trace.occupancy[site] = species
+
+        self.mcusher.update_aux_state(step)
+        return self.current_kernel.trace.occupancy
+
     def single_step(self, occupancy):
         """Attempt an MCMC step.
 
@@ -504,7 +560,7 @@ class MulticellKernel(MCKernelInterface, ABC):
             self.trace.kernel_index = np.array(
                 self._rng.choice(range(len(self._kernels)), p=self._kernel_p)
             )
-            super().single_step(occupancy)  # does this call non mixin parent????
+            self._trace = super().single_step(occupancy)
             # choose new hop period and reset counter
             if self.trace.accepted:
                 kernel_index = self.trace.kernel_index
@@ -528,7 +584,7 @@ class MulticellKernel(MCKernelInterface, ABC):
         # if not do a single step with current kernel
         else:
             kernel_index = self.trace.kernel_index
-            self.trace = self.current_kernel.single_step(occupancy)
+            self._trace = self.current_kernel.single_step(occupancy)
             self._kernel_hop_counter += 1
 
         # set the index

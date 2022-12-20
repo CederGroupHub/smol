@@ -10,10 +10,16 @@ from math import log
 
 import numpy as np
 
-from smol.moca.kernel._base import ALL_BIAS, ALL_MCUSHERS, MCKernel, ThermalKernelMixin
+from smol.moca.kernel._base import (
+    ALL_BIAS,
+    ALL_MCUSHERS,
+    MCKernel,
+    MulticellKernel,
+    ThermalKernelMixin,
+)
 
 
-class MetropolisCriterionMixin:
+class MetropolisAcceptMixin:
     """Metropolis Criterion Mixin class.
 
     Simple mixin class impolementing the Metropolis-Hastings criterion for reause in
@@ -43,7 +49,7 @@ class MetropolisCriterionMixin:
         return self.trace.accepted
 
 
-class Metropolis(MetropolisCriterionMixin, ThermalKernelMixin, MCKernel):
+class Metropolis(MetropolisAcceptMixin, ThermalKernelMixin, MCKernel):
     """A Metropolis-Hastings kernel.
 
     The classic and nothing but the classic.
@@ -89,6 +95,64 @@ class Metropolis(MetropolisCriterionMixin, ThermalKernelMixin, MCKernel):
             seed=seed,
             bias_type=bias_type,
             bias_kwargs=bias_kwargs,
+            **kwargs
+        )
+
+
+class MulticellMetropolis(MetropolisAcceptMixin, ThermalKernelMixin, MulticellKernel):
+    """A Multicell Metropolis Hastings kernel.
+
+    This is useful for example when one wants to sample over different supercell shapes,
+    i.e. for generating special quasi-random structures.
+
+    The ensembles in all kernels must have supercells of the same size, only the shape
+    can change. All ensembles must be created from the same Hamiltonian. And all kernels
+    must be of the same kind.
+
+    There is no requirement for the individual kernels to have the same step type, bias,
+    or any other setup parameter, which allows very flexible sampling strategies.
+    However, users are responsible for ensuring that the overall sampling strategy is
+    correct! (i.e. satisfies balance or detailed balance).
+    """
+
+    valid_mcushers = ALL_MCUSHERS
+    valid_bias = None
+
+    def __init__(
+        self,
+        mckernels,
+        temperature,
+        kernel_probabilities=None,
+        kernel_hop_periods=1,
+        kernel_hop_probabilities=None,
+        seed=None,
+        **kwargs
+    ):
+        """Initialize MCKernel.
+
+        Args:
+            mckernels (list of MCKernels):
+                a list of MCKernels instances to obtain the features and parameters
+                used in computing log probabilities.
+            temperature (float):
+                Temperature that kernel hops are attempted at.
+            seed (int): optional
+                non-negative integer to seed the PRNG
+            kernel_probabilities (Sequence of floats): optional
+                Probability for choosing each of the supplied kernels
+            kernel_hop_periods (int or Sequence of ints): optional
+                number of steps between kernel hop attempts.
+            kernel_hop_probabilities (Sequence of floats): optional
+                probabilities for choosing each of the specified hop periods.
+        """
+        # order of arguments here matters based on the MRO, temperature must be first
+        super().__init__(
+            temperature,
+            mckernels,
+            kernel_probabilities=kernel_probabilities,
+            kernel_hop_periods=kernel_hop_periods,
+            kernel_hop_probabilities=kernel_hop_probabilities,
+            seed=seed,
             **kwargs
         )
 
