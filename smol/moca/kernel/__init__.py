@@ -6,11 +6,17 @@ to generate states for sampling an MCMC chain.
 
 from smol._utils import class_name_from_str, derived_class_factory
 from smol.moca.kernel._base import MCKernelInterface
-from smol.moca.kernel.metropolis import Metropolis
+from smol.moca.kernel.metropolis import Metropolis, MulticellMetropolis
 from smol.moca.kernel.random import UniformlyRandom
 from smol.moca.kernel.wanglandau import WangLandau
 
-__all__ = ["Metropolis", "WangLandau", "UniformlyRandom", "mckernel_factory"]
+__all__ = [
+    "Metropolis",
+    "MulticellMetropolis",
+    "WangLandau",
+    "UniformlyRandom",
+    "mckernel_factory",
+]
 
 
 def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):

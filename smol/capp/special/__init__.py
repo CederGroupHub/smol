@@ -5,5 +5,3 @@ Special structures include the following:
 - Special quasi-ordered structures (SQoS)
 - Small set of ordered structures (SSOS)
 """
-
-__author__ = "Luis Barroso-Luque"

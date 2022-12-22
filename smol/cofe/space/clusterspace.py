@@ -232,7 +232,7 @@ class ClusterSubspace(MSONable):
                 of the box
             use_concentration (bool):
                 if True, the concentrations in the prim structure sites will be
-                used to orthormalize site bases. This gives gives a cluster
+                used to orthormalize site bases. This gives a cluster
                 subspace centered about the prim composition.
             supercell_matcher (StructureMatcher): optional
                 StructureMatcher used to find supercell matrices
