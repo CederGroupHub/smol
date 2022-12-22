@@ -3,6 +3,7 @@ import numpy.testing as npt
 import pytest
 from pymatgen.analysis.structure_matcher import StructureMatcher
 
+from smol.capp.generate.random import gen_random_occupancy, gen_random_structure
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.domain import Vacancy, get_allowed_species
 from smol.moca.processor import (
@@ -11,7 +12,7 @@ from smol.moca.processor import (
     EwaldProcessor,
 )
 from smol.moca.processor._base import Processor
-from tests.utils import assert_msonable, gen_random_occupancy, gen_random_structure
+from tests.utils import assert_msonable
 
 pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
 

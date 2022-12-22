@@ -10,7 +10,7 @@ from collections import namedtuple
 import numpy as np
 
 from smol._utils import derived_class_factory
-from smol.capp.tools import gen_supercell_matrices
+from smol.capp import enumerate_supercell_matrices
 from smol.cofe import ClusterSubspace
 from smol.moca import Ensemble, SampleContainer, Sampler
 from smol.moca.kernel import MulticellMetropolis, mckernel_factory
@@ -93,7 +93,7 @@ class SQSGenerator(ABC):
                         "supercell matrices must have determinant equal to supercell_size"
                     )
         else:
-            supercell_matrices = gen_supercell_matrices(
+            supercell_matrices = enumerate_supercell_matrices(
                 supercell_size, cluster_subspace.symmops
             )
 
@@ -373,7 +373,7 @@ class StochasticSQSGenerator(SQSGenerator):
                 )
 
         if temperatures is None:
-            temperatures = np.linspace(5.0, 0.1, 20)  # TODO benchmark this
+            temperatures = np.linspace(5.0, 0.01, 20)  # TODO benchmark this
 
         self._sampler.anneal(
             temperatures, mcmc_steps, initial_occupancies=initial_occupancies, **kwargs

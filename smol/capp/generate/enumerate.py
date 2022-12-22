@@ -1,13 +1,14 @@
-"""General tools to be used with cluster expansion and related models."""
+"""Tools for exhaustive enumeration."""
 
 __author__ = "Luis Barroso-Luque"
+
 
 import numpy as np
 
 from smol._math import yield_hermite_normal_forms
 
 
-def gen_supercell_matrices(size, symmops, tol=1e-5):
+def enumerate_supercell_matrices(size, symmops, tol=1e-5):
     """Generate all symmetrically distinct supercell matrices of a given size.
 
     Matrices are given in Hermite normal form following the following work:

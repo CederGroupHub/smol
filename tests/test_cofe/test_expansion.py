@@ -3,8 +3,9 @@ import numpy.testing as npt
 import pytest
 from sklearn.linear_model import LinearRegression, Ridge
 
+from smol.capp.generate.random import gen_random_structure
 from smol.cofe import ClusterExpansion, RegressionData
-from tests.utils import assert_msonable, gen_random_structure
+from tests.utils import assert_msonable
 
 
 @pytest.fixture(scope="module")

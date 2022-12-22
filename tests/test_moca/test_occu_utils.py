@@ -5,6 +5,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
+from smol.capp.generate.random import gen_random_occupancy
 from smol.moca._utils.occu import (
     delta_counts_from_step,
     get_dim_ids_by_sublattice,
@@ -12,7 +13,6 @@ from smol.moca._utils.occu import (
     occu_to_counts,
     occu_to_species_list,
 )
-from tests.utils import gen_random_occupancy
 
 
 @pytest.fixture(scope="module")

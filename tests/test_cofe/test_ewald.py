@@ -4,9 +4,10 @@ from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core import PeriodicSite, Structure
 
+from smol.capp.generate.random import gen_random_neutral_occupancy
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.domain import Vacancy, get_allowed_species
-from tests.utils import assert_msonable, gen_random_neutral_occupancy
+from tests.utils import assert_msonable
 
 
 def test_get_ewald_structure(ce_processor):

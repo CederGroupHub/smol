@@ -4,10 +4,10 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
+from smol.capp.generate.random import gen_random_occupancy
 from smol.moca import SampleContainer, Sampler
 from smol.moca.kernel import Metropolis
 from smol.moca.kernel.mcusher import Flip, Swap
-from tests.utils import gen_random_occupancy
 
 TEMPERATURE = 5000
 ATOL = 1e-14

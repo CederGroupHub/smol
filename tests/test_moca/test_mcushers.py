@@ -7,12 +7,12 @@ import numpy.testing as npt
 import pytest
 from pymatgen.core import Composition
 
+from smol.capp.generate.random import gen_random_neutral_occupancy, gen_random_occupancy
 from smol.cofe.space.domain import SiteSpace
 from smol.moca.kernel import mcusher
 from smol.moca.kernel._base import ALL_MCUSHERS
 from smol.moca.kernel.bias import SquareChargeBias
 from smol.moca.sublattice import Sublattice
-from tests.utils import gen_random_neutral_occupancy, gen_random_occupancy
 
 mcmcusher_classes = [getattr(mcusher, i) for i in ALL_MCUSHERS]
 num_sites = 100

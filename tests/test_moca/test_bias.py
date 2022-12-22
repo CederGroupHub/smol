@@ -6,6 +6,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
+from smol.capp.generate.random import gen_random_occupancy
 from smol.moca.composition import get_oxi_state
 from smol.moca.kernel.bias import (
     FugacityBias,
@@ -13,7 +14,6 @@ from smol.moca.kernel.bias import (
     SquareHyperplaneBias,
     mcbias_factory,
 )
-from tests.utils import gen_random_occupancy
 
 bias_classes = [FugacityBias, SquareChargeBias, SquareHyperplaneBias]
 

@@ -4,6 +4,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
+from smol.capp.generate.random import gen_random_occupancy
 from smol.cofe import ClusterExpansion, RegressionData
 from smol.moca import (
     ClusterExpansionProcessor,
@@ -11,7 +12,7 @@ from smol.moca import (
     Ensemble,
     EwaldProcessor,
 )
-from tests.utils import assert_msonable, gen_random_occupancy
+from tests.utils import assert_msonable
 
 
 @pytest.fixture

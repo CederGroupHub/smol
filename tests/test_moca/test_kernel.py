@@ -5,13 +5,13 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
+from smol.capp.generate.random import gen_random_occupancy
 from smol.constants import kB
 from smol.moca.kernel import Metropolis, UniformlyRandom, WangLandau
 from smol.moca.kernel._base import ALL_MCUSHERS, ThermalKernelMixin
 from smol.moca.kernel._trace import StepTrace, Trace
 from smol.moca.kernel.bias import FugacityBias
 from smol.moca.kernel.mcusher import Flip, Swap, TableFlip
-from tests.utils import gen_random_occupancy
 
 kernels_with_bias = [UniformlyRandom, Metropolis]
 kernels_no_bias = [WangLandau]
