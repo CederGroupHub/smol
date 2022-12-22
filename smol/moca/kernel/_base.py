@@ -79,7 +79,7 @@ class MCKernelInterface(metaclass=ABCMeta):
 
 
 class StandardSingleStepMixin(ABC):
-    """An interface class that breaks up the single_step method of a Kernel.
+    """A mixin interface class that breaks up the single_step method of a Kernel.
 
     The breakup is done using the following methods:
 

@@ -41,7 +41,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         supercell_matrix,
         target_features,
         match_weight=1.0,
-        match_tol=1e-8,
+        match_tol=1e-5,
         target_weights=None,
         **processor_kwargs
     ):
@@ -61,7 +61,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
                 Set to any number >0 to use this term. Default is 1.0. to ignore it
                 set it to zero.
             match_tol (float): optional
-                tolerance for matching features. Default is 1e-8.
+                tolerance for matching features. Default is 1e-5.
             target_weights (ndarray): optional
                 Weights for the absolute differences each feature when calculating
                 the total distance. If None, then all features are weighted equally.

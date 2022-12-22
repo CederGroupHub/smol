@@ -3,6 +3,7 @@
 __author__ = "Luis Barroso-Luque"
 
 
+import warnings
 from abc import ABC, abstractmethod
 from collections import namedtuple
 
@@ -11,6 +12,9 @@ import numpy as np
 from smol._utils import derived_class_factory
 from smol.capp.tools import gen_supercell_matrices
 from smol.cofe import ClusterSubspace
+from smol.moca import Ensemble, SampleContainer, Sampler
+from smol.moca.kernel import MulticellMetropolis, mckernel_factory
+from smol.moca.kernel._trace import Trace
 from smol.moca.processor import FeatureDistanceProcessor
 
 SQS = namedtuple("SQS", ["score", "features", "supercell_matrix", "structure"])
@@ -26,6 +30,8 @@ class SQSGenerator(ABC):
         feature_type="correlation",
         target_feature_vector=None,
         target_feature_weights=None,
+        match_weight=1.0,
+        match_tol=1e-5,
         supercell_matrices=None,
         **kwargs,
     ):
@@ -43,11 +49,16 @@ class SQSGenerator(ABC):
                 target feature vector to use for distance calculations
             target_feature_weights (ndarray): optional
                 weights for each target feature
+            match_weight (float): optional
+                weight for the in the wL term above. That is how much to weight the
+                largest diameter below which all features are matched exactly.
+                Set to any number >0 to use this term. Default is 1.0. to ignore it
+                set it to zero.
+            match_tol (float): optional
+                tolerance for matching features. Default is 1e-5.
             supercell_matrices (list of ndarray): optional
-                list of supercell matrices to use
-            **kwargs:
-                additional keyword arguments to be passed to the FeatureDistanceProcessor
-                initialization
+                list of supercell matrices to use. If None, all symmetrically distinct
+                supercell matrices are generated.
         """
         self.cluster_subspace = cluster_subspace
         self.supercell_size = supercell_size
@@ -94,7 +105,8 @@ class SQSGenerator(ABC):
                 scm,
                 target_feature_vector=target_feature_vector,
                 target_feature_weights=target_feature_weights,
-                **kwargs,
+                match_weight=match_weight,
+                match_tol=match_tol,
             )
             for scm in supercell_matrices
         ]
@@ -111,6 +123,8 @@ class SQSGenerator(ABC):
         feature_type="correlation",
         target_feature_vector=None,
         target_feature_weights=None,
+        match_weight=1.0,
+        match_tol=1e-5,
         supercell_matrices=None,
         **kwargs,
     ):
@@ -140,11 +154,18 @@ class SQSGenerator(ABC):
                 target feature vector to use for distance calculations
             target_feature_weights (ndarray): optional
                 weights for each target feature
+            match_weight (float): optional
+                weight for the in the wL term above. That is how much to weight the
+                largest diameter below which all features are matched exactly.
+                Set to any number >0 to use this term. Default is 1.0. to ignore it
+                set it to zero.
+            match_tol (float): optional
+                tolerance for matching features. Default is 1e-5.
             supercell_matrices (list of ndarray): optional
-                list of supercell matrices to use
+                list of supercell matrices to use. If None, all symmetrically distinct
+                supercell matrices are generated.
             **kwargs:
-                additional keyword arguments to be passed to the FeatureDistanceProcessor
-                initialization
+                additional keyword arguments specific to the SQSGenerator
 
         Returns:
             SQSGenerator
@@ -162,6 +183,8 @@ class SQSGenerator(ABC):
             feature_type=feature_type,
             target_feature_vector=target_feature_vector,
             target_feature_weights=target_feature_weights,
+            match_weight=match_weight,
+            match_tol=match_tol,
             supercell_matrices=supercell_matrices,
             **kwargs,
         )
@@ -216,5 +239,180 @@ class SQSGenerator(ABC):
         return
 
 
-# class StochasticSQSGenerator(SQSGenerator):
-#    pass
+class StochasticSQSGenerator(SQSGenerator):
+    """StochasticSQSGenertor class.
+
+    Generate special quasirandom structures using simulated annealing, based on the
+    following work
+
+    https://doi.org/10.1016/j.calphad.2013.06.006
+    """
+
+    def __init__(
+        self,
+        cluster_subspace,
+        supercell_size,
+        feature_type="correlation",
+        target_feature_vector=None,
+        target_feature_weights=None,
+        match_weight=1.0,
+        match_tol=1e-5,
+        supercell_matrices=None,
+        kernel_kwargs=None,
+        **kwargs,
+    ):
+        """Initialize StochasticSQSGenerator.
+
+        Args:
+            cluster_subspace (ClusterSubspace):
+                cluster subspace used to determine features
+            supercell_size (int):
+                size of the supercell in multiples of the primitive cell
+            feature_type (str): optional
+                type of features to be used to determine SQS.
+                options are: "correlation"
+            target_feature_vector (ndarray): optional
+                target feature vector to use for distance calculations
+            target_feature_weights (ndarray): optional
+                weights for each target feature
+            match_weight (float): optional
+                weight for the in the wL term above. That is how much to weight the
+                largest diameter below which all features are matched exactly.
+                Set to any number >0 to use this term. Default is 1.0. to ignore it
+                set it to zero.
+            match_tol (float): optional
+                tolerance for matching features. Default is 1e-5.
+            supercell_matrices (list of ndarray): optional
+                list of supercell matrices to use. If None, all symmetrically distinct
+                supercell matrices are generated.
+            kernel_kwargs (dict): optional
+                keyword arguments for the transition kernel used in each supercell.
+                For example see the documentation for :class:`Metropolis` kernel.
+            **kwargs:
+                keyword arguments used to initialize the :class:`MulticellMetropolis`
+                kernel to be used for the simulated annealing.
+        """
+        super().__init__(
+            cluster_subspace,
+            supercell_size,
+            feature_type,
+            target_feature_vector,
+            target_feature_weights,
+            match_weight,
+            match_tol,
+            supercell_matrices,
+        )
+        step_type = kwargs.pop("step_type", "swap")
+        temperature = kwargs.pop("temperature", np.inf)
+
+        if step_type != "swap":
+            warnings.warn(
+                f"Step type {step_type} was provided.\n Swap steps are recommended, make sure this is what you want.",
+                UserWarning,
+            )
+
+        kernels = [
+            mckernel_factory(
+                "metropolis",
+                Ensemble(processor),
+                step_type,
+                temperature=temperature,
+                **kernel_kwargs,
+            )
+            for processor in self._processors
+        ]
+        for kernel in kernels:
+            kernel.kB = 1.0  # set kB to 1.0 units
+        self._kernel = MulticellMetropolis(kernels, temperature=temperature, **kwargs)
+
+        # get a trial trace to initialize sample container trace
+        _trace = self._kernel.compute_initial_trace(
+            np.zeros(kernels[0].ensemble.num_sites, dtype=int)
+        )
+        sample_trace = Trace(
+            **{
+                name: np.empty((0, 1, *value.shape), dtype=value.dtype)
+                for name, value in _trace.items()
+            }
+        )
+        # TODO refactor sample container to accept tuple of sublattices and just take the ensemble
+        container = SampleContainer(
+            kernels[0].ensemble.sublattices,
+            kernels[0].natural_parameters,
+            kernels[0].ensemble.num_energy_coefs,
+            sample_trace,
+        )
+        self._sampler = Sampler(self._kernel, container)
+
+    def generate(
+        self, mcmc_steps, initial_occupancies=None, temperatures=None, **kwargs
+    ):
+        """Generate a SQS structures.
+
+        Args:
+            mcmc_steps (int):
+                number of mcmc steps per temperature to perfurm simulated annealing
+            initial_occupancies (ndarray): optional
+                initial occupancies to use in the simulated anneal search, an occupancy
+                must be given for each of the supercell shapes, and these occupancies
+                must have the correct compositions.
+            temperatures (list of float): optional
+                temperatures to use for the mcmc steps, temperatures are unitless
+                the recommended range should be only single digits.
+            **kwargs:
+                additional keyword arguments for the simulated annealing. See the anneal
+                method in the :class:`Sampler`.
+        """
+        if initial_occupancies is None and self._sampler.samples.num_samples == 0:
+            initial_occupancies = self._get_initial_occupancies()
+        elif initial_occupancies is not None:
+            shape = (len(self._processors), self._kernel.ensemble._num_sites)
+            if initial_occupancies.shape != shape:
+                raise ValueError(
+                    f"initial occupancies must be of shape {shape}, got {initial_occupancies.shape}"
+                )
+
+        if temperatures is None:
+            temperatures = np.linspace(5.0, 0.1, 20)  # TODO benchmark this
+
+        self._sampler.anneal(
+            temperatures, mcmc_steps, initial_occupancies=initial_occupancies, **kwargs
+        )
+
+    def get_best_sqs(
+        self, num_structures=1, remove_duplicates=True, reduction_algorithm=None
+    ):
+        """Get the best SQS structures.
+
+        generate method must be called, otherwise no SQS will be returned.
+
+        Args:
+            num_structures (int): optional
+                number of structures to return
+            remove_duplicates (bool): optional
+                whether to remove duplicate structures
+            reduction_algorithm (callable): optional
+                function to reduce the number of structures returned
+                should take a list of SQS structures and return a list of SQS structures
+
+        Returns:
+            list of SQS : list ranked by SQS score
+        """
+        if num_structures > self.num_structures:
+            raise ValueError(
+                f"num_structures must be less than or equal to the total number of "
+                f"structures generated {self.num_structures}."
+            )
+        return
+
+    def _get_initial_occupancies(self):
+        """Get initial occupancies for the simulated annealing.
+
+        Gets initial occupances for each supercell shape at the composition of the
+        distordered structure in the given cluster subspace.
+
+        Returns:
+            ndarray of occupancies
+        """
+        # TODO write a generate_random_occu at composition in the tools module
+        return
