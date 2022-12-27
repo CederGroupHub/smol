@@ -3,7 +3,10 @@ import numpy.testing as npt
 import pytest
 from pymatgen.analysis.structure_matcher import StructureMatcher
 
-from smol.capp.generate.random import gen_random_occupancy, gen_random_structure
+from smol.capp.generate.random import (
+    _gen_unconstrained_ordered_occu,
+    gen_random_ordered_structure,
+)
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.domain import Vacancy, get_allowed_species
 from smol.moca.processor import (
@@ -49,7 +52,7 @@ def ewald_processor(cluster_subspace, rng, request):
 # me figure out a clean way to parametrize with parametrized fixtures or use a
 # fixture union from pytest_cases that works.
 def test_encode_decode_property(composite_processor):
-    occu = gen_random_occupancy(composite_processor.get_sublattices())
+    occu = _gen_unconstrained_ordered_occu(composite_processor.get_sublattices())
     decoccu = composite_processor.decode_occupancy(occu)
     for species, space in zip(decoccu, composite_processor.allowed_species):
         assert species in space
@@ -91,7 +94,7 @@ def test_get_average_drift(composite_processor):
 
 def test_compute_property_change(composite_processor, rng):
     sublattices = composite_processor.get_sublattices()
-    occu = gen_random_occupancy(sublattices)
+    occu = _gen_unconstrained_ordered_occu(sublattices)
     active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
 
     for _ in range(100):
@@ -114,7 +117,7 @@ def test_compute_property_change(composite_processor, rng):
 def test_structure_occupancy_conversion(ce_processor):
     sm = StructureMatcher()
     for _ in range(10):
-        s_init = gen_random_structure(
+        s_init = gen_random_ordered_structure(
             ce_processor.cluster_subspace.structure, size=ce_processor.supercell_matrix
         )
         s_init = s_init.get_sorted_structure()
@@ -141,7 +144,7 @@ def test_structure_occupancy_conversion(ce_processor):
 
 def test_compute_feature_change(composite_processor, rng):
     sublattices = composite_processor.get_sublattices()
-    occu = gen_random_occupancy(sublattices)
+    occu = _gen_unconstrained_ordered_occu(sublattices)
     active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
     composite_processor.cluster_subspace.change_site_bases("indicator")
 
@@ -163,7 +166,7 @@ def test_compute_feature_change(composite_processor, rng):
 
 
 def test_compute_property(composite_processor):
-    occu = gen_random_occupancy(composite_processor.get_sublattices())
+    occu = _gen_unconstrained_ordered_occu(composite_processor.get_sublattices())
     struct = composite_processor.structure_from_occupancy(occu)
     pred = np.dot(
         composite_processor.coefs,
@@ -173,7 +176,7 @@ def test_compute_property(composite_processor):
 
 
 def test_msonable(composite_processor):
-    occu = gen_random_occupancy(composite_processor.get_sublattices())
+    occu = _gen_unconstrained_ordered_occu(composite_processor.get_sublattices())
     d = composite_processor.as_dict()
     pr = Processor.from_dict(d)
     assert composite_processor.compute_property(occu) == pr.compute_property(occu)
@@ -185,7 +188,7 @@ def test_msonable(composite_processor):
 
 # ClusterExpansionProcessor only tests
 def test_compute_feature_vector(ce_processor):
-    occu = gen_random_occupancy(ce_processor.get_sublattices())
+    occu = _gen_unconstrained_ordered_occu(ce_processor.get_sublattices())
     struct = ce_processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
     npt.assert_allclose(

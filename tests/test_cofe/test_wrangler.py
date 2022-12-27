@@ -5,7 +5,7 @@ import numpy.testing as npt
 import pytest
 from pymatgen.entries.computed_entries import ComputedStructureEntry
 
-from smol.capp.generate.random import gen_random_structure
+from smol.capp.generate.random import gen_random_ordered_structure
 from smol.cofe import StructureWrangler
 from smol.cofe.extern import EwaldTerm
 from tests.utils import assert_msonable, gen_fake_training_data
@@ -21,7 +21,7 @@ def test_add_data(structure_wrangler, rng):
         structure_wrangler.cluster_subspace.structure, rng=rng
     ):
         structure_wrangler.add_entry(entry, weights={"random": 2.0})
-    struct = gen_random_structure(structure_wrangler.cluster_subspace.structure)
+    struct = gen_random_ordered_structure(structure_wrangler.cluster_subspace.structure)
     energy = -len(struct) * rng.random()
     structure_wrangler.add_entry(
         ComputedStructureEntry(

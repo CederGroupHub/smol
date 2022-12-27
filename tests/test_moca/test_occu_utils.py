@@ -5,7 +5,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
-from smol.capp.generate.random import gen_random_occupancy
+from smol.capp.generate.random import _gen_unconstrained_ordered_occu
 from smol.moca._utils.occu import (
     delta_counts_from_step,
     get_dim_ids_by_sublattice,
@@ -89,7 +89,7 @@ def test_table(sublattices, dim_ids, dim_ids_table_active, dim_ids_table_all):
 def test_occu_conversion(sublattices, dim_ids_table_all, dim_ids_table_active):
     d = sum(len(sublatt.species) for sublatt in sublattices)
     for _ in range(10):
-        occu = gen_random_occupancy(sublattices)
+        occu = _gen_unconstrained_ordered_occu(sublattices)
         list_all = occu_to_species_list(occu, d, dim_ids_table_all)
         list_active = occu_to_species_list(occu, d, dim_ids_table_active)
         n_all = occu_to_counts(occu, d, dim_ids_table_all)
@@ -112,7 +112,7 @@ def test_occu_conversion(sublattices, dim_ids_table_all, dim_ids_table_active):
 def test_delta_n(sublattices, dim_ids_table_active):
     # Test a few good steps.
     d = sum(len(sublatt.species) for sublatt in sublattices)
-    occu = gen_random_occupancy(sublattices)
+    occu = _gen_unconstrained_ordered_occu(sublattices)
     all_sites = np.arange(len(occu), dtype=int)
     activeness = np.any(dim_ids_table_active >= 0, axis=-1)
     # An active site must have at least 2 species allowed.

@@ -4,7 +4,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
-from smol.capp.generate.random import gen_random_occupancy
+from smol.capp.generate.random import _gen_unconstrained_ordered_occu
 from smol.cofe import ClusterExpansion, RegressionData
 from smol.moca import (
     ClusterExpansionProcessor,
@@ -100,7 +100,7 @@ def test_msonable(ensemble):
 
 
 def test_split_ensemble(ensemble):
-    occu = gen_random_occupancy(ensemble.sublattices)
+    occu = _gen_unconstrained_ordered_occu(ensemble.sublattices)
     for sublattice in ensemble.sublattices:
         npt.assert_array_equal(np.arange(len(sublattice.species)), sublattice.encoding)
         # ensemble must have been initialized from default.
@@ -185,7 +185,7 @@ def test_split_ensemble(ensemble):
 # Canonical Ensemble tests
 def test_compute_feature_vector_canonical(canonical_ensemble, rng):
     processor = canonical_ensemble.processor
-    occu = gen_random_occupancy(canonical_ensemble.sublattices)
+    occu = _gen_unconstrained_ordered_occu(canonical_ensemble.sublattices)
     assert np.dot(
         canonical_ensemble.natural_parameters,
         canonical_ensemble.compute_feature_vector(occu),
@@ -244,7 +244,7 @@ def test_compute_feature_vector_canonical(canonical_ensemble, rng):
 # tests for a semigrand ensemble
 def test_compute_feature_vector_sgc(semigrand_ensemble, rng):
     proc = semigrand_ensemble.processor
-    occu = gen_random_occupancy(semigrand_ensemble.sublattices)
+    occu = _gen_unconstrained_ordered_occu(semigrand_ensemble.sublattices)
     chemical_work = sum(
         semigrand_ensemble._chemical_potentials["table"][site][species]
         for site, species in enumerate(occu)

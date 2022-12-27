@@ -6,7 +6,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
-from smol.capp.generate.random import gen_random_occupancy
+from smol.capp.generate.random import _gen_unconstrained_ordered_occu
 from smol.moca.composition import get_oxi_state
 from smol.moca.kernel.bias import (
     FugacityBias,
@@ -36,7 +36,7 @@ def mcbias(all_sublattices, request):
 
 def test_compute_bias_change(mcbias):
     step = []
-    occu = gen_random_occupancy(mcbias.sublattices)
+    occu = _gen_unconstrained_ordered_occu(mcbias.sublattices)
     new_occu = occu.copy()
     rng = np.random.default_rng()
     for _ in range(50):
@@ -132,7 +132,7 @@ def test_charge_bias(square_charge_bias):
         )
     # Bias should be implemented as negative.
     for _ in range(100):
-        occu = gen_random_occupancy(square_charge_bias.sublattices)
+        occu = _gen_unconstrained_ordered_occu(square_charge_bias.sublattices)
         assert square_charge_bias.compute_bias(occu) <= 1e-6
 
 
@@ -148,5 +148,5 @@ def square_comp_bias(all_sublattices):
 def test_comp_bias(square_comp_bias):
     # Bias should be implemented as negative.
     for _ in range(100):
-        occu = gen_random_occupancy(square_comp_bias.sublattices)
+        occu = _gen_unconstrained_ordered_occu(square_comp_bias.sublattices)
         assert square_comp_bias.compute_bias(occu) <= 1e-6

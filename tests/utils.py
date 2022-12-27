@@ -10,7 +10,7 @@ import numpy.testing as npt
 from monty.json import MontyDecoder, MSONable
 from pymatgen.entries.computed_entries import ComputedStructureEntry
 
-from smol.capp.generate.random import gen_random_structure
+from smol.capp.generate.random import gen_random_ordered_structure
 
 
 def assert_table_set_equal(a1, a2):
@@ -50,7 +50,9 @@ def gen_fake_training_data(prim_structure, n=10, rng=None):
     rng = np.random.default_rng(rng)
     training_data = []
     for energy in rng.random(n):
-        struct = gen_random_structure(prim_structure, size=rng.integers(2, 6), rng=rng)
+        struct = gen_random_ordered_structure(
+            prim_structure, size=rng.integers(2, 6), rng=rng
+        )
         energy *= -len(struct)
         training_data.append(ComputedStructureEntry(struct, energy))
     return training_data

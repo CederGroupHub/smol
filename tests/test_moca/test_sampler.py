@@ -4,7 +4,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
-from smol.capp.generate.random import gen_random_occupancy
+from smol.capp.generate.random import _gen_unconstrained_ordered_occu
 from smol.moca import SampleContainer, Sampler
 from smol.moca.kernel import Metropolis
 from smol.moca.kernel.mcusher import Flip, Swap
@@ -38,7 +38,7 @@ def test_from_ensemble(sampler):
 def test_sample(sampler, thin):
     occu = np.vstack(
         [
-            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices)
+            _gen_unconstrained_ordered_occu(sampler.mckernels[0]._usher.sublattices)
             for _ in range(sampler.samples.shape[0])
         ]
     )
@@ -56,7 +56,7 @@ def test_sample(sampler, thin):
 def test_run(sampler, thin, rng):
     occu = np.vstack(
         [
-            gen_random_occupancy(kernel._usher.sublattices)
+            _gen_unconstrained_ordered_occu(kernel._usher.sublattices)
             for kernel in sampler.mckernels
         ]
     )
@@ -87,7 +87,7 @@ def test_anneal(sampler, tmpdir):
     temperatures = np.linspace(2000, 500, 5)
     occu = np.vstack(
         [
-            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices)
+            _gen_unconstrained_ordered_occu(sampler.mckernels[0]._usher.sublattices)
             for _ in range(sampler.samples.shape[0])
         ]
     )
@@ -157,5 +157,5 @@ for sp in expected.keys():
 
 def test_reshape_occu(ensemble):
     sampler = Sampler.from_ensemble(ensemble, temperature=TEMPERATURE)
-    occu = gen_random_occupancy(ensemble.sublattices)
+    occu = _gen_unconstrained_ordered_occu(ensemble.sublattices)
     assert sampler._reshape_occu(occu).shape == (1, len(occu))

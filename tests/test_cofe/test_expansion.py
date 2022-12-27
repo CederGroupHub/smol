@@ -3,7 +3,7 @@ import numpy.testing as npt
 import pytest
 from sklearn.linear_model import LinearRegression, Ridge
 
-from smol.capp.generate.random import gen_random_structure
+from smol.capp.generate.random import gen_random_ordered_structure
 from smol.cofe import ClusterExpansion, RegressionData
 from tests.utils import assert_msonable
 
@@ -15,7 +15,7 @@ def cluster_expansion(cluster_subspace, rng):
     feat_matrix = np.empty((n, len(cluster_subspace)))
     structures = []
     for i in range(n):
-        structure = gen_random_structure(
+        structure = gen_random_ordered_structure(
             cluster_subspace.structure, size=rng.integers(2, 5)
         )
         structures.append(structure)
@@ -66,7 +66,7 @@ def test_predict(cluster_expansion, rng):
     scmatrix[0, 1] = 2  # Intentionally made less symmetric
     scmatrix[1, 2] = 1
     N = np.abs(np.linalg.det(scmatrix))
-    pool = [gen_random_structure(prim, scmatrix) for _ in range(100)]
+    pool = [gen_random_ordered_structure(prim, scmatrix) for _ in range(100)]
     feature_matrix = np.array(
         [
             subspace.corr_from_structure(s, scmatrix=scmatrix, normalized=True)

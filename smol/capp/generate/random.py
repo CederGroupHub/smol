@@ -6,10 +6,39 @@ __author__ = "Luis Barroso-Luque, Fengyu Xie"
 import numpy as np
 from pymatgen.core import Composition, Element
 
-from smol.cofe.space import Vacancy
+from smol.cofe.space.domain import Vacancy
 
 
-def gen_random_occupancy(sublattices, rng=None):
+def gen_random_ordered_occupancy(
+    sublattices, composition=None, charge_neutral=False, rng=None
+):
+    """Generate a random encoded occupancy according to a list of sublattices.
+
+    Args:
+        sublattices (Sequence of Sublattice):
+            A sequence of sublattices
+        composition (Composition): optional
+            A pymatgen Compositions that the generated occupancy should be.
+        charge_neutral (bool): optional
+            If True, the generated occupancy will be charge neutral. Oxidation states
+            must be present in sublattices, if a composition is given this option is
+            ignored.
+        rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}
+            A RNG, seed or otherwise to initialize defauly_rng
+
+    Returns:
+        ndarray: encoded occupancy
+    """
+    if composition is None:
+        if charge_neutral:
+            return _gen_neutral_occu(sublattices, rng=rng)
+        else:
+            return _gen_unconstrained_ordered_occu(sublattices, rng=rng)
+    else:
+        return _gen_composition_ordered_occu(sublattices, composition, rng=rng)
+
+
+def _gen_unconstrained_ordered_occu(sublattices, rng=None):
     """Generate a random encoded occupancy according to a list of sublattices.
 
     Args:
@@ -31,7 +60,7 @@ def gen_random_occupancy(sublattices, rng=None):
     return rand_occu
 
 
-def gen_random_neutral_occupancy(sublattices, lam=10, rng=None):
+def _gen_neutral_occu(sublattices, lam=10, rng=None):
     """Generate a random encoded occupancy according to a list of sublattices.
 
     Args:
@@ -74,7 +103,7 @@ def gen_random_neutral_occupancy(sublattices, lam=10, rng=None):
         else:
             return occu.copy(), C
 
-    occu = gen_random_occupancy(sublattices)
+    occu = _gen_unconstrained_ordered_occu(sublattices)
     for _ in range(10000):
         occu, C = flip(occu, sublattices, lam=lam)
         if C == 0:
@@ -83,7 +112,42 @@ def gen_random_neutral_occupancy(sublattices, lam=10, rng=None):
     raise TimeoutError("Can not generate a neutral occupancy in 10000 flips!")
 
 
-def gen_random_structure(prim, size=3, rng=None):
+def _gen_composition_ordered_occu(sublattices, composition, rng=None):
+    """Generate a random occupancy satisfying a given composition.
+
+    Args:
+        sublattices (Sequence of Sublattice):
+            A sequence of sublattices
+        composition (Composition): optional
+            A pymatgen Compositions that the generated occupancy should be.
+        rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}
+            A RNG, seed or otherwise to initialize defauly_rng
+
+    Returns:
+        ndarray: encoded occupancy
+    """
+    return
+
+
+def _composition_compatiblity(sublattices, composition):
+    """Check if a composition is compatible with a list of sublattices.
+
+    Args:
+        sublattices (Sequence of Sublattice):
+            A sequence of sublattices
+        composition (Composition): optional
+            A pymatgen Compositions that the generated occupancy should be.
+
+    Returns:
+        bool: True if compatible, False otherwise.
+    """
+    if composition.num_atoms > 1.0:  # turn into a fractional composition
+        composition = composition.frac_composition
+
+    return
+
+
+def gen_random_ordered_structure(prim, size=3, rng=None):
     """Generate an random ordered structure from a disordered prim.
 
     Args:

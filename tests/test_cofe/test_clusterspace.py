@@ -12,7 +12,7 @@ from pymatgen.core import Species, Structure
 from pymatgen.util.coord import is_coord_subset_pbc
 
 from smol._exceptions import StructureMatchError
-from smol.capp.generate.random import gen_random_structure
+from smol.capp.generate.random import gen_random_ordered_structure
 from smol.cofe import ClusterSubspace, PottsSubspace
 from smol.cofe.space.clusterspace import get_complete_mapping, invert_mapping
 from smol.cofe.space.constants import SITE_TOL
@@ -127,7 +127,7 @@ def test_site_bases(cluster_subspace, basis_name, orthonormal):
         assert subspace.basis_orthogonal
         assert subspace.basis_orthonormal
 
-    structure = gen_random_structure(subspace.structure)
+    structure = gen_random_ordered_structure(subspace.structure)
     if cluster_subspace.basis_type == subspace.basis_type and not orthonormal:
         npt.assert_array_almost_equal(
             subspace.corr_from_structure(structure),
@@ -169,7 +169,7 @@ def test_supercell_matrix_from_structure(cluster_subspace, rng):
 def test_refine_structure(cluster_subspace, rng):
     supercell = cluster_subspace.structure.copy()
     supercell.make_supercell(3)
-    structure = gen_random_structure(cluster_subspace.structure, size=3)
+    structure = gen_random_ordered_structure(cluster_subspace.structure, size=3)
     structure.apply_strain(rng.uniform(-0.01, 0.01, size=3))
 
     #  TODO this sometimes fails because sc_matrix is not found!!!
@@ -217,7 +217,7 @@ def test_remove_orbits(cluster_subspace, rng):
         for i in range(len(cluster_subspace))
         if cluster_subspace.function_orbit_ids[i] not in ids_to_remove
     ]
-    structure = gen_random_structure(subspace.structure, size=2)
+    structure = gen_random_ordered_structure(subspace.structure, size=2)
     npt.assert_allclose(
         cluster_subspace.corr_from_structure(structure)[corr_inds],
         subspace.corr_from_structure(structure),
@@ -249,7 +249,7 @@ def test_remove_corr_functions(cluster_subspace, rng):
     )
 
     corr_inds = [i for i in range(len(cluster_subspace)) if i not in ids_to_remove]
-    structure = gen_random_structure(subspace.structure, size=2)
+    structure = gen_random_ordered_structure(subspace.structure, size=2)
     npt.assert_allclose(
         cluster_subspace.corr_from_structure(structure)[corr_inds],
         subspace.corr_from_structure(structure),
@@ -311,7 +311,7 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
         return corr
 
     structures = [
-        gen_random_structure(cluster_subspace.structure, size=supercell_matrix)
+        gen_random_ordered_structure(cluster_subspace.structure, size=supercell_matrix)
         for _ in range(10)
     ]
     matrix2 = np.array([[0, 1, 0], [0, 0, 1], [1, 0, 0]]) @ np.array(
@@ -444,7 +444,7 @@ def test_get_aliased_orbits(cluster_subspace, supercell_matrix):
 
 
 def test_periodicity_and_symmetry(cluster_subspace, supercell_matrix):
-    structure = gen_random_structure(cluster_subspace.structure, size=2)
+    structure = gen_random_ordered_structure(cluster_subspace.structure, size=2)
     larger_structure = structure.copy()
     larger_structure.make_supercell(supercell_matrix)
 
@@ -514,7 +514,7 @@ def test_msonable(cluster_subspace_ewald, rng):
 
     for _ in range(2):
         size = rng.integers(1, 4)
-        s = gen_random_structure(cluster_subspace_ewald.structure, size=size)
+        s = gen_random_ordered_structure(cluster_subspace_ewald.structure, size=size)
         _ = cluster_subspace_ewald.corr_from_structure(s)
 
     assert_msonable(cluster_subspace_ewald)

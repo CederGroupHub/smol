@@ -7,7 +7,7 @@ import numpy.testing as npt
 import pytest
 from pymatgen.core import Composition
 
-from smol.capp.generate.random import gen_random_neutral_occupancy, gen_random_occupancy
+from smol.capp.generate.random import _gen_neutral_occu, _gen_unconstrained_ordered_occu
 from smol.cofe.space.domain import SiteSpace
 from smol.moca.kernel import mcusher
 from smol.moca.kernel._base import ALL_MCUSHERS
@@ -55,16 +55,14 @@ def all_sublattices_lmtpo():  # Do a test on sampling probabilities.
 @pytest.fixture
 def rand_occu(all_sublattices):
     # generate a random occupancy according to the sublattices
-    occu = gen_random_occupancy(all_sublattices[0] + all_sublattices[1])
+    occu = _gen_unconstrained_ordered_occu(all_sublattices[0] + all_sublattices[1])
     return occu, all_sublattices[1][0].sites  # return indices of fixed sites
 
 
 @pytest.fixture
 def rand_occu_lmtpo(all_sublattices_lmtpo):
     # generate a random occupancy according to the sublattices
-    occu = gen_random_neutral_occupancy(
-        all_sublattices_lmtpo[0] + all_sublattices_lmtpo[1]
-    )
+    occu = _gen_neutral_occu(all_sublattices_lmtpo[0] + all_sublattices_lmtpo[1])
     return occu, []  # return indices of fixed sites
 
 

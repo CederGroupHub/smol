@@ -5,7 +5,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
-from smol.capp.generate.random import gen_random_occupancy
+from smol.capp.generate.random import _gen_unconstrained_ordered_occu
 from smol.constants import kB
 from smol.moca.kernel import Metropolis, UniformlyRandom, WangLandau
 from smol.moca.kernel._base import ALL_MCUSHERS, ThermalKernelMixin
@@ -80,9 +80,9 @@ def test_constructor(ensemble, step_type, mcusher):
 
 
 def test_single_step(mckernel):
-    mckernel.set_aux_state(gen_random_occupancy(mckernel._usher.sublattices))
+    mckernel.set_aux_state(_gen_unconstrained_ordered_occu(mckernel._usher.sublattices))
     for _ in range(100):
-        occu_ = gen_random_occupancy(mckernel._usher.sublattices)
+        occu_ = _gen_unconstrained_ordered_occu(mckernel._usher.sublattices)
         trace = mckernel.single_step(occu_.copy())
 
         if trace.accepted:
@@ -103,9 +103,11 @@ def test_single_step(mckernel):
 
 
 def test_single_step_bias(mckernel_bias):
-    mckernel_bias.set_aux_state(gen_random_occupancy(mckernel_bias._usher.sublattices))
+    mckernel_bias.set_aux_state(
+        _gen_unconstrained_ordered_occu(mckernel_bias._usher.sublattices)
+    )
     for _ in range(100):
-        occu = gen_random_occupancy(mckernel_bias._usher.sublattices)
+        occu = _gen_unconstrained_ordered_occu(mckernel_bias._usher.sublattices)
         trace = mckernel_bias.single_step(occu.copy())
         # assert delta bias is there and recorded
         assert isinstance(trace.delta_trace.bias, np.ndarray)
