@@ -12,6 +12,13 @@ Use this section to keep track of changes in the works.
 ### Removed
 ### Deprecated
 
+# [v0.2.0](https://github.com/CederGroupHub/smol/releases/tag/v0.2.0) (2022-12-11)
+### Added
+* `WangLandau` kernel class for density of states sampling. #294 @qchempku2017 & @lbluque
+* `Metadata` class to record specifications of MC simulations. #297 @lbluque
+### Fixed
+*  Remove size key when all orbits of a certain size have been removed. #292 @lbluque
+
 # [v0.1.0](https://github.com/CederGroupHub/smol/releases/tag/v0.1.0) (2022-10-20)
 ### Added
 * Charge neutral semi grand canonical sampling. #271 @qchempku2017

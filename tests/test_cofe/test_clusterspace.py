@@ -222,6 +222,12 @@ def test_remove_orbits(cluster_subspace, rng):
         subspace.corr_from_structure(structure),
     )
 
+    # remove all orbits of a certain size and make sure key is removed
+    size = rng.choice(list(subspace.orbits_by_size.keys()))
+    ids_to_remove = [o.id for o in subspace.orbits_by_size[size]]
+    subspace.remove_orbits(ids_to_remove)
+    assert size not in subspace.orbits_by_size.keys()
+
     with pytest.raises(ValueError):
         subspace.remove_orbits([-1])
     with pytest.raises(ValueError):

@@ -14,9 +14,9 @@ from collections import defaultdict
 
 import numpy as np
 from monty.dev import requires
-from monty.json import MontyDecoder, MSONable, jsanitize
+from monty.json import MontyDecoder, MontyEncoder, MSONable, jsanitize
 
-from smol.moca.sampler.kernel import Trace
+from smol.moca.sampler.namespace import Metadata, Trace
 from smol.moca.sublattice import Sublattice
 
 try:
@@ -82,7 +82,15 @@ class SampleContainer(MSONable):
         self.sublattices = sublattices
         self.natural_parameters = natural_parameters
         self._total_steps = 0
-        self.metadata = {} if sampling_metadata is None else sampling_metadata
+
+        if sampling_metadata is not None:
+            if isinstance(sampling_metadata, Metadata):
+                self.metadata = sampling_metadata
+            else:
+                self.metadata = Metadata(SampleContainer.__name__, **sampling_metadata)
+        else:
+            self.metadata = Metadata(SampleContainer.__name__)
+
         self._num_energy_coefs = num_energy_coefs
         # need counter because can't use shape of arraus when allocating space
         self._nsamples = 0
@@ -409,7 +417,7 @@ class SampleContainer(MSONable):
             "num_energy_coefs"
         ] = self._num_energy_coefs  # noqa
         backend.create_dataset(
-            "sampling_metadata", data=json.dumps(jsanitize(self.metadata))
+            "sampling_metadata", data=json.dumps(self.metadata, cls=MontyEncoder)
         )
         trace_grp = backend.create_group("trace")
         for name, value in self._trace.items():
@@ -452,7 +460,7 @@ class SampleContainer(MSONable):
             "@class": self.__class__.__name__,
             "sublattices": [s.as_dict() for s in self.sublattices],
             "natural_parameters": jsanitize(self.natural_parameters),
-            "metadata": jsanitize(self.metadata),
+            "metadata": self.metadata.as_dict(),
             "num_energy_coefs": self._num_energy_coefs,
             "total_mc_steps": self._total_steps,
             "nsamples": self._nsamples,
@@ -474,6 +482,11 @@ class SampleContainer(MSONable):
         """
         sublattices = [Sublattice.from_dict(s) for s in d["sublattices"]]
         trace = Trace(**{key: np.array(val) for key, val in d["trace"].items()})
+        d["metadata"] = MontyDecoder().process_decoded(d["metadata"])
+
+        if not isinstance(d["metadata"], Metadata):  # backwards compatibility
+            d["metadata"] = Metadata(cls.__name__, **d["metadata"])
+
         container = cls(
             sublattices,
             d["natural_parameters"],
