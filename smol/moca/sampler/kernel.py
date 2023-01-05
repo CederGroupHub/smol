@@ -66,12 +66,9 @@ class MCKernel(ABC):
                 corresponding step size.
         """
         self.natural_params = ensemble.natural_parameters
-        self.ensemble = ensemble
         self._seed = seed if seed is not None else np.random.SeedSequence().entropy
         self._rng = np.random.default_rng(self._seed)
-        self._compute_features = ensemble.compute_feature_vector
-        self._feature_change = ensemble.compute_feature_vector_change
-
+        self._ensemble = ensemble
         self.trace = StepTrace(accepted=np.array([True]))
         self._usher, self._bias = None, None
 
@@ -94,6 +91,11 @@ class MCKernel(ABC):
 
         # run a initial step to populate trace values
         _ = self.single_step(np.zeros(ensemble.num_sites, dtype=int))
+
+    @property
+    def ensemble(self):
+        """Return the ensemble instance."""
+        return self._ensemble
 
     @property
     def mcusher(self):
@@ -257,7 +259,7 @@ class UniformlyRandom(MCKernel):
         log_factor = self._usher.compute_log_priori_factor(occupancy, step)
         self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
             occupancy, step
-        )  # noqa
+        )
         self.trace.delta_trace.enthalpy = np.array(
             np.dot(self.natural_params, self.trace.delta_trace.features)
         )
@@ -309,7 +311,7 @@ class Metropolis(ThermalKernel):
         log_factor = self._usher.compute_log_priori_factor(occupancy, step)
         self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
             occupancy, step
-        )  # noqa
+        )
         self.trace.delta_trace.enthalpy = np.array(
             np.dot(self.natural_params, self.trace.delta_trace.features)
         )
@@ -520,7 +522,9 @@ class WangLandau(MCKernel):
         """
         bin_id = self._get_bin_id(self._current_enthalpy)
         step = self._usher.propose_step(occupancy)
-        self.trace.delta_trace.features = self._feature_change(occupancy, step)
+        self.trace.delta_trace.features = self.ensemble.compute_feature_vector_change(
+            occupancy, step
+        )
         self.trace.delta_trace.enthalpy = np.array(
             np.dot(self.natural_params, self.trace.delta_trace.features)
         )
@@ -618,7 +622,7 @@ class WangLandau(MCKernel):
         This is necessary for WangLandau to work properly because
         it needs to store the current enthalpy and features.
         """
-        features = np.array(self._compute_features(occupancy))
+        features = np.array(self.ensemble.compute_feature_vector(occupancy))
         enthalpy = np.dot(features, self.natural_params)
         self._current_features = features
         self._current_enthalpy = enthalpy
