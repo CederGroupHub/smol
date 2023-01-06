@@ -72,7 +72,7 @@ def test_run(sampler, thin, rng):
             np.vstack(
                 list(
                     map(
-                        sampler.mckernels[0]._compute_features,
+                        sampler.mckernels[0].ensemble.compute_feature_vector,
                         sampler.samples.get_occupancies(flat=False)[i],
                     )
                 )
