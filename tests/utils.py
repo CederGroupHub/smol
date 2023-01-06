@@ -8,9 +8,8 @@ import json
 import numpy as np
 import numpy.testing as npt
 from monty.json import MontyDecoder, MSONable
+from pymatgen.core import Composition
 from pymatgen.entries.computed_entries import ComputedStructureEntry
-
-from smol.capp.generate.random import gen_random_ordered_structure
 
 
 def assert_table_set_equal(a1, a2):
@@ -56,3 +55,25 @@ def gen_fake_training_data(prim_structure, n=10, rng=None):
         energy *= -len(struct)
         training_data.append(ComputedStructureEntry(struct, energy))
     return training_data
+
+
+def gen_random_ordered_structure(prim, size=3, rng=None):
+    """Generate an random ordered structure from a disordered prim.
+
+    Args:
+        prim (pymatgen.Structure):
+            disordered primitive structure:
+        size (optional):
+            size argument to structure.make_supercell
+        rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator},
+            A RNG, seed or otherwise to initialize defauly_rng
+
+    Returns:
+        ordered structure
+    """
+    rng = np.random.default_rng(rng)
+    structure = prim.copy()
+    structure.make_supercell(size)
+    for site in structure:
+        site.species = Composition({rng.choice(list(site.species.keys())): 1})
+    return structure

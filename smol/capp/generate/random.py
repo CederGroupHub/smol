@@ -4,7 +4,7 @@ __author__ = "Luis Barroso-Luque, Fengyu Xie"
 
 
 import numpy as np
-from pymatgen.core import Composition, Element
+from pymatgen.core import Element
 
 from smol.cofe.space.domain import Vacancy
 
@@ -145,25 +145,3 @@ def _composition_compatiblity(sublattices, composition):
         composition = composition.frac_composition
 
     return
-
-
-def gen_random_ordered_structure(prim, size=3, rng=None):
-    """Generate an random ordered structure from a disordered prim.
-
-    Args:
-        prim (pymatgen.Structure):
-            disordered primitive structure:
-        size (optional):
-            size argument to structure.make_supercell
-        rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator},
-            A RNG, seed or otherwise to initialize defauly_rng
-
-    Returns:
-        ordered structure
-    """
-    rng = np.random.default_rng(rng)
-    structure = prim.copy()
-    structure.make_supercell(size)
-    for site in structure:
-        site.species = Composition({rng.choice(list(site.species.keys())): 1})
-    return structure
