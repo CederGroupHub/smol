@@ -355,9 +355,9 @@ def test_get_matching_corr_duplicate_inds(structure_wrangler, rng):
     dup_entry = deepcopy(structure_wrangler.entries[ind])
     ind2 = rng.integers(structure_wrangler.num_structures)
     # change the structure for this one:
-    struct = rng.choice(
-        [s for s in structure_wrangler.structures if s != dup_entry.structure]
-    )
+
+    structs = [s for s in structure_wrangler.structures if s != dup_entry.structure]
+    struct = structs[rng.choice(len(structs))]
     dup_entry2 = structure_wrangler.process_entry(
         ComputedStructureEntry(struct, structure_wrangler.entries[ind2].energy),
         properties=structure_wrangler.entries[ind2].data["properties"],
