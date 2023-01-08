@@ -210,6 +210,19 @@ class SampleContainer(MSONable):
         """Get the variance of feature vector elements."""
         return self.get_feature_vectors(discard, thin_by, flat).var(axis=0)
 
+    def get_orbit_factors(self, function_orbit_ids, discard=0, thin_by=1, flat=True):
+        """Get the orbit factor vectors for samples."""
+        vals = self.natural_parameters * self.get_feature_vectors(
+            discard=discard, thin_by=thin_by, flat=flat
+        )
+        orbit_factors = np.array(
+            [
+                np.sum(vals[function_orbit_ids == i])
+                for i in range(len(self.natural_parameters))
+            ]
+        )
+        return orbit_factors
+
     def mean_composition(self, discard=0, thin_by=1, flat=True):
         """Get mean composition for all species regardless of sublattice."""
         comps = self.get_compositions(discard, thin_by, flat)

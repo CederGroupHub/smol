@@ -758,6 +758,67 @@ def test_periodicity(single_subspace):
     npt.assert_allclose(a, b)
 
 
+def test_site_basis_rotation(cluster_subspace):
+    cs = cluster_subspace.copy()
+    if not cs.basis_orthogonal:
+        with pytest.raises(RuntimeError):
+            cs.rotate_site_basis(1, np.pi / 4)
+        cs.change_site_bases("sinusoid", orthonormal=True)
+
+    with pytest.raises(ValueError):
+        cs.rotate_site_basis(len(cs.orbits_by_size[1]) + 2, np.pi)
+
+    cs1 = cs.copy()
+    print(cs.site_rotation_matrix)
+    cs1.rotate_site_basis(1, np.pi / 4)
+    print(cs1.site_rotation_matrix)
+    for i in range(5):
+        structure = gen_random_structure(cs.structure)
+        for j in range(5):
+            coefs1 = 10 * np.random.random(len(cs))
+            coefs = coefs1.copy()
+            coefs = cs1.site_rotation_matrix.T @ coefs
+            eci = coefs / cs.function_ordering_multiplicities
+            eci1 = coefs1 / cs1.function_ordering_multiplicities
+            norms = np.array(
+                [
+                    np.sum(
+                        cs.function_ordering_multiplicities[
+                            np.array(cs.function_orbit_ids) == i
+                        ]
+                        * eci[np.array(cs.function_orbit_ids) == i] ** 2
+                    )
+                    for i in range(len(cs.orbits) + 1)
+                ]
+            )
+            norms1 = np.array(
+                [
+                    np.sum(
+                        cs1.function_ordering_multiplicities[
+                            np.array(cs.function_orbit_ids) == i
+                        ]
+                        * eci1[np.array(cs1.function_orbit_ids) == i] ** 2
+                    )
+                    for i in range(len(cs.orbits) + 1)
+                ]
+            )
+            # test ECI invariance
+            assert np.allclose(norms, norms1)
+            # test correlation vector invariance
+            assert np.allclose(
+                cs1.site_rotation_matrix @ cs.corr_from_structure(structure),
+                cs1.corr_from_structure(structure),
+            )
+            # test values are the same
+            assert np.isclose(
+                np.dot(cs.corr_from_structure(structure), coefs),
+                np.dot(cs1.corr_from_structure(structure), coefs1),
+            )
+            # test rotation matrix is invertible and abs(det) = 1
+            # binary site rotations may lead to det = -1 ?
+            assert np.isclose(abs(np.linalg.det(cs1.site_rotation_matrix)), 1)
+
+
 def _encode_occu(occu, bits):
     return np.array([bit.index(sp) for sp, bit in zip(occu, bits)])
 

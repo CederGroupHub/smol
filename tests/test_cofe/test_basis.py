@@ -94,56 +94,52 @@ def test_rotate(standard_basis, rng):
             standard_basis.rotate(theta)
         return
 
-    standard_basis.rotate(theta)
     if standard_basis.is_orthogonal:
+        standard_basis.rotate(theta)
         assert standard_basis.is_orthogonal
         # if orthogonal all inner products should match!
         npt.assert_array_almost_equal(
             f_array @ f_array.T, standard_basis._f_array @ standard_basis._f_array.T
         )
-    else:
-        # if not orthogonal only vector norms should match!
         npt.assert_array_almost_equal(
-            np.diag(f_array @ f_array.T),
-            np.diag(standard_basis._f_array @ standard_basis._f_array.T),
+            standard_basis._f_array[0], np.ones(len(standard_basis.site_space))
         )
+        if len(standard_basis.site_space) == 2:  # rotation is * -1
+            npt.assert_array_almost_equal(standard_basis._f_array[1], -1 * f_array[1])
+        else:
+            npt.assert_almost_equal(
+                np.arccos(
+                    np.dot(standard_basis._f_array[1], f_array[1])
+                    / (
+                        np.linalg.norm(standard_basis._f_array[1])
+                        * np.linalg.norm(f_array[1])
+                    )
+                ),
+                theta,
+            )
+        standard_basis.rotate(-theta)
+        npt.assert_array_almost_equal(f_array, standard_basis._f_array)
+        standard_basis.orthonormalize()
+        assert standard_basis.is_orthonormal
+        standard_basis.rotate(theta)
+        assert standard_basis.is_orthonormal
 
-    npt.assert_array_almost_equal(
-        standard_basis._f_array[0], np.ones(len(standard_basis.site_space))
-    )
-    if len(standard_basis.site_space) == 2:  # rotation is * -1
-        npt.assert_array_almost_equal(standard_basis._f_array[1], -1 * f_array[1])
+        if len(standard_basis.site_space) > 2:
+            with pytest.raises(ValueError):
+                standard_basis.rotate(theta, 0, 0)
+
+            with pytest.raises(ValueError):
+                standard_basis.rotate(theta, len(standard_basis.site_space))
+            with pytest.raises(ValueError):
+                standard_basis.rotate(theta, 0, len(standard_basis.site_space))
+
+        comp = Composition((("A", 0.2), ("B", 0.2), ("C", 0.3), ("D", 0.3)))
+        b = basis.basis_factory("sinusoid", domain.SiteSpace(comp))
+        with pytest.warns(UserWarning):
+            b.rotate(theta)
     else:
-        npt.assert_almost_equal(
-            np.arccos(
-                np.dot(standard_basis._f_array[1], f_array[1])
-                / (
-                    np.linalg.norm(standard_basis._f_array[1])
-                    * np.linalg.norm(f_array[1])
-                )
-            ),
-            theta,
-        )
-    standard_basis.rotate(-theta)
-    npt.assert_array_almost_equal(f_array, standard_basis._f_array)
-    standard_basis.orthonormalize()
-    assert standard_basis.is_orthonormal
-    standard_basis.rotate(theta)
-    assert standard_basis.is_orthonormal
-
-    if len(standard_basis.site_space) > 2:
-        with pytest.raises(ValueError):
-            standard_basis.rotate(theta, 0, 0)
-
-        with pytest.raises(ValueError):
-            standard_basis.rotate(theta, len(standard_basis.site_space))
-        with pytest.raises(ValueError):
-            standard_basis.rotate(theta, 0, len(standard_basis.site_space))
-
-    comp = Composition((("A", 0.2), ("B", 0.2), ("C", 0.3), ("D", 0.3)))
-    b = basis.basis_factory("sinusoid", domain.SiteSpace(comp))
-    with pytest.warns(UserWarning):
-        b.rotate(theta)
+        with pytest.raises(RuntimeError):
+            standard_basis.rotate(theta)
 
 
 # basis specific tests

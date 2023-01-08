@@ -3,9 +3,11 @@ import numpy.testing as npt
 import pytest
 from pymatgen.analysis.structure_matcher import StructureMatcher
 
+from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.domain import Vacancy, get_allowed_species
 from smol.moca.processor import (
+    ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
     CompositeProcessor,
     EwaldProcessor,
@@ -165,7 +167,7 @@ def test_compute_property(composite_processor):
     occu = gen_random_occupancy(composite_processor.get_sublattices())
     struct = composite_processor.structure_from_occupancy(occu)
     pred = np.dot(
-        composite_processor.coefs,
+        composite_processor.raw_coefs,
         composite_processor.cluster_subspace.corr_from_structure(struct, False),
     )
     assert composite_processor.compute_property(occu) == pytest.approx(pred, abs=ATOL)
@@ -191,6 +193,31 @@ def test_compute_feature_vector(ce_processor):
         ce_processor.compute_feature_vector(occu) / ce_processor.size,
         ce_processor.cluster_subspace.corr_from_structure(struct),
     )
+
+    npt.assert_allclose(
+        ce_processor.compute_feature_vector(occu) / ce_processor.size,
+        ce_processor.cluster_subspace.corr_from_structure(struct),
+    )
+
+
+# orbit decomp processor
+def test_compute_orbit_factors(cluster_subspace):
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
+    scmatrix = 3 * np.eye(3)
+    expansion = ClusterExpansion(cluster_subspace, coefs)
+    processor = ClusterDecompositionProcessor(
+        cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
+    )
+    occu = gen_random_occupancy(processor.get_sublattices())
+    struct = processor.structure_from_occupancy(occu)
+    # same as normalize=False in corr_from_structure
+    proc_interactions = processor.compute_feature_vector(occu) / processor.size
+    exp_interactions = expansion.compute_cluster_interactions(struct)
+    npt.assert_allclose(proc_interactions, exp_interactions)
+    pred_energy = expansion.predict(struct, normalize=True)
+    assert sum(
+        cluster_subspace.orbit_multiplicities * proc_interactions
+    ) == pytest.approx(pred_energy)
 
 
 def test_bad_coef_length(cluster_subspace, rng):
