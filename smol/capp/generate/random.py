@@ -1,41 +1,48 @@
-"""Tools for generation of fully random occupancies and structures."""
+"""Tools for generation of fully random occupancies."""
 
 __author__ = "Luis Barroso-Luque, Fengyu Xie"
 
+from collections import defaultdict
 
 import numpy as np
-from pymatgen.core import Element
+from pymatgen.core import Composition, Element
 
 from smol.cofe.space.domain import Vacancy
 
 
 def gen_random_ordered_occupancy(
-    sublattices, composition=None, charge_neutral=False, rng=None
+    processor, composition=None, charge_neutral=False, tol=1e-6, rng=None
 ):
     """Generate a random encoded occupancy according to a list of sublattices.
 
     Args:
-        sublattices (Sequence of Sublattice):
-            A sequence of sublattices
+        processor (Processor):
+            A processor object that represents the supercell space.
         composition (Composition): optional
             A pymatgen Compositions that the generated occupancy should be.
         charge_neutral (bool): optional
             If True, the generated occupancy will be charge neutral. Oxidation states
             must be present in sublattices, if a composition is given this option is
             ignored.
+        tol (float): optional
+            Tolerance for the composition check, only used if a composition is given.
         rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}
             A RNG, seed or otherwise to initialize defauly_rng
 
     Returns:
         ndarray: encoded occupancy
     """
+    sublattices = processor.get_sublattices()
+
     if composition is None:
         if charge_neutral:
-            return _gen_neutral_occu(sublattices, rng=rng)
+            occu = _gen_neutral_occu(sublattices, rng=rng)
         else:
-            return _gen_unconstrained_ordered_occu(sublattices, rng=rng)
+            occu = _gen_unconstrained_ordered_occu(sublattices, rng=rng)
     else:
-        return _gen_composition_ordered_occu(sublattices, composition, rng=rng)
+        occu = _gen_composition_ordered_occu(sublattices, composition, tol, rng=rng)
+
+    return processor.decode_occupancy(occu)
 
 
 def _gen_unconstrained_ordered_occu(sublattices, rng=None):
@@ -60,12 +67,16 @@ def _gen_unconstrained_ordered_occu(sublattices, rng=None):
     return rand_occu
 
 
-def _gen_neutral_occu(sublattices, lam=10, rng=None):
+def _gen_neutral_occu(sublattices, lam=10, num_attempts=10000, rng=None):
     """Generate a random encoded occupancy according to a list of sublattices.
 
     Args:
         sublattices (Sequence of Sublattice):
             A sequence of sublattices
+        lam (float): optional
+            TODO explanation...
+        num_attempts (int): optional
+            number of flip attempts to generate occupancy.
         rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator},
             A RNG, seed or otherwise to initialize defauly_rng
 
@@ -104,15 +115,17 @@ def _gen_neutral_occu(sublattices, lam=10, rng=None):
             return occu.copy(), C
 
     occu = _gen_unconstrained_ordered_occu(sublattices)
-    for _ in range(10000):
+    for _ in range(num_attempts):
         occu, C = flip(occu, sublattices, lam=lam)
         if C == 0:
             return occu.copy()
 
-    raise TimeoutError("Can not generate a neutral occupancy in 10000 flips!")
+    raise TimeoutError(
+        f"Can not generate a neutral occupancy in {num_attempts} attempts!"
+    )
 
 
-def _gen_composition_ordered_occu(sublattices, composition, rng=None):
+def _gen_composition_ordered_occu(sublattices, composition, tol, rng=None):
     """Generate a random occupancy satisfying a given composition.
 
     Args:
@@ -120,28 +133,151 @@ def _gen_composition_ordered_occu(sublattices, composition, rng=None):
             A sequence of sublattices
         composition (Composition): optional
             A pymatgen Compositions that the generated occupancy should be.
+        tol (float):
+            Tolerance for the composition check.
         rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}
             A RNG, seed or otherwise to initialize defauly_rng
 
     Returns:
         ndarray: encoded occupancy
     """
-    return
+    rng = np.random.default_rng(rng)
+    compositions = _composition_compatiblity(sublattices, composition, tol, rng=rng)
+    occu = np.zeros(sum(len(sl.sites) for sl in sublattices), dtype=int)
+
+    for composition, sublattice in zip(compositions, sublattices):
+        all_sites = list(sublattice.sites.copy())
+        for sp, code in zip(sublattice.species, sublattice.encoding):
+            num_sp = round(composition[sp] * len(sublattice.sites))
+            sites = rng.choice(all_sites, size=num_sp, replace=False)
+            occu[sites] = code
+            all_sites = [i for i in all_sites if i not in sites]
+
+    return occu
 
 
-def _composition_compatiblity(sublattices, composition):
+def _composition_compatiblity(sublattices, composition, tol, rng=None):
     """Check if a composition is compatible with a list of sublattices.
+
+    if only a single composition is given for more than one sublattice, a list of
+    split compositions is returned.
 
     Args:
         sublattices (Sequence of Sublattice):
             A sequence of sublattices
-        composition (Composition): optional
-            A pymatgen Compositions that the generated occupancy should be.
+        composition (Composition or Sequence of composition): optional
+            A pymatgen Compositions that the generated occupancy should be. If a
+            sequence of compositions is given the order must correspond to the order
+            of sublattices.
+        tol (float): optional
+            Tolerance for the composition check.
+        rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}
+            A RNG, seed or otherwise to initialize defauly_rng
 
     Returns:
-        bool: True if compatible, False otherwise.
+        list of Composition: A list of compositions that are compatible
     """
-    if composition.num_atoms > 1.0:  # turn into a fractional composition
-        composition = composition.frac_composition
+    if isinstance(composition, Composition):
+        composition = [composition]
 
-    return
+    compositions = []
+    for comp in composition:
+        if comp.num_atoms > 1.0:  # turn into a fractional composition
+            comp = comp.fractional_composition
+        compositions.append(comp)
+
+    # check that all species in composition appear in sublattices
+    if len(compositions) == 1:
+        # this validation could be moved into the _split_composition function
+        species = {sp for sl in sublattices for sp in sl.species}
+        if any(sp not in species for sp in compositions[0]):
+            raise ValueError(
+                "species are present in composition that are not in sublattices."
+            )
+        compositions = _split_composition_into_sublattices(
+            compositions[0], sublattices, rng=rng
+        )
+    else:
+        for comp, sl in zip(compositions, sublattices):
+            if any(sp not in sl.site_space for sp in comp):
+                raise ValueError(
+                    "species are present in composition that are not in sublattices."
+                )
+
+    # check if the compositions are compatible with the size of the sublattices
+    for composition, sublattice in zip(compositions, sublattices):
+        total = 0
+        for concentration in composition.values():
+            num_sites = len(sublattice.sites) * concentration
+            if abs(round(num_sites) - num_sites) > tol:
+                return ValueError("composition is not compatible with supercell size.")
+            total += round(num_sites)
+
+        if abs(total - len(sublattice.sites)) > tol:
+            return ValueError("composition is not compatible with supercell size.")
+
+    return compositions
+
+
+def _split_composition_into_sublattices(composition, sublattices, rng=None):
+    """Split a given composition into several compositions according to a list of sublattices.
+
+    The split is done randomly for all overlapping species.
+
+    No check is made on the compatibility of the composition with the sublattices.
+
+    Args:
+        composition (Composition):
+            A pymatgen Compositions to be split into Compositions commensurate with
+            given sublattices.
+        sublattices (Sequence of Sublattice):
+            A sequence of sublattices
+        rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}
+            A RNG, seed or otherwise to initialize defauly_rng
+
+    Returns:
+        list: list of split compositions
+    """
+    rng = np.random.default_rng(rng)
+
+    # dictionary of species and the sublattices in which they appear
+    # TODO this can be a util function because I'm pretty sure its used in TableSwap
+    species_in_sublattices = defaultdict(list)
+    for sl in sublattices:
+        for sp in sl.site_space.composition:
+            species_in_sublattices[sp].append(sl)
+
+    # split the composition into sublattices and record in a dictionary with
+    # species as keys and then a dictionary of the sublattices and the composition
+    # of that species in that sublattice
+    total_size = sum(len(sl.sites) for sl in sublattices)
+    compositions_in_sublattices = {}
+    for sp, sublatts in species_in_sublattices.items():
+        sl_sizes = np.array([len(sl.sites) for sl in sublatts])
+        sp_compositions = np.zeros(len(sublatts))
+
+        max_allowed = composition[sp] * total_size
+        for i in range(len(sublatts) - 1):
+            sp_compositions[i] = rng.random() * max_allowed / sl_sizes[i]
+            max_allowed -= sp_compositions[i] * sl_sizes[i]
+
+        sp_compositions[-1] = (
+            total_size * composition[sp] - sum(sl_sizes * sp_compositions)
+        ) / sl_sizes[-1]
+
+        compositions_in_sublattices[sp] = {
+            sl.site_space: comp for sl, comp in zip(sublatts, sp_compositions)
+        }
+
+    # now unwrap the into Composition objects for each sublattice
+    compositions = [
+        Composition(
+            {
+                sp: compositions_in_sublattices[sp][sl.site_space]
+                for sp in sl.site_space.composition
+            }
+        )
+        for sl in sublattices
+    ]
+
+    return compositions
