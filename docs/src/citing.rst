@@ -52,6 +52,17 @@ When using :code:`indicator` site basis sets consider citing,
     J. Phase Equilib. Diffus. 37, 44–52 (2016).
 
 
+Cluster decomposition
+=====================
+
+If you use the `ClusterDecompositionProcessor` class, cluster interaction tensors,
+cluster weights, or related concepts in your work, please cite this work,
+
+    Barroso-Luque, Luis & Ceder, G. (2023).
+    The cluster decomposition of the configurational energy of multicomponent alloys.
+    `[arXiv] <https://doi.org/10.48550/arXiv.2301.02309>`_
+
+
 Cluster expansions with redundant function sets
 ===============================================
 
@@ -63,6 +74,51 @@ to include redundancy in cluster expansions, please cite this publication,
     coherency and redundancy
     <https://link.aps.org/doi/10.1103/PhysRevB.104.224203>`_.
     Phys. Rev. B 104, 224203 (2021).
+
+
+Coulomb electrostatic interactions
+==================================
+When using an :class:`EwaldTerm` as an additional term in a lattice Hamiltonian, please
+cite the following publications,
+
+    Seko, A. & Tanaka, I. `Cluster expansion of multicomponent ionic systems with
+    controlled accuracy: importance of long-range interactions in heterovalent ionic
+    systems <https://doi.org/10.1088/0953-8984/26/11/115403>`_.
+    J. Phys.: Condens. Matter 26, 115403 (2014).
+
+    Richards, W. D., Wang, Y., Miara, L. J., Kim, J. C. & Ceder, G.
+    `Design of Li1+2xZn1−xPS4, a new lithium ion conductor
+    <https://doi.org/10.1039/C6EE02094A>`_. Energy Environ. Sci. 9, 3272–3278 (2016).
+
+    Barroso-Luque, L. et al.
+    `Cluster expansions of multicomponent ionic materials: Formalism and methodology.
+    <https://doi.org/10.1103/PhysRevB.106.144202>`_.
+    Phys. Rev. B 106, 144202 (2022).
+
+
+Charge-neutral semigrand canonical sampling
+===========================================
+
+If you use the charge neutral semigrand canonical sampling or any related functionality
+please cite the following work,
+
+    Xie, F., Zhong, P., Barroso-Luque, L., Ouyang, B. & Ceder, G.
+    `Semigrand-canonical Monte-Carlo simulation methods for charge-decorated cluster
+    expansions <https://doi.org/10.1016/j.commatsci.2022.112000>`_
+    Computational Materials Science 218, 112000 (2023).
+
+
+Wang-Landau sampling
+====================
+
+If you use Wang-Landau sampling to estimate density of states and derivative properties
+we recommend citing the original publications,
+
+    Wang, F. & Landau, D. P.
+    `Efficient, Multiple-Range Random Walk Algorithm to Calculate the Density of States.
+    <https://doi.org/10.1103/PhysRevLett.86.2050>`_.
+    Phys. Rev. Lett. 86, 2050–2053 (2001).
+
 
 Orbit group-wise regularized fits
 =================================
@@ -99,44 +155,3 @@ for hierarchical constrained expansion fits, please cite these publications,
     <https://doi.org/10.1103/PhysRevB.106.144202>`_.
     Phys. Rev. B 106, 144202 (2022).
 
-Charge-neutral semigrand canonical sampling
-===========================================
-
-If you use the charge neutral semigrand canonical sampling or any related functionality
-please cite the following work,
-
-    Xie, F., Zhong, P., Barroso-Luque, L., Ouyang, B. & Ceder, G.
-    `Semigrand-canonical Monte-Carlo simulation methods for charge-decorated cluster
-    expansions <https://doi.org/10.1016/j.commatsci.2022.112000>`_
-    Computational Materials Science 218, 112000 (2023).
-
-Coulomb electrostatic interactions
-==================================
-When using an :class:`EwaldTerm` as an additional term in a lattice Hamiltonian, please
-cite the following publications,
-
-    Seko, A. & Tanaka, I. `Cluster expansion of multicomponent ionic systems with
-    controlled accuracy: importance of long-range interactions in heterovalent ionic
-    systems <https://doi.org/10.1088/0953-8984/26/11/115403>`_.
-    J. Phys.: Condens. Matter 26, 115403 (2014).
-
-    Richards, W. D., Wang, Y., Miara, L. J., Kim, J. C. & Ceder, G.
-    `Design of Li1+2xZn1−xPS4, a new lithium ion conductor
-    <https://doi.org/10.1039/C6EE02094A>`_. Energy Environ. Sci. 9, 3272–3278 (2016).
-
-    Barroso-Luque, L. et al.
-    `Cluster expansions of multicomponent ionic materials: Formalism and methodology.
-    <https://doi.org/10.1103/PhysRevB.106.144202>`_.
-    Phys. Rev. B 106, 144202 (2022).
-
-
-Wang-Landau sampling
-====================
-
-If you use Wang-Landau sampling to estimate density of states and derivative properties
-we recommend citing the original publications,
-
-    Wang, F. & Landau, D. P.
-    `Efficient, Multiple-Range Random Walk Algorithm to Calculate the Density of States.
-    <https://doi.org/10.1103/PhysRevLett.86.2050>`_.
-    Phys. Rev. Lett. 86, 2050–2053 (2001).
