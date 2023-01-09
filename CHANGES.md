@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* Cluster decomposition analysis and sampling functionality. #306 @lbluque
 ### Changed
+* keep ensemble as attribute in `MCKernels`. #304 @lbluque
 ### Fixed
+* add `polytope` and `cvxpy` to test requirements.
 ### Removed
 ### Deprecated
 
