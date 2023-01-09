@@ -10,8 +10,14 @@ from pymatgen.core import Composition, Element
 from smol.cofe.space.domain import Vacancy
 
 
+# TODO alloy encoding/decoding and also allow it for initial occus in smapler, etc
 def gen_random_ordered_occupancy(
-    processor, composition=None, charge_neutral=False, tol=1e-6, rng=None
+    processor,
+    composition=None,
+    charge_neutral=False,
+    tol=1e-6,
+    encoded=True,
+    rng=None,
 ):
     """Generate a random encoded occupancy according to a list of sublattices.
 
@@ -26,6 +32,9 @@ def gen_random_ordered_occupancy(
             ignored.
         tol (float): optional
             Tolerance for the composition check, only used if a composition is given.
+        encoded (bool): optional
+            If True then occupancy is given as integer array otherwise as a list of
+            Species.
         rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}
             A RNG, seed or otherwise to initialize defauly_rng
 
@@ -42,7 +51,10 @@ def gen_random_ordered_occupancy(
     else:
         occu = _gen_composition_ordered_occu(sublattices, composition, tol, rng=rng)
 
-    return processor.decode_occupancy(occu)
+    if not encoded:
+        occu = processor.decode_occupancy(occu)
+
+    return occu
 
 
 def _gen_unconstrained_ordered_occu(sublattices, rng=None):
