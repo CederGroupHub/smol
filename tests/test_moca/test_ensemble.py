@@ -1,4 +1,5 @@
 from copy import deepcopy
+from itertools import product
 
 import numpy as np
 import numpy.testing as npt
@@ -6,6 +7,7 @@ import pytest
 
 from smol.cofe import ClusterExpansion, RegressionData
 from smol.moca import (
+    ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
     CompositeProcessor,
     Ensemble,
@@ -29,24 +31,16 @@ def semigrand_ensemble(composite_processor):
 
 
 # Test with composite processors to cover more ground
-@pytest.mark.parametrize("ensemble_type", ["canonical", "semigrand"])
-def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_type, rng):
+@pytest.mark.parametrize(
+    "ensemble_type, processor_type",
+    list(product(["canonical", "semigrand"], ["expansion", "decomposition"])),
+)
+def test_from_cluster_expansion(
+    cluster_subspace_ewald, ensemble_type, processor_type, rng
+):
     coefs = rng.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
-    proc = CompositeProcessor(cluster_subspace_ewald, scmatrix)
-    proc.add_processor(
-        ClusterExpansionProcessor(
-            cluster_subspace_ewald, scmatrix, coefficients=coefs[:-1]
-        )
-    )
-    proc.add_processor(
-        EwaldProcessor(
-            cluster_subspace_ewald,
-            scmatrix,
-            cluster_subspace_ewald.external_terms[0],
-            coefficient=coefs[-1],
-        )
-    )
+
     reg_data = RegressionData(
         module="fake.module",
         estimator_name="Estimator",
@@ -56,6 +50,27 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_type, rng):
     )
     expansion = ClusterExpansion(cluster_subspace_ewald, coefs, reg_data)
 
+    proc = CompositeProcessor(cluster_subspace_ewald, scmatrix)
+    if processor_type == "expansion":
+        ce_proc = ClusterExpansionProcessor(
+            cluster_subspace_ewald, scmatrix, coefficients=coefs[:-1]
+        )
+    else:
+        ce_proc = ClusterDecompositionProcessor(
+            cluster_subspace_ewald,
+            scmatrix,
+            interaction_tensors=expansion.cluster_interaction_tensors,
+        )
+    proc.add_processor(ce_proc)
+    proc.add_processor(
+        EwaldProcessor(
+            cluster_subspace_ewald,
+            scmatrix,
+            cluster_subspace_ewald.external_terms[0],
+            coefficient=coefs[-1],
+        )
+    )
+
     if ensemble_type == "semigrand":
         species = {sp for space in proc.active_site_spaces for sp in space.keys()}
         chemical_potentials = {sp: 0.3 for sp in species}
@@ -63,11 +78,20 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_type, rng):
     else:
         kwargs = {}
     ensemble = Ensemble.from_cluster_expansion(
-        expansion, supercell_matrix=scmatrix, **kwargs
+        expansion, supercell_matrix=scmatrix, processor_type=processor_type, **kwargs
     )
-    npt.assert_array_equal(
-        ensemble.natural_parameters[: ensemble.num_energy_coefs], coefs
-    )
+    if processor_type == "expansion":
+        npt.assert_array_equal(
+            ensemble.natural_parameters[: ensemble.num_energy_coefs], coefs
+        )
+    else:
+        # In cluster decomposition processor, natural parameters are changed
+        # to orbit multiplicities. E = sum_B m_B H_B, cluster interactions H_B
+        # are now feature vectors.
+        npt.assert_array_equal(
+            ensemble.natural_parameters[: ensemble.num_energy_coefs],
+            np.append(cluster_subspace_ewald.orbit_multiplicities, coefs[-1]),
+        )
     occu = np.zeros(ensemble.num_sites, dtype=int)
     for _ in range(50):  # test a few flips
         sublatt = rng.choice(ensemble.active_sublattices)
