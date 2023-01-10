@@ -10,8 +10,8 @@ from pymatgen.core.composition import ChemicalPotential
 
 from smol.cofe.space.domain import get_species
 from smol.moca.processor import (
-    ClusterExpansionProcessor,
     ClusterDecompositionProcessor,
+    ClusterExpansionProcessor,
     CompositeProcessor,
     EwaldProcessor,
 )
@@ -130,9 +130,13 @@ class Ensemble(MSONable):
         self.chemical_potentials = chemical_potentials
 
     @classmethod
-    def from_cluster_expansion(cls, cluster_expansion, supercell_matrix,
-                               processor_type="decomposition",
-                               **kwargs):
+    def from_cluster_expansion(
+        cls,
+        cluster_expansion,
+        supercell_matrix,
+        processor_type="decomposition",
+        **kwargs,
+    ):
         """Initialize an ensemble from a cluster expansion.
 
         Convenience constructor to instantiate an ensemble. This will take
@@ -172,8 +176,7 @@ class Ensemble(MSONable):
                     cluster_expansion.coefs[:-1],
                 )
             else:
-                raise ValueError(f"Processor type {processor_type}"
-                                 f" not supported!")
+                raise ValueError(f"Processor type {processor_type}" f" not supported!")
             processor.add_processor(ceprocessor)
             # at some point determine term and spinup processor maybe with a
             # factory, if we ever implement more external terms.
@@ -199,8 +202,7 @@ class Ensemble(MSONable):
                     cluster_expansion.coefs,
                 )
             else:
-                raise ValueError(f"Processor type {processor_type}"
-                                 f" not supported!")
+                raise ValueError(f"Processor type {processor_type}" f" not supported!")
         return cls(processor, **kwargs)
 
     @property

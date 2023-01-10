@@ -7,8 +7,8 @@ import pytest
 
 from smol.cofe import ClusterExpansion, RegressionData
 from smol.moca import (
-    ClusterExpansionProcessor,
     ClusterDecompositionProcessor,
+    ClusterExpansionProcessor,
     CompositeProcessor,
     Ensemble,
     EwaldProcessor,
@@ -31,10 +31,13 @@ def semigrand_ensemble(composite_processor):
 
 
 # Test with composite processors to cover more ground
-@pytest.mark.parametrize("ensemble_type, processor_type",
-                         list(product(["canonical", "semigrand"],
-                                      ["expansion", "decomposition"])))
-def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_type, processor_type, rng):
+@pytest.mark.parametrize(
+    "ensemble_type, processor_type",
+    list(product(["canonical", "semigrand"], ["expansion", "decomposition"])),
+)
+def test_from_cluster_expansion(
+    cluster_subspace_ewald, ensemble_type, processor_type, rng
+):
     coefs = rng.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
 
@@ -49,14 +52,15 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_type, processor
 
     proc = CompositeProcessor(cluster_subspace_ewald, scmatrix)
     if processor_type == "expansion":
-        ce_proc = ClusterExpansionProcessor(cluster_subspace_ewald,
-                                            scmatrix,
-                                            coefficients=coefs[:-1])
+        ce_proc = ClusterExpansionProcessor(
+            cluster_subspace_ewald, scmatrix, coefficients=coefs[:-1]
+        )
     else:
-        ce_proc = ClusterDecompositionProcessor(cluster_subspace_ewald,
-                                                scmatrix,
-                                                interaction_tensors=
-                                                expansion.cluster_interaction_tensors)
+        ce_proc = ClusterDecompositionProcessor(
+            cluster_subspace_ewald,
+            scmatrix,
+            interaction_tensors=expansion.cluster_interaction_tensors,
+        )
     proc.add_processor(ce_proc)
     proc.add_processor(
         EwaldProcessor(
@@ -86,8 +90,7 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_type, processor
         # are now feature vectors.
         npt.assert_array_equal(
             ensemble.natural_parameters[: ensemble.num_energy_coefs],
-            np.append(cluster_subspace_ewald.orbit_multiplicities,
-                      coefs[-1])
+            np.append(cluster_subspace_ewald.orbit_multiplicities, coefs[-1]),
         )
     occu = np.zeros(ensemble.num_sites, dtype=int)
     for _ in range(50):  # test a few flips
