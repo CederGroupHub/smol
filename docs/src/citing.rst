@@ -55,7 +55,7 @@ When using :code:`indicator` site basis sets consider citing,
 Cluster decomposition
 =====================
 
-If you use the `ClusterDecompositionProcessor` class, cluster interaction tensors,
+If you use the :class:`ClusterDecompositionProcessor` class, cluster interaction tensors,
 cluster weights, or related concepts in your work, please cite this work,
 
     Barroso-Luque, Luis & Ceder, G. (2023).
@@ -154,4 +154,3 @@ for hierarchical constrained expansion fits, please cite these publications,
     `Cluster expansions of multicomponent ionic materials: Formalism and methodology.
     <https://doi.org/10.1103/PhysRevB.106.144202>`_.
     Phys. Rev. B 106, 144202 (2022).
-
