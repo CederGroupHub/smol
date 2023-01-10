@@ -6,8 +6,9 @@ Processors
 
 This module contains classes for the processors used to
 efficiently calculate energies of occupancies of a given
-:class:`ClusterSubspace` in a given supercell. For cluster
-expansions without an external (Ewald) term, a :class:`ClusterDecompositionProcessor`
+:class:`ClusterSubspace` in a given supercell.
+
+For cluster expansions without an external (Ewald) term, a :class:`ClusterDecompositionProcessor`
 :class:`ClusterExpansionProcessor` is used. The :class:`ClusterDecompositionProcessor`
 will result in faster sampling since it scales only with the number of orbits of
 symmetrically distinct clusters as opposed to the number of correlation functions.
