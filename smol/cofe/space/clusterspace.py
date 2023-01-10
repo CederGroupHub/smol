@@ -28,6 +28,7 @@ from pymatgen.util.coord import (
     is_coord_subset_pbc,
     lattice_points_in_supercell,
 )
+from scipy.linalg import block_diag
 
 from smol.cofe.space import (
     Orbit,
@@ -403,6 +404,33 @@ class ClusterSubspace(MSONable):
         (i.e. Ewald electrostatics).
         """
         return self._external_terms
+
+    @property
+    def site_rotation_matrix(self):
+        """Get change of basis matrix from site function rotations.
+
+        Note: this is meant only for rotations using orthonormal site bases.
+        Using it otherwise will not work as expected.
+        """
+        return block_diag([1], *[orb.rotation_array for orb in self.orbits])
+
+    def orbits_by_cutoffs(self, upper, lower=0):
+        """Get orbits with clusters within given diameter cutoffs (inclusive).
+
+        Args:
+           upper (float):
+               upper diameter for clusters to include.
+           lower (float): optional
+               lower diameter for clusters to include.
+
+        Returns:
+           list of Orbits
+        """
+        return [
+            orbit
+            for orbit in self.iterorbits()
+            if lower <= orbit.base_cluster.diameter <= upper
+        ]
 
     def orbit_hierarchy(self, level=1, min_size=1):
         """Get orbit hierarchy by IDs.
@@ -840,6 +868,44 @@ class ClusterSubspace(MSONable):
         """
         for orbit in self.orbits:
             orbit.transform_site_bases(new_basis, orthonormal)
+
+    def rotate_site_basis(self, singlet_id, angle, index1=0, index2=1):
+        """Apply a rotation to a site basis.
+
+        The rotation is applied around an axis normal to the span of the two
+        site functions given by index1 and index 2 (the constant function is
+        not included, i.e. index 0 corresponds to the first non constant
+        function)
+
+        Read warnings in SiteBasis.rotate when using this method.
+        TLDR: Careful when using this with non-orthogonal or biased site bases.
+
+        Args:
+            singlet_id (int):
+                Orbit id of singlet function. Only singlet function ids are
+                valid here.
+            angle (float):
+                Angle to rotate in radians.
+            index1 (int):
+                index of first basis vector in function_array
+            index2 (int):
+                index of second basis vector in function_array
+        """
+        if singlet_id not in range(1, len(self._orbits[1]) + 1):
+            raise ValueError("Orbit id provided is not a valid singlet id.")
+
+        basis = self.orbits[singlet_id - 1].site_bases[0]
+        basis.rotate(angle, index1, index2)
+        rotated = [basis]
+        for orbit in self.orbits:
+            for site_basis in orbit.site_bases:
+                if (
+                    site_basis.site_space == basis.site_space
+                    and site_basis not in rotated
+                ):  # maybe clean this up?
+                    site_basis.rotate(angle, index1, index2)
+                    rotated.append(site_basis)
+            orbit.reset_bases()
 
     def remove_orbits(self, orbit_ids):
         """Remove whole orbits by their ids.

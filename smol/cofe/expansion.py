@@ -164,6 +164,8 @@ class ClusterExpansion(MSONable):
             if regression_data is not None
             else None
         )
+        # TODO make this cached prop
+        self._int_tensors = None
 
     @cached_property
     def eci(self):
@@ -208,6 +210,45 @@ class ClusterExpansion(MSONable):
         return self._subspace.function_orbit_ids
 
     @property
+    def effective_cluster_weights(self):
+        """Calculate the cluster weights.
+
+        The cluster weights are defined as the weighted sum of ECI squared, where
+        the weights are the ordering multiplicities.
+        """
+        weights = np.array(
+            [
+                np.sum(
+                    self._subspace.function_ordering_multiplicities[
+                        self._subspace.function_orbit_ids == i
+                    ]
+                    * self.eci[self.eci_orbit_ids == i] ** 2
+                )
+                for i in range(len(self._subspace.orbits) + 1)
+            ]
+        )
+        return weights
+
+    @property
+    def cluster_interaction_tensors(self):
+        """Get tuple of cluster interaction tensors.
+
+        Tuple of ndarrays where each array is the interaction tensor for the
+        corresponding orbit of clusters.
+        """
+        if self._int_tensors is None:
+            self._int_tensors = (self.coefs[0],) + tuple(
+                sum(
+                    m * self.eci[orbit.bit_id + i] * tensor
+                    for i, (m, tensor) in enumerate(
+                        zip(orbit.bit_combo_multiplicities, orbit.correlation_tensors)
+                    )
+                )
+                for orbit in self._subspace.orbits
+            )
+        return self._int_tensors
+
+    @property
     def feature_matrix(self):
         """Get the feature matrix used in fit.
 
@@ -233,6 +274,39 @@ class ClusterExpansion(MSONable):
             structure, scmatrix=scmatrix, normalized=normalize
         )
         return np.dot(self.coefs, corrs)
+
+    def compute_cluster_interactions(self, structure, normalize=True):
+        """Compute the vector of cluster interaction values for given structure.
+
+        A cluster interaction is simply a vector made up of the sum of all cluster
+        expansion terms over the same orbit.
+
+        Args:
+            structure (Structure):
+                Structures to predict from
+            normalize (bool):
+                Whether to return the predicted property normalized by
+                the prim cell size.
+
+        Returns: ndarray
+            vector of cluster interaction values
+        """
+        corrs = self.cluster_subspace.corr_from_structure(
+            structure, normalized=normalize
+        )
+        vals = self.eci * corrs
+        interactions = np.array(
+            [
+                np.sum(
+                    vals[self.eci_orbit_ids == i]
+                    * self._subspace.function_ordering_multiplicities[
+                        self.eci_orbit_ids == i
+                    ]
+                )  # noqa
+                for i in range(len(self._subspace.orbits) + 1)
+            ]
+        )
+        return interactions
 
     def prune(self, threshold=0, with_multiplicity=False):
         """Remove fit coefficients or ECI's with small values.

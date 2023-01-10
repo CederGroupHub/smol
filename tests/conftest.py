@@ -5,13 +5,14 @@ import pytest
 from monty.serialization import loadfn
 from pymatgen.core import Structure
 
-from smol.cofe import ClusterSubspace, StructureWrangler
+from smol.cofe import ClusterExpansion, ClusterSubspace, StructureWrangler
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.basis import BasisIterator
-from smol.moca import (
+from smol.moca import Ensemble
+from smol.moca.processor import (
+    ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
     CompositeProcessor,
-    Ensemble,
     EwaldProcessor,
 )
 from smol.utils import get_subclasses
@@ -103,21 +104,32 @@ def ce_processor(cluster_subspace, rng):
     )
 
 
-@pytest.fixture(scope="module")
-def composite_processor(cluster_subspace_ewald, rng):
-    coefs = 2 * rng.random(cluster_subspace_ewald.num_corr_functions + 1)
+@pytest.fixture(params=["CE", "CD"], scope="module")
+def composite_processor(cluster_subspace_ewald, rng, request):
+    coefs = 2 * np.random.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace_ewald, supercell_matrix=scmatrix)
-    proc.add_processor(
-        ClusterExpansionProcessor(
-            cluster_subspace_ewald, scmatrix, coefficients=coefs[:-1]
+    if request.param == "CE":
+        proc.add_processor(
+            ClusterExpansionProcessor(
+                cluster_subspace_ewald, scmatrix, coefficients=coefs[:-1]
+            )
         )
-    )
+    else:
+        expansion = ClusterExpansion(cluster_subspace_ewald, coefs)
+        proc.add_processor(
+            ClusterDecompositionProcessor(
+                cluster_subspace_ewald, scmatrix, expansion.cluster_interaction_tensors
+            )
+        )
     proc.add_processor(
         EwaldProcessor(
             cluster_subspace_ewald, scmatrix, EwaldTerm(), coefficient=coefs[-1]
         )
     )
+    # bind raw coefficients since OD processors do not store them
+    # and be able to test computing properties, hacky but oh well
+    proc.raw_coefs = coefs
     return proc
 
 

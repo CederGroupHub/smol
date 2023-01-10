@@ -6,7 +6,7 @@ Citing
 
 .. note::
     If you have any comments, suggestions or you think we have missed a
-    pertinent publications in our recommended citations, please let us know!
+    pertinent publication in our recommended citations, please let us know!
 
 
 If you use **smol** for your work please cite the following publication,
@@ -106,9 +106,9 @@ If you use the charge neutral semigrand canonical sampling or any related functi
 please cite the following work,
 
     Xie, F., Zhong, P., Barroso-Luque, L., Ouyang, B. & Ceder, G.
-    `Grand-canonical Monte-Carlo simulation methods for charge-decorated cluster
-    expansions <https://arxiv.org/abs/2210.01165>`_ [arxiv:2210.01165].
-
+    `Semigrand-canonical Monte-Carlo simulation methods for charge-decorated cluster
+    expansions <https://doi.org/10.1016/j.commatsci.2022.112000>`_
+    Computational Materials Science 218, 112000 (2023).
 
 Coulomb electrostatic interactions
 ==================================
