@@ -9,9 +9,12 @@ Use this section to keep track of changes in the works.
 ### Added
 * Cluster decomposition analysis and sampling functionality. #306 @lbluque
 ### Changed
-* keep ensemble as attribute in `MCKernels`. #304 @lbluque
+* Keep ensemble as attribute in `MCKernels`. #304 @lbluque
+* Change default processor into ClusterDecompositionProcessor when initializing
+  Ensemble. #309 @qchempku2017
+* Use -mcpu=native compile option to build successfully on newer macs. #310 @lbluque
 ### Fixed
-* add `polytope` and `cvxpy` to test requirements.
+* Add `polytope` and `cvxpy` to test requirements.
 ### Removed
 ### Deprecated
 
