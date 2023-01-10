@@ -14,6 +14,7 @@ import numpy as np
 
 from smol._utils import progress_bar
 from smol.moca.kernel import mckernel_factory
+from smol.moca.kernel._base import MulticellKernel
 from smol.moca.kernel._trace import Trace
 from smol.moca.sampler.container import SampleContainer
 
@@ -184,9 +185,6 @@ class Sampler:
         Yields:
             tuple: accepted, occupancies, features change, enthalpies change
         """
-        occupancies = initial_occupancies.copy()
-        if occupancies.shape != self.samples.shape:
-            occupancies = self._reshape_occu(occupancies)
         if nsteps % thin_by != 0:
             warn(
                 f"The number of steps {nsteps} is not a multiple of thin_by "
@@ -195,10 +193,18 @@ class Sampler:
             )
         # TODO check that initial states are independent if num_walkers > 1
         # TODO make samplers with single chain, multiple and multiprocess
-        # TODO kernel should take only 1 occupancy
+        occupancies = initial_occupancies.copy()
+        if occupancies.shape != self.samples.shape:
+            occupancies = self._reshape_occu(occupancies)
+
         # set up any auxiliary states from initial occupancies
+        selected_occus = []
         for kernel, occupancy in zip(self._kernels, occupancies):
             kernel.set_aux_state(occupancy)
+            if isinstance(kernel, MulticellKernel):  # select the current kernel occu
+                selected_occus.append(occupancy[kernel.trace.kernel_index])
+        if len(selected_occus) > 0:
+            occupancies = np.vstack(selected_occus)
 
         # get initial traces and stack them
         trace = Trace()
@@ -285,9 +291,6 @@ class Sampler:
                 "If not, reset the samples in the sampler.",
                 RuntimeWarning,
             )
-        else:
-            if initial_occupancies.shape != self.samples.shape:
-                initial_occupancies = self._reshape_occu(initial_occupancies)
 
         if stream_chunk > 0:
             if stream_file is None:
@@ -407,10 +410,12 @@ class Sampler:
         # check if this is only a single walker.
         if len(occupancies.shape) == 1 and self.samples.shape[0] == 1:
             occupancies = np.reshape(occupancies, (1, len(occupancies)))
+        elif any(isinstance(kernel, MulticellKernel) for kernel in self._kernels):
+            # reshape for multicell kernels
+            occupancies = np.reshape(occupancies, (1, *occupancies.shape))
         else:
             raise AttributeError(
-                "The given initial occcupancies have "
-                "incompompatible dimensions. Shape should"
+                "The given initial occcupancies have incompompatible dimensions. Shape should"
                 f" be {self.samples.shape}."
             )
         return occupancies

@@ -39,7 +39,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         self,
         cluster_subspace,
         supercell_matrix,
-        target_features,
+        target_vector,
         match_weight=1.0,
         match_tol=1e-5,
         target_weights=None,
@@ -53,7 +53,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
             supercell_matrix (ndarray):
                 an array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
-            target_features (ndarray): optional
+            target_vector (ndarray): optional
                 target feature vector (excluding constant)
             match_weight (float): optional
                 weight for the in the wL term above. That is how much to weight the
@@ -69,7 +69,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
                 additional keyword arguments to instantiate the underlying processor
                 being inherited from.
         """
-        self.target = target_features
+        self.target = target_vector
         if match_weight < 0:
             raise ValueError("The match weight must be a positive number.")
         self.match_tol = match_tol
@@ -202,9 +202,10 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
         self,
         cluster_subspace,
         supercell_matrix,
-        target_correlations=None,
+        target_vector=None,
         match_weight=1.0,
         target_weights=None,
+        match_tol=1e-5,
     ):
         """Initialize a CorrelationDistanceProcessor.
 
@@ -214,7 +215,7 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
             supercell_matrix (ndarray):
                 an array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
-            target_correlations (ndarray): optional
+            target_vector (ndarray): optional
                 target correaltion vector, if None given as vector of zeros is used.
             match_weight (float): optional
                 weight for the in the wL term above. That is how much to weight the
@@ -227,8 +228,8 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
                 Weights for the absolute differences each correlation when calculating
                 the total distance. If None, then all correlations are weighted equally.
         """
-        if target_correlations is None:
-            target_correlations = np.zeros(len(cluster_subspace) - 1)
+        if target_vector is None:
+            target_vector = np.zeros(len(cluster_subspace) - 1)
 
         if target_weights is None:
             target_weights = np.ones(len(cluster_subspace) - 1)
@@ -236,9 +237,10 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
         super().__init__(
             cluster_subspace,
             supercell_matrix,
-            target_features=target_correlations,
+            target_vector=target_vector,
             match_weight=match_weight,
             target_weights=target_weights,
+            match_tol=match_tol,
         )
 
     def compute_feature_vector_distances(self, occupancy, flips):

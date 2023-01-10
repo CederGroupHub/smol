@@ -10,7 +10,7 @@ from collections import namedtuple
 import numpy as np
 
 from smol._utils import derived_class_factory
-from smol.capp import enumerate_supercell_matrices
+from smol.capp import enumerate_supercell_matrices, gen_random_ordered_occupancy
 from smol.cofe import ClusterSubspace
 from smol.moca import Ensemble, SampleContainer, Sampler
 from smol.moca.kernel import MulticellMetropolis, mckernel_factory
@@ -28,8 +28,8 @@ class SQSGenerator(ABC):
         cluster_subspace,
         supercell_size,
         feature_type="correlation",
-        target_feature_vector=None,
-        target_feature_weights=None,
+        target_vector=None,
+        target_weights=None,
         match_weight=1.0,
         match_tol=1e-5,
         supercell_matrices=None,
@@ -45,9 +45,9 @@ class SQSGenerator(ABC):
             feature_type (str): optional
                 type of features to be used to determine SQS.
                 options are: "correlation"
-            target_feature_vector (ndarray): optional
+            target_vector (ndarray): optional
                 target feature vector to use for distance calculations
-            target_feature_weights (ndarray): optional
+            target_weights (ndarray): optional
                 weights for each target feature
             match_weight (float): optional
                 weight for the in the wL term above. That is how much to weight the
@@ -64,22 +64,22 @@ class SQSGenerator(ABC):
         self.supercell_size = supercell_size
 
         if feature_type == "correlation":
-            num_features = len(cluster_subspace)
+            num_features = len(cluster_subspace) - 1  # remove constant
         else:
             raise ValueError(f"feature_type {feature_type} not supported")
 
-        if target_feature_weights is None:
-            target_feature_weights = np.ones(num_features)
+        if target_weights is None:
+            target_weights = np.ones(num_features)
         else:
-            if len(target_feature_weights) != num_features:
+            if len(target_weights) != num_features:
                 raise ValueError(
                     "target_feature_weights must be of length {num_features}"
                 )
 
-        if target_feature_vector is None:
-            target_feature_vector = np.zeros(num_features)
+        if target_vector is None:
+            target_vector = np.zeros(num_features)
         else:
-            if len(target_feature_vector) != num_features:
+            if len(target_vector) != num_features:
                 raise ValueError(
                     "target_feature_vector must be of length {num_features}"
                 )
@@ -94,17 +94,17 @@ class SQSGenerator(ABC):
                     )
         else:
             supercell_matrices = enumerate_supercell_matrices(
-                supercell_size, cluster_subspace.symmops
+                supercell_size, cluster_subspace.symops
             )
 
         self._processors = [
             derived_class_factory(
-                feature_type,
+                feature_type.capitalize() + "DistanceProcessor",
                 FeatureDistanceProcessor,
                 cluster_subspace,
                 scm,
-                target_feature_vector=target_feature_vector,
-                target_feature_weights=target_feature_weights,
+                target_vector=target_vector,
+                target_weights=target_weights,
                 match_weight=match_weight,
                 match_tol=match_tol,
             )
@@ -189,8 +189,8 @@ class SQSGenerator(ABC):
             **kwargs,
         )
 
-    @abstractmethod
     @property
+    @abstractmethod
     def num_structures(self):
         """Get number of structures generated."""
 
@@ -303,7 +303,7 @@ class StochasticSQSGenerator(SQSGenerator):
             supercell_matrices,
         )
         step_type = kwargs.pop("step_type", "swap")
-        temperature = kwargs.pop("temperature", np.inf)
+        temperature = kwargs.pop("temperature", 5.0)
 
         if step_type != "swap":
             warnings.warn(
@@ -311,6 +311,7 @@ class StochasticSQSGenerator(SQSGenerator):
                 UserWarning,
             )
 
+        kernel_kwargs = kernel_kwargs or {}
         kernels = [
             mckernel_factory(
                 "metropolis",
@@ -324,6 +325,7 @@ class StochasticSQSGenerator(SQSGenerator):
         for kernel in kernels:
             kernel.kB = 1.0  # set kB to 1.0 units
         self._kernel = MulticellMetropolis(kernels, temperature=temperature, **kwargs)
+        self._kernel.kB = 1.0  # set kB to 1.0 units
 
         # get a trial trace to initialize sample container trace
         _trace = self._kernel.compute_initial_trace(
@@ -338,12 +340,18 @@ class StochasticSQSGenerator(SQSGenerator):
         # TODO refactor sample container to accept tuple of sublattices and just take the ensemble
         container = SampleContainer(
             kernels[0].ensemble.sublattices,
-            kernels[0].natural_parameters,
+            kernels[0].ensemble.natural_parameters,
             kernels[0].ensemble.num_energy_coefs,
             sample_trace,
         )
-        self._sampler = Sampler(self._kernel, container)
+        self._sampler = Sampler([self._kernel], container)
 
+    def num_structures(self):
+        """Get number of structures generated."""
+        return self._sampler.samples.num_samples
+
+    # TODO sampler.run with initial occus leads to overflow, corrs grow like crazy
+    # running from last trace leads to crash (sigkill)
     def generate(
         self, mcmc_steps, initial_occupancies=None, temperatures=None, **kwargs
     ):
@@ -375,6 +383,8 @@ class StochasticSQSGenerator(SQSGenerator):
         if temperatures is None:
             temperatures = np.linspace(5.0, 0.01, 20)  # TODO benchmark this
 
+        # TODO need to have a way to set the initial occupancies for all the kernels
+        #  here....
         self._sampler.anneal(
             temperatures, mcmc_steps, initial_occupancies=initial_occupancies, **kwargs
         )
@@ -414,5 +424,12 @@ class StochasticSQSGenerator(SQSGenerator):
         Returns:
             ndarray of occupancies
         """
-        # TODO write a generate_random_occu at composition in the tools module
-        return
+        occupancies = np.vstack(
+            [
+                gen_random_ordered_occupancy(
+                    proc, composition=self.cluster_subspace.structure.composition
+                )
+                for proc in self._processors
+            ]
+        )
+        return occupancies

@@ -358,7 +358,7 @@ class MCKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         )
         if self.bias is not None:
             trace.bias = np.array([self.bias.compute_bias(occupancy)], dtype=np.float64)
-        trace.accepted = np.array([True], dtype=np.bool)
+        trace.accepted = np.array([True], dtype=bool)
         return trace
 
 
@@ -545,6 +545,7 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         delta_features = self.ensemble.compute_feature_vector_change(
             self.current_kernel.trace.occupancy, step
         )
+
         self._new_features[self.trace.kernel_index] += delta_features
         new_features = self._new_features[self.trace.kernel_index]
         prev_features = self._prev_features[self._current_kernel_index]
@@ -597,6 +598,7 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
                 self._rng.choice(range(len(self._kernels)), p=self._kernel_p)
             )
             self._trace = super().single_step(occupancy)
+
             # choose new hop period and reset counter
             if self.trace.accepted:
                 kernel_index = self.trace.kernel_index
@@ -633,33 +635,31 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
 
         return self.trace
 
-    def set_aux_state(self, occupancy, *args, **kwargs):
-        """Set the auxiliary occupancies based on an occupancy.
-
-        This is necessary for WangLandau to work properly because
-        it needs to store the current enthalpy and features.
-        """
+    def set_aux_state(self, occupancies, *args, **kwargs):
+        """Set the occupancies, features and enthalpy for each supercell kernel."""
         # set the current and previous values based on given occupancy
-        self._new_features = np.vstack(
-            [
-                kernel.ensemble.compute_feature_vector(occupancy)
-                for kernel in self._kernels
-            ]
-        )
-        self._new_enthalpies = np.dot(
-            self._new_features, self.current_kernel.natural_params
-        )
-        self._prev_features = self._new_features.copy()
-        self._new_enthalpies = self._new_enthalpies.copy()
+        new_features = []
 
-        for kernel in self._kernels:
-            kernel.set_aux_state(occupancy, *args, **kwargs)
+        if occupancies.shape[0] == len(self._kernels):
+            for kernel, occupancy in zip(self._kernels, occupancies):
+                occupancy = np.ascontiguousarray(occupancy, dtype=int)
+                kernel.trace.occupancy = occupancy
+                kernel.set_aux_state(occupancy, *args, **kwargs)
+                new_features.append(kernel.ensemble.compute_feature_vector(occupancy))
+                self._new_features = np.vstack(new_features)
+                self._new_enthalpies = np.dot(
+                    self._new_features, self.current_kernel.natural_params
+                )
+                self._prev_features = self._new_features.copy()
+                self._new_enthalpies = self._new_enthalpies.copy()
+        else:  # if only one assume it is continuing from a run...
+            self.current_kernel.set_aux_state(occupancies, *args, **kwargs)
 
     def compute_initial_trace(self, occupancy):
         """Compute the initial trace for a given occupancy."""
-        self.trace = self.current_kernel.compute_initial_trace(occupancy)
-        self.trace.kernel_index = self._current_kernel_index
-        return self.trace
+        trace = self.current_kernel.compute_initial_trace(occupancy)
+        trace.kernel_index = self._current_kernel_index
+        return trace
 
 
 class ThermalKernelMixin:
