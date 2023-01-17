@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>cofe.space package &#8212; smol 0.2.0 documentation</title>
+    <title>cofe.space package &#8212; smol 0.3.0 documentation</title>
   
   
   
@@ -34,9 +34,6 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -45,7 +42,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/autogen/cofe.space';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3.0';
         </script>
     <script src="../../_static/require.js"></script>
     <script src="../../_static/custom.js"></script>
@@ -199,7 +196,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.2.0  <!-- this text may get changed later by javascript -->
+        0.3.0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -343,7 +340,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.2.0  <!-- this text may get changed later by javascript -->
+        0.3.0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -854,6 +851,12 @@ about what it means to rotate in this case…</p>
 </dl>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="cofe.space.basis.StandardBasis.rotation_array">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rotation_array</span></span><a class="headerlink" href="#cofe.space.basis.StandardBasis.rotation_array" title="Permalink to this definition">#</a></dt>
+<dd><p>Get the rotation array.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
@@ -1075,6 +1078,24 @@ filename is. Options include “yaml”, “json”. Non-case sensitive.</p></li
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="cofe.space.cluster.Cluster.get_scene">
+<span class="sig-name descname"><span class="pre">get_scene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Scene</span></span></span><a class="headerlink" href="#cofe.space.cluster.Cluster.get_scene" title="Permalink to this definition">#</a></dt>
+<dd><p>Create CTK objects for the lattice and sties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> – Structure object</p></li>
+<li><p><strong>origin</strong> – coordinate of the origin</p></li>
+<li><p><strong>legend</strong> – Legend for the sites</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>CTK scene object to be rendered</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="id3">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lattice</span></span><a class="headerlink" href="#id3" title="Permalink to this definition">#</a></dt>
@@ -1095,7 +1116,7 @@ filename is. Options include “yaml”, “json”. Non-case sensitive.</p></li
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.space.cluster.Cluster.to">
-<span class="sig-name descname"><span class="pre">to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.space.cluster.Cluster.to" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.space.cluster.Cluster.to" title="Permalink to this definition">#</a></dt>
 <dd><p>Output the cluster  to a file or string.</p>
 <p>this is basically a watered down version of pymatgen.Molecule.to</p>
 <dl class="field-list simple">
@@ -1119,6 +1140,24 @@ filename. Defaults is None, i.e. string output.</p></li>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cofe.space.cluster.get_cluster_scene">
+<span class="sig-name descname"><span class="pre">get_cluster_scene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Scene</span></span></span><a class="headerlink" href="#cofe.space.cluster.get_cluster_scene" title="Permalink to this definition">#</a></dt>
+<dd><p>Create CTK objects for the lattice and sties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> – Structure object</p></li>
+<li><p><strong>origin</strong> – coordinate of the origin</p></li>
+<li><p><strong>legend</strong> – Legend for the sites</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>CTK scene object to be rendered</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -1716,6 +1755,24 @@ index.</p>
 <dd><p>Return a list of all orbits sorted by size.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs">
+<span class="sig-name descname"><span class="pre">orbits_by_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs" title="Permalink to this definition">#</a></dt>
+<dd><p>Get orbits with clusters within given diameter cutoffs (inclusive).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>upper</strong> (<em>float</em>) – upper diameter for clusters to include.</p></li>
+<li><p><strong>lower</strong> (<em>float</em>) – optional
+lower diameter for clusters to include.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of Orbits</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.space.clusterspace.ClusterSubspace.orbits_by_size">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#cofe.space.clusterspace.ClusterSubspace.orbits_by_size" title="Permalink to this definition">#</a></dt>
@@ -1824,6 +1881,29 @@ one element in the correlation vector.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="cofe.space.clusterspace.ClusterSubspace.rotate_site_basis">
+<span class="sig-name descname"><span class="pre">rotate_site_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">singlet_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.space.clusterspace.ClusterSubspace.rotate_site_basis" title="Permalink to this definition">#</a></dt>
+<dd><p>Apply a rotation to a site basis.</p>
+<p>The rotation is applied around an axis normal to the span of the two
+site functions given by index1 and index 2 (the constant function is
+not included, i.e. index 0 corresponds to the first non constant
+function)</p>
+<p>Read warnings in SiteBasis.rotate when using this method.
+TLDR: Careful when using this with non-orthogonal or biased site bases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>singlet_id</strong> (<em>int</em>) – Orbit id of singlet function. Only singlet function ids are
+valid here.</p></li>
+<li><p><strong>angle</strong> (<em>float</em>) – Angle to rotate in radians.</p></li>
+<li><p><strong>index1</strong> (<em>int</em>) – index of first basis vector in function_array</p></li>
+<li><p><strong>index2</strong> (<em>int</em>) – index of second basis vector in function_array</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure">
 <span class="sig-name descname"><span class="pre">scmatrix_from_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure" title="Permalink to this definition">#</a></dt>
 <dd><p>Get supercell matrix from a given structure.</p>
@@ -1840,6 +1920,14 @@ to a supercell equivalent to given structure.</p>
 <dd class="field-odd"><p>ndarray</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cofe.space.clusterspace.ClusterSubspace.site_rotation_matrix">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">site_rotation_matrix</span></span><a class="headerlink" href="#cofe.space.clusterspace.ClusterSubspace.site_rotation_matrix" title="Permalink to this definition">#</a></dt>
+<dd><p>Get change of basis matrix from site function rotations.</p>
+<p>Note: this is meant only for rotations using orthonormal site bases.
+Using it otherwise will not work as expected.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -2166,7 +2254,7 @@ site space.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="cofe.space.domain.Vacancy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Vacancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oxidation_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.space.domain.Vacancy" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Vacancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oxidation_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.space.domain.Vacancy" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DummySpecie</span></code></p>
 <p>Wrapper class around DummySpecie to treat vacancies as their own species.</p>
 <p>Initialize a Vacancy.</p>
@@ -2736,6 +2824,24 @@ filename is. Options include “yaml”, “json”. Non-case sensitive.</p></li
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="cofe.space.Cluster.get_scene">
+<span class="sig-name descname"><span class="pre">get_scene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Scene</span></span></span><a class="headerlink" href="#cofe.space.Cluster.get_scene" title="Permalink to this definition">#</a></dt>
+<dd><p>Create CTK objects for the lattice and sties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>self</strong> – Structure object</p></li>
+<li><p><strong>origin</strong> – coordinate of the origin</p></li>
+<li><p><strong>legend</strong> – Legend for the sites</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>CTK scene object to be rendered</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="id6">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lattice</span></span><a class="headerlink" href="#id6" title="Permalink to this definition">#</a></dt>
@@ -2756,7 +2862,7 @@ filename is. Options include “yaml”, “json”. Non-case sensitive.</p></li
 
 <dl class="py method">
 <dt class="sig sig-object py" id="cofe.space.Cluster.to">
-<span class="sig-name descname"><span class="pre">to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.space.Cluster.to" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.space.Cluster.to" title="Permalink to this definition">#</a></dt>
 <dd><p>Output the cluster  to a file or string.</p>
 <p>this is basically a watered down version of pymatgen.Molecule.to</p>
 <dl class="field-list simple">
@@ -3085,7 +3191,7 @@ self.base_cluster.sites[indices] = orbit.base_cluster.sites</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="cofe.space.Vacancy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Vacancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oxidation_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.space.Vacancy" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Vacancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oxidation_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.space.Vacancy" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DummySpecie</span></code></p>
 <p>Wrapper class around DummySpecie to treat vacancies as their own species.</p>
 <p>Initialize a Vacancy.</p>
@@ -3595,6 +3701,15 @@ properties that can be determined.</p>
        </code>
       </a>
      </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.space.basis.StandardBasis.rotation_array">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         StandardBasis.rotation_array
+        </span>
+       </code>
+      </a>
+     </li>
     </ul>
    </li>
    <li class="toc-h3 nav-item toc-entry">
@@ -3794,6 +3909,15 @@ properties that can be determined.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.space.cluster.Cluster.get_scene">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         Cluster.get_scene()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#id3">
        <code class="docutils literal notranslate">
         <span class="pre">
@@ -3830,6 +3954,15 @@ properties that can be determined.</p>
       </a>
      </li>
     </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#cofe.space.cluster.get_cluster_scene">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_cluster_scene()
+      </span>
+     </code>
+    </a>
    </li>
   </ul>
  </li>
@@ -4145,6 +4278,15 @@ properties that can be determined.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.orbits_by_cutoffs()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#cofe.space.clusterspace.ClusterSubspace.orbits_by_size">
        <code class="docutils literal notranslate">
         <span class="pre">
@@ -4190,10 +4332,28 @@ properties that can be determined.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.space.clusterspace.ClusterSubspace.rotate_site_basis">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.rotate_site_basis()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure">
        <code class="docutils literal notranslate">
         <span class="pre">
          ClusterSubspace.scmatrix_from_structure()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.space.clusterspace.ClusterSubspace.site_rotation_matrix">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.site_rotation_matrix
         </span>
        </code>
       </a>
@@ -4809,6 +4969,15 @@ properties that can be determined.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.space.Cluster.get_scene">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         Cluster.get_scene()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#id6">
        <code class="docutils literal notranslate">
         <span class="pre">
@@ -5207,7 +5376,7 @@ properties that can be determined.</p>
     
 <p class="copyright">
 
-    &copy; Copyright 2022-2022, Ceder Group.<br>
+    &copy; Copyright 2022-2023, Ceder Group.<br>
 
 </p>
 
@@ -5226,7 +5395,7 @@ properties that can be determined.</p>
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.1.3.<br>
 </p>
 
   </div>

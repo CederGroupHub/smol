@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Citing &#8212; smol 0.2.0 documentation</title>
+    <title>Citing &#8212; smol 0.3.0 documentation</title>
   
   
   
@@ -34,9 +34,6 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -45,7 +42,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'citing';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3.0';
         </script>
     <script src="_static/require.js"></script>
     <script src="_static/custom.js"></script>
@@ -201,7 +198,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.2.0  <!-- this text may get changed later by javascript -->
+        0.3.0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -345,7 +342,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.2.0  <!-- this text may get changed later by javascript -->
+        0.3.0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -412,7 +409,7 @@
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you have any comments, suggestions or you think we have missed a
-pertinent publications in our recommended citations, please let us know!</p>
+pertinent publication in our recommended citations, please let us know!</p>
 </div>
 <p>If you use <strong>smol</strong> for your work please cite the following publication,</p>
 <blockquote>
@@ -451,6 +448,16 @@ Multicomponent Alloys</a>.
 J. Phase Equilib. Diffus. 37, 44–52 (2016).</p>
 </div></blockquote>
 </section>
+<section id="cluster-decomposition">
+<h2>Cluster decomposition<a class="headerlink" href="#cluster-decomposition" title="Permalink to this heading">#</a></h2>
+<p>If you use the <code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterDecompositionProcessor</span></code> class, cluster interaction tensors,
+cluster weights, or related concepts in your work, please cite this work,</p>
+<blockquote>
+<div><p>Barroso-Luque, Luis &amp; Ceder, G. (2023).
+The cluster decomposition of the configurational energy of multicomponent alloys.
+<a class="reference external" href="https://doi.org/10.48550/arXiv.2301.02309">[arXiv]</a></p>
+</div></blockquote>
+</section>
 <section id="cluster-expansions-with-redundant-function-sets">
 <h2>Cluster expansions with redundant function sets<a class="headerlink" href="#cluster-expansions-with-redundant-function-sets" title="Permalink to this heading">#</a></h2>
 <p>If you use the <code class="xref py py-class docutils literal notranslate"><span class="pre">PottsSubspace</span></code> class or related functionality
@@ -460,6 +467,43 @@ to include redundancy in cluster expansions, please cite this publication,</p>
 <a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevB.104.224203">Sparse expansions of multicomponent oxide configuration energy using
 coherency and redundancy</a>.
 Phys. Rev. B 104, 224203 (2021).</p>
+</div></blockquote>
+</section>
+<section id="coulomb-electrostatic-interactions">
+<h2>Coulomb electrostatic interactions<a class="headerlink" href="#coulomb-electrostatic-interactions" title="Permalink to this heading">#</a></h2>
+<p>When using an <code class="xref py py-class docutils literal notranslate"><span class="pre">EwaldTerm</span></code> as an additional term in a lattice Hamiltonian, please
+cite the following publications,</p>
+<blockquote>
+<div><p>Seko, A. &amp; Tanaka, I. <a class="reference external" href="https://doi.org/10.1088/0953-8984/26/11/115403">Cluster expansion of multicomponent ionic systems with
+controlled accuracy: importance of long-range interactions in heterovalent ionic
+systems</a>.
+J. Phys.: Condens. Matter 26, 115403 (2014).</p>
+<p>Richards, W. D., Wang, Y., Miara, L. J., Kim, J. C. &amp; Ceder, G.
+<a class="reference external" href="https://doi.org/10.1039/C6EE02094A">Design of Li1+2xZn1−xPS4, a new lithium ion conductor</a>. Energy Environ. Sci. 9, 3272–3278 (2016).</p>
+<p>Barroso-Luque, L. et al.
+<a class="reference external" href="https://doi.org/10.1103/PhysRevB.106.144202">Cluster expansions of multicomponent ionic materials: Formalism and methodology.</a>.
+Phys. Rev. B 106, 144202 (2022).</p>
+</div></blockquote>
+</section>
+<section id="charge-neutral-semigrand-canonical-sampling">
+<h2>Charge-neutral semigrand canonical sampling<a class="headerlink" href="#charge-neutral-semigrand-canonical-sampling" title="Permalink to this heading">#</a></h2>
+<p>If you use the charge neutral semigrand canonical sampling or any related functionality
+please cite the following work,</p>
+<blockquote>
+<div><p>Xie, F., Zhong, P., Barroso-Luque, L., Ouyang, B. &amp; Ceder, G.
+<a class="reference external" href="https://doi.org/10.1016/j.commatsci.2022.112000">Semigrand-canonical Monte-Carlo simulation methods for charge-decorated cluster
+expansions</a>
+Computational Materials Science 218, 112000 (2023).</p>
+</div></blockquote>
+</section>
+<section id="wang-landau-sampling">
+<h2>Wang-Landau sampling<a class="headerlink" href="#wang-landau-sampling" title="Permalink to this heading">#</a></h2>
+<p>If you use Wang-Landau sampling to estimate density of states and derivative properties
+we recommend citing the original publications,</p>
+<blockquote>
+<div><p>Wang, F. &amp; Landau, D. P.
+<a class="reference external" href="https://doi.org/10.1103/PhysRevLett.86.2050">Efficient, Multiple-Range Random Walk Algorithm to Calculate the Density of States.</a>.
+Phys. Rev. Lett. 86, 2050–2053 (2001).</p>
 </div></blockquote>
 </section>
 <section id="orbit-group-wise-regularized-fits">
@@ -488,42 +532,6 @@ Phys. Rev. B 106, 024203 (2022).</p>
 <p>Barroso-Luque, L. et al.
 <a class="reference external" href="https://doi.org/10.1103/PhysRevB.106.144202">Cluster expansions of multicomponent ionic materials: Formalism and methodology.</a>.
 Phys. Rev. B 106, 144202 (2022).</p>
-</div></blockquote>
-</section>
-<section id="charge-neutral-semigrand-canonical-sampling">
-<h2>Charge-neutral semigrand canonical sampling<a class="headerlink" href="#charge-neutral-semigrand-canonical-sampling" title="Permalink to this heading">#</a></h2>
-<p>If you use the charge neutral semigrand canonical sampling or any related functionality
-please cite the following work,</p>
-<blockquote>
-<div><p>Xie, F., Zhong, P., Barroso-Luque, L., Ouyang, B. &amp; Ceder, G.
-<a class="reference external" href="https://arxiv.org/abs/2210.01165">Grand-canonical Monte-Carlo simulation methods for charge-decorated cluster
-expansions</a> [arxiv:2210.01165].</p>
-</div></blockquote>
-</section>
-<section id="coulomb-electrostatic-interactions">
-<h2>Coulomb electrostatic interactions<a class="headerlink" href="#coulomb-electrostatic-interactions" title="Permalink to this heading">#</a></h2>
-<p>When using an <code class="xref py py-class docutils literal notranslate"><span class="pre">EwaldTerm</span></code> as an additional term in a lattice Hamiltonian, please
-cite the following publications,</p>
-<blockquote>
-<div><p>Seko, A. &amp; Tanaka, I. <a class="reference external" href="https://doi.org/10.1088/0953-8984/26/11/115403">Cluster expansion of multicomponent ionic systems with
-controlled accuracy: importance of long-range interactions in heterovalent ionic
-systems</a>.
-J. Phys.: Condens. Matter 26, 115403 (2014).</p>
-<p>Richards, W. D., Wang, Y., Miara, L. J., Kim, J. C. &amp; Ceder, G.
-<a class="reference external" href="https://doi.org/10.1039/C6EE02094A">Design of Li1+2xZn1−xPS4, a new lithium ion conductor</a>. Energy Environ. Sci. 9, 3272–3278 (2016).</p>
-<p>Barroso-Luque, L. et al.
-<a class="reference external" href="https://doi.org/10.1103/PhysRevB.106.144202">Cluster expansions of multicomponent ionic materials: Formalism and methodology.</a>.
-Phys. Rev. B 106, 144202 (2022).</p>
-</div></blockquote>
-</section>
-<section id="wang-landau-sampling">
-<h2>Wang-Landau sampling<a class="headerlink" href="#wang-landau-sampling" title="Permalink to this heading">#</a></h2>
-<p>If you use Wang-Landau sampling to estimate density of states and derivative properties
-we recommend citing the original publications,</p>
-<blockquote>
-<div><p>Wang, F. &amp; Landau, D. P.
-<a class="reference external" href="https://doi.org/10.1103/PhysRevLett.86.2050">Efficient, Multiple-Range Random Walk Algorithm to Calculate the Density of States.</a>.
-Phys. Rev. Lett. 86, 2050–2053 (2001).</p>
 </div></blockquote>
 </section>
 </section>
@@ -572,8 +580,28 @@ Phys. Rev. Lett. 86, 2050–2053 (2001).</p>
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#cluster-decomposition">
+   Cluster decomposition
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#cluster-expansions-with-redundant-function-sets">
    Cluster expansions with redundant function sets
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#coulomb-electrostatic-interactions">
+   Coulomb electrostatic interactions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#charge-neutral-semigrand-canonical-sampling">
+   Charge-neutral semigrand canonical sampling
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#wang-landau-sampling">
+   Wang-Landau sampling
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
@@ -587,21 +615,6 @@ Phys. Rev. Lett. 86, 2050–2053 (2001).</p>
     \(\ell_0\ell_2\)
    </span>
    MIQP fits with hierarchical constraints
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#charge-neutral-semigrand-canonical-sampling">
-   Charge-neutral semigrand canonical sampling
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#coulomb-electrostatic-interactions">
-   Coulomb electrostatic interactions
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#wang-landau-sampling">
-   Wang-Landau sampling
   </a>
  </li>
 </ul>
@@ -655,7 +668,7 @@ Phys. Rev. Lett. 86, 2050–2053 (2001).</p>
     
 <p class="copyright">
 
-    &copy; Copyright 2022-2022, Ceder Group.<br>
+    &copy; Copyright 2022-2023, Ceder Group.<br>
 
 </p>
 
@@ -674,7 +687,7 @@ Phys. Rev. Lett. 86, 2050–2053 (2001).</p>
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.1.3.<br>
 </p>
 
   </div>

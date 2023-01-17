@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Expansion Processor &#8212; smol 0.2.0 documentation</title>
+    <title>Cluster Expansion &amp; Decomposition Processors &#8212; smol 0.3.0 documentation</title>
   
   
   
@@ -34,16 +34,13 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/moca/processors.expansion';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3.0';
         </script>
     <script src="../../_static/require.js"></script>
     <script src="../../_static/custom.js"></script>
@@ -199,7 +196,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.2.0  <!-- this text may get changed later by javascript -->
+        0.3.0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -343,7 +340,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.2.0  <!-- this text may get changed later by javascript -->
+        0.3.0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -439,11 +436,106 @@
             <article class="bd-article" role="main">
               
   <section id="module-smol.moca.processor.expansion">
-<span id="expansion-processor"></span><h1>Expansion Processor<a class="headerlink" href="#module-smol.moca.processor.expansion" title="Permalink to this heading">#</a></h1>
+<span id="cluster-expansion-decomposition-processors"></span><h1>Cluster Expansion &amp; Decomposition Processors<a class="headerlink" href="#module-smol.moca.processor.expansion" title="Permalink to this heading">#</a></h1>
 <p>Implementation of CE processor class for a fixed size supercell.</p>
 <p>If you are using a Hamiltonian with an Ewald summation electrostatic term, you
 should use the CompositeProcessor with a ClusterExpansionProcessor and an
 EwaldProcessor class to handle changes in the electrostatic interaction energy.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterDecompositionProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interaction_tensors</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="processors.base.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code></a></p>
+<p>ClusterDecompositionProcessor to use a CD in MC simulations.</p>
+<p>An ClusterDecompositionProcessor is similar to a ClusterExpansionProcessor
+however it computes properties and changes of properties using cluster interactions
+rather than correlation functions and ECI.</p>
+<p>For a given ClusterExpansion the results from sampling using this class
+should be the exact same as using a ClusterExpansionProcessor (ie the
+samples are from the same ensemble).</p>
+<p>A few practical and important differences though, the featyre vectors
+that are used and sampled are the cluster interactions for each occupancy
+as opposed to the correlation vectors (so if you need correlation vectors
+for further analysis you’re probably better off with a standard
+ClusterExpansionProcessor</p>
+<p>However if you don’t need correlation vectors, then this is probably
+more efficient and more importantly the scaling complexity with model size
+is in terms of number of orbits (instead of number of corr functions).
+This can give substantial speedups when doing MC calculations of complex
+high component systems.</p>
+<p>Initialize an ClusterDecompositionProcessor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="../autogen/cofe.html#cofe.ClusterSubspace" title="cofe.ClusterSubspace"><em>ClusterSubspace</em></a>) – A cluster subspace</p></li>
+<li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – An array representing the supercell matrix with respect to the
+Cluster Expansion prim structure.</p></li>
+<li><p><strong>interaction_tensors</strong> (<em>sequence</em><em> of </em><em>ndarray</em>) – Sequence of ndarray where each array corresponds to the
+cluster interaction tensor. These should be in the same order as their
+corresponding orbits in the given cluster_subspace</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.as_dict" title="Permalink to this definition">#</a></dt>
+<dd><p>Json-serialization dict representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>MSONable dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector">
+<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the cluster interaction vector for a given occupancy string.</p>
+<p>The cluster interaction vector in this case is normalized per supercell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupation array</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>correlation vector</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector_change">
+<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the change in the cluster interaction vector from a list of flips.</p>
+<p>The cluster interaction vector in this case is normalized per supercell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>occupancy</strong> (<em>ndarray</em>) – encoded occupancy string</p></li>
+<li><p><strong>flips</strong> (<em>list</em><em> of </em><em>tuple</em>) – list of tuples with two elements. Each tuple represents a
+single flip where the first element is the index of the site
+in the occupancy string and the second element is the index
+for the new species to place at that site.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>change in cluster interaction vector</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.from_dict" title="Permalink to this definition">#</a></dt>
+<dd><p>Create a ClusterExpansionProcessor from serialized MSONable dict.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterExpansionProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor" title="Permalink to this definition">#</a></dt>
@@ -582,6 +674,53 @@ for the new species to place at that site.</p></li>
 <nav id="bd-toc-nav" class="page-toc">
     <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor">
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ClusterDecompositionProcessor
+    </span>
+   </code>
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.as_dict">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ClusterDecompositionProcessor.as_dict()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ClusterDecompositionProcessor.compute_feature_vector()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector_change">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ClusterDecompositionProcessor.compute_feature_vector_change()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.from_dict">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ClusterDecompositionProcessor.from_dict()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor">
    <code class="docutils literal notranslate">
     <span class="pre">
@@ -688,7 +827,7 @@ for the new species to place at that site.</p></li>
     
 <p class="copyright">
 
-    &copy; Copyright 2022-2022, Ceder Group.<br>
+    &copy; Copyright 2022-2023, Ceder Group.<br>
 
 </p>
 
@@ -707,7 +846,7 @@ for the new species to place at that site.</p></li>
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.1.3.<br>
 </p>
 
   </div>

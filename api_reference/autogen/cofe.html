@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>cofe package &#8212; smol 0.2.0 documentation</title>
+    <title>cofe package &#8212; smol 0.3.0 documentation</title>
   
   
   
@@ -34,9 +34,6 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -45,7 +42,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/autogen/cofe';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.2.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3.0';
         </script>
     <script src="../../_static/require.js"></script>
     <script src="../../_static/custom.js"></script>
@@ -199,7 +196,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.2.0  <!-- this text may get changed later by javascript -->
+        0.3.0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -343,7 +340,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.2.0  <!-- this text may get changed later by javascript -->
+        0.3.0  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -517,6 +514,7 @@
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.basis.StandardBasis.orthonormalization_array"><code class="docutils literal notranslate"><span class="pre">StandardBasis.orthonormalization_array</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.basis.StandardBasis.orthonormalize"><code class="docutils literal notranslate"><span class="pre">StandardBasis.orthonormalize()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.basis.StandardBasis.rotate"><code class="docutils literal notranslate"><span class="pre">StandardBasis.rotate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.basis.StandardBasis.rotation_array"><code class="docutils literal notranslate"><span class="pre">StandardBasis.rotation_array</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="cofe.space.html#cofe.space.basis.basis_factory"><code class="docutils literal notranslate"><span class="pre">basis_factory()</span></code></a></li>
@@ -543,12 +541,14 @@
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.cluster.Cluster.from_sites"><code class="docutils literal notranslate"><span class="pre">Cluster.from_sites()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.cluster.Cluster.from_str"><code class="docutils literal notranslate"><span class="pre">Cluster.from_str()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.cluster.Cluster.get_distance"><code class="docutils literal notranslate"><span class="pre">Cluster.get_distance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.cluster.Cluster.get_scene"><code class="docutils literal notranslate"><span class="pre">Cluster.get_scene()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#id3"><code class="docutils literal notranslate"><span class="pre">Cluster.lattice</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.cluster.Cluster.radius"><code class="docutils literal notranslate"><span class="pre">Cluster.radius</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.cluster.Cluster.sites"><code class="docutils literal notranslate"><span class="pre">Cluster.sites</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.cluster.Cluster.to"><code class="docutils literal notranslate"><span class="pre">Cluster.to()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="cofe.space.html#cofe.space.cluster.get_cluster_scene"><code class="docutils literal notranslate"><span class="pre">get_cluster_scene()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="cofe.space.html#module-cofe.space.clusterspace">cofe.space.clusterspace module</a><ul>
@@ -586,12 +586,15 @@
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.orbit_hierarchy"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.orbit_hierarchy()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.orbit_multiplicities"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.orbit_multiplicities</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.orbits"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.orbits</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.orbits_by_cutoffs()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.orbits_by_size"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.orbits_by_size</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.orbits_from_cutoffs"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.orbits_from_cutoffs()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.refine_structure"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.refine_structure()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.remove_corr_functions"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.remove_corr_functions()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.remove_orbits"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.remove_orbits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.rotate_site_basis"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.rotate_site_basis()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.scmatrix_from_structure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.site_rotation_matrix"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.site_rotation_matrix</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.structure"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.structure</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.structure_site_mapping"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.structure_site_mapping()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.clusterspace.ClusterSubspace.supercell_orbit_mappings"><code class="docutils literal notranslate"><span class="pre">ClusterSubspace.supercell_orbit_mappings()</span></code></a></li>
@@ -674,6 +677,7 @@
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.Cluster.from_sites"><code class="docutils literal notranslate"><span class="pre">Cluster.from_sites()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.Cluster.from_str"><code class="docutils literal notranslate"><span class="pre">Cluster.from_str()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.Cluster.get_distance"><code class="docutils literal notranslate"><span class="pre">Cluster.get_distance()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.Cluster.get_scene"><code class="docutils literal notranslate"><span class="pre">Cluster.get_scene()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#id6"><code class="docutils literal notranslate"><span class="pre">Cluster.lattice</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.Cluster.radius"><code class="docutils literal notranslate"><span class="pre">Cluster.radius</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="cofe.space.html#cofe.space.Cluster.sites"><code class="docutils literal notranslate"><span class="pre">Cluster.sites</span></code></a></li>
@@ -881,9 +885,38 @@ for different bases.</p></li>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="cofe.expansion.ClusterExpansion.cluster_interaction_tensors">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_interaction_tensors</span></span><a class="headerlink" href="#cofe.expansion.ClusterExpansion.cluster_interaction_tensors" title="Permalink to this definition">#</a></dt>
+<dd><p>Get tuple of cluster interaction tensors.</p>
+<p>Tuple of ndarrays where each array is the interaction tensor for the
+corresponding orbit of clusters.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="cofe.expansion.ClusterExpansion.cluster_subspace">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#cofe.expansion.ClusterExpansion.cluster_subspace" title="Permalink to this definition">#</a></dt>
 <dd><p>Get ClusterSubspace.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cofe.expansion.ClusterExpansion.compute_cluster_interactions">
+<span class="sig-name descname"><span class="pre">compute_cluster_interactions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.expansion.ClusterExpansion.compute_cluster_interactions" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the vector of cluster interaction values for given structure.</p>
+<p>A cluster interaction is simply a vector made up of the sum of all cluster
+expansion terms over the same orbit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>Structure</em>) – Structures to predict from</p></li>
+<li><p><strong>normalize</strong> (<em>bool</em>) – Whether to return the predicted property normalized by
+the prim cell size.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns: ndarray</dt><dd><p>vector of cluster interaction values</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -907,6 +940,14 @@ represent ECI.</p>
 <dd><p>Get Orbit ids corresponding to each ECI in the Cluster Expansion.</p>
 <p>If the Cluster Expansion includes external terms these are not included
 in the list since they are not associated with any orbit.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cofe.expansion.ClusterExpansion.effective_cluster_weights">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">effective_cluster_weights</span></span><a class="headerlink" href="#cofe.expansion.ClusterExpansion.effective_cluster_weights" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the cluster weights.</p>
+<p>The cluster weights are defined as the weighted sum of ECI squared, where
+the weights are the ordering multiplicities.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1137,9 +1178,38 @@ for different bases.</p></li>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="cofe.ClusterExpansion.cluster_interaction_tensors">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_interaction_tensors</span></span><a class="headerlink" href="#cofe.ClusterExpansion.cluster_interaction_tensors" title="Permalink to this definition">#</a></dt>
+<dd><p>Get tuple of cluster interaction tensors.</p>
+<p>Tuple of ndarrays where each array is the interaction tensor for the
+corresponding orbit of clusters.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="cofe.ClusterExpansion.cluster_subspace">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cluster_subspace</span></span><a class="headerlink" href="#cofe.ClusterExpansion.cluster_subspace" title="Permalink to this definition">#</a></dt>
 <dd><p>Get ClusterSubspace.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cofe.ClusterExpansion.compute_cluster_interactions">
+<span class="sig-name descname"><span class="pre">compute_cluster_interactions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.ClusterExpansion.compute_cluster_interactions" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the vector of cluster interaction values for given structure.</p>
+<p>A cluster interaction is simply a vector made up of the sum of all cluster
+expansion terms over the same orbit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>Structure</em>) – Structures to predict from</p></li>
+<li><p><strong>normalize</strong> (<em>bool</em>) – Whether to return the predicted property normalized by
+the prim cell size.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns: ndarray</dt><dd><p>vector of cluster interaction values</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1163,6 +1233,14 @@ represent ECI.</p>
 <dd><p>Get Orbit ids corresponding to each ECI in the Cluster Expansion.</p>
 <p>If the Cluster Expansion includes external terms these are not included
 in the list since they are not associated with any orbit.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cofe.ClusterExpansion.effective_cluster_weights">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">effective_cluster_weights</span></span><a class="headerlink" href="#cofe.ClusterExpansion.effective_cluster_weights" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculate the cluster weights.</p>
+<p>The cluster weights are defined as the weighted sum of ECI squared, where
+the weights are the ordering multiplicities.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -1825,6 +1903,24 @@ index.</p>
 <dd><p>Return a list of all orbits sorted by size.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="cofe.ClusterSubspace.orbits_by_cutoffs">
+<span class="sig-name descname"><span class="pre">orbits_by_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.ClusterSubspace.orbits_by_cutoffs" title="Permalink to this definition">#</a></dt>
+<dd><p>Get orbits with clusters within given diameter cutoffs (inclusive).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>upper</strong> (<em>float</em>) – upper diameter for clusters to include.</p></li>
+<li><p><strong>lower</strong> (<em>float</em>) – optional
+lower diameter for clusters to include.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of Orbits</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="cofe.ClusterSubspace.orbits_by_size">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#cofe.ClusterSubspace.orbits_by_size" title="Permalink to this definition">#</a></dt>
@@ -1933,6 +2029,29 @@ one element in the correlation vector.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="cofe.ClusterSubspace.rotate_site_basis">
+<span class="sig-name descname"><span class="pre">rotate_site_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">singlet_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.ClusterSubspace.rotate_site_basis" title="Permalink to this definition">#</a></dt>
+<dd><p>Apply a rotation to a site basis.</p>
+<p>The rotation is applied around an axis normal to the span of the two
+site functions given by index1 and index 2 (the constant function is
+not included, i.e. index 0 corresponds to the first non constant
+function)</p>
+<p>Read warnings in SiteBasis.rotate when using this method.
+TLDR: Careful when using this with non-orthogonal or biased site bases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>singlet_id</strong> (<em>int</em>) – Orbit id of singlet function. Only singlet function ids are
+valid here.</p></li>
+<li><p><strong>angle</strong> (<em>float</em>) – Angle to rotate in radians.</p></li>
+<li><p><strong>index1</strong> (<em>int</em>) – index of first basis vector in function_array</p></li>
+<li><p><strong>index2</strong> (<em>int</em>) – index of second basis vector in function_array</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cofe.ClusterSubspace.scmatrix_from_structure">
 <span class="sig-name descname"><span class="pre">scmatrix_from_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cofe.ClusterSubspace.scmatrix_from_structure" title="Permalink to this definition">#</a></dt>
 <dd><p>Get supercell matrix from a given structure.</p>
@@ -1949,6 +2068,14 @@ to a supercell equivalent to given structure.</p>
 <dd class="field-odd"><p>ndarray</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cofe.ClusterSubspace.site_rotation_matrix">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">site_rotation_matrix</span></span><a class="headerlink" href="#cofe.ClusterSubspace.site_rotation_matrix" title="Permalink to this definition">#</a></dt>
+<dd><p>Get change of basis matrix from site function rotations.</p>
+<p>Note: this is meant only for rotations using orthonormal site bases.
+Using it otherwise will not work as expected.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -2905,10 +3032,28 @@ having to re-match structures and such.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.expansion.ClusterExpansion.cluster_interaction_tensors">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterExpansion.cluster_interaction_tensors
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#cofe.expansion.ClusterExpansion.cluster_subspace">
        <code class="docutils literal notranslate">
         <span class="pre">
          ClusterExpansion.cluster_subspace
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.expansion.ClusterExpansion.compute_cluster_interactions">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterExpansion.compute_cluster_interactions()
         </span>
        </code>
       </a>
@@ -2936,6 +3081,15 @@ having to re-match structures and such.</p>
        <code class="docutils literal notranslate">
         <span class="pre">
          ClusterExpansion.eci_orbit_ids
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.expansion.ClusterExpansion.effective_cluster_weights">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterExpansion.effective_cluster_weights
         </span>
        </code>
       </a>
@@ -3114,10 +3268,28 @@ having to re-match structures and such.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.ClusterExpansion.cluster_interaction_tensors">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterExpansion.cluster_interaction_tensors
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#cofe.ClusterExpansion.cluster_subspace">
        <code class="docutils literal notranslate">
         <span class="pre">
          ClusterExpansion.cluster_subspace
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.ClusterExpansion.compute_cluster_interactions">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterExpansion.compute_cluster_interactions()
         </span>
        </code>
       </a>
@@ -3145,6 +3317,15 @@ having to re-match structures and such.</p>
        <code class="docutils literal notranslate">
         <span class="pre">
          ClusterExpansion.eci_orbit_ids
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.ClusterExpansion.effective_cluster_weights">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterExpansion.effective_cluster_weights
         </span>
        </code>
       </a>
@@ -3512,6 +3693,15 @@ having to re-match structures and such.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.ClusterSubspace.orbits_by_cutoffs">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.orbits_by_cutoffs()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#cofe.ClusterSubspace.orbits_by_size">
        <code class="docutils literal notranslate">
         <span class="pre">
@@ -3557,10 +3747,28 @@ having to re-match structures and such.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.ClusterSubspace.rotate_site_basis">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.rotate_site_basis()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#cofe.ClusterSubspace.scmatrix_from_structure">
        <code class="docutils literal notranslate">
         <span class="pre">
          ClusterSubspace.scmatrix_from_structure()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#cofe.ClusterSubspace.site_rotation_matrix">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         ClusterSubspace.site_rotation_matrix
         </span>
        </code>
       </a>
@@ -4139,7 +4347,7 @@ having to re-match structures and such.</p>
     
 <p class="copyright">
 
-    &copy; Copyright 2022-2022, Ceder Group.<br>
+    &copy; Copyright 2022-2023, Ceder Group.<br>
 
 </p>
 
@@ -4158,7 +4366,7 @@ having to re-match structures and such.</p>
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.1.3.<br>
 </p>
 
   </div>
