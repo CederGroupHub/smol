@@ -91,9 +91,14 @@ pygments_style = "sphinx"
 
 html_theme = "pydata_sphinx_theme"
 
-html_logo = "_static/logo.png"  # banner.svg needs text as paths to avoid font missing
+# TODO: update this when fixed version of pydata-sphinx-theme is released
+# html_logo = "_static/logo.png"  # banner.svg needs text as paths to avoid font missing
 
 html_theme_options = {
+    "logo": {
+        "image_light": "logo.png",
+        "image_dark": "logo.png",
+    },
     "github_url": "https://github.com/CederGroupHub/smol",
     "use_edit_page_button": True,
     "show_toc_level": 2,
