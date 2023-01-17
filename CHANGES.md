@@ -7,13 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
-* Cluster decomposition analysis and sampling functionality. #306 @lbluque
 ### Changed
-* keep ensemble as attribute in `MCKernels`. #304 @lbluque
 ### Fixed
-* add `polytope` and `cvxpy` to test requirements.
 ### Removed
 ### Deprecated
+
+# [v0.3.0](https://github.com/CederGroupHub/smol/releases/tag/v0.3.0) (2023-01-13)
+### Added
+* Cluster decomposition analysis and sampling functionality. #306 @lbluque
+### Changed
+* Keep ensemble as attribute in `MCKernels`. #304 @lbluque
+* Change default processor into ClusterDecompositionProcessor when initializing
+  Ensemble. #309 @qchempku2017
+* Use -mcpu=native compile option to build successfully on newer macs. #310 @lbluque
+### Fixed
+* Add `polytope` and `cvxpy` to test requirements. #304 @lbluque
 
 # [v0.2.0](https://github.com/CederGroupHub/smol/releases/tag/v0.2.0) (2022-12-11)
 ### Added
