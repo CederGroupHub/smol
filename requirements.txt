@@ -1,4 +1,5 @@
 numpy==1.24.1
 monty==2022.9.9
 pandas==1.4.4
+pybtex==0.24.0
 pymatgen==2022.11.7
