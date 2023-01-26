@@ -16,6 +16,7 @@ import numpy as np
 from monty.dev import requires
 from monty.json import MontyDecoder, MontyEncoder, MSONable, jsanitize
 
+from smol.moca import Ensemble
 from smol.moca.sampler.namespace import Metadata, Trace
 from smol.moca.sublattice import Sublattice
 
@@ -56,31 +57,17 @@ class SampleContainer(MSONable):
             Dictionary of metadata from the MC run that generated the samples.
     """
 
-    def __init__(
-        self,
-        sublattices,
-        natural_parameters,
-        num_energy_coefs,
-        sample_trace,
-        sampling_metadata=None,
-    ):
+    def __init__(self, ensemble, sample_trace, sampling_metadata=None):
         """Initialize a sample container.
 
         Args:
-            sublattices (list of Sublattice):
-                Sublattices of the ensemble sampled.
-            natural_parameters (ndarray):
-                array of natural parameters used in the ensemble.
-            num_energy_coefs (int):
-                the number of coefficients in the natural parameters that
-                correspond to the energy only.
+            ensemble (Ensemble):
+                Ensemble object used to generate the samples.
             sample_trace (Trace):
                 a trace object for the traced values during MC sampling
             sampling_metadata (Ensemble):
                 sampling metadata (i.e. ensemble name, mckernel type, etc)
         """
-        self.sublattices = sublattices
-        self.natural_parameters = natural_parameters
         self._total_steps = 0
 
         if sampling_metadata is not None:
@@ -91,12 +78,39 @@ class SampleContainer(MSONable):
         else:
             self.metadata = Metadata(SampleContainer.__name__)
 
-        self._num_energy_coefs = num_energy_coefs
-        # need counter because can't use shape of arraus when allocating space
+        # TODO these private attributes should be removed once the older format of
+        #  sample containers (those that do not save ensembles) is no longer supported
+        self._sublattices = None
+        self._natural_parameters = None
+        self._num_energy_coefs = (
+            ensemble.num_energy_coefs if ensemble is not None else None
+        )
+
+        self._ensemble = ensemble
+        # need counter because can't use shape of arrays when allocating space
         self._nsamples = 0
         self._trace = sample_trace
         self._aux_checkpoint = None
         self._backend = None  # for streaming
+
+    @property
+    def sublattices(self):
+        """Return the sublattices."""
+        if self._ensemble is None:
+            return self._sublattices
+        return self._ensemble.sublattices
+
+    @property
+    def natural_parameters(self):
+        """Return the natural parameters."""
+        if self._ensemble is None:
+            return self._natural_parameters
+        return self._ensemble.natural_parameters
+
+    @property
+    def ensemble(self):
+        """Return the ensemble name."""
+        return self._ensemble
 
     @property
     def num_samples(self):
@@ -471,10 +485,8 @@ class SampleContainer(MSONable):
         container_d = {
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
-            "sublattices": [s.as_dict() for s in self.sublattices],
-            "natural_parameters": jsanitize(self.natural_parameters),
+            "ensemble": self.ensemble.as_dict(),
             "metadata": self.metadata.as_dict(),
-            "num_energy_coefs": self._num_energy_coefs,
             "total_mc_steps": self._total_steps,
             "nsamples": self._nsamples,
             "trace": jsanitize(self._trace.as_dict()),
@@ -483,30 +495,65 @@ class SampleContainer(MSONable):
         # TODO need to think how to generally serialize the aux checkpoint
         return container_d
 
+    def update_format(self, ensemble):
+        """Update the format of the container to match the ensemble.
+
+        Args:
+            ensemble (Ensemble): ensemble to match
+        """
+        self._ensemble = ensemble
+
     @classmethod
-    def from_dict(cls, d):
+    def from_dict(cls, d, ensemble=None):
         """Instantiate a SampleContainer from dict representation.
 
         Args:
             d (dict):
                 dictionary representation.
+            ensemble (Ensemble): optional
+                The ensemble object to used for generating samples. Only needed to
+                update legacy files.
         Returns:
-            Sublattice
+            SampleContainer
         """
-        sublattices = [Sublattice.from_dict(s) for s in d["sublattices"]]
         trace = Trace(**{key: np.array(val) for key, val in d["trace"].items()})
         d["metadata"] = MontyDecoder().process_decoded(d["metadata"])
 
         if not isinstance(d["metadata"], Metadata):  # backwards compatibility
             d["metadata"] = Metadata(cls.__name__, **d["metadata"])
 
-        container = cls(
-            sublattices,
-            d["natural_parameters"],
-            d["num_energy_coefs"],
-            trace,
-            d["metadata"],
-        )
+        # TODO remove this if statement once legacy files are not supported!
+        if "sublattices" in d.keys():
+            sublattices = [
+                Sublattice.from_dict(sublatt) for sublatt in d["sublattices"]
+            ]
+            if ensemble is None:
+                warnings.warn(
+                    "This SampleContainer was created with a previous version of smol.\n"
+                    "This format is deprecated and will not be supported in the future.\n"
+                    "To update your SampleContainer, pass the original Ensemble object "
+                    "that was used to generate samples to the from_dict class method "
+                    "using the `ensemble` keyword argument.",
+                    FutureWarning,
+                )
+                container = cls(None, trace, d["metadata"])
+                container._sublattices = sublattices
+                container._natural_parameters = d["natural_parameters"]
+                container._num_energy_coefs = d["num_energy_coefs"]
+            else:
+                # check that sublattices match (this does not check if active sites match!)
+                if not all(sl in sublattices for sl in ensemble.sublattices) or len(
+                    ensemble.sublattices
+                ) != len(sublattices):
+                    raise ValueError(
+                        "Sublattices in Ensemble object passed do not match, the once saved. \n "
+                        "Make sure you are passing the correct Ensemble object."
+                    )
+                container = cls(ensemble, trace, d["metadata"])
+        else:
+            ensemble = Ensemble.from_dict(d["ensemble"])
+            container = cls(ensemble, trace, d["metadata"])
+
         # set the container internals
         container._total_steps = d["total_mc_steps"]
         container._nsamples = trace.occupancy.shape[0]
