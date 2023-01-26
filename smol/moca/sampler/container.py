@@ -140,6 +140,29 @@ class SampleContainer(MSONable):
             efficiency = efficiency.mean()
         return efficiency
 
+    def get_sampled_structures(self, indices=-1):
+        """Get sampled structures for MC steps given by indices.
+
+        Args:
+            indices (list of int or int):
+                A single index or list of indices to obtain sampled structures
+
+        Returns:
+            list of Structure
+        """
+        if self.ensemble is None:
+            raise RuntimeError(
+                "Cannot get structures for SampleContainer with older format!"
+            )
+
+        indices = [indices] if isinstance(indices, int) else indices
+        occupancies = self.get_occupancies()[indices]
+        structures = [
+            self.ensemble.processor.structure_from_occupancy(occu)
+            for occu in occupancies
+        ]
+        return structures
+
     def get_trace_value(self, name, discard=0, thin_by=1, flat=True):
         """Get sampled values of a traced value given by name."""
         value = getattr(self._trace, name)[discard + thin_by - 1 :: thin_by]
