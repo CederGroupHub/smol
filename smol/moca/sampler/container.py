@@ -437,12 +437,7 @@ class SampleContainer(MSONable):
 
     def _init_backend(self, backend, nsamples):
         """Initialize a backend file."""
-        sublattices = [sublatt.as_dict() for sublatt in self.sublattices]
-        backend.create_dataset("sublattices", data=json.dumps(sublattices))
-        backend.create_dataset("natural_parameters", data=self.natural_parameters)
-        backend["natural_parameters"].attrs[
-            "num_energy_coefs"
-        ] = self._num_energy_coefs  # noqa
+        backend.create_dataset("ensemble", data=json.dumps(self.ensemble.as_dict()))
         backend.create_dataset(
             "sampling_metadata", data=json.dumps(self.metadata, cls=MontyEncoder)
         )
@@ -495,13 +490,35 @@ class SampleContainer(MSONable):
         # TODO need to think how to generally serialize the aux checkpoint
         return container_d
 
-    def update_format(self, ensemble):
-        """Update the format of the container to match the ensemble.
-
-        Args:
-            ensemble (Ensemble): ensemble to match
-        """
-        self._ensemble = ensemble
+    @classmethod  # TODO remove this when old container format (without ensemble) are no longer supported
+    def _from_legacy(
+        cls, ensemble, sublattices, trace, metadata, nat_params, n_energy_coefs
+    ):
+        """Load a legacy container."""
+        if ensemble is None:
+            warnings.warn(
+                "This SampleContainer was created with a previous version of smol.\n"
+                "This format is deprecated and will not be supported in the future.\n"
+                "To update your SampleContainer, generate it using the from_dict or "
+                "from_hd5f methods passing the Ensemble that was used to generate samples"
+                " using the `ensemble` keyword argument, and re-save it.",
+                FutureWarning,
+            )
+            container = cls(None, trace, metadata)
+            container._sublattices = sublattices
+            container._natural_parameters = nat_params
+            container._num_energy_coefs = n_energy_coefs
+        else:
+            # check that sublattices match (this does not check if active sites match!)
+            if not all(sl in sublattices for sl in ensemble.sublattices) or len(
+                ensemble.sublattices
+            ) != len(sublattices):
+                raise ValueError(
+                    "Sublattices in Ensemble object passed do not match, the once saved. \n "
+                    "Make sure you are passing the correct Ensemble object."
+                )
+            container = cls(ensemble, trace, metadata)
+        return container
 
     @classmethod
     def from_dict(cls, d, ensemble=None):
@@ -522,34 +539,18 @@ class SampleContainer(MSONable):
         if not isinstance(d["metadata"], Metadata):  # backwards compatibility
             d["metadata"] = Metadata(cls.__name__, **d["metadata"])
 
-        # TODO remove this if statement once legacy files are not supported!
         if "sublattices" in d.keys():
             sublattices = [
                 Sublattice.from_dict(sublatt) for sublatt in d["sublattices"]
             ]
-            if ensemble is None:
-                warnings.warn(
-                    "This SampleContainer was created with a previous version of smol.\n"
-                    "This format is deprecated and will not be supported in the future.\n"
-                    "To update your SampleContainer, pass the original Ensemble object "
-                    "that was used to generate samples to the from_dict class method "
-                    "using the `ensemble` keyword argument.",
-                    FutureWarning,
-                )
-                container = cls(None, trace, d["metadata"])
-                container._sublattices = sublattices
-                container._natural_parameters = d["natural_parameters"]
-                container._num_energy_coefs = d["num_energy_coefs"]
-            else:
-                # check that sublattices match (this does not check if active sites match!)
-                if not all(sl in sublattices for sl in ensemble.sublattices) or len(
-                    ensemble.sublattices
-                ) != len(sublattices):
-                    raise ValueError(
-                        "Sublattices in Ensemble object passed do not match, the once saved. \n "
-                        "Make sure you are passing the correct Ensemble object."
-                    )
-                container = cls(ensemble, trace, d["metadata"])
+            container = cls._from_legacy(
+                ensemble,
+                sublattices,
+                trace,
+                d["metadata"],
+                d["natural_parameters"],
+                d["num_energy_coefs"],
+            )
         else:
             ensemble = Ensemble.from_dict(d["ensemble"])
             container = cls(ensemble, trace, d["metadata"])
@@ -577,7 +578,7 @@ class SampleContainer(MSONable):
 
     @classmethod
     @requires(h5py is not None, "'h5py' not found. Please install it.")
-    def from_hdf5(cls, file_path, swmr_mode=True):
+    def from_hdf5(cls, file_path, swmr_mode=True, ensemble=None):
         """Instantiate a SampleContainer from an hdf5 file.
 
         Args:
@@ -586,6 +587,9 @@ class SampleContainer(MSONable):
             swmr_mode (bool): optional
                 If true allows to read file from other processes. Single Writer
                 Multiple Readers.
+            ensemble (Ensemble): optional
+                The ensemble object to used for generating samples. Only needed to
+                update legacy files.
 
         Returns:
             SampleContainer
@@ -601,24 +605,30 @@ class SampleContainer(MSONable):
                     f"have been written and will be loaded.",
                     UserWarning,
                 )
-
-            sublattices = [
-                Sublattice.from_dict(s) for s in json.loads(f["sublattices"][()])
-            ]
             trace = Trace(
                 **{name: value[:nsamples] for name, value in f["trace"].items()}
             )
-            container = cls(
-                sublattices=sublattices,
-                natural_parameters=f["natural_parameters"][()],
-                num_energy_coefs=f["natural_parameters"].attrs[
-                    "num_energy_coefs"
-                ],  # noqa
-                sample_trace=trace,
-                sampling_metadata=json.loads(
-                    f["sampling_metadata"][()], cls=MontyDecoder
-                ),
-            )
+
+            metadata = json.loads(f["sampling_metadata"][()], cls=MontyDecoder)
+            if not isinstance(metadata, Metadata):  # backwards compatibility
+                metadata = Metadata(cls.__name__, **metadata)
+
+            if "sublattices" in f.keys():
+                sublattices = [
+                    Sublattice.from_dict(s) for s in json.loads(f["sublattices"][()])
+                ]
+                container = cls._from_legacy(
+                    ensemble,
+                    sublattices,
+                    trace,
+                    metadata,
+                    f["natural_parameters"][()],
+                    f["natural_parameters"].attrs["num_energy_coefs"],
+                )
+            else:
+                ensemble = Ensemble.from_dict(json.loads(f["ensemble"][()]))
+                container = cls(ensemble, trace, metadata)
+
             container._nsamples = nsamples
             container._total_steps = f["trace"].attrs["total_mc_steps"]
         return container
