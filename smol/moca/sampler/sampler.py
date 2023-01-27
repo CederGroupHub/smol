@@ -201,8 +201,10 @@ class Sampler:
         selected_occus = []
         for kernel, occupancy in zip(self._kernels, occupancies):
             kernel.set_aux_state(occupancy)
-            if isinstance(kernel, MulticellKernel):  # select the current kernel occu
-                selected_occus.append(occupancy[kernel.trace.kernel_index])
+            # select the current kernel occu
+            if isinstance(kernel, MulticellKernel):
+                if occupancies.shape[1] == len(kernel.mckernels):
+                    selected_occus.append(occupancy[kernel.trace.kernel_index])
         if len(selected_occus) > 0:
             occupancies = np.vstack(selected_occus)
 

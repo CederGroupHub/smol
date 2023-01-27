@@ -352,6 +352,7 @@ class StochasticSQSGenerator(SQSGenerator):
 
     # TODO sampler.run with initial occus leads to overflow, corrs grow like crazy
     # running from last trace leads to crash (sigkill)
+
     def generate(
         self, mcmc_steps, initial_occupancies=None, temperatures=None, **kwargs
     ):
