@@ -455,12 +455,11 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         self._kernels = mckernels
         self._current_hop_period = self._rng.choice(self._hop_periods, p=self._hop_p)
         self._kernel_hop_counter = 1
-        self._new_enthalpies = np.full(len(mckernels), 0)
-        self._new_features = np.zeros(
-            (len(mckernels), len(self._kernels[0].natural_params))
-        )
-        self._prev_enthalpies = np.full(len(mckernels), 0)
-        self._prev_features = np.zeros(
+
+        # keep values of enthalpy and features
+        self._new_enthalpy, self._new_features = None, None
+        self._enthalpies = np.full(len(mckernels), 0)
+        self._features = np.zeros(
             (len(mckernels), len(self._kernels[0].natural_params))
         )
         self._current_kernel_index = 0
@@ -541,23 +540,21 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         Returns:
             StepTrace: the step trace
         """
-        # Use the previous kernel of the kernel attempting to hop to
+        # from kernel attempting to hop to
         delta_features = self.ensemble.compute_feature_vector_change(
             self.current_kernel.trace.occupancy, step
         )
+        self._new_features = self._features[self.trace.kernel_index] + delta_features
 
-        self._new_features[self.trace.kernel_index] += delta_features
-        new_features = self._new_features[self.trace.kernel_index]
-        prev_features = self._prev_features[self._current_kernel_index]
-        self.trace.delta_trace.features = new_features - prev_features
+        # from kernel currently at
+        prev_features = self._features[self._current_kernel_index]
+        self.trace.delta_trace.features = self._new_features - prev_features
 
-        new_enthalpy = np.dot(
-            self._new_features[self.trace.kernel_index],
-            self.current_kernel.natural_params,
+        self._new_enthalpy = np.dot(
+            self._new_features, self.current_kernel.natural_params
         )
-        self._new_enthalpies[self.trace.kernel_index] = new_enthalpy
-        prev_enthalpy = self._new_enthalpies[self._current_kernel_index]
-        self.trace.delta_trace.enthalpy = new_enthalpy - prev_enthalpy
+        prev_enthalpy = self._enthalpies[self._current_kernel_index]
+        self.trace.delta_trace.enthalpy = self._new_enthalpy - prev_enthalpy
 
     def _do_accept_step(self, occupancy, step):
         """Populate trace and aux states for an accepted step.
@@ -571,8 +568,13 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         Returns:
             ndarray: new occupancy
         """
+        # update occupancy
         for site, species in step:
             self.current_kernel.trace.occupancy[site] = species
+
+        # update the features
+        self._enthalpies[self.trace.kernel_index] = self._new_enthalpy
+        self._features[self.trace.kernel_index] = self._new_features
 
         self.mcusher.update_aux_state(step)
         return self.current_kernel.trace.occupancy
@@ -599,21 +601,11 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
             )
             self._trace = super().single_step(occupancy)
 
-            # choose new hop period and reset counter
-            if self.trace.accepted:
-                kernel_index = self.trace.kernel_index
-                # set previous values to the new values
-                self._prev_enthalpies[kernel_index] = self._new_enthalpies[kernel_index]
-                self._prev_features[kernel_index] = self._new_features[kernel_index]
-            else:
-                kernel_index = self._current_kernel_index
-                # set the new values back to the previous values
-                self._new_features[self.trace.kernel_index] = self._prev_features[
-                    self.trace.kernel_index
-                ]
-                self._new_enthalpies[self.trace.kernel_index] = self._prev_enthalpies[
-                    self.trace.kernel_index
-                ]
+            kernel_index = (
+                self.trace.kernel_index
+                if self.trace.accepted
+                else self._current_kernel_index
+            )
 
             self._current_hop_period = self._rng.choice(
                 self._hop_periods, p=self._hop_p
@@ -623,15 +615,17 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         else:
             kernel_index = self.trace.kernel_index
             self._trace = self.current_kernel.single_step(occupancy)
+            # We need to save the latest property...
+            if self.trace.accepted:
+                self._features[kernel_index] += self.trace.delta_trace.features
+                self._enthalpies[kernel_index] += self.trace.delta_trace.enthalpy
+
             self._kernel_hop_counter += 1
 
-        # set the index
+        # set the index  # TODO decide if current kernel is based on the trace or _current_kernel_index
+        # probably better to have it be _current_kernel_index, so that the trace records the proposed always..
         self.trace.kernel_index = kernel_index
         self._current_kernel_index = kernel_index
-
-        # for this we need to save the latest property...
-        self._new_features[kernel_index] += self.trace.delta_trace.features
-        self._new_enthalpies[kernel_index] += self.trace.delta_trace.enthalpy
 
         return self.trace
 
@@ -646,12 +640,10 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
                 kernel.trace.occupancy = occupancy
                 kernel.set_aux_state(occupancy, *args, **kwargs)
                 new_features.append(kernel.ensemble.compute_feature_vector(occupancy))
-                self._new_features = np.vstack(new_features)
-                self._new_enthalpies = np.dot(
-                    self._new_features, self.current_kernel.natural_params
+                self._features = np.vstack(new_features)
+                self._enthalpies = np.dot(
+                    self._features, self.current_kernel.natural_params
                 )
-                self._prev_features = self._new_features.copy()
-                self._new_enthalpies = self._new_enthalpies.copy()
         else:  # if only one assume it is continuing from a run...
             self.current_kernel.set_aux_state(occupancies, *args, **kwargs)
 
