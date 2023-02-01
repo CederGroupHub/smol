@@ -53,7 +53,7 @@ def fake_traces(container, rng):
     sites2 = container.sublattices[1].sites
     for i in range(NSAMPLES):
         for j in range(nwalkers):
-            # make occupancy compositions (1/3, 1/3, 1/3) & (1/2, 1/2, 1/2)
+            # make occupancy compositions (1/3, 1/3, 1/3) & (1/2, 1/2)
             size = int(SUBLATTICE_COMPOSITIONS[0] * len(sites1))
             s = rng.choice(sites1, size=size, replace=False)
             occus[i, j, s] = 0
@@ -394,3 +394,13 @@ def test_flush_to_hdf5(container, fake_traces, mode, tmpdir):
     backend.close()
 
     os.remove(file_path)
+
+
+def test_get_sampled_structures(container, fake_traces, rng):
+    # not the best test here, but it will do for now...
+    add_samples(container, fake_traces)
+    ids = rng.choice(range(container.num_samples), size=5)
+    structures = container.get_sampled_structures(ids)
+    for i, struct in zip(ids, structures):
+        occu = container.get_occupancies()[i]
+        assert container.ensemble.processor.structure_from_occupancy(occu) == struct

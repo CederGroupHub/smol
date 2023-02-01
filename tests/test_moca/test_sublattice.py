@@ -154,6 +154,7 @@ def test_inactiveness(sublattice, rng):
     sublattice.restrict_sites(sublattice.sites)
     assert not sublattice.is_active
 
+
 def test_equal(sublattice, rng):
     sublatt2 = Sublattice.from_dict(sublattice.as_dict())
     assert sublattice == sublatt2

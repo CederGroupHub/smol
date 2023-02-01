@@ -148,10 +148,14 @@ def ensemble(composite_processor, request):
 
 
 @pytest.fixture(scope="module")
-def single_sgc_ensemble(single_subspace, rng):
-    coefs = rng.random(single_subspace.num_corr_functions)
+def single_sgc_ensemble(rng):
+    # a single sgc ensemble using the LMOF test structures
+    subspace = ClusterSubspace.from_cutoffs(
+        test_structures[3], cutoffs={2: 6, 3: 4}, supercell_size="volume"
+    )
+    coefs = rng.random(subspace.num_corr_functions)
     coefs[0] = -1.0
-    proc = ClusterExpansionProcessor(single_subspace, 4 * np.eye(3), coefs)
+    proc = ClusterExpansionProcessor(subspace, 6 * np.eye(3), coefs)
     species = {sp for space in proc.active_site_spaces for sp in space.keys()}
     return Ensemble(proc, chemical_potentials={sp: 1.0 for sp in species})
 
