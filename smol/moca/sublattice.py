@@ -177,9 +177,14 @@ class Sublattice(MSONable):
         return part_sublattices
 
     def __eq__(self, other):
-        """Check equality of sublattices."""
-        if other.site_space == self.site_space and np.array_equal(
-            other.sites, self.sites
+        """Check equality of sublattices.
+
+        Does not check equality of restricted sites!
+        """
+        if (
+            other.site_space == self.site_space
+            and np.array_equal(other.encoding, self.encoding)
+            and np.array_equal(other.sites, self.sites)
         ):
             return True
         return False

@@ -170,3 +170,10 @@ def test_equal(sublattice, rng):
     sublatt2.reset_restricted_sites()
     sublatt2.sites = np.arange(len(sublattice.sites) - 5)
     assert sublattice != sublatt2
+
+    # change the encoding to a random one
+    sublatt2.site_space = sublattice.site_space
+    sublatt2.sites = sublattice.sites
+    sublatt2.reset_restricted_sites()
+    sublatt2.encoding = rng.choice(range(10, 20 + len(sublatt2.encoding)), replace=False)
+    assert sublattice != sublatt2
