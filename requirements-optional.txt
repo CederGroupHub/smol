@@ -1,4 +1,4 @@
-h5py==3.7.0
+h5py==3.8.0
 scikit-learn>=1.1.2
 polytope
 cvxpy
