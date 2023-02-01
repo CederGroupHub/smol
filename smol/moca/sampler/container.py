@@ -408,6 +408,7 @@ class SampleContainer(MSONable):
         backend["trace"].attrs["total_mc_steps"] += self._total_steps
         backend["trace"].attrs["nsamples"] += self._nsamples
         backend.flush()
+
         self._total_steps = 0
         self._nsamples = 0
 
@@ -460,10 +461,11 @@ class SampleContainer(MSONable):
 
     def _init_backend(self, backend, nsamples):
         """Initialize a backend file."""
-        backend.create_dataset(
+        metadata = backend.create_group("metadata")
+        metadata.create_dataset(
             "ensemble", data=json.dumps(self.ensemble, cls=MontyEncoder)
         )
-        backend.create_dataset(
+        metadata.create_dataset(
             "sampling_metadata", data=json.dumps(self.metadata, cls=MontyEncoder)
         )
         trace_grp = backend.create_group("trace")
@@ -476,6 +478,7 @@ class SampleContainer(MSONable):
             )
         trace_grp.attrs["nsamples"] = 0
         trace_grp.attrs["total_mc_steps"] = 0
+        backend.flush()  # flush initialization
 
     @staticmethod
     def _grow_backend(backend, nsamples):
@@ -525,7 +528,7 @@ class SampleContainer(MSONable):
                 "This SampleContainer was created with a previous version of smol.\n"
                 "This format is deprecated and will not be supported in the future.\n"
                 "To update your SampleContainer, generate it using the from_dict or "
-                "from_hd5f methods passing the Ensemble that was used to generate samples"
+                "from_hdf5 methods passing the Ensemble that was used to generate samples"
                 " using the `ensemble` keyword argument, and re-save it.",
                 FutureWarning,
             )
@@ -564,7 +567,7 @@ class SampleContainer(MSONable):
         if not isinstance(d["metadata"], Metadata):  # backwards compatibility
             d["metadata"] = Metadata(cls.__name__, **d["metadata"])
 
-        if "sublattices" in d.keys():
+        if "sublattices" in d.keys():  # legacy file
             sublattices = [
                 Sublattice.from_dict(sublatt) for sublatt in d["sublattices"]
             ]
@@ -634,11 +637,15 @@ class SampleContainer(MSONable):
                 **{name: value[:nsamples] for name, value in f["trace"].items()}
             )
 
-            metadata = json.loads(f["sampling_metadata"][()], cls=MontyDecoder)
-            if not isinstance(metadata, Metadata):  # backwards compatibility
-                metadata = Metadata(cls.__name__, **metadata)
+            if "sublattices" in f.keys():  # legacy file
+                sampling_metadata = json.loads(
+                    f["sampling_metadata"][()], cls=MontyDecoder
+                )
+                if not isinstance(
+                    sampling_metadata, Metadata
+                ):  # backwards compatibility
+                    sampling_metadata = Metadata(cls.__name__, **sampling_metadata)
 
-            if "sublattices" in f.keys():
                 sublattices = [
                     Sublattice.from_dict(s) for s in json.loads(f["sublattices"][()])
                 ]
@@ -646,14 +653,18 @@ class SampleContainer(MSONable):
                     ensemble,
                     sublattices,
                     trace,
-                    metadata,
+                    sampling_metadata,
                     f["natural_parameters"][()],
                     f["natural_parameters"].attrs["num_energy_coefs"],
                 )
             else:
-                ensemble = Ensemble.from_dict(json.loads(f["ensemble"][()]))
-                container = cls(ensemble, trace, metadata)
+                sampling_metadata = Metadata.from_dict(
+                    json.loads(f["metadata"]["sampling_metadata"][()])
+                )
+                ensemble = Ensemble.from_dict(json.loads(f["metadata"]["ensemble"][()]))
+                container = cls(ensemble, trace, sampling_metadata)
 
             container._nsamples = nsamples
             container._total_steps = f["trace"].attrs["total_mc_steps"]
+
         return container

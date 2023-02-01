@@ -18,6 +18,11 @@ from smol.moca.processor import (
 from smol.utils import get_subclasses
 from tests.utils import gen_fake_training_data
 
+# uncomment below to show HDF5 C traceback
+# import h5py
+# h5py._errors.unsilence_errors()
+
+
 SEED = None
 
 # load test data files and set them up as fixtures
