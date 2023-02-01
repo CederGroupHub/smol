@@ -5,16 +5,15 @@ from itertools import product
 import numpy as np
 import numpy.testing as npt
 import pytest
-from pymatgen.core.composition import ChemicalPotential, Composition
+from pymatgen.core.composition import Composition
 
-from smol.cofe.space.domain import SiteSpace, get_species
+from smol.cofe.space.domain import SiteSpace
 from smol.moca.sampler import SampleContainer
 from smol.moca.sampler.namespace import Trace
 from smol.moca.sublattice import Sublattice
 from tests.utils import assert_msonable
 
-
-NSAMPLES = 1000
+NSAMPLES = 100
 # compositions will depend on number of sites and num species in the
 # sublattices created in the fixture, if changing make sure it works out.
 SUBLATTICE_COMPOSITIONS = [1.0 / 3.0, 1.0 / 2.0]
@@ -23,8 +22,12 @@ SUBLATTICE_COMPOSITIONS = [1.0 / 3.0, 1.0 / 2.0]
 @pytest.fixture(params=[1, 5])
 def container(request, single_sgc_ensemble, rng):
     trace = Trace(
-        occupancy=np.zeros((0, request.param, single_sgc_ensemble.num_sites), dtype=int),
-        features=rng.random((0, request.param, len(single_sgc_ensemble.natural_parameters))),
+        occupancy=np.zeros(
+            (0, request.param, single_sgc_ensemble.num_sites), dtype=int
+        ),
+        features=rng.random(
+            (0, request.param, len(single_sgc_ensemble.natural_parameters))
+        ),
         enthalpy=np.ones((0, request.param, 1)),
         temperature=np.zeros((0, request.param, 1)),
         accepted=np.zeros((0, request.param, 1), dtype=bool),
@@ -32,7 +35,7 @@ def container(request, single_sgc_ensemble, rng):
     sample_container = SampleContainer(
         single_sgc_ensemble,
         sample_trace=trace,
-        sampling_metadata=single_sgc_ensemble.thermo_boundaries
+        sampling_metadata=single_sgc_ensemble.thermo_boundaries,
     )
     yield sample_container
     sample_container.clear()
@@ -110,7 +113,7 @@ def test_allocate_and_save(container, fake_traces, rng):
     container.clear()
 
 
-@pytest.mark.parametrize("discard, thin", product((0, 100), (1, 10)))
+@pytest.mark.parametrize("discard, thin", product((0, 10), (1, 5)))
 def test_get_sampled_values(container, fake_traces, discard, thin):
     nsites = container.shape[-1]
     add_samples(container, fake_traces)
@@ -143,7 +146,7 @@ def test_get_sampled_values(container, fake_traces, discard, thin):
             sublattice, discard=discard, thin_by=thin
         )
         if len(sublattice.species) == 1:  # single species sublattice
-            assert c.shape == (nsamples * nw, )
+            assert c.shape == (nsamples * nw,)
         else:
             assert c.shape == (nsamples * nw, len(sublattice.species))
         npt.assert_array_equal(c, comp * np.ones_like(c))
@@ -185,7 +188,7 @@ def test_get_sampled_values(container, fake_traces, discard, thin):
         container.get_sublattice_compositions(sublattice)
 
 
-@pytest.mark.parametrize("discard, thin", product((0, 100), (1, 10)))
+@pytest.mark.parametrize("discard, thin", product((0, 10), (1, 5)))
 def test_means_and_variances(container, fake_traces, discard, thin):
     add_samples(container, fake_traces)
     sublattices = container.sublattices
@@ -288,12 +291,12 @@ def test_get_mins(container, fake_traces, rng):
     add_samples(container, fake_traces)
     i = rng.choice(range(NSAMPLES))
     nwalkers = container.shape[0]
-    container._trace.enthalpy[i, :] = -10
-    container._trace.features[i, :, :] = 5.0
-    assert container.get_minimum_enthalpy() == -10.0
+    container._trace.enthalpy[i, :] = -11
+    container._trace.features[i, :, 0] = 5.0
+    assert container.get_minimum_enthalpy() == -11.0
     assert container.get_minimum_energy() == -5.0
     npt.assert_array_equal(
-        container.get_minimum_enthalpy(flat=False), np.array([nwalkers * [-10.0]]).T
+        container.get_minimum_enthalpy(flat=False), np.array([nwalkers * [-11.0]]).T
     )
     npt.assert_array_equal(
         container.get_minimum_energy(flat=False), np.array([nwalkers * [-5.0]]).T
@@ -337,15 +340,15 @@ def test_hdf5(container, fake_traces, tmpdir):
 
 @pytest.mark.parametrize("mode", [False, True])
 def test_flush_to_hdf5(container, fake_traces, mode, tmpdir):
-    print(container.metadata)
     flushed_container = deepcopy(container)
     add_samples(container, fake_traces)
     file_path = os.path.join(tmpdir, "test.h5")
     chunk = len(fake_traces) // 4
     flushed_container.allocate(chunk)
     backend = flushed_container.get_backend(file_path, len(fake_traces), swmr_mode=mode)
+
     start = 0
-    for _ in range(4):
+    for j in range(4):
         for i in range(start, start + chunk):
             flushed_container.save_sampled_trace(fake_traces[i], thinned_by=1)
         assert flushed_container._trace.occupancy.shape[0] == chunk

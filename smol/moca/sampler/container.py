@@ -460,7 +460,9 @@ class SampleContainer(MSONable):
 
     def _init_backend(self, backend, nsamples):
         """Initialize a backend file."""
-        backend.create_dataset("ensemble", data=json.dumps(self.ensemble.as_dict()))
+        backend.create_dataset(
+            "ensemble", data=json.dumps(self.ensemble, cls=MontyEncoder)
+        )
         backend.create_dataset(
             "sampling_metadata", data=json.dumps(self.metadata, cls=MontyEncoder)
         )

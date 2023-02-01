@@ -152,11 +152,7 @@ def single_sgc_ensemble(single_subspace, rng):
     coefs = rng.random(single_subspace.num_corr_functions)
     coefs[0] = -1.0
     proc = ClusterExpansionProcessor(single_subspace, 4 * np.eye(3), coefs)
-    species = {
-        sp
-        for space in proc.active_site_spaces
-        for sp in space.keys()
-    }
+    species = {sp for space in proc.active_site_spaces for sp in space.keys()}
     return Ensemble(proc, chemical_potentials={sp: 1.0 for sp in species})
 
 
