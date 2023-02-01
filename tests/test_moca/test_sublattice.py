@@ -175,5 +175,7 @@ def test_equal(sublattice, rng):
     sublatt2.site_space = sublattice.site_space
     sublatt2.sites = sublattice.sites
     sublatt2.reset_restricted_sites()
-    sublatt2.encoding = rng.choice(range(10, 20 + len(sublatt2.encoding)), replace=False)
+    sublatt2.encoding = rng.choice(
+        range(10, 20 + len(sublatt2.encoding)), replace=False
+    )
     assert sublattice != sublatt2
