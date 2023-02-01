@@ -140,15 +140,20 @@ class SampleContainer(MSONable):
             efficiency = efficiency.mean()
         return efficiency
 
-    def get_sampled_structures(self, indices=-1):
+    def get_sampled_structures(self, indices, flat=True):
         """Get sampled structures for MC steps given by indices.
 
         Args:
             indices (list of int or int):
-                A single index or list of indices to obtain sampled structures
+                A single index or list of indices to obtain sampled structures.
+            flat (bool): optional
+                If true will flatten chains, and the indices correspond to flattened
+                values. If false chain is not flattened, and if multiple walkers where
+                used returns a list of list where each inner list has the sampled
+                structure for each walker. Default is set to flat True.
 
         Returns:
-            list of Structure
+            list of Structure or list of list of Structure
         """
         if self.ensemble is None:
             raise RuntimeError(
@@ -156,11 +161,20 @@ class SampleContainer(MSONable):
             )
 
         indices = [indices] if isinstance(indices, int) else indices
-        occupancies = self.get_occupancies()[indices]
-        structures = [
-            self.ensemble.processor.structure_from_occupancy(occu)
-            for occu in occupancies
-        ]
+        occupancies = self.get_occupancies(flat=flat)[indices]
+        if flat:
+            structures = [
+                self.ensemble.processor.structure_from_occupancy(occu)
+                for occu in occupancies
+            ]
+        else:
+            structures = [
+                [
+                    self.ensemble.processor.structure_from_occupancy(occu)
+                    for occu in occus
+                ]
+                for occus in occupancies
+            ]
         return structures
 
     def get_trace_value(self, name, discard=0, thin_by=1, flat=True):

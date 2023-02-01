@@ -400,7 +400,16 @@ def test_get_sampled_structures(container, fake_traces, rng):
     # not the best test here, but it will do for now...
     add_samples(container, fake_traces)
     ids = rng.choice(range(container.num_samples), size=5)
-    structures = container.get_sampled_structures(ids)
+
+    # check for flattened chains
+    structures = container.get_sampled_structures(ids, flat=True)
     for i, struct in zip(ids, structures):
         occu = container.get_occupancies()[i]
         assert container.ensemble.processor.structure_from_occupancy(occu) == struct
+
+    # check for unflattened chains
+    structures_list = container.get_sampled_structures(ids, flat=False)
+    for i, structures in zip(ids, structures_list):
+        occus = container.get_occupancies(flat=False)[i]
+        for occu, struct in zip(occus, structures):
+            assert container.ensemble.processor.structure_from_occupancy(occu) == struct
