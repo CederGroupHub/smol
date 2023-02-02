@@ -163,7 +163,7 @@ class FugacityBias(MCBias):
         value = [{get_species(k): v for k, v in sub.items()} for sub in value]
         if not all(sum(fus.values()) == 1 for fus in value):
             raise ValueError("Fugacity ratios must add to one.")
-        for (spec, vals) in zip(self._species, value):
+        for spec, vals in zip(self._species, value):
             if spec != set(vals.keys()):
                 raise ValueError(
                     f"Fugacity fractions given are missing or not valid "
