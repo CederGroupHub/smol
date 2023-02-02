@@ -129,9 +129,7 @@ class Sampler:
         # Container will be initialized to read all sub-lattices,
         # active or not.
         container = SampleContainer(
-            ensemble.sublattices,
-            ensemble.natural_parameters,
-            ensemble.num_energy_coefs,
+            ensemble,
             sample_trace,
             sampling_metadata,
         )

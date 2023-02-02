@@ -18,6 +18,11 @@ from smol.moca.processor import (
 from smol.utils import get_subclasses
 from tests.utils import gen_fake_training_data
 
+# uncomment below to show HDF5 C traceback
+# import h5py
+# h5py._errors.unsilence_errors()
+
+
 SEED = None
 
 # load test data files and set them up as fixtures
@@ -145,6 +150,19 @@ def ensemble(composite_processor, request):
     else:
         kwargs = {}
     return Ensemble(composite_processor, **kwargs)
+
+
+@pytest.fixture(scope="module")
+def single_sgc_ensemble(rng):
+    # a single sgc ensemble using the LMOF test structures
+    subspace = ClusterSubspace.from_cutoffs(
+        test_structures[3], cutoffs={2: 6, 3: 4}, supercell_size="volume"
+    )
+    coefs = rng.random(subspace.num_corr_functions)
+    coefs[0] = -1.0
+    proc = ClusterExpansionProcessor(subspace, 6 * np.eye(3), coefs)
+    species = {sp for space in proc.active_site_spaces for sp in space.keys()}
+    return Ensemble(proc, chemical_potentials={sp: 1.0 for sp in species})
 
 
 @pytest.fixture(scope="module")
