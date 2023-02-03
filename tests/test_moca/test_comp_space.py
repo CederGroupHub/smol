@@ -412,9 +412,9 @@ def test_convert_formats(comp_space):
         a = comp_space._A
         b = comp_space._b * supercell_size
         x_std = comp_space.get_centroid_composition(supercell_size)
-        print("basis:", comp_space.basis)
-        print("n0:", comp_space.get_supercell_base_solution(supercell_size))
-        print("x_std:", x_std)
+        # print("basis:", comp_space.basis)
+        # print("n0:", comp_space.get_supercell_base_solution(supercell_size))
+        # print("x_std:", x_std)
         n = comp_space.basis.T @ x_std + comp_space.get_supercell_base_solution(
             supercell_size
         )
@@ -487,10 +487,17 @@ def test_convert_formats(comp_space):
             )
         # Test constraints violation
         null_vec = np.random.rand(len(null_space)) * 0.01
-        if len(null_space) > 0 and not np.allclose(np.abs(null_vec), 0, atol=NUM_TOL):
-            dn = null_space.T @ null_vec
-            n_bad = n + dn
+        dn = null_space.T @ null_vec
+        n_bad = n + dn
+        if len(null_space) > 0 and not np.allclose(
+            np.abs(comp_space._A @ (n / supercell_size) - comp_space._b),
+            0,
+            atol=NUM_TOL,
+        ):
             if np.all(n_bad >= 0):
+                print("bad composition:", n_bad)
+                print("A:", comp_space._A)
+                print("b:", comp_space._b * supercell_size)
                 with pytest.raises(ValueError):
                     _ = comp_space.translate_format(
                         n_bad, supercell_size, from_format="counts", to_format="counts"
