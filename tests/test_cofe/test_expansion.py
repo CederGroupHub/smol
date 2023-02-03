@@ -15,7 +15,7 @@ def cluster_expansion(cluster_subspace, rng):
     structures = []
     for i in range(n):
         structure = gen_random_structure(
-            cluster_subspace.structure, size=rng.integers(2, 5)
+            cluster_subspace.structure, size=rng.integers(2, 5), rng=rng
         )
         structures.append(structure)
         feat_matrix[i] = cluster_subspace.corr_from_structure(structure)
@@ -65,7 +65,7 @@ def test_predict(cluster_expansion, rng):
     scmatrix[0, 1] = 2  # Intentionally made less symmetric
     scmatrix[1, 2] = 1
     N = np.abs(np.linalg.det(scmatrix))
-    pool = [gen_random_structure(prim, scmatrix) for _ in range(100)]
+    pool = [gen_random_structure(prim, scmatrix, rng=rng) for _ in range(100)]
     feature_matrix = np.array(
         [
             subspace.corr_from_structure(s, scmatrix=scmatrix, normalized=True)

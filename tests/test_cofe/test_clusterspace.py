@@ -119,14 +119,14 @@ def test_functions_inds_by_cutoffs(cluster_subspace):
 
 
 @pytest.mark.parametrize("orthonormal", [(True, False)])
-def test_site_bases(cluster_subspace, basis_name, orthonormal):
+def test_site_bases(cluster_subspace, basis_name, orthonormal, rng):
     subspace = cluster_subspace.copy()  # copy it to keep original state
     subspace.change_site_bases(basis_name, orthonormal=orthonormal)
     if orthonormal:
         assert subspace.basis_orthogonal
         assert subspace.basis_orthonormal
 
-    structure = gen_random_structure(subspace.structure)
+    structure = gen_random_structure(subspace.structure, rng=rng)
     if cluster_subspace.basis_type == subspace.basis_type and not orthonormal:
         npt.assert_array_almost_equal(
             subspace.corr_from_structure(structure),
@@ -168,7 +168,7 @@ def test_supercell_matrix_from_structure(cluster_subspace, rng):
 def test_refine_structure(cluster_subspace, rng):
     supercell = cluster_subspace.structure.copy()
     supercell.make_supercell(3)
-    structure = gen_random_structure(cluster_subspace.structure, size=3)
+    structure = gen_random_structure(cluster_subspace.structure, size=3, rng=rng)
     structure.apply_strain(rng.uniform(-0.01, 0.01, size=3))
 
     #  TODO this sometimes fails because sc_matrix is not found!!!
@@ -216,7 +216,7 @@ def test_remove_orbits(cluster_subspace, rng):
         for i in range(len(cluster_subspace))
         if cluster_subspace.function_orbit_ids[i] not in ids_to_remove
     ]
-    structure = gen_random_structure(subspace.structure, size=2)
+    structure = gen_random_structure(subspace.structure, size=2, rng=rng)
     npt.assert_allclose(
         cluster_subspace.corr_from_structure(structure)[corr_inds],
         subspace.corr_from_structure(structure),
@@ -248,7 +248,7 @@ def test_remove_corr_functions(cluster_subspace, rng):
     )
 
     corr_inds = [i for i in range(len(cluster_subspace)) if i not in ids_to_remove]
-    structure = gen_random_structure(subspace.structure, size=2)
+    structure = gen_random_structure(subspace.structure, size=2, rng=rng)
     npt.assert_allclose(
         cluster_subspace.corr_from_structure(structure)[corr_inds],
         subspace.corr_from_structure(structure),
@@ -259,7 +259,7 @@ def test_remove_corr_functions(cluster_subspace, rng):
         subspace.remove_corr_functions(ids)
 
 
-def test_orbit_mappings(cluster_subspace, supercell_matrix):
+def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
     # check that all supercell_structure index groups map to the correct
     # primitive cell sites, and check that max distance under supercell
     # structure pbc is less than the max distance without pbc
@@ -310,7 +310,7 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
         return corr
 
     structures = [
-        gen_random_structure(cluster_subspace.structure, size=supercell_matrix)
+        gen_random_structure(cluster_subspace.structure, size=supercell_matrix, rng=rng)
         for _ in range(10)
     ]
     matrix2 = np.array([[0, 1, 0], [0, 0, 1], [1, 0, 0]]) @ np.array(
@@ -442,8 +442,8 @@ def test_get_aliased_orbits(cluster_subspace, supercell_matrix):
     assert aliased_orbits_std == aliased_orbs
 
 
-def test_periodicity_and_symmetry(cluster_subspace, supercell_matrix):
-    structure = gen_random_structure(cluster_subspace.structure, size=2)
+def test_periodicity_and_symmetry(cluster_subspace, supercell_matrix, rng):
+    structure = gen_random_structure(cluster_subspace.structure, size=2, rng=rng)
     larger_structure = structure.copy()
     larger_structure.make_supercell(supercell_matrix)
 
@@ -513,7 +513,7 @@ def test_msonable(cluster_subspace_ewald, rng):
 
     for _ in range(2):
         size = rng.integers(1, 4)
-        s = gen_random_structure(cluster_subspace_ewald.structure, size=size)
+        s = gen_random_structure(cluster_subspace_ewald.structure, size=size, rng=rng)
         _ = cluster_subspace_ewald.corr_from_structure(s)
 
     assert_msonable(cluster_subspace_ewald)
@@ -758,7 +758,7 @@ def test_periodicity(single_subspace):
     npt.assert_allclose(a, b)
 
 
-def test_site_basis_rotation(cluster_subspace):
+def test_site_basis_rotation(cluster_subspace, rng):
     cs = cluster_subspace.copy()
     if not cs.basis_orthogonal:
         with pytest.raises(RuntimeError):
@@ -773,7 +773,7 @@ def test_site_basis_rotation(cluster_subspace):
     cs1.rotate_site_basis(1, np.pi / 4)
     print(cs1.site_rotation_matrix)
     for i in range(5):
-        structure = gen_random_structure(cs.structure)
+        structure = gen_random_structure(cs.structure, rng=rng)
         for j in range(5):
             coefs1 = 10 * np.random.random(len(cs))
             coefs = coefs1.copy()

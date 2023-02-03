@@ -112,11 +112,13 @@ def test_compute_property_change(composite_processor, rng):
         assert dprop == -1 * rdprop
 
 
-def test_structure_occupancy_conversion(ce_processor):
+def test_structure_occupancy_conversion(ce_processor, rng):
     sm = StructureMatcher()
     for _ in range(10):
         s_init = gen_random_structure(
-            ce_processor.cluster_subspace.structure, size=ce_processor.supercell_matrix
+            ce_processor.cluster_subspace.structure,
+            size=ce_processor.supercell_matrix,
+            rng=rng,
         )
         s_init = s_init.get_sorted_structure()
         occu_init = ce_processor.occupancy_from_structure(s_init)
