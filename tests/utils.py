@@ -112,7 +112,7 @@ def gen_random_neutral_occupancy(sublattices, lam=10, rng=None):
         else:
             return occu.copy(), C
 
-    occu = gen_random_occupancy(sublattices)
+    occu = gen_random_occupancy(sublattices, rng=rng)
     for _ in range(10000):
         occu, C = flip(occu, sublattices, lam=lam)
         if C == 0:

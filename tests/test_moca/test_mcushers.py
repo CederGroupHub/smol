@@ -53,9 +53,9 @@ def all_sublattices_lmtpo():  # Do a test on sampling probabilities.
 
 
 @pytest.fixture
-def rand_occu(all_sublattices):
+def rand_occu(all_sublattices, rng):
     # generate a random occupancy according to the sublattices
-    occu = gen_random_occupancy(all_sublattices[0] + all_sublattices[1])
+    occu = gen_random_occupancy(all_sublattices[0] + all_sublattices[1], rng=rng)
     return occu, all_sublattices[1][0].sites  # return indices of fixed sites
 
 

@@ -35,10 +35,10 @@ def test_from_ensemble(sampler):
 
 
 @pytest.mark.parametrize("thin", (1, 10))
-def test_sample(sampler, thin):
+def test_sample(sampler, thin, rng):
     occu = np.vstack(
         [
-            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices)
+            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices, rng=rng)
             for _ in range(sampler.samples.shape[0])
         ]
     )
@@ -56,7 +56,7 @@ def test_sample(sampler, thin):
 def test_run(sampler, thin, rng):
     occu = np.vstack(
         [
-            gen_random_occupancy(kernel._usher.sublattices)
+            gen_random_occupancy(kernel._usher.sublattices, rng=rng)
             for kernel in sampler.mckernels
         ]
     )
@@ -83,11 +83,11 @@ def test_run(sampler, thin, rng):
     sampler.clear_samples()
 
 
-def test_anneal(sampler, tmpdir):
+def test_anneal(sampler, rng, tmpdir):
     temperatures = np.linspace(2000, 500, 5)
     occu = np.vstack(
         [
-            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices)
+            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices, rng=rng)
             for _ in range(sampler.samples.shape[0])
         ]
     )
@@ -155,7 +155,7 @@ for sp in expected.keys():
 """
 
 
-def test_reshape_occu(ensemble):
+def test_reshape_occu(ensemble, rng):
     sampler = Sampler.from_ensemble(ensemble, temperature=TEMPERATURE)
-    occu = gen_random_occupancy(ensemble.sublattices)
+    occu = gen_random_occupancy(ensemble.sublattices, rng=rng)
     assert sampler._reshape_occu(occu).shape == (1, len(occu))

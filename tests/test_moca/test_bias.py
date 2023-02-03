@@ -34,9 +34,9 @@ def mcbias(all_sublattices, request):
     return request.param(all_sublattices)
 
 
-def test_compute_bias_change(mcbias):
+def test_compute_bias_change(mcbias, rng):
     step = []
-    occu = gen_random_occupancy(mcbias.sublattices)
+    occu = gen_random_occupancy(mcbias.sublattices, rng=rng)
     new_occu = occu.copy()
     rng = np.random.default_rng()
     for _ in range(50):
@@ -119,7 +119,7 @@ def square_charge_bias(all_sublattices):
     return SquareChargeBias(all_sublattices)
 
 
-def test_charge_bias(square_charge_bias):
+def test_charge_bias(square_charge_bias, rng):
     table = square_charge_bias._c_table
     n_species = max(max(s.encoding) for s in square_charge_bias.sublattices) + 1
     n_sites = sum(len(s.sites) for s in square_charge_bias.sublattices)
@@ -132,7 +132,7 @@ def test_charge_bias(square_charge_bias):
         )
     # Bias should be implemented as negative.
     for _ in range(100):
-        occu = gen_random_occupancy(square_charge_bias.sublattices)
+        occu = gen_random_occupancy(square_charge_bias.sublattices, rng=rng)
         assert square_charge_bias.compute_bias(occu) <= 1e-6
 
 
@@ -145,8 +145,8 @@ def square_comp_bias(all_sublattices):
     return SquareHyperplaneBias(all_sublattices, a, b)
 
 
-def test_comp_bias(square_comp_bias):
+def test_comp_bias(square_comp_bias, rng):
     # Bias should be implemented as negative.
     for _ in range(100):
-        occu = gen_random_occupancy(square_comp_bias.sublattices)
+        occu = gen_random_occupancy(square_comp_bias.sublattices, rng=rng)
         assert square_comp_bias.compute_bias(occu) <= 1e-6
