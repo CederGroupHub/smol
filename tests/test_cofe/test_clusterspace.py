@@ -264,7 +264,6 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
     # primitive cell sites, and check that max distance under supercell
     # structure pbc is less than the max distance without pbc
 
-    # sc_matrix = np.array([[2, 0, 0], [0, 2, 0], [0, 1, 1]])
     supercell_struct = cluster_subspace.structure.copy()
     supercell_struct.make_supercell(supercell_matrix)
     fcoords = np.array(supercell_struct.frac_coords)
