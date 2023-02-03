@@ -295,20 +295,6 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
 
     # Test that symmetrically equivalent matrices really produce the
     # same correlation vector for the same occupancy.
-    def get_corr(occu, space, matrix):
-        mappings = space._gen_orbit_indices(matrix)
-        orbit_list = [
-            (
-                orbit.bit_id,
-                orbit.flat_tensor_indices,
-                orbit.flat_correlation_tensors,
-                cluster_indices,
-            )
-            for cluster_indices, orbit in zip(mappings, space.orbits)
-        ]
-        corr = corr_from_occupancy(occu, space.num_corr_functions, orbit_list)
-        return corr
-
     structures = [
         gen_random_structure(cluster_subspace.structure, size=supercell_matrix, rng=rng)
         for _ in range(10)
@@ -325,17 +311,21 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
     # super-cell matrices are symmetrically equivalent.
     occus = [
         cluster_subspace.occupancy_from_structure(
-            s, scmatrix=supercell_matrix, encode=True
+            structure, scmatrix=supercell_matrix, encode=True
         )
-        for s in structures
+        for structure in structures
     ]
     occus2 = [
-        cluster_subspace.occupancy_from_structure(s, scmatrix=matrix2, encode=True)
-        for s in structures
+        cluster_subspace.occupancy_from_structure(
+            structure, scmatrix=matrix2, encode=True
+        )
+        for structure in structures
     ]
     occus3 = [
-        cluster_subspace.occupancy_from_structure(s, scmatrix=matrix3, encode=True)
-        for s in structures
+        cluster_subspace.occupancy_from_structure(
+            structure, scmatrix=matrix3, encode=True
+        )
+        for structure in structures
     ]
 
     corrs = np.array(
@@ -380,20 +370,21 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
     # Symmetrically equivalent matrices should give the same correlation
     # vectors on the same structure, when using the default orbit mapping.
     cluster_subspace._supercell_orb_inds = {}
-    for s, c in zip(structures, corrs):
+    for structure, expected in zip(structures, corrs):
+        predicted = cluster_subspace.corr_from_structure(structure)
+        npt.assert_array_almost_equal(predicted, expected)
         npt.assert_array_almost_equal(
-            cluster_subspace.corr_from_structure(s),
-            cluster_subspace.corr_from_structure(s, scmatrix=supercell_matrix),
+            expected,
+            cluster_subspace.corr_from_structure(structure, scmatrix=supercell_matrix),
         )
         npt.assert_array_almost_equal(
-            cluster_subspace.corr_from_structure(s),
-            cluster_subspace.corr_from_structure(s, scmatrix=matrix2),
+            expected,
+            cluster_subspace.corr_from_structure(structure, scmatrix=matrix2),
         )
         npt.assert_array_almost_equal(
-            cluster_subspace.corr_from_structure(s),
-            cluster_subspace.corr_from_structure(s, scmatrix=matrix3),
+            expected,
+            cluster_subspace.corr_from_structure(structure, scmatrix=matrix3),
         )
-        npt.assert_array_almost_equal(cluster_subspace.corr_from_structure(s), c)
 
 
 def test_get_aliased_orbits(cluster_subspace, supercell_matrix):
