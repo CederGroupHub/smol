@@ -124,37 +124,6 @@ def test_anneal(sampler, rng, tmpdir):
         sampler.anneal([100, 200], steps)
 
 
-# TODO test run sgensembles at high temp
-"""
-# test some high temp high potential values
-steps = 10000
-chem_pots = {'Na+': 100.0, 'Cl-': 0.0}
-self.msgensemble.chemical_potentials = chem_pots
-expected = {'Na+': 1.0, 'Cl-': 0.0}
-sampler_m.run(steps, self.occu)
-comp = sampler_m.samples.mean_composition()
-for sp in expected.keys():
-    self.assertAlmostEqual(expected[sp], comp[sp], places=2)
-sampler_m.clear_samples()
-
-chem_pots = {'Na+': -100.0, 'Cl-': 0.0}
-self.msgensemble.chemical_potentials = chem_pots
-expected = {'Na+': 0.0, 'Cl-': 1.0}
-sampler_m.run(steps, self.occu)
-comp = sampler_m.samples.mean_composition()
-for sp in expected.keys():
-    self.assertAlmostEqual(expected[sp], comp[sp], places=2)
-sampler_m.clear_samples()
-
-self.fsgensemble.temperature = 1E9  # go real high to be uniform
-sampler_f.run(steps, self.occu)
-expected = {'Na+': 0.5, 'Cl-': 0.5}
-comp = sampler_f.samples.mean_composition()
-for sp in expected.keys():
-    self.assertAlmostEqual(expected[sp], comp[sp], places=1)
-"""
-
-
 def test_reshape_occu(ensemble, rng):
     sampler = Sampler.from_ensemble(ensemble, temperature=TEMPERATURE)
     occu = gen_random_occupancy(ensemble.sublattices, rng=rng)
