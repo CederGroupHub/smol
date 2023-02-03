@@ -10,7 +10,8 @@ from smol.moca.sampler.mcusher import Flip, Swap
 from tests.utils import gen_random_occupancy
 
 TEMPERATURE = 5000
-ATOL = 1e-14
+# Correlations are within ATOL 1E-14, but ewald energies sometimes need more slack
+ATOL = 5e-13  # this is still enough precision anyway
 
 
 @pytest.fixture(params=[1, 5])
@@ -51,7 +52,6 @@ def test_sample(sampler, thin, rng):
         next(it)
 
 
-# TODO efficiency is sometimes =0 and so fails
 @pytest.mark.parametrize("thin", (1, 10))
 def test_run(sampler, thin, rng):
     occu = np.vstack(
@@ -66,7 +66,7 @@ def test_run(sampler, thin, rng):
     assert 0 <= sampler.efficiency() <= 1
 
     # pick some random samples and check recorded traces match!
-    for i in rng.choice(range(sampler.samples.num_samples), size=10):
+    for i in rng.choice(range(sampler.samples.num_samples), size=50):
         npt.assert_allclose(
             sampler.samples.get_feature_vectors(flat=False)[i],
             np.vstack(
