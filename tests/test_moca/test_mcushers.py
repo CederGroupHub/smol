@@ -60,10 +60,10 @@ def rand_occu(all_sublattices, rng):
 
 
 @pytest.fixture
-def rand_occu_lmtpo(all_sublattices_lmtpo):
+def rand_occu_lmtpo(all_sublattices_lmtpo, rng):
     # generate a random occupancy according to the sublattices
     occu = gen_random_neutral_occupancy(
-        all_sublattices_lmtpo[0] + all_sublattices_lmtpo[1]
+        all_sublattices_lmtpo[0] + all_sublattices_lmtpo[1], rng=rng
     )
     return occu, []  # return indices of fixed sites
 
