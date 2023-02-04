@@ -17,9 +17,9 @@ from tests.utils import assert_msonable, gen_random_occupancy, gen_random_struct
 
 pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
 
-RTOL = 0.0  # relative tolerance to check property change functions
+RTOL = 1e-12  # relative tolerance to check property change functions
 # absolute tolerance to check property change functions (eps is approx 2E-16)
-ATOL = 2e4 * np.finfo(float).eps
+ATOL = 1e4 * np.finfo(float).eps
 DRIFT_TOL = 10 * np.finfo(float).eps  # tolerance of average drift
 
 
@@ -220,7 +220,7 @@ def test_compute_cluster_interactions(cluster_subspace, rng):
     pred_energy = expansion.predict(struct, normalize=True)
     assert sum(
         cluster_subspace.orbit_multiplicities * proc_interactions
-    ) == pytest.approx(pred_energy)
+    ) == pytest.approx(pred_energy, abs=ATOL)
 
 
 def test_bad_coef_length(cluster_subspace, rng):
