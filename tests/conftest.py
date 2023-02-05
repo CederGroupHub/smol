@@ -77,7 +77,12 @@ def single_structure():
 @pytest.fixture(params=test_structures, scope="package")
 def cluster_subspace(cluster_cutoffs, request):
     subspace = ClusterSubspace.from_cutoffs(
-        request.param, cutoffs=cluster_cutoffs, supercell_size="volume"
+        request.param,
+        cutoffs=cluster_cutoffs,
+        supercell_size="volume",
+        ltol=0.3,
+        stol=0.35,
+        angle_tol=10,
     )
     return subspace
 
