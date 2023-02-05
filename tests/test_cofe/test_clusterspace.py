@@ -372,18 +372,17 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
     for structure, expected in zip(structures, corrs):
         predicted = cluster_subspace.corr_from_structure(structure)
         npt.assert_array_almost_equal(predicted, expected)
-        npt.assert_array_almost_equal(
-            expected,
-            cluster_subspace.corr_from_structure(structure, scmatrix=supercell_matrix),
+
+        predicted = cluster_subspace.corr_from_structure(
+            structure, scmatrix=supercell_matrix
         )
-        npt.assert_array_almost_equal(
-            expected,
-            cluster_subspace.corr_from_structure(structure, scmatrix=matrix2),
-        )
-        npt.assert_array_almost_equal(
-            expected,
-            cluster_subspace.corr_from_structure(structure, scmatrix=matrix3),
-        )
+        npt.assert_array_almost_equal(predicted, expected)
+
+        predicted = cluster_subspace.corr_from_structure(structure, scmatrix=matrix2)
+        npt.assert_array_almost_equal(predicted, expected)
+
+        predicted = cluster_subspace.corr_from_structure(structure, scmatrix=matrix3)
+        npt.assert_array_almost_equal(predicted, expected)
 
 
 def test_get_aliased_orbits(cluster_subspace, supercell_matrix):
