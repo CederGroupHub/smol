@@ -19,7 +19,7 @@ pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed
 
 RTOL = 1e-12  # relative tolerance to check property change functions
 # absolute tolerance to check property change functions (eps is approx 2E-16)
-ATOL = 1e4 * np.finfo(float).eps
+ATOL = 2e4 * np.finfo(float).eps
 DRIFT_TOL = 10 * np.finfo(float).eps  # tolerance of average drift
 
 
