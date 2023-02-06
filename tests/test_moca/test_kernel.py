@@ -84,10 +84,10 @@ def test_constructor(ensemble, step_type, mcusher):
     assert "bias" in kernel.trace.delta_trace.names
 
 
-def test_single_step(mckernel):
-    mckernel.set_aux_state(gen_random_occupancy(mckernel._usher.sublattices))
+def test_single_step(mckernel, rng):
+    mckernel.set_aux_state(gen_random_occupancy(mckernel._usher.sublattices, rng=rng))
     for _ in range(100):
-        occu_ = gen_random_occupancy(mckernel._usher.sublattices)
+        occu_ = gen_random_occupancy(mckernel._usher.sublattices, rng=rng)
         trace = mckernel.single_step(occu_.copy())
 
         if trace.accepted:
@@ -107,10 +107,12 @@ def test_single_step(mckernel):
             assert "mod_factor" in trace.names
 
 
-def test_single_step_bias(mckernel_bias):
-    mckernel_bias.set_aux_state(gen_random_occupancy(mckernel_bias._usher.sublattices))
+def test_single_step_bias(mckernel_bias, rng):
+    mckernel_bias.set_aux_state(
+        gen_random_occupancy(mckernel_bias._usher.sublattices, rng=rng)
+    )
     for _ in range(100):
-        occu = gen_random_occupancy(mckernel_bias._usher.sublattices)
+        occu = gen_random_occupancy(mckernel_bias._usher.sublattices, rng=rng)
         trace = mckernel_bias.single_step(occu.copy())
         # assert delta bias is there and recorded
         assert isinstance(trace.delta_trace.bias, np.ndarray)

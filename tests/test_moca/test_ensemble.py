@@ -122,8 +122,8 @@ def test_msonable(ensemble):
     assert_msonable(ensemble)
 
 
-def test_split_ensemble(ensemble):
-    occu = gen_random_occupancy(ensemble.sublattices)
+def test_split_ensemble(ensemble, rng):
+    occu = gen_random_occupancy(ensemble.sublattices, rng=rng)
     for sublattice in ensemble.sublattices:
         npt.assert_array_equal(np.arange(len(sublattice.species)), sublattice.encoding)
         # ensemble must have been initialized from default.
@@ -208,7 +208,7 @@ def test_split_ensemble(ensemble):
 # Canonical Ensemble tests
 def test_compute_feature_vector_canonical(canonical_ensemble, rng):
     processor = canonical_ensemble.processor
-    occu = gen_random_occupancy(canonical_ensemble.sublattices)
+    occu = gen_random_occupancy(canonical_ensemble.sublattices, rng=rng)
     assert np.dot(
         canonical_ensemble.natural_parameters,
         canonical_ensemble.compute_feature_vector(occu),
@@ -267,7 +267,7 @@ def test_compute_feature_vector_canonical(canonical_ensemble, rng):
 # tests for a semigrand ensemble
 def test_compute_feature_vector_sgc(semigrand_ensemble, rng):
     proc = semigrand_ensemble.processor
-    occu = gen_random_occupancy(semigrand_ensemble.sublattices)
+    occu = gen_random_occupancy(semigrand_ensemble.sublattices, rng=rng)
     chemical_work = sum(
         semigrand_ensemble._chemical_potentials["table"][site][species]
         for site, species in enumerate(occu)

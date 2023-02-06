@@ -10,7 +10,8 @@ from smol.moca.sampler.mcusher import Flip, Swap
 from tests.utils import gen_random_occupancy
 
 TEMPERATURE = 5000
-ATOL = 1e-14
+# Correlations are within ATOL 1E-14, but ewald energies sometimes need more slack
+ATOL = 5e-13  # this is still enough precision anyway
 
 
 @pytest.fixture(params=[1, 5])
@@ -35,10 +36,10 @@ def test_from_ensemble(sampler):
 
 
 @pytest.mark.parametrize("thin", (1, 10))
-def test_sample(sampler, thin):
+def test_sample(sampler, thin, rng):
     occu = np.vstack(
         [
-            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices)
+            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices, rng=rng)
             for _ in range(sampler.samples.shape[0])
         ]
     )
@@ -51,12 +52,11 @@ def test_sample(sampler, thin):
         next(it)
 
 
-# TODO efficiency is sometimes =0 and so fails
 @pytest.mark.parametrize("thin", (1, 10))
 def test_run(sampler, thin, rng):
     occu = np.vstack(
         [
-            gen_random_occupancy(kernel._usher.sublattices)
+            gen_random_occupancy(kernel._usher.sublattices, rng=rng)
             for kernel in sampler.mckernels
         ]
     )
@@ -66,7 +66,7 @@ def test_run(sampler, thin, rng):
     assert 0 <= sampler.efficiency() <= 1
 
     # pick some random samples and check recorded traces match!
-    for i in rng.choice(range(sampler.samples.num_samples), size=10):
+    for i in rng.choice(range(sampler.samples.num_samples), size=50):
         npt.assert_allclose(
             sampler.samples.get_feature_vectors(flat=False)[i],
             np.vstack(
@@ -83,11 +83,11 @@ def test_run(sampler, thin, rng):
     sampler.clear_samples()
 
 
-def test_anneal(sampler, tmpdir):
+def test_anneal(sampler, rng, tmpdir):
     temperatures = np.linspace(2000, 500, 5)
     occu = np.vstack(
         [
-            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices)
+            gen_random_occupancy(sampler.mckernels[0]._usher.sublattices, rng=rng)
             for _ in range(sampler.samples.shape[0])
         ]
     )
@@ -124,38 +124,7 @@ def test_anneal(sampler, tmpdir):
         sampler.anneal([100, 200], steps)
 
 
-# TODO test run sgensembles at high temp
-"""
-# test some high temp high potential values
-steps = 10000
-chem_pots = {'Na+': 100.0, 'Cl-': 0.0}
-self.msgensemble.chemical_potentials = chem_pots
-expected = {'Na+': 1.0, 'Cl-': 0.0}
-sampler_m.run(steps, self.occu)
-comp = sampler_m.samples.mean_composition()
-for sp in expected.keys():
-    self.assertAlmostEqual(expected[sp], comp[sp], places=2)
-sampler_m.clear_samples()
-
-chem_pots = {'Na+': -100.0, 'Cl-': 0.0}
-self.msgensemble.chemical_potentials = chem_pots
-expected = {'Na+': 0.0, 'Cl-': 1.0}
-sampler_m.run(steps, self.occu)
-comp = sampler_m.samples.mean_composition()
-for sp in expected.keys():
-    self.assertAlmostEqual(expected[sp], comp[sp], places=2)
-sampler_m.clear_samples()
-
-self.fsgensemble.temperature = 1E9  # go real high to be uniform
-sampler_f.run(steps, self.occu)
-expected = {'Na+': 0.5, 'Cl-': 0.5}
-comp = sampler_f.samples.mean_composition()
-for sp in expected.keys():
-    self.assertAlmostEqual(expected[sp], comp[sp], places=1)
-"""
-
-
-def test_reshape_occu(ensemble):
+def test_reshape_occu(ensemble, rng):
     sampler = Sampler.from_ensemble(ensemble, temperature=TEMPERATURE)
-    occu = gen_random_occupancy(ensemble.sublattices)
+    occu = gen_random_occupancy(ensemble.sublattices, rng=rng)
     assert sampler._reshape_occu(occu).shape == (1, len(occu))

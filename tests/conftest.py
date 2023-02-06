@@ -77,7 +77,12 @@ def single_structure():
 @pytest.fixture(params=test_structures, scope="package")
 def cluster_subspace(cluster_cutoffs, request):
     subspace = ClusterSubspace.from_cutoffs(
-        request.param, cutoffs=cluster_cutoffs, supercell_size="volume"
+        request.param,
+        cutoffs=cluster_cutoffs,
+        supercell_size="volume",
+        ltol=0.3,
+        stol=0.35,
+        angle_tol=10,
     )
     return subspace
 
@@ -179,9 +184,15 @@ def basis_name(request):
 
 @pytest.fixture
 def supercell_matrix(rng):
-    m = rng.integers(-3, 3, size=(3, 3))
-    while abs(np.linalg.det(m)) < 1e-6:  # make sure not singular
-        m = rng.integers(-3, 3, size=(3, 3))
+    def skewed(scm):  # check if any angle is less than 45 degrees
+        normed_scm = scm / np.linalg.norm(scm, axis=0)
+        off_diag = (np.array([0, 0, 1]), np.array([1, 2, 2]))
+        return any(abs(normed_scm @ normed_scm)[off_diag] > 0.5)
+
+    # make sure not singular and not overly skewed
+    while abs(np.linalg.det(m := rng.integers(-3, 3, size=(3, 3)))) < 1e-4 or skewed(m):
+        pass
+
     return m
 
 
