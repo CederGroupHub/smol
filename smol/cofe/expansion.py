@@ -164,8 +164,6 @@ class ClusterExpansion(MSONable):
             if regression_data is not None
             else None
         )
-        # TODO make this cached prop
-        self._int_tensors = None
 
     @cached_property
     def eci(self):
@@ -180,6 +178,24 @@ class ClusterExpansion(MSONable):
         eci = coefs.copy()
         eci /= self._subspace.function_total_multiplicities
         return eci
+
+    @cached_property
+    def cluster_interaction_tensors(self):
+        """Get tuple of cluster interaction tensors.
+
+        Tuple of ndarrays where each array is the interaction tensor for the
+        corresponding orbit of clusters.
+        """
+        interaction_tensors = (self.coefs[0],) + tuple(
+            sum(
+                m * self.eci[orbit.bit_id + i] * tensor
+                for i, (m, tensor) in enumerate(
+                    zip(orbit.bit_combo_multiplicities, orbit.correlation_tensors)
+                )
+            )
+            for orbit in self._subspace.orbits
+        )
+        return interaction_tensors
 
     @property
     def structure(self):
@@ -228,25 +244,6 @@ class ClusterExpansion(MSONable):
             ]
         )
         return weights
-
-    @property
-    def cluster_interaction_tensors(self):
-        """Get tuple of cluster interaction tensors.
-
-        Tuple of ndarrays where each array is the interaction tensor for the
-        corresponding orbit of clusters.
-        """
-        if self._int_tensors is None:
-            self._int_tensors = (self.coefs[0],) + tuple(
-                sum(
-                    m * self.eci[orbit.bit_id + i] * tensor
-                    for i, (m, tensor) in enumerate(
-                        zip(orbit.bit_combo_multiplicities, orbit.correlation_tensors)
-                    )
-                )
-                for orbit in self._subspace.orbits
-            )
-        return self._int_tensors
 
     @property
     def feature_matrix(self):
@@ -332,14 +329,20 @@ class ClusterExpansion(MSONable):
         coefs = self.eci if with_multiplicity else self.coefs
         bit_ids = [i for i, coef in enumerate(coefs) if abs(coef) < threshold]
         self.cluster_subspace.remove_corr_functions(bit_ids)
+
         # Update necessary attributes
         ids_complement = list(set(range(len(self.coefs))) - set(bit_ids))
         ids_complement.sort()
         self.coefs = self.coefs[ids_complement]
+
         if self._feat_matrix is not None:
             self._feat_matrix = self._feat_matrix[:, ids_complement]
+
         if hasattr(self, "eci"):  # reset cache
             del self.eci
+
+        if hasattr(self, "cluster_interaction_tensors"):  # reset cache
+            del self.cluster_interaction_tensors
 
     def copy(self):
         """Return a copy of self."""
