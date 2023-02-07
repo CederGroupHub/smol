@@ -361,9 +361,6 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
     # vectors on the same structure, when using the default orbit mapping.
     cluster_subspace._supercell_orb_inds = {}
     for structure, expected in zip(structures, corrs):
-        predicted = cluster_subspace.corr_from_structure(structure)
-        npt.assert_array_almost_equal(predicted, expected)
-
         predicted = cluster_subspace.corr_from_structure(
             structure, scmatrix=supercell_matrix
         )
@@ -373,6 +370,9 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
         npt.assert_array_almost_equal(predicted, expected)
 
         predicted = cluster_subspace.corr_from_structure(structure, scmatrix=matrix3)
+        npt.assert_array_almost_equal(predicted, expected)
+
+        predicted = cluster_subspace.corr_from_structure(structure)
         npt.assert_array_almost_equal(predicted, expected)
 
 
