@@ -170,6 +170,7 @@ def test_refine_structure(cluster_subspace, rng):
     supercell.make_supercell(3)
     structure = gen_random_structure(cluster_subspace.structure, size=3, rng=rng)
     structure.apply_strain(rng.uniform(-0.01, 0.01, size=3))
+    refined_structure = cluster_subspace.refine_structure(structure)
 
     assert not np.allclose(  # check that distorted structure is not equivalent
         supercell.lattice.parameters, structure.lattice.parameters
