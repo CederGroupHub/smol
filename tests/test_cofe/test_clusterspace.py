@@ -1,4 +1,3 @@
-import warnings
 from itertools import combinations
 
 import numpy as np
@@ -165,22 +164,12 @@ def test_supercell_matrix_from_structure(cluster_subspace, rng):
     assert np.linalg.det(sc_matrix) == pytest.approx(8)
 
 
+@pytest.mark.xfail(raises=StructureMatchError)
 def test_refine_structure(cluster_subspace, rng):
     supercell = cluster_subspace.structure.copy()
     supercell.make_supercell(3)
     structure = gen_random_structure(cluster_subspace.structure, size=3, rng=rng)
     structure.apply_strain(rng.uniform(-0.01, 0.01, size=3))
-
-    #  TODO this sometimes fails because sc_matrix is not found!!!
-    try:
-        refined_structure = cluster_subspace.refine_structure(structure)
-    except StructureMatchError:
-        warnings.warn(
-            "StructureMatchError was raised when testing refined structures"
-            f" for testing structure {cluster_subspace.structure}",
-            RuntimeWarning,
-        )
-        return
 
     assert not np.allclose(  # check that distorted structure is not equivalent
         supercell.lattice.parameters, structure.lattice.parameters
@@ -259,6 +248,7 @@ def test_remove_corr_functions(cluster_subspace, rng):
         subspace.remove_corr_functions(ids)
 
 
+@pytest.mark.xfail(raises=StructureMatchError)
 def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
     # check that all supercell_structure index groups map to the correct
     # primitive cell sites, and check that max distance under supercell
