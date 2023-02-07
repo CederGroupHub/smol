@@ -12,6 +12,13 @@ Use this section to keep track of changes in the works.
 ### Removed
 ### Deprecated
 
+# [v0.3.1](https://github.com/CederGroupHub/smol/releases/tag/v0.3.1) (2023-02-07)
+### Changed
+* Save ensemble as attributed in `SampleContainer` add `get_sampled_structures`. #326 @lbluque
+### Fixed
+* `ClusterExpansion.cluster_interaction_tensors` as a cached property and reset when pruning. #330 @lbluque
+* Fix flakey unit tests. #328 @lbluque & @qchempku2017
+
 # [v0.3.0](https://github.com/CederGroupHub/smol/releases/tag/v0.3.0) (2023-01-13)
 ### Added
 * Cluster decomposition analysis and sampling functionality. #306 @lbluque
