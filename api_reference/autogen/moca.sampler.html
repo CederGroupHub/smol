@@ -4,9 +4,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>moca.sampler package &#8212; smol 0.0.3 documentation</title>
+    <title>moca.sampler package &#8212; smol 0.3.1 documentation</title>
   
   
   
@@ -34,16 +34,13 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/autogen/moca.sampler';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.0.3';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3.1';
         </script>
     <script src="../../_static/require.js"></script>
     <script src="../../_static/custom.js"></script>
@@ -197,7 +194,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.0.3  <!-- this text may get changed later by javascript -->
+        0.3.1  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -341,7 +338,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.0.3  <!-- this text may get changed later by javascript -->
+        0.3.1  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -456,6 +453,10 @@ for random structure). If not given this will be taken from the
 prim structure used in the cluster subspace. Needs to be in
 the same order as the corresponding sublattice.</p></li>
 </ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>kwargs:</dt><dd><p>Keyword arguments for initializing MCUsher.</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -574,7 +575,7 @@ step returned by MCUsher.</p></li>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.sampler.bias.SquareChargeBias">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SquareChargeBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.SquareChargeBias" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SquareChargeBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.SquareChargeBias" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#moca.sampler.bias.MCBias" title="moca.sampler.bias.MCBias"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCBias</span></code></a></p>
 <p>Square charge bias.</p>
 <p>This bias penalizes energy on square of the system net charge.</p>
@@ -590,6 +591,10 @@ Penalty factor. energy/kT will be penalized by adding penalty
 Must be positive. Default to 0.5, which works
 for most of the cases.</p></li>
 </ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>kwargs:</dt><dd><p>Keyword arguments for initializing MCUsher.</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -657,6 +662,10 @@ Default to 0.5, which works for most of the cases.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="simple">
+<dt>kwargs:</dt><dd><p>Keyword arguments for initializing MCUsher.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.sampler.bias.SquareHyperplaneBias.compute_bias">
 <span class="sig-name descname"><span class="pre">compute_bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.bias.SquareHyperplaneBias.compute_bias" title="Permalink to this definition">#</a></dt>
@@ -718,7 +727,7 @@ It has some minimimal methods and properties useful to start analyzing the
 samples.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.sampler.container.SampleContainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SampleContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natural_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_energy_coefs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.container.SampleContainer" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SampleContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.container.SampleContainer" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
 <p>A SampleContainer class stores Monte Carlo simulation samples.</p>
 <p>A SampleContainer holds samples and sampling information from an MCMC
@@ -787,10 +796,7 @@ can be anything representative, i.e. number of sites)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sublattices</strong> (<em>list</em><em> of </em><a class="reference internal" href="moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice"><em>Sublattice</em></a>) – Sublattices of the ensemble sampled.</p></li>
-<li><p><strong>natural_parameters</strong> (<em>ndarray</em>) – array of natural parameters used in the ensemble.</p></li>
-<li><p><strong>num_energy_coefs</strong> (<em>int</em>) – the number of coefficients in the natural parameters that
-correspond to the energy only.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – Ensemble object used to generate the samples.</p></li>
 <li><p><strong>sample_trace</strong> (<em>Trace</em>) – a trace object for the traced values during MC sampling</p></li>
 <li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
 </ul>
@@ -831,6 +837,12 @@ correspond to the energy only.</p></li>
 <dd><p>Calculate the variance of sampled energies.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.sampler.container.SampleContainer.ensemble">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ensemble</span></span><a class="headerlink" href="#moca.sampler.container.SampleContainer.ensemble" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the ensemble name.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.sampler.container.SampleContainer.enthalpy_variance">
 <span class="sig-name descname"><span class="pre">enthalpy_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.container.SampleContainer.enthalpy_variance" title="Permalink to this definition">#</a></dt>
@@ -856,21 +868,26 @@ correspond to the energy only.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.sampler.container.SampleContainer.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.container.SampleContainer.from_dict" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensemble</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.container.SampleContainer.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Instantiate a SampleContainer from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – dictionary representation.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d</strong> (<em>dict</em>) – dictionary representation.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – optional
+The ensemble object to used for generating samples. Only needed to
+update legacy files.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Sublattice</p>
+<dd class="field-even"><p>SampleContainer</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.sampler.container.SampleContainer.from_hdf5">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.container.SampleContainer.from_hdf5" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensemble</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.container.SampleContainer.from_hdf5" title="Permalink to this definition">#</a></dt>
 <dd><p>Instantiate a SampleContainer from an hdf5 file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -879,6 +896,9 @@ correspond to the energy only.</p></li>
 <li><p><strong>swmr_mode</strong> (<em>bool</em>) – optional
 If true allows to read file from other processes. Single Writer
 Multiple Readers.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – optional
+The ensemble object to used for generating samples. Only needed to
+update legacy files.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -972,6 +992,27 @@ Multiple Readers.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="moca.sampler.container.SampleContainer.get_sampled_structures">
+<span class="sig-name descname"><span class="pre">get_sampled_structures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.container.SampleContainer.get_sampled_structures" title="Permalink to this definition">#</a></dt>
+<dd><p>Get sampled structures for MC steps given by indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indices</strong> (<em>list</em><em> of </em><em>int</em><em> or </em><em>int</em>) – A single index or list of indices to obtain sampled structures.</p></li>
+<li><p><strong>flat</strong> (<em>bool</em>) – optional
+If true will flatten chains, and the indices correspond to flattened
+values. If false chain is not flattened, and if multiple walkers where
+used returns a list of list where each inner list has the sampled
+structure for each walker. Default is set to flat True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of Structure or list of list of Structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="moca.sampler.container.SampleContainer.get_species_counts">
 <span class="sig-name descname"><span class="pre">get_species_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.container.SampleContainer.get_species_counts" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the species counts for each occupancy in the chain.</p>
@@ -1041,6 +1082,12 @@ same order as the underlying site space.</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#id0" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the natural parameters.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="moca.sampler.container.SampleContainer.num_samples">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_samples</span></span><a class="headerlink" href="#moca.sampler.container.SampleContainer.num_samples" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the total number of samples.</p>
@@ -1077,6 +1124,12 @@ the total mc iterations.</p></li>
 <dt class="sig sig-object py" id="moca.sampler.container.SampleContainer.sublattice_composition_variance">
 <span class="sig-name descname"><span class="pre">sublattice_composition_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.container.SampleContainer.sublattice_composition_variance" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the variance in composition of a specific sublattice.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id1">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#id1" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the sublattices.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2177,7 +2230,7 @@ simulations.</p>
 <p>Samples are saved in a Sample Container.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="moca.sampler.SampleContainer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SampleContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">natural_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_energy_coefs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.SampleContainer" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SampleContainer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.SampleContainer" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
 <p>A SampleContainer class stores Monte Carlo simulation samples.</p>
 <p>A SampleContainer holds samples and sampling information from an MCMC
@@ -2246,10 +2299,7 @@ can be anything representative, i.e. number of sites)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sublattices</strong> (<em>list</em><em> of </em><a class="reference internal" href="moca.html#moca.sublattice.Sublattice" title="moca.sublattice.Sublattice"><em>Sublattice</em></a>) – Sublattices of the ensemble sampled.</p></li>
-<li><p><strong>natural_parameters</strong> (<em>ndarray</em>) – array of natural parameters used in the ensemble.</p></li>
-<li><p><strong>num_energy_coefs</strong> (<em>int</em>) – the number of coefficients in the natural parameters that
-correspond to the energy only.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – Ensemble object used to generate the samples.</p></li>
 <li><p><strong>sample_trace</strong> (<em>Trace</em>) – a trace object for the traced values during MC sampling</p></li>
 <li><p><strong>sampling_metadata</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – sampling metadata (i.e. ensemble name, mckernel type, etc)</p></li>
 </ul>
@@ -2290,6 +2340,12 @@ correspond to the energy only.</p></li>
 <dd><p>Calculate the variance of sampled energies.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="moca.sampler.SampleContainer.ensemble">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ensemble</span></span><a class="headerlink" href="#moca.sampler.SampleContainer.ensemble" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the ensemble name.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.sampler.SampleContainer.enthalpy_variance">
 <span class="sig-name descname"><span class="pre">enthalpy_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.SampleContainer.enthalpy_variance" title="Permalink to this definition">#</a></dt>
@@ -2315,21 +2371,26 @@ correspond to the energy only.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.sampler.SampleContainer.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.SampleContainer.from_dict" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensemble</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.SampleContainer.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Instantiate a SampleContainer from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – dictionary representation.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>d</strong> (<em>dict</em>) – dictionary representation.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – optional
+The ensemble object to used for generating samples. Only needed to
+update legacy files.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Sublattice</p>
+<dd class="field-even"><p>SampleContainer</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="moca.sampler.SampleContainer.from_hdf5">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.SampleContainer.from_hdf5" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swmr_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensemble</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.SampleContainer.from_hdf5" title="Permalink to this definition">#</a></dt>
 <dd><p>Instantiate a SampleContainer from an hdf5 file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2338,6 +2399,9 @@ correspond to the energy only.</p></li>
 <li><p><strong>swmr_mode</strong> (<em>bool</em>) – optional
 If true allows to read file from other processes. Single Writer
 Multiple Readers.</p></li>
+<li><p><strong>ensemble</strong> (<a class="reference internal" href="moca.html#moca.Ensemble" title="moca.Ensemble"><em>Ensemble</em></a>) – optional
+The ensemble object to used for generating samples. Only needed to
+update legacy files.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2431,6 +2495,27 @@ Multiple Readers.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="moca.sampler.SampleContainer.get_sampled_structures">
+<span class="sig-name descname"><span class="pre">get_sampled_structures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.SampleContainer.get_sampled_structures" title="Permalink to this definition">#</a></dt>
+<dd><p>Get sampled structures for MC steps given by indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indices</strong> (<em>list</em><em> of </em><em>int</em><em> or </em><em>int</em>) – A single index or list of indices to obtain sampled structures.</p></li>
+<li><p><strong>flat</strong> (<em>bool</em>) – optional
+If true will flatten chains, and the indices correspond to flattened
+values. If false chain is not flattened, and if multiple walkers where
+used returns a list of list where each inner list has the sampled
+structure for each walker. Default is set to flat True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of Structure or list of list of Structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="moca.sampler.SampleContainer.get_species_counts">
 <span class="sig-name descname"><span class="pre">get_species_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.SampleContainer.get_species_counts" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the species counts for each occupancy in the chain.</p>
@@ -2500,6 +2585,12 @@ same order as the underlying site space.</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="id2">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">natural_parameters</span></span><a class="headerlink" href="#id2" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the natural parameters.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="moca.sampler.SampleContainer.num_samples">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_samples</span></span><a class="headerlink" href="#moca.sampler.SampleContainer.num_samples" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the total number of samples.</p>
@@ -2536,6 +2627,12 @@ the total mc iterations.</p></li>
 <dt class="sig sig-object py" id="moca.sampler.SampleContainer.sublattice_composition_variance">
 <span class="sig-name descname"><span class="pre">sublattice_composition_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thin_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#moca.sampler.SampleContainer.sublattice_composition_variance" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the variance in composition of a specific sublattice.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id3">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#id3" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the sublattices.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -2848,6 +2945,15 @@ match samples will be appended.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#moca.sampler.container.SampleContainer.ensemble">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         SampleContainer.ensemble
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#moca.sampler.container.SampleContainer.enthalpy_variance">
        <code class="docutils literal notranslate">
         <span class="pre">
@@ -2992,6 +3098,15 @@ match samples will be appended.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#moca.sampler.container.SampleContainer.get_sampled_structures">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         SampleContainer.get_sampled_structures()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#moca.sampler.container.SampleContainer.get_species_counts">
        <code class="docutils literal notranslate">
         <span class="pre">
@@ -3082,6 +3197,15 @@ match samples will be appended.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#id0">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         SampleContainer.natural_parameters
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#moca.sampler.container.SampleContainer.num_samples">
        <code class="docutils literal notranslate">
         <span class="pre">
@@ -3122,6 +3246,15 @@ match samples will be appended.</p>
        <code class="docutils literal notranslate">
         <span class="pre">
          SampleContainer.sublattice_composition_variance()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#id1">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         SampleContainer.sublattices
         </span>
        </code>
       </a>
@@ -3919,6 +4052,15 @@ match samples will be appended.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#moca.sampler.SampleContainer.ensemble">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         SampleContainer.ensemble
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#moca.sampler.SampleContainer.enthalpy_variance">
        <code class="docutils literal notranslate">
         <span class="pre">
@@ -4063,6 +4205,15 @@ match samples will be appended.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#moca.sampler.SampleContainer.get_sampled_structures">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         SampleContainer.get_sampled_structures()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#moca.sampler.SampleContainer.get_species_counts">
        <code class="docutils literal notranslate">
         <span class="pre">
@@ -4153,6 +4304,15 @@ match samples will be appended.</p>
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#id2">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         SampleContainer.natural_parameters
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#moca.sampler.SampleContainer.num_samples">
        <code class="docutils literal notranslate">
         <span class="pre">
@@ -4193,6 +4353,15 @@ match samples will be appended.</p>
        <code class="docutils literal notranslate">
         <span class="pre">
          SampleContainer.sublattice_composition_variance()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#id3">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         SampleContainer.sublattices
         </span>
        </code>
       </a>
@@ -4307,7 +4476,7 @@ match samples will be appended.</p>
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.1.3.<br>
 </p>
 
   </div>

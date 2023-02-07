@@ -4,9 +4,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>LiMnO DRX Cluster Expansion &#8212; smol 0.0.3 documentation</title>
+    <title>LiMnO DRX Cluster Expansion &#8212; smol 0.3.1 documentation</title>
   
   
   
@@ -34,9 +34,6 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -45,7 +42,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/lmo-drx-ce-mc';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.0.3';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3.1';
         </script>
     <script src="../_static/require.js"></script>
     <script src="../_static/custom.js"></script>
@@ -199,7 +196,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.0.3  <!-- this text may get changed later by javascript -->
+        0.3.1  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -343,7 +340,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.0.3  <!-- this text may get changed later by javascript -->
+        0.3.1  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -664,7 +661,7 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.0.3/docs/src/notebooks/lmo-drx-ce-mc.ipynb">docs/src/notebooks/lmo-drx-ce-mc.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.3.1/docs/src/notebooks/lmo-drx-ce-mc.ipynb">docs/src/notebooks/lmo-drx-ce-mc.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -910,11 +907,10 @@ Our feature matrix has the following dimensions: (238, 387)
 </pre></div>
 </div>
 </div>
-<p>We will use L1-regularization, which is to minimize the following objective function with a penalty parameter <span class="math notranslate nohighlight">\(\lambda\)</span> (note that in sklearn this is called <span class="math notranslate nohighlight">\(\alpha\)</span>, but we have already used this to define our function cluster).</p>
-<div class="math notranslate nohighlight">
-\begin{equation}
+<p>We will use L1-regularization, which is to minimize the following objective function with a penalty parameter <span class="math notranslate nohighlight">\(\lambda\)</span> (note that in sklearn this is called <span class="math notranslate nohighlight">\(\alpha\)</span>, but we have already used this to define our function cluster). <span class="math">\begin{equation}
 \frac{1}{2n}||E-\textbf{X}\vec w||_2^2 + \lambda ||\vec w||_1
-\end{equation}</div><p>We will optimize the hyperparameter using only a single fit with a train/test split. However, improved results can be obtained from doing a proper cross validation optimization.</p>
+\end{equation}</span></p>
+<p>We will optimize the hyperparameter using only a single fit with a train/test split. However, improved results can be obtained from doing a proper cross validation optimization.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
@@ -1008,9 +1004,9 @@ Text(0, 0.5, &#39;Average RMSE (eV/prim) in 50 trials&#39;)
 
 <span class="n">y_predict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">wvec</span><span class="p">)</span>
 <span class="n">y_train_predict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">wvec</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Out-of-sample RMSE is: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_predict</span><span class="p">))</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;In-sample RMSE is: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_train_predict</span><span class="p">))</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Number of Features &gt; 1E-5: </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wvec</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1E-5</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">wvec</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Out-of-sample RMSE is: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span><span class="w"> </span><span class="n">y_predict</span><span class="p">))</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;In-sample RMSE is: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span><span class="w"> </span><span class="n">y_train_predict</span><span class="p">))</span><span class="si">}</span><span class="s1"> eV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Number of Features &gt; 1E-5: </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wvec</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">1E-5</span><span class="p">)</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">wvec</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
 <span class="n">first_pair</span> <span class="o">=</span> <span class="n">cs</span><span class="o">.</span><span class="n">orbits_by_size</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bit_id</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Point correlation coefficients: </span><span class="si">{</span><span class="n">wvec</span><span class="p">[:</span><span class="n">first_pair</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -1368,7 +1364,7 @@ Sampling 1 chain(s) from a cell with 3456 sites...: 100%|███████�
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.1.3.<br>
 </p>
 
   </div>

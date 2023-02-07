@@ -4,9 +4,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Creating a Cluster Expansion with an additional Ewald electrostatic term &#8212; smol 0.0.3 documentation</title>
+    <title>Creating a Cluster Expansion with an additional Ewald electrostatic term &#8212; smol 0.3.1 documentation</title>
   
   
   
@@ -34,9 +34,6 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -45,7 +42,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/creating-a-ce-w-electrostatics';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.0.3';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3.1';
         </script>
     <script src="../_static/require.js"></script>
     <script src="../_static/custom.js"></script>
@@ -199,7 +196,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.0.3  <!-- this text may get changed later by javascript -->
+        0.3.1  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -343,7 +340,7 @@
       <div class="navbar-end-item">
         <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.0.3  <!-- this text may get changed later by javascript -->
+        0.3.1  <!-- this text may get changed later by javascript -->
         <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -664,7 +661,7 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.0.3/docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb">docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.3.1/docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb">docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -791,8 +788,8 @@ The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is
 </pre></div>
 </div>
 </div>
-<section id="3.1)-Check-the-quality-of-the-fit-and-the-&quot;dielectric&quot;-constant">
-<h3>3.1) Check the quality of the fit and the “dielectric” constant<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit-and-the-"dielectric"-constant" title="Permalink to this heading">#</a></h3>
+<section id="3.1)-Check-the-quality-of-the-fit-and-the-“dielectric”-constant">
+<h3>3.1) Check the quality of the fit and the “dielectric” constant<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit-and-the-“dielectric”-constant" title="Permalink to this heading">#</a></h3>
 <p>We will check the quality of the fit with the simple methods from before.</p>
 <p>It is also useful to look at the value of the fit coefficient obtained for the Ewald interaction, since its inverse can be interpreted as a dielectric constant.</p>
 <div class="nbinput docutils container">
@@ -808,8 +805,8 @@ The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is
 <span class="n">maxer</span> <span class="o">=</span> <span class="n">max_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">),</span>
                   <span class="n">train_predictions</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{</span><span class="mf">1E3</span> <span class="o">*</span> <span class="n">rmse</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{</span><span class="mf">1E3</span> <span class="o">*</span> <span class="n">maxer</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{</span><span class="mf">1E3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rmse</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{</span><span class="mf">1E3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">maxer</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fitted dielectric constant </span><span class="si">{</span><span class="mi">1</span><span class="o">/</span><span class="n">expansion</span><span class="o">.</span><span class="n">coefs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -826,8 +823,8 @@ Fitted dielectric constant 9.413114998055713
 </div>
 </section>
 </section>
-<section id="4)-Constraining-the-value-of-the-&quot;dielectric&quot;-constant">
-<h2>4) Constraining the value of the “dielectric” constant<a class="headerlink" href="#4)-Constraining-the-value-of-the-"dielectric"-constant" title="Permalink to this heading">#</a></h2>
+<section id="4)-Constraining-the-value-of-the-“dielectric”-constant">
+<h2>4) Constraining the value of the “dielectric” constant<a class="headerlink" href="#4)-Constraining-the-value-of-the-“dielectric”-constant" title="Permalink to this heading">#</a></h2>
 <p>Sometimes we want to constrain the obtained value of the dielectric constant, when it is too large or when it is negative (which would mean higher electrostatic interaction energy is more favorable?)</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
@@ -852,8 +849,8 @@ Fitted dielectric constant 9.413114998055713
 <span class="n">maxer</span> <span class="o">=</span> <span class="n">max_error</span><span class="p">(</span><span class="n">wrangler</span><span class="o">.</span><span class="n">get_property_vector</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">),</span>
                   <span class="n">train_predictions</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{</span><span class="mf">1E3</span> <span class="o">*</span> <span class="n">rmse</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{</span><span class="mf">1E3</span> <span class="o">*</span> <span class="n">maxer</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{</span><span class="mf">1E3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rmse</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{</span><span class="mf">1E3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">maxer</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fitted dielectric constant </span><span class="si">{</span><span class="mi">1</span><span class="o">/</span><span class="n">coefs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -889,8 +886,8 @@ Fitted dielectric constant 5.0
                   <span class="n">train_predictions</span><span class="p">)</span>
 
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{</span><span class="mf">1E3</span> <span class="o">*</span> <span class="n">rmse</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{</span><span class="mf">1E3</span> <span class="o">*</span> <span class="n">maxer</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RMSE </span><span class="si">{</span><span class="mf">1E3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rmse</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MAX </span><span class="si">{</span><span class="mf">1E3</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">maxer</span><span class="si">}</span><span class="s1"> meV/prim&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Fitted dielectric constant </span><span class="si">{</span><span class="mi">1</span><span class="o">/</span><span class="n">coefs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -972,14 +969,14 @@ Fitted dielectric constant 5.0
   </a>
   <ul class="visible nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href='#3.1)-Check-the-quality-of-the-fit-and-the-"dielectric"-constant'>
+    <a class="reference internal nav-link" href="#3.1)-Check-the-quality-of-the-fit-and-the-“dielectric”-constant">
      3.1) Check the quality of the fit and the “dielectric” constant
     </a>
    </li>
   </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href='#4)-Constraining-the-value-of-the-"dielectric"-constant'>
+  <a class="reference internal nav-link" href="#4)-Constraining-the-value-of-the-“dielectric”-constant">
    4) Constraining the value of the “dielectric” constant
   </a>
   <ul class="visible nav section-nav flex-column">
@@ -1065,7 +1062,7 @@ Fitted dielectric constant 5.0
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.1.3.<br>
 </p>
 
   </div>
