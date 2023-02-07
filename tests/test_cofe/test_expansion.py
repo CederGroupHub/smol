@@ -101,11 +101,21 @@ def test_prune(cluster_expansion):
     ids = [i for i, coef in enumerate(cluster_expansion.coefs) if abs(coef) >= thresh]
     new_coefs = cluster_expansion.coefs[ids]
     new_eci = cluster_expansion.eci[ids]
+
     assert len(expansion.coefs) == len(new_coefs)
     npt.assert_array_equal(new_eci, expansion.eci)
     npt.assert_array_equal(new_coefs, expansion.coefs)
     assert len(expansion.cluster_subspace) == len(new_coefs)
     assert len(expansion.eci_orbit_ids) == len(new_coefs)
+    assert (
+        len(expansion.cluster_interaction_tensors)
+        == expansion.cluster_subspace.num_orbits
+    )
+    assert (
+        len(expansion.cluster_interaction_tensors)
+        == len(expansion.cluster_subspace.orbits) + 1
+    )
+
     pruned_feat_matrix = cluster_expansion._feat_matrix[:, ids]
     npt.assert_array_equal(expansion._feat_matrix, pruned_feat_matrix)
     # check that recomputing features produces what's expected
