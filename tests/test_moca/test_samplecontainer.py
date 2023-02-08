@@ -9,8 +9,7 @@ from pymatgen.core.composition import Composition
 
 from smol.cofe.space.domain import SiteSpace
 from smol.moca import SampleContainer
-from smol.moca.sampler import SampleContainer
-from smol.moca.sampler.namespace import Trace
+from smol.moca._trace import Trace
 from smol.moca.sublattice import Sublattice
 from tests.utils import assert_msonable
 

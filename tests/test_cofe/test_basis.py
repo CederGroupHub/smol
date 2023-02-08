@@ -8,7 +8,7 @@ from numpy.polynomial.legendre import legval
 from pymatgen.core import Composition
 
 from smol._utils import get_subclasses
-from smol.cofe.space import basis, domain
+from smol.cofe.space import domain
 from tests.utils import assert_msonable
 
 pytestmark = pytest.mark.filterwarnings("ignore:The measure given does not sum to 1.")

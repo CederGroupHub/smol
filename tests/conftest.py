@@ -8,7 +8,7 @@ from pymatgen.core import Structure
 from smol._utils import get_subclasses
 from smol.cofe import ClusterExpansion, ClusterSubspace, StructureWrangler
 from smol.cofe.extern import EwaldTerm
-from smol.cofe.space.basis import BasisIterator
+from smol.cofe.space._basis import BasisIterator
 from smol.moca import Ensemble
 from smol.moca.processor import (
     ClusterDecompositionProcessor,

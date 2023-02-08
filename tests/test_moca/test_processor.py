@@ -218,7 +218,7 @@ def test_compute_cluster_interactions(cluster_subspace, rng):
         cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
     )
 
-    occu = gen_random_occupancy(processor.get_sublattices(), rng=rng)
+    occu = _gen_unconstrained_ordered_occu(processor.get_sublattices(), rng=rng)
     struct = processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
     proc_interactions = processor.compute_feature_vector(occu) / processor.size

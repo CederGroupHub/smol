@@ -10,7 +10,7 @@ from pymatgen.core import Composition
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from smol.cofe.space import Cluster, Orbit
-from smol.cofe.space.basis import basis_factory
+from smol.cofe.space._basis import basis_factory
 from smol.cofe.space.domain import SiteSpace, get_site_spaces
 from tests.utils import assert_msonable
 

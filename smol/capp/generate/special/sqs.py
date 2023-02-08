@@ -13,8 +13,8 @@ from smol._utils import derived_class_factory
 from smol.capp import enumerate_supercell_matrices, gen_random_ordered_occupancy
 from smol.cofe import ClusterSubspace
 from smol.moca import Ensemble, SampleContainer, Sampler
+from smol.moca._trace import Trace
 from smol.moca.kernel import MulticellMetropolis, mckernel_factory
-from smol.moca.kernel._trace import Trace
 from smol.moca.processor import FeatureDistanceProcessor
 
 SQS = namedtuple("SQS", ["score", "features", "supercell_matrix", "structure"])

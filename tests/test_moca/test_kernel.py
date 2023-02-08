@@ -7,9 +7,9 @@ import pytest
 
 from smol.capp.generate.random import _gen_unconstrained_ordered_occu
 from smol.constants import kB
+from smol.moca._trace import StepTrace, Trace
 from smol.moca.kernel import Metropolis, UniformlyRandom, WangLandau
 from smol.moca.kernel._base import ALL_MCUSHERS, ThermalKernelMixin
-from smol.moca.kernel._trace import StepTrace, Trace
 from smol.moca.kernel.bias import FugacityBias
 from smol.moca.kernel.mcusher import Flip, Swap, TableFlip
 

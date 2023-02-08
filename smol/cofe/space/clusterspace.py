@@ -38,7 +38,7 @@ from smol.cofe.space import (
     get_allowed_species,
     get_site_spaces,
 )
-from smol.cofe.space.basis import IndicatorBasis
+from smol.cofe.space._basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
 from smol.correlations import corr_from_occupancy
 

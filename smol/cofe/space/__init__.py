@@ -4,7 +4,7 @@ Contains classes and functions necessary to represent the configurational space
 of a crystalline system and the space of functions over it.
 """
 
-from .basis import basis_factory
+from ._basis import basis_factory
 from .cluster import Cluster
 from .domain import Vacancy, get_allowed_species, get_site_spaces, get_species
 from .orbit import Orbit

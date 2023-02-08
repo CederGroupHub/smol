@@ -8,10 +8,10 @@ import numpy as np
 
 from smol._utils import class_name_from_str, get_subclasses
 from smol.constants import kB
-from smol.moca.kernel._trace import StepTrace, Trace
+from smol.moca._metadata import Metadata
+from smol.moca._trace import StepTrace, Trace
 from smol.moca.kernel.bias import MCBias, mcbias_factory
 from smol.moca.kernel.mcusher import MCUsher, mcusher_factory
-from smol.moca.metadata import Metadata
 
 ALL_MCUSHERS = list(get_subclasses(MCUsher).keys())
 ALL_BIAS = list(get_subclasses(MCBias).keys())
@@ -362,6 +362,66 @@ class MCKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         return trace
 
 
+class ThermalKernelMixin:
+    """Mixin class for transition kernels with a set temperature.
+
+    Basically all kernels should use this Mixin class with the exception of those
+    for multicanonical sampling and related methods (i.e. see Wang-Landau)
+
+    Never really found a final say regarding Mixins with __init__ and attributes....
+    ...oh well, here's one...
+    """
+
+    kB: float = kB  # Boltzmann constant in eV/K
+
+    def __init__(self, temperature, *args, **kwargs):
+        """Initialize ThermalKernel.
+
+        Args:
+            ensemble (Ensemble):
+                an Ensemble instance to obtain the features and parameters
+                used in computing log probabilities.
+            step_type (str):
+                string specifying the MCMC step type.
+            temperature (float):
+                temperature at which the MCMC sampling will be carried out.
+            args:
+                positional arguments to instantiate the MCUsher for the
+                corresponding step size.
+            kwargs:
+                keyword arguments to instantiate the MCUsher for the
+                corresponding step size.
+        """
+        self.beta = 1.0 / (kB * temperature)
+        super().__init__(*args, **kwargs)
+        self.temperature = temperature
+
+    @property
+    def temperature(self):
+        """Get the temperature of kernel."""
+        return self.trace.temperature
+
+    @temperature.setter
+    def temperature(self, temperature):
+        """Set the temperature and beta accordingly."""
+        self.trace.temperature = np.array(temperature, dtype=np.float64)
+        self.beta = 1.0 / (self.kB * temperature)
+
+    def compute_initial_trace(self, occupancy):
+        """Compute initial values for sample trace given occupancy.
+
+        Args:
+            occupancy (ndarray):
+                Initial occupancy
+
+        Returns:
+            Trace
+        """
+        trace = super().compute_initial_trace(occupancy)
+        trace.temperature = np.array([self.trace.temperature], dtype=np.float64)
+        return trace
+
+
 class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
     """Abstract MulticellKernel class.
 
@@ -651,64 +711,4 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         """Compute the initial trace for a given occupancy."""
         trace = self.current_kernel.compute_initial_trace(occupancy)
         trace.kernel_index = self._current_kernel_index
-        return trace
-
-
-class ThermalKernelMixin:
-    """Mixin class for transition kernels with a set temperature.
-
-    Basically all kernels should use this Mixin class with the exception of those
-    for multicanonical sampling and related methods (i.e. see Wang-Landau)
-
-    Never really found a final say regarding Mixins with __init__ and attributes....
-    ...oh well, here's one...
-    """
-
-    kB: float = kB  # Boltzmann constant in eV/K
-
-    def __init__(self, temperature, *args, **kwargs):
-        """Initialize ThermalKernel.
-
-        Args:
-            ensemble (Ensemble):
-                an Ensemble instance to obtain the features and parameters
-                used in computing log probabilities.
-            step_type (str):
-                string specifying the MCMC step type.
-            temperature (float):
-                temperature at which the MCMC sampling will be carried out.
-            args:
-                positional arguments to instantiate the MCUsher for the
-                corresponding step size.
-            kwargs:
-                keyword arguments to instantiate the MCUsher for the
-                corresponding step size.
-        """
-        self.beta = 1.0 / (kB * temperature)
-        super().__init__(*args, **kwargs)
-        self.temperature = temperature
-
-    @property
-    def temperature(self):
-        """Get the temperature of kernel."""
-        return self.trace.temperature
-
-    @temperature.setter
-    def temperature(self, temperature):
-        """Set the temperature and beta accordingly."""
-        self.trace.temperature = np.array(temperature, dtype=np.float64)
-        self.beta = 1.0 / (self.kB * temperature)
-
-    def compute_initial_trace(self, occupancy):
-        """Compute initial values for sample trace given occupancy.
-
-        Args:
-            occupancy (ndarray):
-                Initial occupancy
-
-        Returns:
-            Trace
-        """
-        trace = super().compute_initial_trace(occupancy)
-        trace.temperature = np.array([self.trace.temperature], dtype=np.float64)
         return trace
