@@ -337,15 +337,11 @@ class StochasticSQSGenerator(SQSGenerator):
                 for name, value in _trace.items()
             }
         )
-        # TODO refactor sample container to accept tuple of sublattices and just take the ensemble
-        container = SampleContainer(
-            kernels[0].ensemble.sublattices,
-            kernels[0].ensemble.natural_parameters,
-            kernels[0].ensemble.num_energy_coefs,
-            sample_trace,
-        )
+
+        container = SampleContainer(kernels[0].ensemble, sample_trace)
         self._sampler = Sampler([self._kernel], container)
 
+    @property
     def num_structures(self):
         """Get number of structures generated."""
         return self._sampler.samples.num_samples
@@ -375,7 +371,7 @@ class StochasticSQSGenerator(SQSGenerator):
         if initial_occupancies is None and self._sampler.samples.num_samples == 0:
             initial_occupancies = self._get_initial_occupancies()
         elif initial_occupancies is not None:
-            shape = (len(self._processors), self._kernel.ensemble._num_sites)
+            shape = (len(self._processors), self._kernel.ensemble.num_sites)
             if initial_occupancies.shape != shape:
                 raise ValueError(
                     f"initial occupancies must be of shape {shape}, got {initial_occupancies.shape}"
