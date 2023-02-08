@@ -24,7 +24,9 @@ def test_add_data(structure_wrangler, rng):
         structure_wrangler.cluster_subspace.structure, rng=rng
     ):
         structure_wrangler.add_entry(entry, weights={"random": 2.0})
-    struct = gen_random_ordered_structure(structure_wrangler.cluster_subspace.structure)
+    struct = gen_random_ordered_structure(
+        structure_wrangler.cluster_subspace.structure, rng=rng
+    )
     energy = -len(struct) * rng.random()
     structure_wrangler.add_entry(
         ComputedStructureEntry(
@@ -359,9 +361,9 @@ def test_get_matching_corr_duplicate_inds(structure_wrangler, rng):
     dup_entry = deepcopy(structure_wrangler.entries[ind])
     ind2 = rng.integers(structure_wrangler.num_structures)
     # change the structure for this one:
-    struct = rng.choice(
-        [s for s in structure_wrangler.structures if s != dup_entry.structure]
-    )
+
+    structs = [s for s in structure_wrangler.structures if s != dup_entry.structure]
+    struct = structs[rng.choice(len(structs))]
     dup_entry2 = structure_wrangler.process_entry(
         ComputedStructureEntry(struct, structure_wrangler.entries[ind2].energy),
         properties=structure_wrangler.entries[ind2].data["properties"],

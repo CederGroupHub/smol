@@ -1,6 +1,6 @@
-===================
-Expansion Processor
-===================
+============================================
+Cluster Expansion & Decomposition Processors
+============================================
 
 .. automodule:: smol.moca.processor.expansion
    :members:

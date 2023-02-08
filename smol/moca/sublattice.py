@@ -176,6 +176,19 @@ class Sublattice(MSONable):
             part_sublattices.append(part_sublatt)
         return part_sublattices
 
+    def __eq__(self, other):
+        """Check equality of sublattices.
+
+        Does not check equality of restricted sites!
+        """
+        if (
+            other.site_space == self.site_space
+            and np.array_equal(other.encoding, self.encoding)
+            and np.array_equal(other.sites, self.sites)
+        ):
+            return True
+        return False
+
     def as_dict(self):
         """Get Json-serialization dict representation.
 

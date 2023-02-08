@@ -23,7 +23,7 @@ from smol._utils import derived_class_factory, get_subclasses
 
 from .domain import SiteSpace
 
-ATOL, RTOL = 1e-12, 1e-8
+EPS_MULT = 10  # eps precision multiplier
 
 
 __author__ = "Luis Barroso-Luque"
@@ -193,6 +193,8 @@ class StandardBasis(DiscreteBasis):
         """
         super().__init__(site_space, basis_functions)
         self._r_array = None  # array from QR in basis orthonormalization
+        # rotation array
+        self._rot_array = np.eye(self.function_array.shape[1])
 
     def _construct_function_array(self, basis_functions):
         """Construct function array with basis functions as rows."""
@@ -216,6 +218,11 @@ class StandardBasis(DiscreteBasis):
         """Get R array from QR factorization."""
         return self._r_array
 
+    @property
+    def rotation_array(self):
+        """Get the rotation array."""
+        return self._rot_array
+
     def orthonormalize(self):
         """Orthonormalizes basis function set based on initial basis set.
 
@@ -232,8 +239,8 @@ class StandardBasis(DiscreteBasis):
         )
 
         # make zeros actually zeros
-        r_mat[abs(r_mat) < 2 * np.finfo(np.float64).eps] = 0.0
-        q_mat[abs(q_mat) < 2 * np.finfo(np.float64).eps] = 0.0
+        r_mat[abs(r_mat) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
+        q_mat[abs(q_mat) < EPS_MULT * np.finfo(np.float64).eps] = 0.0
 
         self._r_array = q_mat[:, 0] / np.sqrt(self.measure_vector) * r_mat.T
         self._f_array = q_mat.T / q_mat[:, 0]  # make first row constant = 1
@@ -272,9 +279,12 @@ class StandardBasis(DiscreteBasis):
                 "again if the basis was originally so.",
                 UserWarning,
             )
+        elif not self.is_orthogonal:
+            raise RuntimeError("Non-orthogonal site basis rotations are not allowed!")
 
         if len(self.site_space) == 2:
             self._f_array[1] *= -1
+            rotation_mat = -1 * self._rot_array
         else:
             if index1 == index2:
                 raise ValueError("Basis function indices cannot be the same!")
@@ -307,8 +317,10 @@ class StandardBasis(DiscreteBasis):
             self._f_array[1:] = self._f_array[1:] @ rotation_mat.T
             # make really small numbers zero
             self._f_array[
-                abs(self._f_array) < 2 * np.finfo(np.float64).eps
-            ] = 0.0  # noqa
+                abs(self._f_array) < EPS_MULT * np.finfo(np.float64).eps
+            ] = 0.0
+
+        self._rot_array = rotation_mat @ self._rot_array
 
     def as_dict(self) -> dict:
         """Get MSONable dict representation."""
@@ -317,6 +329,7 @@ class StandardBasis(DiscreteBasis):
         basis_d["orthonorm_array"] = (
             None if self._r_array is None else self._r_array.tolist()
         )
+        basis_d["rot_array"] = self._rot_array.tolist()
         return basis_d
 
     @classmethod
@@ -334,6 +347,9 @@ class StandardBasis(DiscreteBasis):
         # restore arrays
         site_basis._f_array = np.array(d["func_array"])
         site_basis._r_array = np.array(d["orthonorm_array"])
+        rot_array = d.get("rot_array")
+        if rot_array is not None:
+            site_basis._rot_array = np.array(rot_array)
         return site_basis
 
 

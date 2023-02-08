@@ -47,7 +47,7 @@ COMPILER_DIRECTIVES = {
 
 
 if sys.platform.startswith("darwin"):
-    COMPILE_OPTIONS["other"] += ["-march=native", "-stdlib=libc++"]
+    COMPILE_OPTIONS["other"] += ["-mcpu=native", "-stdlib=libc++"]
 
 
 # By subclassing build_extensions we have the actual compiler that will be used which is

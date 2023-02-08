@@ -1,4 +1,5 @@
 from copy import deepcopy
+from itertools import product
 
 import numpy as np
 import numpy.testing as npt
@@ -7,6 +8,7 @@ import pytest
 from smol.capp.generate.random import _gen_unconstrained_ordered_occu
 from smol.cofe import ClusterExpansion, RegressionData
 from smol.moca import (
+    ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
     CompositeProcessor,
     Ensemble,
@@ -30,16 +32,37 @@ def semigrand_ensemble(composite_processor):
 
 
 # Test with composite processors to cover more ground
-@pytest.mark.parametrize("ensemble_type", ["canonical", "semigrand"])
-def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_type, rng):
+@pytest.mark.parametrize(
+    "ensemble_type, processor_type",
+    list(product(["canonical", "semigrand"], ["expansion", "decomposition"])),
+)
+def test_from_cluster_expansion(
+    cluster_subspace_ewald, ensemble_type, processor_type, rng
+):
     coefs = rng.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
+
+    reg_data = RegressionData(
+        module="fake.module",
+        estimator_name="Estimator",
+        feature_matrix=rng.random((5, len(coefs))),
+        property_vector=rng.random(len(coefs)),
+        parameters={"foo": "bar"},
+    )
+    expansion = ClusterExpansion(cluster_subspace_ewald, coefs, reg_data)
+
     proc = CompositeProcessor(cluster_subspace_ewald, scmatrix)
-    proc.add_processor(
-        ClusterExpansionProcessor(
+    if processor_type == "expansion":
+        ce_proc = ClusterExpansionProcessor(
             cluster_subspace_ewald, scmatrix, coefficients=coefs[:-1]
         )
-    )
+    else:
+        ce_proc = ClusterDecompositionProcessor(
+            cluster_subspace_ewald,
+            scmatrix,
+            interaction_tensors=expansion.cluster_interaction_tensors,
+        )
+    proc.add_processor(ce_proc)
     proc.add_processor(
         EwaldProcessor(
             cluster_subspace_ewald,
@@ -64,11 +87,20 @@ def test_from_cluster_expansion(cluster_subspace_ewald, ensemble_type, rng):
     else:
         kwargs = {}
     ensemble = Ensemble.from_cluster_expansion(
-        expansion, supercell_matrix=scmatrix, **kwargs
+        expansion, supercell_matrix=scmatrix, processor_type=processor_type, **kwargs
     )
-    npt.assert_array_equal(
-        ensemble.natural_parameters[: ensemble.num_energy_coefs], coefs
-    )
+    if processor_type == "expansion":
+        npt.assert_array_equal(
+            ensemble.natural_parameters[: ensemble.num_energy_coefs], coefs
+        )
+    else:
+        # In cluster decomposition processor, natural parameters are changed
+        # to orbit multiplicities. E = sum_B m_B H_B, cluster interactions H_B
+        # are now feature vectors.
+        npt.assert_array_equal(
+            ensemble.natural_parameters[: ensemble.num_energy_coefs],
+            np.append(cluster_subspace_ewald.orbit_multiplicities, coefs[-1]),
+        )
     occu = np.zeros(ensemble.num_sites, dtype=int)
     for _ in range(50):  # test a few flips
         sublatt = rng.choice(ensemble.active_sublattices)
@@ -99,8 +131,8 @@ def test_msonable(ensemble):
     assert_msonable(ensemble)
 
 
-def test_split_ensemble(ensemble):
-    occu = _gen_unconstrained_ordered_occu(ensemble.sublattices)
+def test_split_ensemble(ensemble, rng):
+    occu = _gen_unconstrained_ordered_occu(ensemble.sublattices, rng=rng)
     for sublattice in ensemble.sublattices:
         npt.assert_array_equal(np.arange(len(sublattice.species)), sublattice.encoding)
         # ensemble must have been initialized from default.
@@ -185,7 +217,7 @@ def test_split_ensemble(ensemble):
 # Canonical Ensemble tests
 def test_compute_feature_vector_canonical(canonical_ensemble, rng):
     processor = canonical_ensemble.processor
-    occu = _gen_unconstrained_ordered_occu(canonical_ensemble.sublattices)
+    occu = _gen_unconstrained_ordered_occu(canonical_ensemble.sublattices, rng=rng)
     assert np.dot(
         canonical_ensemble.natural_parameters,
         canonical_ensemble.compute_feature_vector(occu),
@@ -244,7 +276,7 @@ def test_compute_feature_vector_canonical(canonical_ensemble, rng):
 # tests for a semigrand ensemble
 def test_compute_feature_vector_sgc(semigrand_ensemble, rng):
     proc = semigrand_ensemble.processor
-    occu = _gen_unconstrained_ordered_occu(semigrand_ensemble.sublattices)
+    occu = _gen_unconstrained_ordered_occu(semigrand_ensemble.sublattices, rng=rng)
     chemical_work = sum(
         semigrand_ensemble._chemical_potentials["table"][site][species]
         for site, species in enumerate(occu)

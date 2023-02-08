@@ -4,9 +4,11 @@ import pytest
 from pymatgen.analysis.structure_matcher import StructureMatcher
 
 from smol.capp.generate.random import _gen_unconstrained_ordered_occu
+from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.domain import Vacancy, get_allowed_species
 from smol.moca.processor import (
+    ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
     CompositeProcessor,
     EwaldProcessor,
@@ -16,7 +18,7 @@ from tests.utils import assert_msonable, gen_random_ordered_structure
 
 pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
 
-RTOL = 0.0  # relative tolerance to check property change functions
+RTOL = 1e-12  # relative tolerance to check property change functions
 # absolute tolerance to check property change functions (eps is approx 2E-16)
 ATOL = 2e4 * np.finfo(float).eps
 DRIFT_TOL = 10 * np.finfo(float).eps  # tolerance of average drift
@@ -48,8 +50,10 @@ def ewald_processor(cluster_subspace, rng, request):
 # Currently being done only on composites because I can not for the life of
 # me figure out a clean way to parametrize with parametrized fixtures or use a
 # fixture union from pytest_cases that works.
-def test_encode_decode_property(composite_processor):
-    occu = _gen_unconstrained_ordered_occu(composite_processor.get_sublattices())
+def test_encode_decode_property(composite_processor, rng):
+    occu = _gen_unconstrained_ordered_occu(
+        composite_processor.get_sublattices(), rng=rng
+    )
     decoccu = composite_processor.decode_occupancy(occu)
     for species, space in zip(decoccu, composite_processor.allowed_species):
         assert species in space
@@ -91,7 +95,7 @@ def test_get_average_drift(composite_processor):
 
 def test_compute_property_change(composite_processor, rng):
     sublattices = composite_processor.get_sublattices()
-    occu = _gen_unconstrained_ordered_occu(sublattices)
+    occu = _gen_unconstrained_ordered_occu(sublattices, rng=rng)
     active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
 
     for _ in range(100):
@@ -111,11 +115,13 @@ def test_compute_property_change(composite_processor, rng):
         assert dprop == -1 * rdprop
 
 
-def test_structure_occupancy_conversion(ce_processor):
+def test_structure_occupancy_conversion(ce_processor, rng):
     sm = StructureMatcher()
     for _ in range(10):
         s_init = gen_random_ordered_structure(
-            ce_processor.cluster_subspace.structure, size=ce_processor.supercell_matrix
+            ce_processor.cluster_subspace.structure,
+            size=ce_processor.supercell_matrix,
+            rng=rng,
         )
         s_init = s_init.get_sorted_structure()
         occu_init = ce_processor.occupancy_from_structure(s_init)
@@ -141,7 +147,7 @@ def test_structure_occupancy_conversion(ce_processor):
 
 def test_compute_feature_change(composite_processor, rng):
     sublattices = composite_processor.get_sublattices()
-    occu = _gen_unconstrained_ordered_occu(sublattices)
+    occu = _gen_unconstrained_ordered_occu(sublattices, rng=rng)
     active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
     composite_processor.cluster_subspace.change_site_bases("indicator")
 
@@ -162,18 +168,22 @@ def test_compute_feature_change(composite_processor, rng):
         assert dprop == -1 * rdprop
 
 
-def test_compute_property(composite_processor):
-    occu = _gen_unconstrained_ordered_occu(composite_processor.get_sublattices())
+def test_compute_property(composite_processor, rng):
+    occu = _gen_unconstrained_ordered_occu(
+        composite_processor.get_sublattices(), rng=rng
+    )
     struct = composite_processor.structure_from_occupancy(occu)
     pred = np.dot(
-        composite_processor.coefs,
+        composite_processor.raw_coefs,
         composite_processor.cluster_subspace.corr_from_structure(struct, False),
     )
     assert composite_processor.compute_property(occu) == pytest.approx(pred, abs=ATOL)
 
 
-def test_msonable(composite_processor):
-    occu = _gen_unconstrained_ordered_occu(composite_processor.get_sublattices())
+def test_msonable(composite_processor, rng):
+    occu = _gen_unconstrained_ordered_occu(
+        composite_processor.get_sublattices(), rng=rng
+    )
     d = composite_processor.as_dict()
     pr = Processor.from_dict(d)
     assert composite_processor.compute_property(occu) == pr.compute_property(occu)
@@ -184,14 +194,40 @@ def test_msonable(composite_processor):
 
 
 # ClusterExpansionProcessor only tests
-def test_compute_feature_vector(ce_processor):
-    occu = _gen_unconstrained_ordered_occu(ce_processor.get_sublattices())
+def test_compute_feature_vector(ce_processor, rng):
+    occu = _gen_unconstrained_ordered_occu(ce_processor.get_sublattices(), rng=rng)
     struct = ce_processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
     npt.assert_allclose(
         ce_processor.compute_feature_vector(occu) / ce_processor.size,
         ce_processor.cluster_subspace.corr_from_structure(struct),
     )
+
+    npt.assert_allclose(
+        ce_processor.compute_feature_vector(occu) / ce_processor.size,
+        ce_processor.cluster_subspace.corr_from_structure(struct),
+    )
+
+
+# orbit decomp processor
+def test_compute_cluster_interactions(cluster_subspace, rng):
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
+    scmatrix = 3 * np.eye(3)
+    expansion = ClusterExpansion(cluster_subspace, coefs)
+    processor = ClusterDecompositionProcessor(
+        cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
+    )
+
+    occu = gen_random_occupancy(processor.get_sublattices(), rng=rng)
+    struct = processor.structure_from_occupancy(occu)
+    # same as normalize=False in corr_from_structure
+    proc_interactions = processor.compute_feature_vector(occu) / processor.size
+    exp_interactions = expansion.compute_cluster_interactions(struct)
+    npt.assert_allclose(proc_interactions, exp_interactions)
+    pred_energy = expansion.predict(struct, normalize=True)
+    assert sum(
+        cluster_subspace.orbit_multiplicities * proc_interactions
+    ) == pytest.approx(pred_energy, abs=ATOL)
 
 
 def test_bad_coef_length(cluster_subspace, rng):

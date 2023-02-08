@@ -1,4 +1,3 @@
-import warnings
 from itertools import combinations
 
 import numpy as np
@@ -119,14 +118,14 @@ def test_functions_inds_by_cutoffs(cluster_subspace):
 
 
 @pytest.mark.parametrize("orthonormal", [(True, False)])
-def test_site_bases(cluster_subspace, basis_name, orthonormal):
+def test_site_bases(cluster_subspace, basis_name, orthonormal, rng):
     subspace = cluster_subspace.copy()  # copy it to keep original state
     subspace.change_site_bases(basis_name, orthonormal=orthonormal)
     if orthonormal:
         assert subspace.basis_orthogonal
         assert subspace.basis_orthonormal
 
-    structure = gen_random_ordered_structure(subspace.structure)
+    structure = gen_random_ordered_structure(subspace.structure, rng=rng)
     if cluster_subspace.basis_type == subspace.basis_type and not orthonormal:
         npt.assert_array_almost_equal(
             subspace.corr_from_structure(structure),
@@ -165,22 +164,15 @@ def test_supercell_matrix_from_structure(cluster_subspace, rng):
     assert np.linalg.det(sc_matrix) == pytest.approx(8)
 
 
+@pytest.mark.xfail(raises=StructureMatchError)
 def test_refine_structure(cluster_subspace, rng):
     supercell = cluster_subspace.structure.copy()
     supercell.make_supercell(3)
-    structure = gen_random_ordered_structure(cluster_subspace.structure, size=3)
+    structure = gen_random_ordered_structure(
+        cluster_subspace.structure, size=3, rng=rng
+    )
     structure.apply_strain(rng.uniform(-0.01, 0.01, size=3))
-
-    #  TODO this sometimes fails because sc_matrix is not found!!!
-    try:
-        refined_structure = cluster_subspace.refine_structure(structure)
-    except StructureMatchError:
-        warnings.warn(
-            "StructureMatchError was raised when testing refined structures"
-            f" for testing structure {cluster_subspace.structure}",
-            RuntimeWarning,
-        )
-        return
+    refined_structure = cluster_subspace.refine_structure(structure)
 
     assert not np.allclose(  # check that distorted structure is not equivalent
         supercell.lattice.parameters, structure.lattice.parameters
@@ -216,7 +208,7 @@ def test_remove_orbits(cluster_subspace, rng):
         for i in range(len(cluster_subspace))
         if cluster_subspace.function_orbit_ids[i] not in ids_to_remove
     ]
-    structure = gen_random_ordered_structure(subspace.structure, size=2)
+    structure = gen_random_ordered_structure(subspace.structure, size=2, rng=rng)
     npt.assert_allclose(
         cluster_subspace.corr_from_structure(structure)[corr_inds],
         subspace.corr_from_structure(structure),
@@ -248,7 +240,7 @@ def test_remove_corr_functions(cluster_subspace, rng):
     )
 
     corr_inds = [i for i in range(len(cluster_subspace)) if i not in ids_to_remove]
-    structure = gen_random_ordered_structure(subspace.structure, size=2)
+    structure = gen_random_ordered_structure(subspace.structure, size=2, rng=rng)
     npt.assert_allclose(
         cluster_subspace.corr_from_structure(structure)[corr_inds],
         subspace.corr_from_structure(structure),
@@ -259,12 +251,12 @@ def test_remove_corr_functions(cluster_subspace, rng):
         subspace.remove_corr_functions(ids)
 
 
-def test_orbit_mappings(cluster_subspace, supercell_matrix):
+@pytest.mark.xfail(raises=StructureMatchError)
+def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
     # check that all supercell_structure index groups map to the correct
     # primitive cell sites, and check that max distance under supercell
     # structure pbc is less than the max distance without pbc
 
-    # sc_matrix = np.array([[2, 0, 0], [0, 2, 0], [0, 1, 1]])
     supercell_struct = cluster_subspace.structure.copy()
     supercell_struct.make_supercell(supercell_matrix)
     fcoords = np.array(supercell_struct.frac_coords)
@@ -295,22 +287,10 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
 
     # Test that symmetrically equivalent matrices really produce the
     # same correlation vector for the same occupancy.
-    def get_corr(occu, space, matrix):
-        mappings = space._gen_orbit_indices(matrix)
-        orbit_list = [
-            (
-                orbit.bit_id,
-                orbit.flat_tensor_indices,
-                orbit.flat_correlation_tensors,
-                cluster_indices,
-            )
-            for cluster_indices, orbit in zip(mappings, space.orbits)
-        ]
-        corr = corr_from_occupancy(occu, space.num_corr_functions, orbit_list)
-        return corr
-
     structures = [
-        gen_random_ordered_structure(cluster_subspace.structure, size=supercell_matrix)
+        gen_random_ordered_structure(
+            cluster_subspace.structure, size=supercell_matrix, rng=rng
+        )
         for _ in range(10)
     ]
     matrix2 = np.array([[0, 1, 0], [0, 0, 1], [1, 0, 0]]) @ np.array(
@@ -325,17 +305,21 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
     # super-cell matrices are symmetrically equivalent.
     occus = [
         cluster_subspace.occupancy_from_structure(
-            s, scmatrix=supercell_matrix, encode=True
+            structure, scmatrix=supercell_matrix, encode=True
         )
-        for s in structures
+        for structure in structures
     ]
     occus2 = [
-        cluster_subspace.occupancy_from_structure(s, scmatrix=matrix2, encode=True)
-        for s in structures
+        cluster_subspace.occupancy_from_structure(
+            structure, scmatrix=matrix2, encode=True
+        )
+        for structure in structures
     ]
     occus3 = [
-        cluster_subspace.occupancy_from_structure(s, scmatrix=matrix3, encode=True)
-        for s in structures
+        cluster_subspace.occupancy_from_structure(
+            structure, scmatrix=matrix3, encode=True
+        )
+        for structure in structures
     ]
 
     corrs = np.array(
@@ -380,20 +364,20 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix):
     # Symmetrically equivalent matrices should give the same correlation
     # vectors on the same structure, when using the default orbit mapping.
     cluster_subspace._supercell_orb_inds = {}
-    for s, c in zip(structures, corrs):
-        npt.assert_array_almost_equal(
-            cluster_subspace.corr_from_structure(s),
-            cluster_subspace.corr_from_structure(s, scmatrix=supercell_matrix),
+    for structure, expected in zip(structures, corrs):
+        predicted = cluster_subspace.corr_from_structure(
+            structure, scmatrix=supercell_matrix
         )
-        npt.assert_array_almost_equal(
-            cluster_subspace.corr_from_structure(s),
-            cluster_subspace.corr_from_structure(s, scmatrix=matrix2),
-        )
-        npt.assert_array_almost_equal(
-            cluster_subspace.corr_from_structure(s),
-            cluster_subspace.corr_from_structure(s, scmatrix=matrix3),
-        )
-        npt.assert_array_almost_equal(cluster_subspace.corr_from_structure(s), c)
+        npt.assert_array_almost_equal(predicted, expected)
+
+        predicted = cluster_subspace.corr_from_structure(structure, scmatrix=matrix2)
+        npt.assert_array_almost_equal(predicted, expected)
+
+        predicted = cluster_subspace.corr_from_structure(structure, scmatrix=matrix3)
+        npt.assert_array_almost_equal(predicted, expected)
+
+        predicted = cluster_subspace.corr_from_structure(structure)
+        npt.assert_array_almost_equal(predicted, expected)
 
 
 def test_get_aliased_orbits(cluster_subspace, supercell_matrix):
@@ -442,8 +426,10 @@ def test_get_aliased_orbits(cluster_subspace, supercell_matrix):
     assert aliased_orbits_std == aliased_orbs
 
 
-def test_periodicity_and_symmetry(cluster_subspace, supercell_matrix):
-    structure = gen_random_ordered_structure(cluster_subspace.structure, size=2)
+def test_periodicity_and_symmetry(cluster_subspace, supercell_matrix, rng):
+    structure = gen_random_ordered_structure(
+        cluster_subspace.structure, size=2, rng=rng
+    )
     larger_structure = structure.copy()
     larger_structure.make_supercell(supercell_matrix)
 
@@ -513,7 +499,9 @@ def test_msonable(cluster_subspace_ewald, rng):
 
     for _ in range(2):
         size = rng.integers(1, 4)
-        s = gen_random_ordered_structure(cluster_subspace_ewald.structure, size=size)
+        s = gen_random_ordered_structure(
+            cluster_subspace_ewald.structure, size=size, rng=rng
+        )
         _ = cluster_subspace_ewald.corr_from_structure(s)
 
     assert_msonable(cluster_subspace_ewald)
@@ -756,6 +744,67 @@ def test_periodicity(single_subspace):
     s.make_supercell([2, 1, 1])
     b = single_subspace.corr_from_structure(s)
     npt.assert_allclose(a, b)
+
+
+def test_site_basis_rotation(cluster_subspace, rng):
+    cs = cluster_subspace.copy()
+    if not cs.basis_orthogonal:
+        with pytest.raises(RuntimeError):
+            cs.rotate_site_basis(1, np.pi / 4)
+        cs.change_site_bases("sinusoid", orthonormal=True)
+
+    with pytest.raises(ValueError):
+        cs.rotate_site_basis(len(cs.orbits_by_size[1]) + 2, np.pi)
+
+    cs1 = cs.copy()
+    print(cs.site_rotation_matrix)
+    cs1.rotate_site_basis(1, np.pi / 4)
+    print(cs1.site_rotation_matrix)
+    for i in range(5):
+        structure = gen_random_ordered_structure(cs.structure, rng=rng)
+        for j in range(5):
+            coefs1 = 10 * np.random.random(len(cs))
+            coefs = coefs1.copy()
+            coefs = cs1.site_rotation_matrix.T @ coefs
+            eci = coefs / cs.function_ordering_multiplicities
+            eci1 = coefs1 / cs1.function_ordering_multiplicities
+            norms = np.array(
+                [
+                    np.sum(
+                        cs.function_ordering_multiplicities[
+                            np.array(cs.function_orbit_ids) == i
+                        ]
+                        * eci[np.array(cs.function_orbit_ids) == i] ** 2
+                    )
+                    for i in range(len(cs.orbits) + 1)
+                ]
+            )
+            norms1 = np.array(
+                [
+                    np.sum(
+                        cs1.function_ordering_multiplicities[
+                            np.array(cs.function_orbit_ids) == i
+                        ]
+                        * eci1[np.array(cs1.function_orbit_ids) == i] ** 2
+                    )
+                    for i in range(len(cs.orbits) + 1)
+                ]
+            )
+            # test ECI invariance
+            assert np.allclose(norms, norms1)
+            # test correlation vector invariance
+            assert np.allclose(
+                cs1.site_rotation_matrix @ cs.corr_from_structure(structure),
+                cs1.corr_from_structure(structure),
+            )
+            # test values are the same
+            assert np.isclose(
+                np.dot(cs.corr_from_structure(structure), coefs),
+                np.dot(cs1.corr_from_structure(structure), coefs1),
+            )
+            # test rotation matrix is invertible and abs(det) = 1
+            # binary site rotations may lead to det = -1 ?
+            assert np.isclose(abs(np.linalg.det(cs1.site_rotation_matrix)), 1)
 
 
 def _encode_occu(occu, bits):

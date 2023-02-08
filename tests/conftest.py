@@ -6,16 +6,22 @@ from monty.serialization import loadfn
 from pymatgen.core import Structure
 
 from smol._utils import get_subclasses
-from smol.cofe import ClusterSubspace, StructureWrangler
+from smol.cofe import ClusterExpansion, ClusterSubspace, StructureWrangler
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.basis import BasisIterator
-from smol.moca import (
+from smol.moca import Ensemble
+from smol.moca.processor import (
+    ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
     CompositeProcessor,
-    Ensemble,
     EwaldProcessor,
 )
 from tests.utils import gen_fake_training_data
+
+# uncomment below to show HDF5 C traceback
+# import h5py
+# h5py._errors.unsilence_errors()
+
 
 SEED = None
 
@@ -103,21 +109,32 @@ def ce_processor(cluster_subspace, rng):
     )
 
 
-@pytest.fixture(scope="module")
-def composite_processor(cluster_subspace_ewald, rng):
-    coefs = 2 * rng.random(cluster_subspace_ewald.num_corr_functions + 1)
+@pytest.fixture(params=["CE", "CD"], scope="module")
+def composite_processor(cluster_subspace_ewald, rng, request):
+    coefs = 2 * np.random.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace_ewald, supercell_matrix=scmatrix)
-    proc.add_processor(
-        ClusterExpansionProcessor(
-            cluster_subspace_ewald, scmatrix, coefficients=coefs[:-1]
+    if request.param == "CE":
+        proc.add_processor(
+            ClusterExpansionProcessor(
+                cluster_subspace_ewald, scmatrix, coefficients=coefs[:-1]
+            )
         )
-    )
+    else:
+        expansion = ClusterExpansion(cluster_subspace_ewald, coefs)
+        proc.add_processor(
+            ClusterDecompositionProcessor(
+                cluster_subspace_ewald, scmatrix, expansion.cluster_interaction_tensors
+            )
+        )
     proc.add_processor(
         EwaldProcessor(
             cluster_subspace_ewald, scmatrix, EwaldTerm(), coefficient=coefs[-1]
         )
     )
+    # bind raw coefficients since OD processors do not store them
+    # and be able to test computing properties, hacky but oh well
+    proc.raw_coefs = coefs
     return proc
 
 
@@ -136,6 +153,19 @@ def ensemble(composite_processor, request):
 
 
 @pytest.fixture(scope="module")
+def single_sgc_ensemble(rng):
+    # a single sgc ensemble using the LMOF test structures
+    subspace = ClusterSubspace.from_cutoffs(
+        test_structures[3], cutoffs={2: 6, 3: 4}, supercell_size="volume"
+    )
+    coefs = rng.random(subspace.num_corr_functions)
+    coefs[0] = -1.0
+    proc = ClusterExpansionProcessor(subspace, 6 * np.eye(3), coefs)
+    species = {sp for space in proc.active_site_spaces for sp in space.keys()}
+    return Ensemble(proc, chemical_potentials={sp: 1.0 for sp in species})
+
+
+@pytest.fixture(scope="module")
 def single_canonical_ensemble(single_subspace, rng):
     coefs = rng.random(single_subspace.num_corr_functions)
     proc = ClusterExpansionProcessor(single_subspace, 4 * np.eye(3), coefs)
@@ -149,9 +179,15 @@ def basis_name(request):
 
 @pytest.fixture
 def supercell_matrix(rng):
-    m = rng.integers(-3, 3, size=(3, 3))
-    while abs(np.linalg.det(m)) < 1e-6:  # make sure not singular
-        m = rng.integers(-3, 3, size=(3, 3))
+    def skewed(scm):  # check if any angle is less than 45 degrees
+        normed_scm = scm / np.linalg.norm(scm, axis=0)
+        off_diag = (np.array([0, 0, 1]), np.array([1, 2, 2]))
+        return any(abs(normed_scm @ normed_scm)[off_diag] > 0.5)
+
+    # make sure not singular and not overly skewed
+    while abs(np.linalg.det(m := rng.integers(-3, 3, size=(3, 3)))) < 1e-4 or skewed(m):
+        pass
+
     return m
 
 

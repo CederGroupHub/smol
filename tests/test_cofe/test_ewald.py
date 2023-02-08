@@ -40,7 +40,7 @@ def test_get_ewald_structure(ce_processor):
         start += n_sp
 
 
-def test_val_from_occupancy(ce_processor):
+def test_val_from_occupancy(ce_processor, rng):
     # Test 10 times at random, with charge balance.
     supercell = ce_processor.structure
     sublattices = ce_processor.get_sublattices()
@@ -48,7 +48,7 @@ def test_val_from_occupancy(ce_processor):
     for _ in range(10):
         try:
             # We should only test neutral occupancies.
-            occu = _gen_neutral_occu(sublattices)
+            occu = _gen_neutral_occu(sublattices, rng=rng)
             n_success += 1
         except TimeoutError:
             occu = None

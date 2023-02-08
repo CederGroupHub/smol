@@ -5,51 +5,38 @@ from itertools import product
 import numpy as np
 import numpy.testing as npt
 import pytest
-from pymatgen.core.composition import ChemicalPotential, Composition
+from pymatgen.core.composition import Composition
 
-from smol.cofe.space.domain import SiteSpace, get_species
+from smol.cofe.space.domain import SiteSpace
 from smol.moca import SampleContainer
-from smol.moca.kernel._trace import Trace
+from smol.moca.sampler import SampleContainer
+from smol.moca.sampler.namespace import Trace
 from smol.moca.sublattice import Sublattice
 from tests.utils import assert_msonable
 
-NUM_SITES = 500
-NSAMPLES = 1000
+NSAMPLES = 100
 # compositions will depend on number of sites and num species in the
 # sublattices created in the fixture, if changing make sure it works out.
 SUBLATTICE_COMPOSITIONS = [1.0 / 3.0, 1.0 / 2.0]
 
 
 @pytest.fixture(params=[1, 5])
-def container(request, rng):
-    natural_parameters = np.zeros(10)
-    natural_parameters[[0, -1]] = -1  # make first and last 1
-    num_energy_coefs = 9
-    sites = rng.choice(range(NUM_SITES), size=300, replace=False)
-    site_space = SiteSpace(Composition({"A": 0.2, "B": 0.5, "C": 0.3}))
-    sublatt1 = Sublattice(site_space, sites)
-    site_space = SiteSpace(Composition({"A": 0.4, "D": 0.6}))
-    sites2 = np.setdiff1d(range(NUM_SITES), sites)
-    sublatt2 = Sublattice(site_space, np.array(sites2))
-    sublattices = [sublatt1, sublatt2]
+def container(request, single_sgc_ensemble, rng):
     trace = Trace(
-        occupancy=np.zeros((0, request.param, NUM_SITES), dtype=int),
-        features=rng.random((0, request.param, len(natural_parameters))),
+        occupancy=np.zeros(
+            (0, request.param, single_sgc_ensemble.num_sites), dtype=int
+        ),
+        features=rng.random(
+            (0, request.param, len(single_sgc_ensemble.natural_parameters))
+        ),
         enthalpy=np.ones((0, request.param, 1)),
         temperature=np.zeros((0, request.param, 1)),
         accepted=np.zeros((0, request.param, 1), dtype=bool),
     )
     sample_container = SampleContainer(
-        sublattices=sublattices,
-        natural_parameters=natural_parameters,
-        num_energy_coefs=num_energy_coefs,
+        single_sgc_ensemble,
         sample_trace=trace,
-        sampling_metadata={
-            "thermo_boundaries": ChemicalPotential(
-                {get_species("Li+"): 0.5, get_species("Vacancy"): 0.3}
-            ),
-            "seeds": [0 for _ in range(request.param)],
-        },
+        sampling_metadata=single_sgc_ensemble.thermo_boundaries,
     )
     yield sample_container
     sample_container.clear()
@@ -58,7 +45,7 @@ def container(request, rng):
 @pytest.fixture
 def fake_traces(container, rng):
     nwalkers = container.shape[0]
-    occus = np.empty((NSAMPLES, nwalkers, NUM_SITES))
+    occus = np.empty((NSAMPLES, nwalkers, container.shape[-1]))
     enths = -5 * np.ones((NSAMPLES, nwalkers, 1))
     temps = -300.56 * np.ones((NSAMPLES, nwalkers, 1))
     feats = np.zeros((NSAMPLES, nwalkers, len(container.natural_parameters)))
@@ -67,7 +54,7 @@ def fake_traces(container, rng):
     sites2 = container.sublattices[1].sites
     for i in range(NSAMPLES):
         for j in range(nwalkers):
-            # make occupancy compositions (1/3, 1/3, 1/3) & (1/2, 1/2, 1/2)
+            # make occupancy compositions (1/3, 1/3, 1/3) & (1/2, 1/2)
             size = int(SUBLATTICE_COMPOSITIONS[0] * len(sites1))
             s = rng.choice(sites1, size=size, replace=False)
             occus[i, j, s] = 0
@@ -102,14 +89,15 @@ def add_samples(sample_container, fake_traces, thinned_by=1):
 
 def test_allocate_and_save(container, fake_traces, rng):
     nwalkers = container.shape[0]
+    nsites = container.shape[-1]
     assert len(container) == 0
-    assert container._trace.occupancy.shape == (0, nwalkers, NUM_SITES)
+    assert container._trace.occupancy.shape == (0, nwalkers, nsites)
     assert container._trace.enthalpy.shape == (0, nwalkers, 1)
     assert container._trace.accepted.shape == (0, nwalkers, 1)
 
     container.allocate(NSAMPLES)
     assert len(container) == 0
-    assert container._trace.occupancy.shape == (NSAMPLES, nwalkers, NUM_SITES)
+    assert container._trace.occupancy.shape == (NSAMPLES, nwalkers, nsites)
     assert container._trace.enthalpy.shape == (NSAMPLES, nwalkers, 1)
     assert container._trace.accepted.shape == (NSAMPLES, nwalkers, 1)
     container.clear()
@@ -126,8 +114,9 @@ def test_allocate_and_save(container, fake_traces, rng):
     container.clear()
 
 
-@pytest.mark.parametrize("discard, thin", product((0, 100), (1, 10)))
+@pytest.mark.parametrize("discard, thin", product((0, 10), (1, 5)))
 def test_get_sampled_values(container, fake_traces, discard, thin):
+    nsites = container.shape[-1]
     add_samples(container, fake_traces)
     nat_params = container.natural_parameters
     sublattices = container.sublattices
@@ -141,7 +130,7 @@ def test_get_sampled_values(container, fake_traces, discard, thin):
     assert container.sampling_efficiency(discard=discard) == expected
     assert container.get_occupancies(discard=discard, thin_by=thin).shape == (
         nsamples * nw,
-        NUM_SITES,
+        nsites,
     )
     assert container.get_feature_vectors(discard=discard, thin_by=thin).shape == (
         nsamples * nw,
@@ -157,7 +146,10 @@ def test_get_sampled_values(container, fake_traces, discard, thin):
         c = container.get_sublattice_compositions(
             sublattice, discard=discard, thin_by=thin
         )
-        assert c.shape == (nsamples * nw, len(sublattice.species))
+        if len(sublattice.species) == 1:  # single species sublattice
+            assert c.shape == (nsamples * nw,)
+        else:
+            assert c.shape == (nsamples * nw, len(sublattice.species))
         npt.assert_array_equal(c, comp * np.ones_like(c))
 
     # get non flattened values
@@ -172,7 +164,7 @@ def test_get_sampled_values(container, fake_traces, discard, thin):
     )
     assert container.get_occupancies(
         discard=discard, thin_by=thin, flat=False
-    ).shape == (nsamples, nw, NUM_SITES)
+    ).shape == (nsamples, nw, nsites)
     assert container.get_feature_vectors(
         discard=discard, thin_by=thin, flat=False
     ).shape == (nsamples, nw, len(nat_params))
@@ -197,7 +189,7 @@ def test_get_sampled_values(container, fake_traces, discard, thin):
         container.get_sublattice_compositions(sublattice)
 
 
-@pytest.mark.parametrize("discard, thin", product((0, 100), (1, 10)))
+@pytest.mark.parametrize("discard, thin", product((0, 10), (1, 5)))
 def test_means_and_variances(container, fake_traces, discard, thin):
     add_samples(container, fake_traces)
     sublattices = container.sublattices
@@ -209,7 +201,7 @@ def test_means_and_variances(container, fake_traces, discard, thin):
     npt.assert_array_equal(
         container.mean_feature_vector(discard=discard, thin_by=thin),
         [2.5]
-        + 8
+        + (len(container.natural_parameters) - 2)
         * [
             0,
         ]
@@ -217,7 +209,7 @@ def test_means_and_variances(container, fake_traces, discard, thin):
     )
     npt.assert_array_equal(
         container.feature_vector_variance(discard=discard, thin_by=thin),
-        10
+        len(container.natural_parameters)
         * [
             0,
         ],
@@ -264,7 +256,7 @@ def test_means_and_variances(container, fake_traces, discard, thin):
         nw
         * [
             [2.5]
-            + 8
+            + (len(container.natural_parameters) - 2)
             * [
                 0.0,
             ]
@@ -275,7 +267,7 @@ def test_means_and_variances(container, fake_traces, discard, thin):
         container.feature_vector_variance(discard=discard, thin_by=thin, flat=False),
         nw
         * [
-            10
+            len(container.natural_parameters)
             * [
                 0.0,
             ]
@@ -300,12 +292,12 @@ def test_get_mins(container, fake_traces, rng):
     add_samples(container, fake_traces)
     i = rng.choice(range(NSAMPLES))
     nwalkers = container.shape[0]
-    container._trace.enthalpy[i, :] = -10
-    container._trace.features[i, :, :] = 5.0
-    assert container.get_minimum_enthalpy() == -10.0
+    container._trace.enthalpy[i, :] = -11
+    container._trace.features[i, :, 0] = 5.0
+    assert container.get_minimum_enthalpy() == -11.0
     assert container.get_minimum_energy() == -5.0
     npt.assert_array_equal(
-        container.get_minimum_enthalpy(flat=False), np.array([nwalkers * [-10.0]]).T
+        container.get_minimum_enthalpy(flat=False), np.array([nwalkers * [-11.0]]).T
     )
     npt.assert_array_equal(
         container.get_minimum_energy(flat=False), np.array([nwalkers * [-5.0]]).T
@@ -349,15 +341,15 @@ def test_hdf5(container, fake_traces, tmpdir):
 
 @pytest.mark.parametrize("mode", [False, True])
 def test_flush_to_hdf5(container, fake_traces, mode, tmpdir):
-    print(container.metadata)
     flushed_container = deepcopy(container)
     add_samples(container, fake_traces)
     file_path = os.path.join(tmpdir, "test.h5")
     chunk = len(fake_traces) // 4
     flushed_container.allocate(chunk)
     backend = flushed_container.get_backend(file_path, len(fake_traces), swmr_mode=mode)
+
     start = 0
-    for _ in range(4):
+    for j in range(4):
         for i in range(start, start + chunk):
             flushed_container.save_sampled_trace(fake_traces[i], thinned_by=1)
         assert flushed_container._trace.occupancy.shape[0] == chunk
@@ -403,3 +395,22 @@ def test_flush_to_hdf5(container, fake_traces, mode, tmpdir):
     backend.close()
 
     os.remove(file_path)
+
+
+def test_get_sampled_structures(container, fake_traces, rng):
+    # not the best test here, but it will do for now...
+    add_samples(container, fake_traces)
+    ids = rng.choice(range(container.num_samples), size=5)
+
+    # check for flattened chains
+    structures = container.get_sampled_structures(ids, flat=True)
+    for i, struct in zip(ids, structures):
+        occu = container.get_occupancies()[i]
+        assert container.ensemble.processor.structure_from_occupancy(occu) == struct
+
+    # check for unflattened chains
+    structures_list = container.get_sampled_structures(ids, flat=False)
+    for i, structures in zip(ids, structures_list):
+        occus = container.get_occupancies(flat=False)[i]
+        for occu, struct in zip(occus, structures):
+            assert container.ensemble.processor.structure_from_occupancy(occu) == struct

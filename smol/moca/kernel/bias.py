@@ -116,8 +116,10 @@ class FugacityBias(MCBias):
                 for random structure). If not given this will be taken from the
                 prim structure used in the cluster subspace. Needs to be in
                 the same order as the corresponding sublattice.
+        kwargs:
+            Keyword arguments for initializing MCUsher.
         """
-        super().__init__(sublattices)
+        super().__init__(sublattices, **kwargs)
         self._fus = None
         self._fu_table = None
         # Consider only species on active sub-lattices
@@ -161,7 +163,7 @@ class FugacityBias(MCBias):
         value = [{get_species(k): v for k, v in sub.items()} for sub in value]
         if not all(sum(fus.values()) == 1 for fus in value):
             raise ValueError("Fugacity ratios must add to one.")
-        for (spec, vals) in zip(self._species, value):
+        for spec, vals in zip(self._species, value):
             if spec != set(vals.keys()):
                 raise ValueError(
                     f"Fugacity fractions given are missing or not valid "
@@ -232,7 +234,7 @@ class SquareChargeBias(MCBias):
     This bias penalizes energy on square of the system net charge.
     """
 
-    def __init__(self, sublattices, penalty=0.5):
+    def __init__(self, sublattices, penalty=0.5, **kwargs):
         """Square charge bias.
 
         Args:
@@ -244,8 +246,10 @@ class SquareChargeBias(MCBias):
                 * charge**2.
                 Must be positive. Default to 0.5, which works
                 for most of the cases.
+        kwargs:
+            Keyword arguments for initializing MCUsher.
         """
-        super().__init__(sublattices)
+        super().__init__(sublattices, **kwargs)
         charges = [
             [get_oxi_state(sp) for sp in sublatt.species]
             for sublatt in self.sublattices
@@ -329,8 +333,10 @@ class SquareHyperplaneBias(MCBias):
                 Penalty factor. energy/kT will be penalized by adding penalty
                 * ||A n - b||**2. Must be positive.
                 Default to 0.5, which works for most of the cases.
+        kwargs:
+            Keyword arguments for initializing MCUsher.
         """
-        super().__init__(sublattices)
+        super().__init__(sublattices, **kwargs)
         if penalty <= 0:
             raise ValueError("Penalty factor should be > 0!")
         self.penalty = penalty

@@ -79,10 +79,12 @@ def test_constructor(ensemble, step_type, mcusher):
     assert "bias" in kernel.trace.delta_trace.names
 
 
-def test_single_step(mckernel):
-    mckernel.set_aux_state(_gen_unconstrained_ordered_occu(mckernel._usher.sublattices))
+def test_single_step(mckernel, rng):
+    mckernel.set_aux_state(
+        _gen_unconstrained_ordered_occu(mckernel._usher.sublattices, rng=rng)
+    )
     for _ in range(100):
-        occu_ = _gen_unconstrained_ordered_occu(mckernel._usher.sublattices)
+        occu_ = _gen_unconstrained_ordered_occu(mckernel._usher.sublattices, rng=rng)
         trace = mckernel.single_step(occu_.copy())
 
         if trace.accepted:
@@ -102,12 +104,14 @@ def test_single_step(mckernel):
             assert "mod_factor" in trace.names
 
 
-def test_single_step_bias(mckernel_bias):
+def test_single_step_bias(mckernel_bias, rng):
     mckernel_bias.set_aux_state(
         _gen_unconstrained_ordered_occu(mckernel_bias._usher.sublattices)
     )
     for _ in range(100):
-        occu = _gen_unconstrained_ordered_occu(mckernel_bias._usher.sublattices)
+        occu = _gen_unconstrained_ordered_occu(
+            mckernel_bias._usher.sublattices, rng=rng
+        )
         trace = mckernel_bias.single_step(occu.copy())
         # assert delta bias is there and recorded
         assert isinstance(trace.delta_trace.bias, np.ndarray)
