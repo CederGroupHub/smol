@@ -1,7 +1,6 @@
-import pytest
-
-
 from abc import ABC, abstractmethod
+
+import pytest
 
 from smol.moca.sampler.kernel import (
     MCKernel,
@@ -52,7 +51,9 @@ def test_get_subclasses():
         def do_stuff(self):
             print("I'm doing more stuff!")
 
-    assert all(c in get_subclasses(DummyABC).values() for c in [DummyParent, DummyChild])
+    assert all(
+        c in get_subclasses(DummyABC).values() for c in [DummyParent, DummyChild]
+    )
     assert DummyABC not in get_subclasses(DummyABC).values()
     assert DummyDummyABC not in get_subclasses(DummyABC).values()
 
