@@ -1,5 +1,8 @@
 import pytest
 
+
+from abc import ABC, abstractmethod
+
 from smol.moca.sampler.kernel import (
     MCKernel,
     Metropolis,
@@ -31,7 +34,27 @@ def test_get_subclasses():
     assert all(
         c in get_subclasses(MCKernel).values() for c in [UniformlyRandom, Metropolis]
     )
-    assert all(c in get_subclasses(ThermalKernel).values() for c in [Metropolis])
+    assert Metropolis in get_subclasses(ThermalKernel).values()
+
+    class DummyABC(ABC):
+        @abstractmethod
+        def do_stuff(self):
+            pass
+
+    class DummyDummyABC(DummyABC):
+        pass
+
+    class DummyParent(DummyABC):
+        def do_stuff(self):
+            print("I'm doing stuff!")
+
+    class DummyChild(DummyParent):
+        def do_stuff(self):
+            print("I'm doing more stuff!")
+
+    assert all(c in get_subclasses(DummyABC).values() for c in [DummyParent, DummyChild])
+    assert DummyABC not in get_subclasses(DummyABC).values()
+    assert DummyDummyABC not in get_subclasses(DummyABC).values()
 
 
 def test_derived_class_factory(single_canonical_ensemble):

@@ -69,10 +69,11 @@ def get_subclasses(base_class: object) -> Dict[str, object]:
     """
     sub_classes = {}
     for sub_class in base_class.__subclasses__():
-        if inspect.isabstract(sub_class):
-            sub_classes.update(get_subclasses(sub_class))
-        else:
+        sub_classes.update(get_subclasses(sub_class))
+
+        if not inspect.isabstract(sub_class):
             sub_classes[sub_class.__name__] = sub_class
+
     return sub_classes
 
 
