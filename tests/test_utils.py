@@ -1,10 +1,36 @@
+from abc import ABC, abstractmethod
+
 import pytest
 
+from smol.cofe.space.basis import (
+    BasisIterator,
+    ChebyshevIterator,
+    IndicatorIterator,
+    LegendreIterator,
+    NumpyPolyIterator,
+    PolynomialIterator,
+    SinusoidIterator,
+)
+from smol.moca.sampler.bias import (
+    FugacityBias,
+    MCBias,
+    SquareChargeBias,
+    SquareHyperplaneBias,
+)
 from smol.moca.sampler.kernel import (
     MCKernel,
     Metropolis,
     ThermalKernel,
     UniformlyRandom,
+    WangLandau,
+)
+from smol.moca.sampler.mcusher import (
+    Composite,
+    Flip,
+    MCUsher,
+    MultiStep,
+    Swap,
+    TableFlip,
 )
 from smol.utils import class_name_from_str, derived_class_factory, get_subclasses
 
@@ -28,10 +54,64 @@ def test_class_name_from_str(class_str):
 
 
 def test_get_subclasses():
+    # test a few dummy classes
+    class DummyABC(ABC):
+        @abstractmethod
+        def do_stuff(self):
+            pass
+
+    class DummyDummyABC(DummyABC):
+        pass
+
+    class DummyParent(DummyABC):
+        def do_stuff(self):
+            print("I'm doing stuff!")
+
+    class DummyChild(DummyParent):
+        def do_stuff(self):
+            print("I'm doing more stuff!")
+
     assert all(
-        c in get_subclasses(MCKernel).values() for c in [UniformlyRandom, Metropolis]
+        c in get_subclasses(DummyABC).values() for c in [DummyParent, DummyChild]
     )
-    assert all(c in get_subclasses(ThermalKernel).values() for c in [Metropolis])
+    assert DummyABC not in get_subclasses(DummyABC).values()
+    assert DummyDummyABC not in get_subclasses(DummyABC).values()
+
+    # now test classes in smol
+    assert all(
+        c in get_subclasses(MCKernel).values()
+        for c in [UniformlyRandom, Metropolis, WangLandau]
+    )
+    assert Metropolis in get_subclasses(ThermalKernel).values()
+
+    assert all(
+        c in get_subclasses(MCUsher).values()
+        for c in [Swap, Flip, MultiStep, Composite, TableFlip]
+    )
+
+    assert all(
+        c in get_subclasses(MCBias).values()
+        for c in [FugacityBias, SquareChargeBias, SquareHyperplaneBias]
+    )
+
+    assert all(
+        c in get_subclasses(BasisIterator).values()
+        for c in [
+            SinusoidIterator,
+            IndicatorIterator,
+            LegendreIterator,
+            ChebyshevIterator,
+            PolynomialIterator,
+        ]
+    )
+
+    # assert an abstract derived class is not included
+    assert NumpyPolyIterator not in get_subclasses(BasisIterator).values()
+
+    assert all(
+        c in get_subclasses(BasisIterator).values()
+        for c in [LegendreIterator, ChebyshevIterator, PolynomialIterator]
+    )
 
 
 def test_derived_class_factory(single_canonical_ensemble):
