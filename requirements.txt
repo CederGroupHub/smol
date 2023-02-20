@@ -1,6 +1,6 @@
 numpy==1.23.5
 monty==2022.9.9
-scipy==1.10.0
+scipy==1.10.1
 pandas==1.4.4
 pybtex==0.24.0
 mp-api==0.30.9
