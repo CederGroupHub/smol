@@ -154,12 +154,7 @@ def test_get_sampled_values(container, fake_traces, discard, thin):
     # get non flattened values
     npt.assert_array_equal(
         container.sampling_efficiency(discard=discard, flat=False),
-        (
-            accepted[
-                discard:,
-            ].sum(axis=0)
-            / (container._total_steps - discard)
-        ),
+        (accepted[discard:,].sum(axis=0) / (container._total_steps - discard)),
     )
     assert container.get_occupancies(
         discard=discard, thin_by=thin, flat=False
