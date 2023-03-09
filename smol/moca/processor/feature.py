@@ -12,13 +12,16 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 
 from smol.cofe.space.clusterspace import ClusterSubspace
-from smol.correlations import corr_distance_single_flip
+from smol.correlations import (
+    corr_distance_single_flip,
+    interaction_distance_single_flip,
+)
 from smol.moca.processor import ClusterDecompositionProcessor, ClusterExpansionProcessor
 from smol.moca.processor._base import Processor
 
 
 class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
-    """FeaturedistanceProcessor abstract class to compute distance from a fixed feature vector.
+    """Abstract class to compute distance from a fixed feature vector.
 
     The distance used to measure distance is,
 
@@ -83,14 +86,15 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
 
     @abstractmethod
     def compute_feature_vector_distances(self, occupancy, flips):
-        """Compute the distance of feature vectors separated by given flips from the target.
+        """Compute distance of feature vectors separated by given flips from the target.
 
         Args:
             occupancy (ndarray):
                 encoded occupancy array
 
         Returns:
-            ndarray: 2D distance vector where the first row corresponds to correlations before flips
+            ndarray: 2D distance vector where the first row corresponds to correlations
+            before flips
         """
 
     @abstractmethod
@@ -181,7 +185,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
 
 
 class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionProcessor):
-    """CorrelationDistanceProcessor to compute distances from a fixed correlation vector.
+    """CorrelationDistanceProcessor to compute distance from a fixed correlation vector.
 
     The distance used to measure distance is,
 
@@ -244,18 +248,24 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
         )
 
     def compute_feature_vector_distances(self, occupancy, flips):
-        """Compute the distance of correlation vectors separated by given flips from the target.
+        """Compute the distance of correlation vectors separated by given flips.
+
+        The distance is referenced to the target correlation vector, such that the
+        result is a 2D array where each row is the distance of one correlation vector
+        to the target.
 
         Args:
             occupancy (ndarray):
                 encoded occupancy array
             flips (list of tuple):
-                list of tuples with two elements. Each tuple represents a single flip where
-                the first element is the index of the site in the occupancy array and the
-                second element is the index for the new species to place at that site.
+                list of tuples with two elements. Each tuple represents a single flip
+                where the first element is the index of the site in the occupancy array
+                and the second element is the index for the new species to place at that
+                site.
 
         Returns:
-            ndarray: 2D distance vector where the first row corresponds to correlations before flips
+            ndarray: 2D distance vector where the first row corresponds to correlations
+            before flips
         """
         occu_i = occupancy
         corr_distances = np.zeros((2, self.num_corr_functions))
@@ -302,7 +312,7 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
 class InteractionDistanceProcessor(
     FeatureDistanceProcessor, ClusterDecompositionProcessor
 ):
-    """InteractionDistanceProcessor to compute distances from a fixed cluster interaction vector.
+    """Compute distances from a fixed cluster interaction vector.
 
     The distance used to measure distance is,
 
@@ -311,11 +321,12 @@ class InteractionDistanceProcessor(
         d = -wL + ||W^T(f - f_T)||_1
 
     where f is the cluster interaction vector, f_T is the target vector, and L is the
-    diameter for which all correlation values of clusters of smaller diameter are exactly
-    equal to the target, and w is a weight for the L term. And W is a diagonal matrix
-    of optional weights for each correlation.
+    diameter for which all correlation values of clusters of smaller diameter are
+    exactly equal to the target, and w is a weight for the L term. And W is a diagonal
+    matrix of optional weights for each correlation.
 
-    Following the proposal in the following publication but applied to cluster interaction vectors,
+    Following the proposal in the following publication but applied to cluster
+    interaction vectors,
     https://doi.org/10.1016/j.calphad.2013.06.006
     """
 
@@ -342,7 +353,9 @@ class InteractionDistanceProcessor(
                 cluster interaction tensor. These should be in the same order as their
                 corresponding orbits in the given cluster_subspace
             target_vector (ndarray): optional
-                target correaltion vector, if None given as vector of zeros is used.
+                target cluster interaction vector, if None given as vector of zeros is
+
+                used.
             match_weight (float): optional
                 weight for the in the wL term above. That is how much to weight the
                 largest diameter below which all correlations are matched exactly.
@@ -371,25 +384,27 @@ class InteractionDistanceProcessor(
         )
 
     def compute_feature_vector_distances(self, occupancy, flips):
-        """Compute the distance of correlation vectors separated by given flips from the target.
+        """Compute the distance of cluster interaction vectors separated by given flips.
 
         Args:
             occupancy (ndarray):
                 encoded occupancy array
             flips (list of tuple):
-                list of tuples with two elements. Each tuple represents a single flip where
-                the first element is the index of the site in the occupancy array and the
-                second element is the index for the new species to place at that site.
+                list of tuples with two elements. Each tuple represents a single flip
+                where the first element is the index of the site in the occupancy array
+                and the second element is the index for the new species to place at that
+                site.
 
         Returns:
-            ndarray: 2D distance vector where the first row corresponds to correlations before flips
+            ndarray: 2D distance vector where the first row corresponds to correlations
+            before flips
         """
         occu_i = occupancy
         interaction_distances = np.zeros((2, self.num_orbits))
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            interaction_distances += corr_distance_single_flip(
+            interaction_distances += interaction_distance_single_flip(
                 occu_f,
                 occu_i,
                 self.target,

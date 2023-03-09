@@ -3767,7 +3767,7 @@ static PyObject *__pyx_f_4smol_12correlations_corr_distance_single_flip(__Pyx_me
  *     cdef const double[:, ::1] corr_tensors
  *     out = np.zeros((2, num_corr_functions))             # <<<<<<<<<<<<<<
  *     cdef double[:, ::1] o_view = out
- *     o_view[0] = 0  # empty cluster always irrelevant
+ *     o_view[:, 0] = 0
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -3807,7 +3807,7 @@ static PyObject *__pyx_f_4smol_12correlations_corr_distance_single_flip(__Pyx_me
  *     cdef const double[:, ::1] corr_tensors
  *     out = np.zeros((2, num_corr_functions))
  *     cdef double[:, ::1] o_view = out             # <<<<<<<<<<<<<<
- *     o_view[0] = 0  # empty cluster always irrelevant
+ *     o_view[:, 0] = 0
  *
  */
   __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 142, __pyx_L1_error)
@@ -3818,32 +3818,34 @@ static PyObject *__pyx_f_4smol_12correlations_corr_distance_single_flip(__Pyx_me
   /* "smol/correlations.pyx":143
  *     out = np.zeros((2, num_corr_functions))
  *     cdef double[:, ::1] o_view = out
- *     o_view[0] = 0  # empty cluster always irrelevant             # <<<<<<<<<<<<<<
+ *     o_view[:, 0] = 0             # <<<<<<<<<<<<<<
  *
  *     for n, tensor_indices, corr_tensors, indices in orbit_list:
  */
   __pyx_t_6.data = __pyx_v_o_view.data;
   __pyx_t_6.memview = __pyx_v_o_view.memview;
   __PYX_INC_MEMVIEW(&__pyx_t_6, 0);
-  {
+  __pyx_t_6.shape[0] = __pyx_v_o_view.shape[0];
+__pyx_t_6.strides[0] = __pyx_v_o_view.strides[0];
+    __pyx_t_6.suboffsets[0] = -1;
+
+{
     Py_ssize_t __pyx_tmp_idx = 0;
-    Py_ssize_t __pyx_tmp_stride = __pyx_v_o_view.strides[0];
+    Py_ssize_t __pyx_tmp_stride = __pyx_v_o_view.strides[1];
         __pyx_t_6.data += __pyx_tmp_idx * __pyx_tmp_stride;
 }
-
-__pyx_t_6.shape[0] = __pyx_v_o_view.shape[1];
-__pyx_t_6.strides[0] = __pyx_v_o_view.strides[1];
-    __pyx_t_6.suboffsets[0] = -1;
 
 {
       double __pyx_temp_scalar = 0.0;
       {
-          Py_ssize_t __pyx_temp_extent = __pyx_t_6.shape[0];
-          Py_ssize_t __pyx_temp_idx;
-          double *__pyx_temp_pointer = (double *) __pyx_t_6.data;
-          for (__pyx_temp_idx = 0; __pyx_temp_idx < __pyx_temp_extent; __pyx_temp_idx++) {
-            *((double *) __pyx_temp_pointer) = __pyx_temp_scalar;
-            __pyx_temp_pointer += 1;
+          Py_ssize_t __pyx_temp_extent_0 = __pyx_t_6.shape[0];
+          Py_ssize_t __pyx_temp_stride_0 = __pyx_t_6.strides[0];
+          char *__pyx_temp_pointer_0;
+          Py_ssize_t __pyx_temp_idx_0;
+          __pyx_temp_pointer_0 = __pyx_t_6.data;
+          for (__pyx_temp_idx_0 = 0; __pyx_temp_idx_0 < __pyx_temp_extent_0; __pyx_temp_idx_0++) {
+            *((double *) __pyx_temp_pointer_0) = __pyx_temp_scalar;
+            __pyx_temp_pointer_0 += __pyx_temp_stride_0;
           }
       }
   }
@@ -3852,7 +3854,7 @@ __pyx_t_6.strides[0] = __pyx_v_o_view.strides[1];
   __pyx_t_6.data = NULL;
 
   /* "smol/correlations.pyx":145
- *     o_view[0] = 0  # empty cluster always irrelevant
+ *     o_view[:, 0] = 0
  *
  *     for n, tensor_indices, corr_tensors, indices in orbit_list:             # <<<<<<<<<<<<<<
  *         M = corr_tensors.shape[0]  # index of bit combos
@@ -4124,7 +4126,7 @@ __pyx_t_6.strides[0] = __pyx_v_o_view.strides[1];
     }
 
     /* "smol/correlations.pyx":145
- *     o_view[0] = 0  # empty cluster always irrelevant
+ *     o_view[:, 0] = 0
  *
  *     for n, tensor_indices, corr_tensors, indices in orbit_list:             # <<<<<<<<<<<<<<
  *         M = corr_tensors.shape[0]  # index of bit combos
@@ -4757,7 +4759,7 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
   double __pyx_v_p;
   __Pyx_memviewslice __pyx_v_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_v_tensor_indices = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_v_interaction_tensors = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_v_interaction_tensor = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_v_out = NULL;
   __Pyx_memviewslice __pyx_v_o_view = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_r = NULL;
@@ -4789,19 +4791,19 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("interactions_from_occupancy", 0);
 
-  /* "smol/correlations.pyx":239
+  /* "smol/correlations.pyx":240
  *     cdef const long[::1] tensor_indices
- *     cdef const double[::1] interaction_tensors
+ *     cdef const double[::1] interaction_tensor
  *     out = np.zeros(num_interactions)             # <<<<<<<<<<<<<<
  *     cdef double[:] o_view = out
  *     o_view[0] = offset  # empty cluster
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 239, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 240, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 239, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 240, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_interactions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 239, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_interactions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 240, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -4816,25 +4818,25 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 239, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 240, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_out = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "smol/correlations.pyx":240
- *     cdef const double[::1] interaction_tensors
+  /* "smol/correlations.pyx":241
+ *     cdef const double[::1] interaction_tensor
  *     out = np.zeros(num_interactions)
  *     cdef double[:] o_view = out             # <<<<<<<<<<<<<<
  *     o_view[0] = offset  # empty cluster
  *
  */
-  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 240, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 241, __pyx_L1_error)
   __pyx_v_o_view = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "smol/correlations.pyx":241
+  /* "smol/correlations.pyx":242
  *     out = np.zeros(num_interactions)
  *     cdef double[:] o_view = out
  *     o_view[0] = offset  # empty cluster             # <<<<<<<<<<<<<<
@@ -4844,33 +4846,33 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
   __pyx_t_6 = 0;
   *((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_6 * __pyx_v_o_view.strides[0]) )) = __pyx_v_offset;
 
-  /* "smol/correlations.pyx":243
+  /* "smol/correlations.pyx":244
  *     o_view[0] = offset  # empty cluster
  *
  *     n = 1             # <<<<<<<<<<<<<<
- *     for tensor_indices, interaction_tensors, indices in orbit_list:
+ *     for tensor_indices, interaction_tensor, indices in orbit_list:
  *         I = indices.shape[0] # cluster index
  */
   __pyx_v_n = 1;
 
-  /* "smol/correlations.pyx":244
+  /* "smol/correlations.pyx":245
  *
  *     n = 1
- *     for tensor_indices, interaction_tensors, indices in orbit_list:             # <<<<<<<<<<<<<<
+ *     for tensor_indices, interaction_tensor, indices in orbit_list:             # <<<<<<<<<<<<<<
  *         I = indices.shape[0] # cluster index
  *         J = indices.shape[1] # index within cluster
  */
   if (unlikely(__pyx_v_orbit_list == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    __PYX_ERR(0, 244, __pyx_L1_error)
+    __PYX_ERR(0, 245, __pyx_L1_error)
   }
   __pyx_t_1 = __pyx_v_orbit_list; __Pyx_INCREF(__pyx_t_1); __pyx_t_7 = 0;
   for (;;) {
     if (__pyx_t_7 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 244, __pyx_L1_error)
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 245, __pyx_L1_error)
     #else
-    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 244, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 245, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     #endif
     if ((likely(PyTuple_CheckExact(__pyx_t_3))) || (PyList_CheckExact(__pyx_t_3))) {
@@ -4879,7 +4881,7 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
       if (unlikely(size != 3)) {
         if (size > 3) __Pyx_RaiseTooManyValuesError(3);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 244, __pyx_L1_error)
+        __PYX_ERR(0, 245, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -4895,17 +4897,17 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
       __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_8);
       #else
-      __pyx_t_2 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 244, __pyx_L1_error)
+      __pyx_t_2 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 245, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 244, __pyx_L1_error)
+      __pyx_t_4 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 245, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_8 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 244, __pyx_L1_error)
+      __pyx_t_8 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 245, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       #endif
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_9 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 244, __pyx_L1_error)
+      __pyx_t_9 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 245, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_t_10 = Py_TYPE(__pyx_t_9)->tp_iternext;
@@ -4915,7 +4917,7 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
       __Pyx_GOTREF(__pyx_t_4);
       index = 2; __pyx_t_8 = __pyx_t_10(__pyx_t_9); if (unlikely(!__pyx_t_8)) goto __pyx_L5_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_8);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_10(__pyx_t_9), 3) < 0) __PYX_ERR(0, 244, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_10(__pyx_t_9), 3) < 0) __PYX_ERR(0, 245, __pyx_L1_error)
       __pyx_t_10 = NULL;
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       goto __pyx_L6_unpacking_done;
@@ -4923,21 +4925,21 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __pyx_t_10 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 244, __pyx_L1_error)
+      __PYX_ERR(0, 245, __pyx_L1_error)
       __pyx_L6_unpacking_done:;
     }
-    __pyx_t_11 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_2, 0); if (unlikely(!__pyx_t_11.memview)) __PYX_ERR(0, 244, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_2, 0); if (unlikely(!__pyx_t_11.memview)) __PYX_ERR(0, 245, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_12 = __Pyx_PyObject_to_MemoryviewSlice_dc_double__const__(__pyx_t_4, 0); if (unlikely(!__pyx_t_12.memview)) __PYX_ERR(0, 244, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyObject_to_MemoryviewSlice_dc_double__const__(__pyx_t_4, 0); if (unlikely(!__pyx_t_12.memview)) __PYX_ERR(0, 245, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_13 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_13.memview)) __PYX_ERR(0, 244, __pyx_L1_error)
+    __pyx_t_13 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_13.memview)) __PYX_ERR(0, 245, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __PYX_XDEC_MEMVIEW(&__pyx_v_tensor_indices, 1);
     __pyx_v_tensor_indices = __pyx_t_11;
     __pyx_t_11.memview = NULL;
     __pyx_t_11.data = NULL;
-    __PYX_XDEC_MEMVIEW(&__pyx_v_interaction_tensors, 1);
-    __pyx_v_interaction_tensors = __pyx_t_12;
+    __PYX_XDEC_MEMVIEW(&__pyx_v_interaction_tensor, 1);
+    __pyx_v_interaction_tensor = __pyx_t_12;
     __pyx_t_12.memview = NULL;
     __pyx_t_12.data = NULL;
     __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
@@ -4945,17 +4947,17 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
     __pyx_t_13.memview = NULL;
     __pyx_t_13.data = NULL;
 
-    /* "smol/correlations.pyx":245
+    /* "smol/correlations.pyx":246
  *     n = 1
- *     for tensor_indices, interaction_tensors, indices in orbit_list:
+ *     for tensor_indices, interaction_tensor, indices in orbit_list:
  *         I = indices.shape[0] # cluster index             # <<<<<<<<<<<<<<
  *         J = indices.shape[1] # index within cluster
  *         p = 0
  */
     __pyx_v_I = (__pyx_v_indices.shape[0]);
 
-    /* "smol/correlations.pyx":246
- *     for tensor_indices, interaction_tensors, indices in orbit_list:
+    /* "smol/correlations.pyx":247
+ *     for tensor_indices, interaction_tensor, indices in orbit_list:
  *         I = indices.shape[0] # cluster index
  *         J = indices.shape[1] # index within cluster             # <<<<<<<<<<<<<<
  *         p = 0
@@ -4963,7 +4965,7 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
  */
     __pyx_v_J = (__pyx_v_indices.shape[1]);
 
-    /* "smol/correlations.pyx":247
+    /* "smol/correlations.pyx":248
  *         I = indices.shape[0] # cluster index
  *         J = indices.shape[1] # index within cluster
  *         p = 0             # <<<<<<<<<<<<<<
@@ -4972,7 +4974,7 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
  */
     __pyx_v_p = 0.0;
 
-    /* "smol/correlations.pyx":248
+    /* "smol/correlations.pyx":249
  *         J = indices.shape[1] # index within cluster
  *         p = 0
  *         for i in range(I):             # <<<<<<<<<<<<<<
@@ -4984,7 +4986,7 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
     for (__pyx_t_16 = 0; __pyx_t_16 < __pyx_t_15; __pyx_t_16+=1) {
       __pyx_v_i = __pyx_t_16;
 
-      /* "smol/correlations.pyx":249
+      /* "smol/correlations.pyx":250
  *         p = 0
  *         for i in range(I):
  *             index = 0             # <<<<<<<<<<<<<<
@@ -4993,23 +4995,23 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
  */
       __pyx_v_index = 0;
 
-      /* "smol/correlations.pyx":250
+      /* "smol/correlations.pyx":251
  *         for i in range(I):
  *             index = 0
  *             for j in range(J):             # <<<<<<<<<<<<<<
  *                 index += tensor_indices[j] * occu[indices[i, j]]
- *             p += interaction_tensors[index]
+ *             p += interaction_tensor[index]
  */
       __pyx_t_17 = __pyx_v_J;
       __pyx_t_18 = __pyx_t_17;
       for (__pyx_t_19 = 0; __pyx_t_19 < __pyx_t_18; __pyx_t_19+=1) {
         __pyx_v_j = __pyx_t_19;
 
-        /* "smol/correlations.pyx":251
+        /* "smol/correlations.pyx":252
  *             index = 0
  *             for j in range(J):
  *                 index += tensor_indices[j] * occu[indices[i, j]]             # <<<<<<<<<<<<<<
- *             p += interaction_tensors[index]
+ *             p += interaction_tensor[index]
  *         o_view[n] = p / I
  */
         __pyx_t_6 = __pyx_v_j;
@@ -5019,20 +5021,20 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
         __pyx_v_index = (__pyx_v_index + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_6)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu.data) + __pyx_t_22)) )))));
       }
 
-      /* "smol/correlations.pyx":252
+      /* "smol/correlations.pyx":253
  *             for j in range(J):
  *                 index += tensor_indices[j] * occu[indices[i, j]]
- *             p += interaction_tensors[index]             # <<<<<<<<<<<<<<
+ *             p += interaction_tensor[index]             # <<<<<<<<<<<<<<
  *         o_view[n] = p / I
  *         n += 1
  */
       __pyx_t_21 = __pyx_v_index;
-      __pyx_v_p = (__pyx_v_p + (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_interaction_tensors.data) + __pyx_t_21)) ))));
+      __pyx_v_p = (__pyx_v_p + (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_interaction_tensor.data) + __pyx_t_21)) ))));
     }
 
-    /* "smol/correlations.pyx":253
+    /* "smol/correlations.pyx":254
  *                 index += tensor_indices[j] * occu[indices[i, j]]
- *             p += interaction_tensors[index]
+ *             p += interaction_tensor[index]
  *         o_view[n] = p / I             # <<<<<<<<<<<<<<
  *         n += 1
  *
@@ -5040,8 +5042,8 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
     __pyx_t_21 = __pyx_v_n;
     *((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_21 * __pyx_v_o_view.strides[0]) )) = (__pyx_v_p / ((double)__pyx_v_I));
 
-    /* "smol/correlations.pyx":254
- *             p += interaction_tensors[index]
+    /* "smol/correlations.pyx":255
+ *             p += interaction_tensor[index]
  *         o_view[n] = p / I
  *         n += 1             # <<<<<<<<<<<<<<
  *
@@ -5049,17 +5051,17 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
  */
     __pyx_v_n = (__pyx_v_n + 1);
 
-    /* "smol/correlations.pyx":244
+    /* "smol/correlations.pyx":245
  *
  *     n = 1
- *     for tensor_indices, interaction_tensors, indices in orbit_list:             # <<<<<<<<<<<<<<
+ *     for tensor_indices, interaction_tensor, indices in orbit_list:             # <<<<<<<<<<<<<<
  *         I = indices.shape[0] # cluster index
  *         J = indices.shape[1] # index within cluster
  */
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "smol/correlations.pyx":256
+  /* "smol/correlations.pyx":257
  *         n += 1
  *
  *     return out             # <<<<<<<<<<<<<<
@@ -5096,7 +5098,7 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
   __pyx_L0:;
   __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_v_tensor_indices, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_v_interaction_tensors, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_v_interaction_tensor, 1);
   __Pyx_XDECREF(__pyx_v_out);
   __PYX_XDEC_MEMVIEW(&__pyx_v_o_view, 1);
   __Pyx_XGIVEREF(__pyx_r);
@@ -5106,7 +5108,7 @@ static PyObject *__pyx_f_4smol_12correlations_interactions_from_occupancy(__Pyx_
 
 /* Python wrapper */
 static PyObject *__pyx_pw_4smol_12correlations_9interactions_from_occupancy(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_4smol_12correlations_8interactions_from_occupancy[] = "Computes the cluster interaction vector for a given encoded occupancy string.\n    Args:\n        occu (ndarray):\n            encoded occupancy vector\n        num_interactions (int):\n            total number of cluster interactions (orbits in cluster subspace).\n        offset (float):\n            eci value for the constant term.\n        orbit_list:\n            Information of all orbits.\n            (flat tensor index array, flat cluster interaction tensor,\n             site indices of clusters)\n    Returns: array\n        cluster interaction vector for given occupancy\n    ";
+static char __pyx_doc_4smol_12correlations_8interactions_from_occupancy[] = "Computes the cluster interaction vector for a given encoded occupancy string.\n\n    Args:\n        occu (ndarray):\n            encoded occupancy vector\n        num_interactions (int):\n            total number of cluster interactions (orbits in cluster subspace).\n        offset (float):\n            eci value for the constant term.\n        orbit_list:\n            Information of all orbits.\n            (flat tensor index array, flat cluster interaction tensor,\n             site indices of clusters)\n    Returns: array\n        cluster interaction vector for given occupancy\n    ";
 static PyObject *__pyx_pw_4smol_12correlations_9interactions_from_occupancy(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_occu = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_v_num_interactions;
@@ -5223,7 +5225,7 @@ static PyObject *__pyx_pf_4smol_12correlations_8interactions_from_occupancy(CYTH
   return __pyx_r;
 }
 
-/* "smol/correlations.pyx":259
+/* "smol/correlations.pyx":260
  *
  *
  * cpdef delta_interactions_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
@@ -5279,19 +5281,19 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("delta_interactions_single_flip", 0);
 
-  /* "smol/correlations.pyx":285
+  /* "smol/correlations.pyx":286
  *     cdef const long[::1] tensor_indices
  *     cdef const double[::1] interaction_tensor
  *     out = np.zeros(num_interactions)             # <<<<<<<<<<<<<<
  *     cdef double[::1] o_view = out
  *
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 285, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 286, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 285, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 286, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_interactions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 285, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_interactions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 286, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -5306,25 +5308,25 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
   __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_t_2) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 285, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 286, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_out = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "smol/correlations.pyx":286
+  /* "smol/correlations.pyx":287
  *     cdef const double[::1] interaction_tensor
  *     out = np.zeros(num_interactions)
  *     cdef double[::1] o_view = out             # <<<<<<<<<<<<<<
  *
  *     for n, ratio, tensor_indices, interaction_tensor, indices in site_orbit_list:
  */
-  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 286, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_dc_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 287, __pyx_L1_error)
   __pyx_v_o_view = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "smol/correlations.pyx":288
+  /* "smol/correlations.pyx":289
  *     cdef double[::1] o_view = out
  *
  *     for n, ratio, tensor_indices, interaction_tensor, indices in site_orbit_list:             # <<<<<<<<<<<<<<
@@ -5333,15 +5335,15 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
  */
   if (unlikely(__pyx_v_site_orbit_list == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    __PYX_ERR(0, 288, __pyx_L1_error)
+    __PYX_ERR(0, 289, __pyx_L1_error)
   }
   __pyx_t_1 = __pyx_v_site_orbit_list; __Pyx_INCREF(__pyx_t_1); __pyx_t_6 = 0;
   for (;;) {
     if (__pyx_t_6 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 288, __pyx_L1_error)
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 289, __pyx_L1_error)
     #else
-    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 288, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 289, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     #endif
     if ((likely(PyTuple_CheckExact(__pyx_t_3))) || (PyList_CheckExact(__pyx_t_3))) {
@@ -5350,7 +5352,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
       if (unlikely(size != 5)) {
         if (size > 5) __Pyx_RaiseTooManyValuesError(5);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 288, __pyx_L1_error)
+        __PYX_ERR(0, 289, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -5376,7 +5378,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
         Py_ssize_t i;
         PyObject** temps[5] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_7,&__pyx_t_8,&__pyx_t_9};
         for (i=0; i < 5; i++) {
-          PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 288, __pyx_L1_error)
+          PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 289, __pyx_L1_error)
           __Pyx_GOTREF(item);
           *(temps[i]) = item;
         }
@@ -5386,7 +5388,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
     } else {
       Py_ssize_t index = -1;
       PyObject** temps[5] = {&__pyx_t_2,&__pyx_t_4,&__pyx_t_7,&__pyx_t_8,&__pyx_t_9};
-      __pyx_t_10 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 288, __pyx_L1_error)
+      __pyx_t_10 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 289, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_t_11 = Py_TYPE(__pyx_t_10)->tp_iternext;
@@ -5395,7 +5397,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
         __Pyx_GOTREF(item);
         *(temps[index]) = item;
       }
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_11(__pyx_t_10), 5) < 0) __PYX_ERR(0, 288, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_11(__pyx_t_10), 5) < 0) __PYX_ERR(0, 289, __pyx_L1_error)
       __pyx_t_11 = NULL;
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       goto __pyx_L6_unpacking_done;
@@ -5403,18 +5405,18 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __pyx_t_11 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 288, __pyx_L1_error)
+      __PYX_ERR(0, 289, __pyx_L1_error)
       __pyx_L6_unpacking_done:;
     }
-    __pyx_t_12 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 288, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 289, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 288, __pyx_L1_error)
+    __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_4); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 289, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_7, 0); if (unlikely(!__pyx_t_14.memview)) __PYX_ERR(0, 288, __pyx_L1_error)
+    __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_7, 0); if (unlikely(!__pyx_t_14.memview)) __PYX_ERR(0, 289, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_dc_double__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 288, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_dc_double__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 289, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_9, 0); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 288, __pyx_L1_error)
+    __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_9, 0); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 289, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __pyx_v_n = __pyx_t_12;
     __pyx_v_ratio = __pyx_t_13;
@@ -5431,7 +5433,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
     __pyx_t_16.memview = NULL;
     __pyx_t_16.data = NULL;
 
-    /* "smol/correlations.pyx":289
+    /* "smol/correlations.pyx":290
  *
  *     for n, ratio, tensor_indices, interaction_tensor, indices in site_orbit_list:
  *         I = indices.shape[0] # cluster index             # <<<<<<<<<<<<<<
@@ -5440,7 +5442,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
  */
     __pyx_v_I = (__pyx_v_indices.shape[0]);
 
-    /* "smol/correlations.pyx":290
+    /* "smol/correlations.pyx":291
  *     for n, ratio, tensor_indices, interaction_tensor, indices in site_orbit_list:
  *         I = indices.shape[0] # cluster index
  *         J = indices.shape[1] # index within cluster             # <<<<<<<<<<<<<<
@@ -5449,7 +5451,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
  */
     __pyx_v_J = (__pyx_v_indices.shape[1]);
 
-    /* "smol/correlations.pyx":291
+    /* "smol/correlations.pyx":292
  *         I = indices.shape[0] # cluster index
  *         J = indices.shape[1] # index within cluster
  *         p = 0             # <<<<<<<<<<<<<<
@@ -5458,7 +5460,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
  */
     __pyx_v_p = 0.0;
 
-    /* "smol/correlations.pyx":292
+    /* "smol/correlations.pyx":293
  *         J = indices.shape[1] # index within cluster
  *         p = 0
  *         for i in range(I):             # <<<<<<<<<<<<<<
@@ -5470,7 +5472,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
     for (__pyx_t_18 = 0; __pyx_t_18 < __pyx_t_17; __pyx_t_18+=1) {
       __pyx_v_i = __pyx_t_18;
 
-      /* "smol/correlations.pyx":293
+      /* "smol/correlations.pyx":294
  *         p = 0
  *         for i in range(I):
  *             ind_i, ind_f = 0, 0             # <<<<<<<<<<<<<<
@@ -5482,7 +5484,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
       __pyx_v_ind_i = __pyx_t_19;
       __pyx_v_ind_f = __pyx_t_20;
 
-      /* "smol/correlations.pyx":294
+      /* "smol/correlations.pyx":295
  *         for i in range(I):
  *             ind_i, ind_f = 0, 0
  *             for j in range(J):             # <<<<<<<<<<<<<<
@@ -5494,7 +5496,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
       for (__pyx_t_21 = 0; __pyx_t_21 < __pyx_t_19; __pyx_t_21+=1) {
         __pyx_v_j = __pyx_t_21;
 
-        /* "smol/correlations.pyx":295
+        /* "smol/correlations.pyx":296
  *             ind_i, ind_f = 0, 0
  *             for j in range(J):
  *                 ind_i += tensor_indices[j] * occu_i[indices[i, j]]             # <<<<<<<<<<<<<<
@@ -5507,7 +5509,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
         __pyx_t_25 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_23 * __pyx_v_indices.strides[0]) )) + __pyx_t_24)) )));
         __pyx_v_ind_i = (__pyx_v_ind_i + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_22)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_25)) )))));
 
-        /* "smol/correlations.pyx":296
+        /* "smol/correlations.pyx":297
  *             for j in range(J):
  *                 ind_i += tensor_indices[j] * occu_i[indices[i, j]]
  *                 ind_f += tensor_indices[j] * occu_f[indices[i, j]]             # <<<<<<<<<<<<<<
@@ -5521,7 +5523,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
         __pyx_v_ind_f = (__pyx_v_ind_f + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_24)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_22)) )))));
       }
 
-      /* "smol/correlations.pyx":297
+      /* "smol/correlations.pyx":298
  *                 ind_i += tensor_indices[j] * occu_i[indices[i, j]]
  *                 ind_f += tensor_indices[j] * occu_f[indices[i, j]]
  *             p += (interaction_tensor[ind_f] - interaction_tensor[ind_i])             # <<<<<<<<<<<<<<
@@ -5533,7 +5535,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
       __pyx_v_p = (__pyx_v_p + ((*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_interaction_tensor.data) + __pyx_t_25)) ))) - (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_interaction_tensor.data) + __pyx_t_23)) )))));
     }
 
-    /* "smol/correlations.pyx":298
+    /* "smol/correlations.pyx":299
  *                 ind_f += tensor_indices[j] * occu_f[indices[i, j]]
  *             p += (interaction_tensor[ind_f] - interaction_tensor[ind_i])
  *         o_view[n] = p / ratio / I             # <<<<<<<<<<<<<<
@@ -5543,7 +5545,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
     __pyx_t_23 = __pyx_v_n;
     *((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_o_view.data) + __pyx_t_23)) )) = ((__pyx_v_p / __pyx_v_ratio) / ((double)__pyx_v_I));
 
-    /* "smol/correlations.pyx":288
+    /* "smol/correlations.pyx":289
  *     cdef double[::1] o_view = out
  *
  *     for n, ratio, tensor_indices, interaction_tensor, indices in site_orbit_list:             # <<<<<<<<<<<<<<
@@ -5553,7 +5555,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "smol/correlations.pyx":299
+  /* "smol/correlations.pyx":300
  *             p += (interaction_tensor[ind_f] - interaction_tensor[ind_i])
  *         o_view[n] = p / ratio / I
  *     return out             # <<<<<<<<<<<<<<
@@ -5565,7 +5567,7 @@ static PyObject *__pyx_f_4smol_12correlations_delta_interactions_single_flip(__P
   __pyx_r = __pyx_v_out;
   goto __pyx_L0;
 
-  /* "smol/correlations.pyx":259
+  /* "smol/correlations.pyx":260
  *
  *
  * cpdef delta_interactions_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
@@ -5641,23 +5643,23 @@ static PyObject *__pyx_pw_4smol_12correlations_11delta_interactions_single_flip(
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_occu_i)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_interactions_single_flip", 1, 4, 4, 1); __PYX_ERR(0, 259, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_interactions_single_flip", 1, 4, 4, 1); __PYX_ERR(0, 260, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_interactions)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_interactions_single_flip", 1, 4, 4, 2); __PYX_ERR(0, 259, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_interactions_single_flip", 1, 4, 4, 2); __PYX_ERR(0, 260, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_site_orbit_list)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("delta_interactions_single_flip", 1, 4, 4, 3); __PYX_ERR(0, 259, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("delta_interactions_single_flip", 1, 4, 4, 3); __PYX_ERR(0, 260, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "delta_interactions_single_flip") < 0)) __PYX_ERR(0, 259, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "delta_interactions_single_flip") < 0)) __PYX_ERR(0, 260, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -5667,20 +5669,20 @@ static PyObject *__pyx_pw_4smol_12correlations_11delta_interactions_single_flip(
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
     }
-    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 259, __pyx_L3_error)
-    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 260, __pyx_L3_error)
-    __pyx_v_num_interactions = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_num_interactions == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 261, __pyx_L3_error)
+    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 260, __pyx_L3_error)
+    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 261, __pyx_L3_error)
+    __pyx_v_num_interactions = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_num_interactions == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 262, __pyx_L3_error)
     __pyx_v_site_orbit_list = ((PyObject*)values[3]);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("delta_interactions_single_flip", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 259, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("delta_interactions_single_flip", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 260, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("smol.correlations.delta_interactions_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_site_orbit_list), (&PyList_Type), 1, "site_orbit_list", 1))) __PYX_ERR(0, 262, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_site_orbit_list), (&PyList_Type), 1, "site_orbit_list", 1))) __PYX_ERR(0, 263, __pyx_L1_error)
   __pyx_r = __pyx_pf_4smol_12correlations_10delta_interactions_single_flip(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_num_interactions, __pyx_v_site_orbit_list);
 
   /* function exit code */
@@ -5701,7 +5703,7 @@ static PyObject *__pyx_pf_4smol_12correlations_10delta_interactions_single_flip(
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("delta_interactions_single_flip", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_4smol_12correlations_delta_interactions_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_num_interactions, __pyx_v_site_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 259, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_4smol_12correlations_delta_interactions_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_num_interactions, __pyx_v_site_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -5720,7 +5722,7 @@ static PyObject *__pyx_pf_4smol_12correlations_10delta_interactions_single_flip(
   return __pyx_r;
 }
 
-/* "smol/correlations.pyx":302
+/* "smol/correlations.pyx":303
  *
  *
  * cpdef interaction_distance_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
@@ -5730,10 +5732,9 @@ static PyObject *__pyx_pf_4smol_12correlations_10delta_interactions_single_flip(
 
 static PyObject *__pyx_pw_4smol_12correlations_13interaction_distance_single_flip(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static PyObject *__pyx_f_4smol_12correlations_interaction_distance_single_flip(__Pyx_memviewslice __pyx_v_occu_f, __Pyx_memviewslice __pyx_v_occu_i, __Pyx_memviewslice __pyx_v_ref_interaction_vector, int const __pyx_v_num_interactions, PyObject *__pyx_v_orbit_list, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  int __pyx_v_n;
   int __pyx_v_i;
   int __pyx_v_j;
-  int __pyx_v_n;
-  int __pyx_v_m;
   int __pyx_v_I;
   int __pyx_v_J;
   int __pyx_v_ind_i;
@@ -5745,7 +5746,6 @@ static PyObject *__pyx_f_4smol_12correlations_interaction_distance_single_flip(_
   __Pyx_memviewslice __pyx_v_interaction_tensor = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_v_out = NULL;
   __Pyx_memviewslice __pyx_v_o_view = { 0, 0, { 0 }, { 0 }, { 0 } };
-  CYTHON_UNUSED PyObject *__pyx_v_ratio = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -5757,44 +5757,42 @@ static PyObject *__pyx_f_4smol_12correlations_interaction_distance_single_flip(_
   Py_ssize_t __pyx_t_7;
   PyObject *__pyx_t_8 = NULL;
   PyObject *__pyx_t_9 = NULL;
-  PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
-  PyObject *(*__pyx_t_12)(PyObject *);
-  int __pyx_t_13;
-  __Pyx_memviewslice __pyx_t_14 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_15 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_16 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  double __pyx_t_17;
-  double __pyx_t_18;
+  PyObject *(*__pyx_t_10)(PyObject *);
+  __Pyx_memviewslice __pyx_t_11 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_12 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  __Pyx_memviewslice __pyx_t_13 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  double __pyx_t_14;
+  double __pyx_t_15;
+  int __pyx_t_16;
+  int __pyx_t_17;
+  int __pyx_t_18;
   int __pyx_t_19;
   int __pyx_t_20;
   int __pyx_t_21;
-  int __pyx_t_22;
-  int __pyx_t_23;
+  Py_ssize_t __pyx_t_22;
+  Py_ssize_t __pyx_t_23;
   Py_ssize_t __pyx_t_24;
   Py_ssize_t __pyx_t_25;
-  Py_ssize_t __pyx_t_26;
-  Py_ssize_t __pyx_t_27;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("interaction_distance_single_flip", 0);
 
-  /* "smol/correlations.pyx":336
+  /* "smol/correlations.pyx":337
  *     cdef const long[::1] tensor_indices
- *     cdef const double[:, ::1] interaction_tensor
+ *     cdef const double[::1] interaction_tensor
  *     out = np.zeros((2, num_interactions))             # <<<<<<<<<<<<<<
  *     cdef double[:, ::1] o_view = out
- *     o_view[0] = 0  # empty cluster always irrelevant
+ *     o_view[:, 0] = 0
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 336, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 337, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 336, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 337, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_interactions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 336, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_num_interactions); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 337, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 336, __pyx_L1_error)
+  __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 337, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_INCREF(__pyx_int_2);
   __Pyx_GIVEREF(__pyx_int_2);
@@ -5815,53 +5813,55 @@ static PyObject *__pyx_f_4smol_12correlations_interaction_distance_single_flip(_
   __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_t_4) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 336, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 337, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_out = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "smol/correlations.pyx":337
- *     cdef const double[:, ::1] interaction_tensor
+  /* "smol/correlations.pyx":338
+ *     cdef const double[::1] interaction_tensor
  *     out = np.zeros((2, num_interactions))
  *     cdef double[:, ::1] o_view = out             # <<<<<<<<<<<<<<
- *     o_view[0] = 0  # empty cluster always irrelevant
+ *     o_view[:, 0] = 0
  *
  */
-  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 337, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double(__pyx_v_out, PyBUF_WRITABLE); if (unlikely(!__pyx_t_5.memview)) __PYX_ERR(0, 338, __pyx_L1_error)
   __pyx_v_o_view = __pyx_t_5;
   __pyx_t_5.memview = NULL;
   __pyx_t_5.data = NULL;
 
-  /* "smol/correlations.pyx":338
+  /* "smol/correlations.pyx":339
  *     out = np.zeros((2, num_interactions))
  *     cdef double[:, ::1] o_view = out
- *     o_view[0] = 0  # empty cluster always irrelevant             # <<<<<<<<<<<<<<
+ *     o_view[:, 0] = 0             # <<<<<<<<<<<<<<
  *
- *     for n, ratio, tensor_indices, interaction_tensor, indices in orbit_list:
+ *     n = 1
  */
   __pyx_t_6.data = __pyx_v_o_view.data;
   __pyx_t_6.memview = __pyx_v_o_view.memview;
   __PYX_INC_MEMVIEW(&__pyx_t_6, 0);
-  {
+  __pyx_t_6.shape[0] = __pyx_v_o_view.shape[0];
+__pyx_t_6.strides[0] = __pyx_v_o_view.strides[0];
+    __pyx_t_6.suboffsets[0] = -1;
+
+{
     Py_ssize_t __pyx_tmp_idx = 0;
-    Py_ssize_t __pyx_tmp_stride = __pyx_v_o_view.strides[0];
+    Py_ssize_t __pyx_tmp_stride = __pyx_v_o_view.strides[1];
         __pyx_t_6.data += __pyx_tmp_idx * __pyx_tmp_stride;
 }
-
-__pyx_t_6.shape[0] = __pyx_v_o_view.shape[1];
-__pyx_t_6.strides[0] = __pyx_v_o_view.strides[1];
-    __pyx_t_6.suboffsets[0] = -1;
 
 {
       double __pyx_temp_scalar = 0.0;
       {
-          Py_ssize_t __pyx_temp_extent = __pyx_t_6.shape[0];
-          Py_ssize_t __pyx_temp_idx;
-          double *__pyx_temp_pointer = (double *) __pyx_t_6.data;
-          for (__pyx_temp_idx = 0; __pyx_temp_idx < __pyx_temp_extent; __pyx_temp_idx++) {
-            *((double *) __pyx_temp_pointer) = __pyx_temp_scalar;
-            __pyx_temp_pointer += 1;
+          Py_ssize_t __pyx_temp_extent_0 = __pyx_t_6.shape[0];
+          Py_ssize_t __pyx_temp_stride_0 = __pyx_t_6.strides[0];
+          char *__pyx_temp_pointer_0;
+          Py_ssize_t __pyx_temp_idx_0;
+          __pyx_temp_pointer_0 = __pyx_t_6.data;
+          for (__pyx_temp_idx_0 = 0; __pyx_temp_idx_0 < __pyx_temp_extent_0; __pyx_temp_idx_0++) {
+            *((double *) __pyx_temp_pointer_0) = __pyx_temp_scalar;
+            __pyx_temp_pointer_0 += __pyx_temp_stride_0;
           }
       }
   }
@@ -5869,123 +5869,118 @@ __pyx_t_6.strides[0] = __pyx_v_o_view.strides[1];
   __pyx_t_6.memview = NULL;
   __pyx_t_6.data = NULL;
 
-  /* "smol/correlations.pyx":340
- *     o_view[0] = 0  # empty cluster always irrelevant
+  /* "smol/correlations.pyx":341
+ *     o_view[:, 0] = 0
  *
- *     for n, ratio, tensor_indices, interaction_tensor, indices in orbit_list:             # <<<<<<<<<<<<<<
+ *     n = 1             # <<<<<<<<<<<<<<
+ *     for tensor_indices, interaction_tensor, indices in orbit_list:
+ *         I = indices.shape[0] # cluster index
+ */
+  __pyx_v_n = 1;
+
+  /* "smol/correlations.pyx":342
+ *
+ *     n = 1
+ *     for tensor_indices, interaction_tensor, indices in orbit_list:             # <<<<<<<<<<<<<<
  *         I = indices.shape[0] # cluster index
  *         J = indices.shape[1] # index within cluster
  */
   if (unlikely(__pyx_v_orbit_list == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    __PYX_ERR(0, 340, __pyx_L1_error)
+    __PYX_ERR(0, 342, __pyx_L1_error)
   }
   __pyx_t_1 = __pyx_v_orbit_list; __Pyx_INCREF(__pyx_t_1); __pyx_t_7 = 0;
   for (;;) {
     if (__pyx_t_7 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 340, __pyx_L1_error)
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 342, __pyx_L1_error)
     #else
-    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 340, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 342, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     #endif
     if ((likely(PyTuple_CheckExact(__pyx_t_3))) || (PyList_CheckExact(__pyx_t_3))) {
       PyObject* sequence = __pyx_t_3;
       Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
-      if (unlikely(size != 5)) {
-        if (size > 5) __Pyx_RaiseTooManyValuesError(5);
+      if (unlikely(size != 3)) {
+        if (size > 3) __Pyx_RaiseTooManyValuesError(3);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 340, __pyx_L1_error)
+        __PYX_ERR(0, 342, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
         __pyx_t_4 = PyTuple_GET_ITEM(sequence, 0);
         __pyx_t_2 = PyTuple_GET_ITEM(sequence, 1);
         __pyx_t_8 = PyTuple_GET_ITEM(sequence, 2);
-        __pyx_t_9 = PyTuple_GET_ITEM(sequence, 3);
-        __pyx_t_10 = PyTuple_GET_ITEM(sequence, 4);
       } else {
         __pyx_t_4 = PyList_GET_ITEM(sequence, 0);
         __pyx_t_2 = PyList_GET_ITEM(sequence, 1);
         __pyx_t_8 = PyList_GET_ITEM(sequence, 2);
-        __pyx_t_9 = PyList_GET_ITEM(sequence, 3);
-        __pyx_t_10 = PyList_GET_ITEM(sequence, 4);
       }
       __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_2);
       __Pyx_INCREF(__pyx_t_8);
-      __Pyx_INCREF(__pyx_t_9);
-      __Pyx_INCREF(__pyx_t_10);
       #else
-      {
-        Py_ssize_t i;
-        PyObject** temps[5] = {&__pyx_t_4,&__pyx_t_2,&__pyx_t_8,&__pyx_t_9,&__pyx_t_10};
-        for (i=0; i < 5; i++) {
-          PyObject* item = PySequence_ITEM(sequence, i); if (unlikely(!item)) __PYX_ERR(0, 340, __pyx_L1_error)
-          __Pyx_GOTREF(item);
-          *(temps[i]) = item;
-        }
-      }
+      __pyx_t_4 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 342, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 342, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_8 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 342, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
       #endif
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else {
       Py_ssize_t index = -1;
-      PyObject** temps[5] = {&__pyx_t_4,&__pyx_t_2,&__pyx_t_8,&__pyx_t_9,&__pyx_t_10};
-      __pyx_t_11 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 340, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_11);
+      __pyx_t_9 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 342, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __pyx_t_12 = Py_TYPE(__pyx_t_11)->tp_iternext;
-      for (index=0; index < 5; index++) {
-        PyObject* item = __pyx_t_12(__pyx_t_11); if (unlikely(!item)) goto __pyx_L5_unpacking_failed;
-        __Pyx_GOTREF(item);
-        *(temps[index]) = item;
-      }
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_11), 5) < 0) __PYX_ERR(0, 340, __pyx_L1_error)
-      __pyx_t_12 = NULL;
-      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      __pyx_t_10 = Py_TYPE(__pyx_t_9)->tp_iternext;
+      index = 0; __pyx_t_4 = __pyx_t_10(__pyx_t_9); if (unlikely(!__pyx_t_4)) goto __pyx_L5_unpacking_failed;
+      __Pyx_GOTREF(__pyx_t_4);
+      index = 1; __pyx_t_2 = __pyx_t_10(__pyx_t_9); if (unlikely(!__pyx_t_2)) goto __pyx_L5_unpacking_failed;
+      __Pyx_GOTREF(__pyx_t_2);
+      index = 2; __pyx_t_8 = __pyx_t_10(__pyx_t_9); if (unlikely(!__pyx_t_8)) goto __pyx_L5_unpacking_failed;
+      __Pyx_GOTREF(__pyx_t_8);
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_10(__pyx_t_9), 3) < 0) __PYX_ERR(0, 342, __pyx_L1_error)
+      __pyx_t_10 = NULL;
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       goto __pyx_L6_unpacking_done;
       __pyx_L5_unpacking_failed:;
-      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __pyx_t_12 = NULL;
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __pyx_t_10 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 340, __pyx_L1_error)
+      __PYX_ERR(0, 342, __pyx_L1_error)
       __pyx_L6_unpacking_done:;
     }
-    __pyx_t_13 = __Pyx_PyInt_As_int(__pyx_t_4); if (unlikely((__pyx_t_13 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 340, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_4, 0); if (unlikely(!__pyx_t_11.memview)) __PYX_ERR(0, 342, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_14.memview)) __PYX_ERR(0, 340, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyObject_to_MemoryviewSlice_dc_double__const__(__pyx_t_2, 0); if (unlikely(!__pyx_t_12.memview)) __PYX_ERR(0, 342, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_13 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_8, 0); if (unlikely(!__pyx_t_13.memview)) __PYX_ERR(0, 342, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_double__const__(__pyx_t_9, 0); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 340, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long__const__(__pyx_t_10, 0); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 340, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_v_n = __pyx_t_13;
-    __Pyx_XDECREF_SET(__pyx_v_ratio, __pyx_t_2);
-    __pyx_t_2 = 0;
     __PYX_XDEC_MEMVIEW(&__pyx_v_tensor_indices, 1);
-    __pyx_v_tensor_indices = __pyx_t_14;
-    __pyx_t_14.memview = NULL;
-    __pyx_t_14.data = NULL;
+    __pyx_v_tensor_indices = __pyx_t_11;
+    __pyx_t_11.memview = NULL;
+    __pyx_t_11.data = NULL;
     __PYX_XDEC_MEMVIEW(&__pyx_v_interaction_tensor, 1);
-    __pyx_v_interaction_tensor = __pyx_t_15;
-    __pyx_t_15.memview = NULL;
-    __pyx_t_15.data = NULL;
+    __pyx_v_interaction_tensor = __pyx_t_12;
+    __pyx_t_12.memview = NULL;
+    __pyx_t_12.data = NULL;
     __PYX_XDEC_MEMVIEW(&__pyx_v_indices, 1);
-    __pyx_v_indices = __pyx_t_16;
-    __pyx_t_16.memview = NULL;
-    __pyx_t_16.data = NULL;
+    __pyx_v_indices = __pyx_t_13;
+    __pyx_t_13.memview = NULL;
+    __pyx_t_13.data = NULL;
 
-    /* "smol/correlations.pyx":341
- *
- *     for n, ratio, tensor_indices, interaction_tensor, indices in orbit_list:
+    /* "smol/correlations.pyx":343
+ *     n = 1
+ *     for tensor_indices, interaction_tensor, indices in orbit_list:
  *         I = indices.shape[0] # cluster index             # <<<<<<<<<<<<<<
  *         J = indices.shape[1] # index within cluster
  *         p_f, p_i = 0, 0
  */
     __pyx_v_I = (__pyx_v_indices.shape[0]);
 
-    /* "smol/correlations.pyx":342
- *     for n, ratio, tensor_indices, interaction_tensor, indices in orbit_list:
+    /* "smol/correlations.pyx":344
+ *     for tensor_indices, interaction_tensor, indices in orbit_list:
  *         I = indices.shape[0] # cluster index
  *         J = indices.shape[1] # index within cluster             # <<<<<<<<<<<<<<
  *         p_f, p_i = 0, 0
@@ -5993,140 +5988,147 @@ __pyx_t_6.strides[0] = __pyx_v_o_view.strides[1];
  */
     __pyx_v_J = (__pyx_v_indices.shape[1]);
 
-    /* "smol/correlations.pyx":343
+    /* "smol/correlations.pyx":345
  *         I = indices.shape[0] # cluster index
  *         J = indices.shape[1] # index within cluster
  *         p_f, p_i = 0, 0             # <<<<<<<<<<<<<<
  *         for i in range(I):
  *             ind_f, ind_i = 0, 0
  */
-    __pyx_t_17 = 0.0;
-    __pyx_t_18 = 0.0;
-    __pyx_v_p_f = __pyx_t_17;
-    __pyx_v_p_i = __pyx_t_18;
+    __pyx_t_14 = 0.0;
+    __pyx_t_15 = 0.0;
+    __pyx_v_p_f = __pyx_t_14;
+    __pyx_v_p_i = __pyx_t_15;
 
-    /* "smol/correlations.pyx":344
+    /* "smol/correlations.pyx":346
  *         J = indices.shape[1] # index within cluster
  *         p_f, p_i = 0, 0
  *         for i in range(I):             # <<<<<<<<<<<<<<
  *             ind_f, ind_i = 0, 0
  *             for j in range(J):
  */
-    __pyx_t_13 = __pyx_v_I;
-    __pyx_t_19 = __pyx_t_13;
-    for (__pyx_t_20 = 0; __pyx_t_20 < __pyx_t_19; __pyx_t_20+=1) {
-      __pyx_v_i = __pyx_t_20;
+    __pyx_t_16 = __pyx_v_I;
+    __pyx_t_17 = __pyx_t_16;
+    for (__pyx_t_18 = 0; __pyx_t_18 < __pyx_t_17; __pyx_t_18+=1) {
+      __pyx_v_i = __pyx_t_18;
 
-      /* "smol/correlations.pyx":345
+      /* "smol/correlations.pyx":347
  *         p_f, p_i = 0, 0
  *         for i in range(I):
  *             ind_f, ind_i = 0, 0             # <<<<<<<<<<<<<<
  *             for j in range(J):
  *                 ind_f += tensor_indices[j] * occu_f[indices[i, j]]
  */
-      __pyx_t_21 = 0;
-      __pyx_t_22 = 0;
-      __pyx_v_ind_f = __pyx_t_21;
-      __pyx_v_ind_i = __pyx_t_22;
+      __pyx_t_19 = 0;
+      __pyx_t_20 = 0;
+      __pyx_v_ind_f = __pyx_t_19;
+      __pyx_v_ind_i = __pyx_t_20;
 
-      /* "smol/correlations.pyx":346
+      /* "smol/correlations.pyx":348
  *         for i in range(I):
  *             ind_f, ind_i = 0, 0
  *             for j in range(J):             # <<<<<<<<<<<<<<
  *                 ind_f += tensor_indices[j] * occu_f[indices[i, j]]
  *                 ind_i += tensor_indices[j] * occu_i[indices[i, j]]
  */
-      __pyx_t_22 = __pyx_v_J;
-      __pyx_t_21 = __pyx_t_22;
-      for (__pyx_t_23 = 0; __pyx_t_23 < __pyx_t_21; __pyx_t_23+=1) {
-        __pyx_v_j = __pyx_t_23;
+      __pyx_t_20 = __pyx_v_J;
+      __pyx_t_19 = __pyx_t_20;
+      for (__pyx_t_21 = 0; __pyx_t_21 < __pyx_t_19; __pyx_t_21+=1) {
+        __pyx_v_j = __pyx_t_21;
 
-        /* "smol/correlations.pyx":347
+        /* "smol/correlations.pyx":349
  *             ind_f, ind_i = 0, 0
  *             for j in range(J):
  *                 ind_f += tensor_indices[j] * occu_f[indices[i, j]]             # <<<<<<<<<<<<<<
  *                 ind_i += tensor_indices[j] * occu_i[indices[i, j]]
- *             p_f += interaction_tensor[m, ind_f]
+ *             p_f += interaction_tensor[ind_f]
  */
+        __pyx_t_22 = __pyx_v_j;
+        __pyx_t_23 = __pyx_v_i;
         __pyx_t_24 = __pyx_v_j;
-        __pyx_t_25 = __pyx_v_i;
-        __pyx_t_26 = __pyx_v_j;
-        __pyx_t_27 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_25 * __pyx_v_indices.strides[0]) )) + __pyx_t_26)) )));
-        __pyx_v_ind_f = (__pyx_v_ind_f + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_24)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_27)) )))));
+        __pyx_t_25 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_23 * __pyx_v_indices.strides[0]) )) + __pyx_t_24)) )));
+        __pyx_v_ind_f = (__pyx_v_ind_f + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_22)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_f.data) + __pyx_t_25)) )))));
 
-        /* "smol/correlations.pyx":348
+        /* "smol/correlations.pyx":350
  *             for j in range(J):
  *                 ind_f += tensor_indices[j] * occu_f[indices[i, j]]
  *                 ind_i += tensor_indices[j] * occu_i[indices[i, j]]             # <<<<<<<<<<<<<<
- *             p_f += interaction_tensor[m, ind_f]
- *             p_i += interaction_tensor[m, ind_i]
+ *             p_f += interaction_tensor[ind_f]
+ *             p_i += interaction_tensor[ind_i]
  */
-        __pyx_t_26 = __pyx_v_j;
-        __pyx_t_25 = __pyx_v_i;
-        __pyx_t_27 = __pyx_v_j;
-        __pyx_t_24 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_25 * __pyx_v_indices.strides[0]) )) + __pyx_t_27)) )));
-        __pyx_v_ind_i = (__pyx_v_ind_i + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_26)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_24)) )))));
+        __pyx_t_24 = __pyx_v_j;
+        __pyx_t_23 = __pyx_v_i;
+        __pyx_t_25 = __pyx_v_j;
+        __pyx_t_22 = (*((long const  *) ( /* dim=1 */ ((char *) (((long const  *) ( /* dim=0 */ (__pyx_v_indices.data + __pyx_t_23 * __pyx_v_indices.strides[0]) )) + __pyx_t_25)) )));
+        __pyx_v_ind_i = (__pyx_v_ind_i + ((*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_tensor_indices.data) + __pyx_t_24)) ))) * (*((long const  *) ( /* dim=0 */ ((char *) (((long const  *) __pyx_v_occu_i.data) + __pyx_t_22)) )))));
       }
 
-      /* "smol/correlations.pyx":349
+      /* "smol/correlations.pyx":351
  *                 ind_f += tensor_indices[j] * occu_f[indices[i, j]]
  *                 ind_i += tensor_indices[j] * occu_i[indices[i, j]]
- *             p_f += interaction_tensor[m, ind_f]             # <<<<<<<<<<<<<<
- *             p_i += interaction_tensor[m, ind_i]
+ *             p_f += interaction_tensor[ind_f]             # <<<<<<<<<<<<<<
+ *             p_i += interaction_tensor[ind_i]
  *         o_view[1, n] = abs(p_f / I - ref_interaction_vector[n])
  */
-      __pyx_t_27 = __pyx_v_m;
       __pyx_t_25 = __pyx_v_ind_f;
-      __pyx_v_p_f = (__pyx_v_p_f + (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_interaction_tensor.data + __pyx_t_27 * __pyx_v_interaction_tensor.strides[0]) )) + __pyx_t_25)) ))));
+      __pyx_v_p_f = (__pyx_v_p_f + (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_interaction_tensor.data) + __pyx_t_25)) ))));
 
-      /* "smol/correlations.pyx":350
+      /* "smol/correlations.pyx":352
  *                 ind_i += tensor_indices[j] * occu_i[indices[i, j]]
- *             p_f += interaction_tensor[m, ind_f]
- *             p_i += interaction_tensor[m, ind_i]             # <<<<<<<<<<<<<<
+ *             p_f += interaction_tensor[ind_f]
+ *             p_i += interaction_tensor[ind_i]             # <<<<<<<<<<<<<<
  *         o_view[1, n] = abs(p_f / I - ref_interaction_vector[n])
  *         o_view[0, n] = abs(p_i / I - ref_interaction_vector[n])
  */
-      __pyx_t_25 = __pyx_v_m;
-      __pyx_t_27 = __pyx_v_ind_i;
-      __pyx_v_p_i = (__pyx_v_p_i + (*((double const  *) ( /* dim=1 */ ((char *) (((double const  *) ( /* dim=0 */ (__pyx_v_interaction_tensor.data + __pyx_t_25 * __pyx_v_interaction_tensor.strides[0]) )) + __pyx_t_27)) ))));
+      __pyx_t_25 = __pyx_v_ind_i;
+      __pyx_v_p_i = (__pyx_v_p_i + (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_interaction_tensor.data) + __pyx_t_25)) ))));
     }
 
-    /* "smol/correlations.pyx":351
- *             p_f += interaction_tensor[m, ind_f]
- *             p_i += interaction_tensor[m, ind_i]
+    /* "smol/correlations.pyx":353
+ *             p_f += interaction_tensor[ind_f]
+ *             p_i += interaction_tensor[ind_i]
  *         o_view[1, n] = abs(p_f / I - ref_interaction_vector[n])             # <<<<<<<<<<<<<<
  *         o_view[0, n] = abs(p_i / I - ref_interaction_vector[n])
- *     return out
+ *         n += 1
  */
-    __pyx_t_27 = __pyx_v_n;
-    __pyx_t_25 = 1;
-    __pyx_t_24 = __pyx_v_n;
-    *((double *) ( /* dim=1 */ ((char *) (((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_25 * __pyx_v_o_view.strides[0]) )) + __pyx_t_24)) )) = fabs(((__pyx_v_p_f / ((double)__pyx_v_I)) - (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_ref_interaction_vector.data) + __pyx_t_27)) )))));
+    __pyx_t_25 = __pyx_v_n;
+    __pyx_t_23 = 1;
+    __pyx_t_22 = __pyx_v_n;
+    *((double *) ( /* dim=1 */ ((char *) (((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_23 * __pyx_v_o_view.strides[0]) )) + __pyx_t_22)) )) = fabs(((__pyx_v_p_f / ((double)__pyx_v_I)) - (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_ref_interaction_vector.data) + __pyx_t_25)) )))));
 
-    /* "smol/correlations.pyx":352
- *             p_i += interaction_tensor[m, ind_i]
+    /* "smol/correlations.pyx":354
+ *             p_i += interaction_tensor[ind_i]
  *         o_view[1, n] = abs(p_f / I - ref_interaction_vector[n])
  *         o_view[0, n] = abs(p_i / I - ref_interaction_vector[n])             # <<<<<<<<<<<<<<
+ *         n += 1
  *     return out
  */
-    __pyx_t_27 = __pyx_v_n;
-    __pyx_t_24 = 0;
     __pyx_t_25 = __pyx_v_n;
-    *((double *) ( /* dim=1 */ ((char *) (((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_24 * __pyx_v_o_view.strides[0]) )) + __pyx_t_25)) )) = fabs(((__pyx_v_p_i / ((double)__pyx_v_I)) - (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_ref_interaction_vector.data) + __pyx_t_27)) )))));
+    __pyx_t_22 = 0;
+    __pyx_t_23 = __pyx_v_n;
+    *((double *) ( /* dim=1 */ ((char *) (((double *) ( /* dim=0 */ (__pyx_v_o_view.data + __pyx_t_22 * __pyx_v_o_view.strides[0]) )) + __pyx_t_23)) )) = fabs(((__pyx_v_p_i / ((double)__pyx_v_I)) - (*((double const  *) ( /* dim=0 */ ((char *) (((double const  *) __pyx_v_ref_interaction_vector.data) + __pyx_t_25)) )))));
 
-    /* "smol/correlations.pyx":340
- *     o_view[0] = 0  # empty cluster always irrelevant
+    /* "smol/correlations.pyx":355
+ *         o_view[1, n] = abs(p_f / I - ref_interaction_vector[n])
+ *         o_view[0, n] = abs(p_i / I - ref_interaction_vector[n])
+ *         n += 1             # <<<<<<<<<<<<<<
+ *     return out
+ */
+    __pyx_v_n = (__pyx_v_n + 1);
+
+    /* "smol/correlations.pyx":342
  *
- *     for n, ratio, tensor_indices, interaction_tensor, indices in orbit_list:             # <<<<<<<<<<<<<<
+ *     n = 1
+ *     for tensor_indices, interaction_tensor, indices in orbit_list:             # <<<<<<<<<<<<<<
  *         I = indices.shape[0] # cluster index
  *         J = indices.shape[1] # index within cluster
  */
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "smol/correlations.pyx":353
- *         o_view[1, n] = abs(p_f / I - ref_interaction_vector[n])
+  /* "smol/correlations.pyx":356
  *         o_view[0, n] = abs(p_i / I - ref_interaction_vector[n])
+ *         n += 1
  *     return out             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
@@ -6134,7 +6136,7 @@ __pyx_t_6.strides[0] = __pyx_v_o_view.strides[1];
   __pyx_r = __pyx_v_out;
   goto __pyx_L0;
 
-  /* "smol/correlations.pyx":302
+  /* "smol/correlations.pyx":303
  *
  *
  * cpdef interaction_distance_single_flip(const long[::1] occu_f,             # <<<<<<<<<<<<<<
@@ -6152,11 +6154,9 @@ __pyx_t_6.strides[0] = __pyx_v_o_view.strides[1];
   __PYX_XDEC_MEMVIEW(&__pyx_t_6, 1);
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_XDECREF(__pyx_t_11);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_14, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_15, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_16, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_11, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_12, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_13, 1);
   __Pyx_AddTraceback("smol.correlations.interaction_distance_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -6165,7 +6165,6 @@ __pyx_t_6.strides[0] = __pyx_v_o_view.strides[1];
   __PYX_XDEC_MEMVIEW(&__pyx_v_interaction_tensor, 1);
   __Pyx_XDECREF(__pyx_v_out);
   __PYX_XDEC_MEMVIEW(&__pyx_v_o_view, 1);
-  __Pyx_XDECREF(__pyx_v_ratio);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -6215,29 +6214,29 @@ static PyObject *__pyx_pw_4smol_12correlations_13interaction_distance_single_fli
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_occu_i)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("interaction_distance_single_flip", 1, 5, 5, 1); __PYX_ERR(0, 302, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("interaction_distance_single_flip", 1, 5, 5, 1); __PYX_ERR(0, 303, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_ref_interaction_vector)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("interaction_distance_single_flip", 1, 5, 5, 2); __PYX_ERR(0, 302, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("interaction_distance_single_flip", 1, 5, 5, 2); __PYX_ERR(0, 303, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_interactions)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("interaction_distance_single_flip", 1, 5, 5, 3); __PYX_ERR(0, 302, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("interaction_distance_single_flip", 1, 5, 5, 3); __PYX_ERR(0, 303, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_orbit_list)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("interaction_distance_single_flip", 1, 5, 5, 4); __PYX_ERR(0, 302, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("interaction_distance_single_flip", 1, 5, 5, 4); __PYX_ERR(0, 303, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "interaction_distance_single_flip") < 0)) __PYX_ERR(0, 302, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "interaction_distance_single_flip") < 0)) __PYX_ERR(0, 303, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
       goto __pyx_L5_argtuple_error;
@@ -6248,21 +6247,21 @@ static PyObject *__pyx_pw_4smol_12correlations_13interaction_distance_single_fli
       values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
     }
-    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 302, __pyx_L3_error)
-    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 303, __pyx_L3_error)
-    __pyx_v_ref_interaction_vector = __Pyx_PyObject_to_MemoryviewSlice_dc_double__const__(values[2], 0); if (unlikely(!__pyx_v_ref_interaction_vector.memview)) __PYX_ERR(0, 304, __pyx_L3_error)
-    __pyx_v_num_interactions = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_num_interactions == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 305, __pyx_L3_error)
+    __pyx_v_occu_f = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[0], 0); if (unlikely(!__pyx_v_occu_f.memview)) __PYX_ERR(0, 303, __pyx_L3_error)
+    __pyx_v_occu_i = __Pyx_PyObject_to_MemoryviewSlice_dc_long__const__(values[1], 0); if (unlikely(!__pyx_v_occu_i.memview)) __PYX_ERR(0, 304, __pyx_L3_error)
+    __pyx_v_ref_interaction_vector = __Pyx_PyObject_to_MemoryviewSlice_dc_double__const__(values[2], 0); if (unlikely(!__pyx_v_ref_interaction_vector.memview)) __PYX_ERR(0, 305, __pyx_L3_error)
+    __pyx_v_num_interactions = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_num_interactions == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 306, __pyx_L3_error)
     __pyx_v_orbit_list = ((PyObject*)values[4]);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("interaction_distance_single_flip", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 302, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("interaction_distance_single_flip", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 303, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("smol.correlations.interaction_distance_single_flip", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_orbit_list), (&PyList_Type), 1, "orbit_list", 1))) __PYX_ERR(0, 306, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_orbit_list), (&PyList_Type), 1, "orbit_list", 1))) __PYX_ERR(0, 307, __pyx_L1_error)
   __pyx_r = __pyx_pf_4smol_12correlations_12interaction_distance_single_flip(__pyx_self, __pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_ref_interaction_vector, __pyx_v_num_interactions, __pyx_v_orbit_list);
 
   /* function exit code */
@@ -6283,7 +6282,7 @@ static PyObject *__pyx_pf_4smol_12correlations_12interaction_distance_single_fli
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("interaction_distance_single_flip", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_4smol_12correlations_interaction_distance_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_ref_interaction_vector, __pyx_v_num_interactions, __pyx_v_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 302, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_4smol_12correlations_interaction_distance_single_flip(__pyx_v_occu_f, __pyx_v_occu_i, __pyx_v_ref_interaction_vector, __pyx_v_num_interactions, __pyx_v_orbit_list, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 303, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;

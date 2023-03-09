@@ -140,7 +140,7 @@ cpdef corr_distance_single_flip(const long[::1] occu_f,
     cdef const double[:, ::1] corr_tensors
     out = np.zeros((2, num_corr_functions))
     cdef double[:, ::1] o_view = out
-    o_view[0] = 0  # empty cluster always irrelevant
+    o_view[:, 0] = 0
 
     for n, tensor_indices, corr_tensors, indices in orbit_list:
         M = corr_tensors.shape[0]  # index of bit combos
@@ -217,6 +217,7 @@ cpdef interactions_from_occupancy(const long[::1] occu,
                                   const double offset,
                                   list orbit_list):
     """Computes the cluster interaction vector for a given encoded occupancy string.
+
     Args:
         occu (ndarray):
             encoded occupancy vector
@@ -235,13 +236,13 @@ cpdef interactions_from_occupancy(const long[::1] occu,
     cdef double p
     cdef const long[:, ::1] indices
     cdef const long[::1] tensor_indices
-    cdef const double[::1] interaction_tensors
+    cdef const double[::1] interaction_tensor
     out = np.zeros(num_interactions)
     cdef double[:] o_view = out
     o_view[0] = offset  # empty cluster
 
     n = 1
-    for tensor_indices, interaction_tensors, indices in orbit_list:
+    for tensor_indices, interaction_tensor, indices in orbit_list:
         I = indices.shape[0] # cluster index
         J = indices.shape[1] # index within cluster
         p = 0
@@ -249,7 +250,7 @@ cpdef interactions_from_occupancy(const long[::1] occu,
             index = 0
             for j in range(J):
                 index += tensor_indices[j] * occu[indices[i, j]]
-            p += interaction_tensors[index]
+            p += interaction_tensor[index]
         o_view[n] = p / I
         n += 1
 
@@ -328,16 +329,17 @@ cpdef interaction_distance_single_flip(const long[::1] occu_f,
         ndarray: 2D with cluster interaction vector distances from reference for each of
         occu_i and occu_f
     """
-    cdef int i, j, n, m, I, J, ind_i, ind_f
+    cdef int n, i, j, I, J, ind_i, ind_f
     cdef double p_i, p_f
     cdef const long[:, ::1] indices
     cdef const long[::1] tensor_indices
-    cdef const double[:, ::1] interaction_tensor
+    cdef const double[::1] interaction_tensor
     out = np.zeros((2, num_interactions))
     cdef double[:, ::1] o_view = out
-    o_view[0] = 0  # empty cluster always irrelevant
+    o_view[:, 0] = 0
 
-    for n, ratio, tensor_indices, interaction_tensor, indices in orbit_list:
+    n = 1
+    for tensor_indices, interaction_tensor, indices in orbit_list:
         I = indices.shape[0] # cluster index
         J = indices.shape[1] # index within cluster
         p_f, p_i = 0, 0
@@ -346,8 +348,9 @@ cpdef interaction_distance_single_flip(const long[::1] occu_f,
             for j in range(J):
                 ind_f += tensor_indices[j] * occu_f[indices[i, j]]
                 ind_i += tensor_indices[j] * occu_i[indices[i, j]]
-            p_f += interaction_tensor[m, ind_f]
-            p_i += interaction_tensor[m, ind_i]
+            p_f += interaction_tensor[ind_f]
+            p_i += interaction_tensor[ind_i]
         o_view[1, n] = abs(p_f / I - ref_interaction_vector[n])
         o_view[0, n] = abs(p_i / I - ref_interaction_vector[n])
+        n += 1
     return out
