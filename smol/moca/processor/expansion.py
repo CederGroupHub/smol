@@ -177,7 +177,9 @@ class ClusterDecompositionProcessor(Processor):
     high component systems.
     """
 
-    def __init__(self, cluster_subspace, supercell_matrix, interaction_tensors):
+    def __init__(
+        self, cluster_subspace, supercell_matrix, interaction_tensors, coefficients=None
+    ):
         """Initialize an ClusterDecompositionProcessor.
 
         Args:
@@ -190,6 +192,10 @@ class ClusterDecompositionProcessor(Processor):
                 Sequence of ndarray where each array corresponds to the
                 cluster interaction tensor. These should be in the same order as their
                 corresponding orbits in the given cluster_subspace
+            coefficients (ndarray): optional
+                coefficients of each mean cluster interaction tensor. This should often
+                be some multiple of the orbit multiplicities. Default is the orbit
+                multiplicities.
         """
         if len(interaction_tensors) != cluster_subspace.num_orbits:
             raise ValueError(
@@ -200,11 +206,12 @@ class ClusterDecompositionProcessor(Processor):
             )
 
         #  the orbit multiplicities play the role of coefficients here.
-        super().__init__(
-            cluster_subspace,
-            supercell_matrix,
-            coefficients=cluster_subspace.orbit_multiplicities,
+        coefficients = (
+            cluster_subspace.orbit_multiplicities
+            if coefficients is None
+            else coefficients
         )
+        super().__init__(cluster_subspace, supercell_matrix, coefficients=coefficients)
 
         self.num_orbits = self.cluster_subspace.num_orbits
         self._fac_tensors = interaction_tensors
