@@ -27,7 +27,7 @@ class MCKernelInterface(metaclass=ABCMeta):
     @property
     @abstractmethod
     def trace(self) -> StepTrace:
-        """Return the StepTrace object used to record the values for the propsed MC step.
+        """Return the StepTrace object used to record the values for the proposed step.
 
         The trace most often holds the occupancy, an acceptance value, the change in
         features and change in generalized enthalpy from the previous step.
@@ -70,7 +70,7 @@ class MCKernelInterface(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def set_aux_state(self, occupancies, *args, **kwargs):
+    def set_aux_state(self, occupancy, *args, **kwargs):
         """Set the auxiliary occupancies from initial or checkpoint values.
 
         This class should be used to setup any auxiliary values that are not recorded

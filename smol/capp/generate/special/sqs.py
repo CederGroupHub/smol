@@ -90,7 +90,8 @@ class SQSGenerator(ABC):
                     raise ValueError("supercell matrices must be 3x3")
                 if np.linalg.det(scm) != supercell_size:
                     raise ValueError(
-                        "supercell matrices must have determinant equal to supercell_size"
+                        "supercell matrices must have determinant equal to "
+                        "supercell_size"
                     )
         else:
             supercell_matrices = enumerate_supercell_matrices(
@@ -307,7 +308,8 @@ class StochasticSQSGenerator(SQSGenerator):
 
         if step_type != "swap":
             warnings.warn(
-                f"Step type {step_type} was provided.\n Swap steps are recommended, make sure this is what you want.",
+                f"Step type {step_type} was provided.\n Swap steps are recommended, "
+                f"make sure this is what you want.",
                 UserWarning,
             )
 
@@ -374,7 +376,8 @@ class StochasticSQSGenerator(SQSGenerator):
             shape = (len(self._processors), self._kernel.ensemble.num_sites)
             if initial_occupancies.shape != shape:
                 raise ValueError(
-                    f"initial occupancies must be of shape {shape}, got {initial_occupancies.shape}"
+                    f"initial occupancies must be of shape {shape},"
+                    f"got {initial_occupancies.shape}"
                 )
 
         if temperatures is None:
