@@ -1,14 +1,17 @@
 """Get constraints on variables from a processor."""
-from typing import List, Union
+from typing import List
 
 import cvxpy as cp
 import numpy as np
 from cvxpy.constraints.constraint import Constraint
 
 from smol.moca import CompositionSpace
+from smol.solver.upper_bound.indices import get_dim_id_to_var_ids_mapping
+
+__author__ = "Fengyu Xie"
 
 
-def get_normalization_constraints(
+def get_upper_bound_normalization_constraints(
     variables: cp.Variable, variable_indices: List[List[int]]
 ) -> List[Constraint]:
     """Get normalization constraints of variables on each site.
@@ -22,49 +25,15 @@ def get_normalization_constraints(
     Returns:
         List[Constraint].
     """
-    return [cp.sum(variables[indices]) == 1 for indices in variable_indices]
+    return [
+        cp.sum(variables[indices]) == 1
+        for indices in variable_indices
+        if len(indices) > 0
+    ]
 
 
-def get_dim_id_to_var_ids_mapping(
-    sublattice_dim_ids: List[List[int]],
-    variable_indices: List[List[int]],
-    sublattice_sites: List[List[int]],
-) -> List[Union[List[int], int]]:
-    """Get mapping from composition vector component index to variable indices.
-
-    Args:
-        sublattice_dim_ids(list[list[int]]):
-            Index of composition vector component for each species in each sub-lattice.
-        variable_indices(list[list[int]]):
-            List of variable indices corresponding to each active site index and
-            species indices in its site space.
-        sublattice_sites(list[list[int]]):
-            Index of sites in each sub-lattice of a super-cell.
-            variable_indices, composition_space and sublattice_sites must be generated
-            from the same processor!
-    Returns:
-        list[list[int]|int]:
-            Variable indices corresponding to each component index if the sub-lattice has
-            more than one species, or the number of sites in sub-lattice if the sub-lattice
-            has only one species.
-    """
-    n_dims = sum([len(dims) for dims in sublattice_dim_ids])
-    dim_id_to_var_ids = [[] for _ in range(n_dims)]
-    for sublattice_id, dim_ids in enumerate(sublattice_dim_ids):
-        sites = sublattice_sites[sublattice_id]
-        if len(dim_ids) == 1:  # Inactive sub-lattice.
-            dim_id = dim_ids[0]
-            # Save the number of sites as all occupied by a single species.
-            dim_id_to_var_ids[dim_id] = len(sites)
-        else:
-            for species_id, dim_id in enumerate(dim_ids):
-                dim_id_to_var_ids[dim_id] = [
-                    variable_indices[site_id][species_id] for site_id in sites
-                ]
-    return dim_id_to_var_ids
-
-
-def get_composition_space_constraints(
+# Not directly tested.
+def get_upper_bound_composition_space_constraints(
     variables: cp.Variable,
     variable_indices: List[List[int]],
     composition_space: CompositionSpace,
@@ -73,7 +42,8 @@ def get_composition_space_constraints(
 ) -> List[Constraint]:
     """Get constraints on species composition with CompositionSpace.
 
-    Supports charge balance and other generic composition constraints. See moca.CompositionSpace.
+    Supports charge balance and other generic composition constraints.
+    See moca.CompositionSpace.
     Args:
         variables(cp.Variable):
             cvxpy variables storing the ground-state result.
@@ -89,7 +59,7 @@ def get_composition_space_constraints(
             variable_indices, composition_space and sublattice_sites must be generated
             from the same processor!
     Returns:
-        List[Constraint].
+        list[Constraint]: Constraints corresponding to the given composition space.
     """
     # Get the variable indices corresponding to each dimension in "counts" format.
     dim_id_to_var_ids = get_dim_id_to_var_ids_mapping(
@@ -117,7 +87,7 @@ def get_composition_space_constraints(
         for dim_id, indices in enumerate(dim_id_to_var_ids):
             # Active sub-lattice.
             if isinstance(indices, list):
-                expression += variables[indices] * aa[dim_id]
+                expression += cp.sum(variables[indices]) * aa[dim_id]
             else:
                 expression += indices * aa[dim_id]
         constraints.append(expression == bb)
@@ -139,7 +109,7 @@ def get_composition_space_constraints(
         for dim_id, indices in enumerate(dim_id_to_var_ids):
             # Active sub-lattice.
             if isinstance(indices, list):
-                expression += variables[indices] * aa[dim_id]
+                expression += cp.sum(variables[indices]) * aa[dim_id]
             else:
                 expression += indices * aa[dim_id]
         constraints.append(expression <= bb)
@@ -161,9 +131,59 @@ def get_composition_space_constraints(
         for dim_id, indices in enumerate(dim_id_to_var_ids):
             # Active sub-lattice.
             if isinstance(indices, list):
-                expression += variables[indices] * aa[dim_id]
+                expression += cp.sum(variables[indices]) * aa[dim_id]
             else:
                 expression += indices * aa[dim_id]
         constraints.append(expression >= bb)
+
+    return constraints
+
+
+def get_upper_bound_fixed_composition_constraints(
+    variables: cp.Variable,
+    variable_indices: List[List[int]],
+    fixed_composition: List[int],
+    dim_ids_in_sublattices: List[List[int]],
+    sublattice_sites: List[List[int]],
+) -> List[Constraint]:
+    """Fix the count of species in the super-cell.
+
+    Used for searching ground-states in a canonical ensemble.
+    Args:
+        variables(cp.Variable):
+            cvxpy variables storing the ground-state result.
+        variable_indices(list[list[int]]):
+            List of variable indices corresponding to each active site index and
+            species indices in its site space.
+        fixed_composition(list[int]):
+            Amount of each species to be fixed in the super-cell, in CompositionSpace
+            "counts" format. You are fully responsible for setting the order of species
+            in the list correctly as would be generated by a CompositionSpace.
+        dim_ids_in_sublattices(List[List[int]]):
+            Indices of "counts" format composition vector corresponding to each species
+            on each sub-lattice.
+        sublattice_sites(list[list[int]]):
+            Index of sites in each sub-lattice of a super-cell.
+            variable_indices, composition_space and sublattice_sites must be generated
+            from the same processor!
+    Return:
+        list[Constraint]: Constraints corresponding to a fixed composition on each
+        sub-lattice.
+    """
+    dim_id_to_var_ids = get_dim_id_to_var_ids_mapping(
+        dim_ids_in_sublattices, variable_indices, sublattice_sites
+    )
+
+    constraints = []
+    for dim_id, indices in enumerate(dim_id_to_var_ids):
+        if isinstance(indices, list):
+            constraints.append(cp.sum(variables[indices]) == fixed_composition[dim_id])
+        elif fixed_composition[dim_id] != indices:
+            raise ValueError(
+                f"Composition component {dim_id} is an inactive"
+                f" sub-lattice with {indices} sites, but"
+                f" fixed_composition only has {fixed_composition[dim_id]}"
+                f" sites!"
+            )
 
     return constraints

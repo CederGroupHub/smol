@@ -6,6 +6,8 @@ import numpy as np
 
 from smol.moca.processor.base import Processor
 
+__author__ = "Fengyu Xie"
+
 
 def get_upper_bound_variables_from_processor(
     processor: Processor,
@@ -33,9 +35,6 @@ def get_upper_bound_variables_from_processor(
         else:
             variable_indices.append([])
     return cp.Variable(n_variables, boolean=True), variable_indices
-
-
-# TODO: implement lower-bound here in the future.
 
 
 def get_occupancy_from_variables(
