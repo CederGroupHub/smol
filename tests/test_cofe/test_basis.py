@@ -7,6 +7,7 @@ from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
 from pymatgen.core import Composition
 
+import smol.cofe.space._basis as basis
 from smol._utils import get_subclasses
 from smol.cofe.space import domain
 from tests.utils import assert_msonable

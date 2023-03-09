@@ -206,7 +206,7 @@ class ClusterDecompositionProcessor(Processor):
             coefficients=cluster_subspace.orbit_multiplicities,
         )
 
-        self.n_orbits = self.cluster_subspace.num_orbits
+        self.num_orbits = self.cluster_subspace.num_orbits
         self._fac_tensors = interaction_tensors
 
         # List of orbit information and supercell site indices to compute corr
@@ -250,7 +250,7 @@ class ClusterDecompositionProcessor(Processor):
         """
         return (
             interactions_from_occupancy(
-                occupancy, self.n_orbits, self._fac_tensors[0], self._orbit_list
+                occupancy, self.num_orbits, self._fac_tensors[0], self._orbit_list
             )
             * self.size
         )
@@ -274,13 +274,13 @@ class ClusterDecompositionProcessor(Processor):
             array: change in cluster interaction vector
         """
         occu_i = occupancy
-        delta_interactions = np.zeros(self.n_orbits)
+        delta_interactions = np.zeros(self.num_orbits)
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
             site_orbit_list = self._orbits_by_sites[f[0]]
             delta_interactions += delta_interactions_single_flip(
-                occu_f, occu_i, self.n_orbits, site_orbit_list
+                occu_f, occu_i, self.num_orbits, site_orbit_list
             )
             occu_i = occu_f
 

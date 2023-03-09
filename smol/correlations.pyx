@@ -107,7 +107,7 @@ cpdef delta_corr_single_flip(const long[::1] occu_f,
 
 cpdef corr_distance_single_flip(const long[::1] occu_f,
                                 const long[::1] occu_i,
-                                const double[::1] corr,
+                                const double[::1] ref_corr_vector,
                                 const int num_corr_functions,
                                 list orbit_list):
     """Computes the absolute distance of two correlation vectors separated by a single
@@ -120,7 +120,7 @@ cpdef corr_distance_single_flip(const long[::1] occu_f,
             encoded occupancy array with flip
         occu_i (ndarray):
             encoded occupancy array without flip
-        corr (ndarray):
+        ref_corr_vector (ndarray):
             reference correlation vector
         num_corr_functions (int):
             total number of bit orderings in expansion.
@@ -130,7 +130,8 @@ cpdef corr_distance_single_flip(const long[::1] occu_f,
              site indices of clusters)
 
     Returns:
-        ndarray: correlation vector difference
+        ndarray: 2D with correlation vector distances from reference for each of occu_i
+        and occu_f
     """
     cdef int i, j, n, m, I, J, M, ind_i, ind_f
     cdef double p_i, p_f
@@ -154,8 +155,8 @@ cpdef corr_distance_single_flip(const long[::1] occu_f,
                     ind_i += tensor_indices[j] * occu_i[indices[i, j]]
                 p_f += corr_tensors[m, ind_f]
                 p_i += corr_tensors[m, ind_i]
-            o_view[1, n] = abs(p_f / I - corr[n])
-            o_view[0, n] = abs(p_i / I - corr[n])
+            o_view[1, n] = abs(p_f / I - ref_corr_vector[n])
+            o_view[0, n] = abs(p_i / I - ref_corr_vector[n])
             n += 1
     return out
 
@@ -295,4 +296,58 @@ cpdef delta_interactions_single_flip(const long[::1] occu_f,
                 ind_f += tensor_indices[j] * occu_f[indices[i, j]]
             p += (interaction_tensor[ind_f] - interaction_tensor[ind_i])
         o_view[n] = p / ratio / I
+    return out
+
+
+cpdef interaction_distance_single_flip(const long[::1] occu_f,
+                                       const long[::1] occu_i,
+                                       const double[::1] ref_interaction_vector,
+                                       const int num_interactions,
+                                       list orbit_list):
+    """Computes the absolute distance of two cluster interaction vectors separated by a
+    single flip and a given correlation vector.
+
+    Unfortunately this scales just as bad as computing the full interaction vector.
+
+    Args:
+        occu_f (ndarray):
+            encoded occupancy array with flip
+        occu_i (ndarray):
+            encoded occupancy array without flip
+        ref_interaction_vector (ndarray):
+            reference cluster interaction vector
+        num_interactions (int):
+            total number of cluster interactions (orbits in cluster subspace).
+        site_orbit_list:
+            Information of all orbits that include the flip site.
+            List of tuples each with
+            (cluster ratio, flat tensor index array, flat cluster interaction tensor,
+             site indices of clusters)
+
+    Returns:
+        ndarray: 2D with cluster interaction vector distances from reference for each of
+        occu_i and occu_f
+    """
+    cdef int i, j, n, m, I, J, ind_i, ind_f
+    cdef double p_i, p_f
+    cdef const long[:, ::1] indices
+    cdef const long[::1] tensor_indices
+    cdef const double[:, ::1] interaction_tensor
+    out = np.zeros((2, num_interactions))
+    cdef double[:, ::1] o_view = out
+    o_view[0] = 0  # empty cluster always irrelevant
+
+    for n, ratio, tensor_indices, interaction_tensor, indices in orbit_list:
+        I = indices.shape[0] # cluster index
+        J = indices.shape[1] # index within cluster
+        p_f, p_i = 0, 0
+        for i in range(I):
+            ind_f, ind_i = 0, 0
+            for j in range(J):
+                ind_f += tensor_indices[j] * occu_f[indices[i, j]]
+                ind_i += tensor_indices[j] * occu_i[indices[i, j]]
+            p_f += interaction_tensor[m, ind_f]
+            p_i += interaction_tensor[m, ind_i]
+        o_view[1, n] = abs(p_f / I - ref_interaction_vector[n])
+        o_view[0, n] = abs(p_i / I - ref_interaction_vector[n])
     return out

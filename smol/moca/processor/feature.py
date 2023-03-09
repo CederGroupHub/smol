@@ -13,7 +13,7 @@ import numpy as np
 
 from smol.cofe.space.clusterspace import ClusterSubspace
 from smol.correlations import corr_distance_single_flip
-from smol.moca.processor import ClusterExpansionProcessor
+from smol.moca.processor import ClusterDecompositionProcessor, ClusterExpansionProcessor
 from smol.moca.processor._base import Processor
 
 
@@ -292,6 +292,130 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
                     distance_vector[range(orbit.bit_id, orbit.bit_id + len(orbit))]
                     <= self.match_tol
                 ):
+                    max_matched_diameters[size] = orbit.base_cluster.diameter
+                else:
+                    break
+
+        return min(max_matched_diameters.values())
+
+
+class InteractionDistanceProcessor(
+    FeatureDistanceProcessor, ClusterDecompositionProcessor
+):
+    """InteractionDistanceProcessor to compute distances from a fixed cluster interaction vector.
+
+    The distance used to measure distance is,
+
+    .. math::
+
+        d = -wL + ||W^T(f - f_T)||_1
+
+    where f is the cluster interaction vector, f_T is the target vector, and L is the
+    diameter for which all correlation values of clusters of smaller diameter are exactly
+    equal to the target, and w is a weight for the L term. And W is a diagonal matrix
+    of optional weights for each correlation.
+
+    Following the proposal in the following publication but applied to cluster interaction vectors,
+    https://doi.org/10.1016/j.calphad.2013.06.006
+    """
+
+    def __init__(
+        self,
+        cluster_subspace,
+        supercell_matrix,
+        interaction_tensors,
+        target_vector=None,
+        match_weight=1.0,
+        target_weights=None,
+        match_tol=1e-5,
+    ):
+        """Initialize a CorrelationDistanceProcessor.
+
+        Args:
+            cluster_subspace (ClusterSubspace):
+                a cluster subspace
+            supercell_matrix (ndarray):
+                an array representing the supercell matrix with respect to the
+                Cluster Expansion prim structure.
+            interaction_tensors (sequence of ndarray):
+                Sequence of ndarray where each array corresponds to the
+                cluster interaction tensor. These should be in the same order as their
+                corresponding orbits in the given cluster_subspace
+            target_vector (ndarray): optional
+                target correaltion vector, if None given as vector of zeros is used.
+            match_weight (float): optional
+                weight for the in the wL term above. That is how much to weight the
+                largest diameter below which all correlations are matched exactly.
+                Set to any number >0 to use this term. Default is 1.0. to ignore it
+                set it to zero.
+            match_tol (float): optional
+                tolerance for matching features. Default is 1e-8.
+            target_weights (ndarray): optional
+                Weights for the absolute differences each correlation when calculating
+                the total distance. If None, then all correlations are weighted equally.
+        """
+        if target_vector is None:
+            target_vector = np.zeros(cluster_subspace.num_orbits - 1)
+
+        if target_weights is None:
+            target_weights = np.ones(cluster_subspace.num_orbits - 1)
+
+        super().__init__(
+            cluster_subspace,
+            supercell_matrix,
+            interaction_tensors=interaction_tensors,
+            target_vector=target_vector,
+            match_weight=match_weight,
+            target_weights=target_weights,
+            match_tol=match_tol,
+        )
+
+    def compute_feature_vector_distances(self, occupancy, flips):
+        """Compute the distance of correlation vectors separated by given flips from the target.
+
+        Args:
+            occupancy (ndarray):
+                encoded occupancy array
+            flips (list of tuple):
+                list of tuples with two elements. Each tuple represents a single flip where
+                the first element is the index of the site in the occupancy array and the
+                second element is the index for the new species to place at that site.
+
+        Returns:
+            ndarray: 2D distance vector where the first row corresponds to correlations before flips
+        """
+        occu_i = occupancy
+        interaction_distances = np.zeros((2, self.num_orbits))
+        for f in flips:
+            occu_f = occu_i.copy()
+            occu_f[f[0]] = f[1]
+            interaction_distances += corr_distance_single_flip(
+                occu_f,
+                occu_i,
+                self.target,
+                self.num_orbits,
+                self._orbit_list,
+            )
+            occu_i = occu_f
+
+        return interaction_distances
+
+    def exact_match_max_diameter(self, distance_vector):
+        """
+        Get the largest diameter for which all features are exactly matched.
+
+        Args:
+            distance_vector (ndarray):
+                feature vector
+
+        Returns:
+            float: largest diameter
+        """
+        max_matched_diameters = {}
+        for size, orbits in self.cluster_subspace.orbits_by_size.items():
+            max_matched_diameters[size] = 0
+            for i, orbit in enumerate(orbits):
+                if distance_vector[i] <= self.match_tol:
                     max_matched_diameters[size] = orbit.base_cluster.diameter
                 else:
                     break
