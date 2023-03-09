@@ -64,7 +64,7 @@ class ClusterExpansionProcessor(Processor):
             )
 
         # List of orbit information and supercell site indices to compute corr
-        self._orbit_list = cluster_subspace.gen_orbit_list(supercell_matrix)
+        self._orbit_list = cluster_subspace.generate_orbit_list(supercell_matrix)
 
         # Dictionary of orbits by site index and information
         # necessary to compute local changes in correlation vectors from flips

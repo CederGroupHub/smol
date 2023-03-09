@@ -327,7 +327,7 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
             corr_from_occupancy(
                 occu,
                 cluster_subspace.num_corr_functions,
-                cluster_subspace.gen_orbit_list(supercell_matrix),
+                cluster_subspace.generate_orbit_list(supercell_matrix),
             )
             for occu in occus
         ]
@@ -338,7 +338,7 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
             corr_from_occupancy(
                 occu,
                 cluster_subspace.num_corr_functions,
-                cluster_subspace.gen_orbit_list(matrix2),
+                cluster_subspace.generate_orbit_list(matrix2),
             )
             for occu in occus2
         ]
@@ -349,7 +349,7 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
             corr_from_occupancy(
                 occu,
                 cluster_subspace.num_corr_functions,
-                cluster_subspace.gen_orbit_list(matrix3),
+                cluster_subspace.generate_orbit_list(matrix3),
             )
             for occu in occus3
         ]

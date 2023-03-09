@@ -11,7 +11,7 @@ from smol.cofe.space.domain import Vacancy
 
 
 # TODO alloy encoding/decoding and also allow it for initial occus in smapler, etc
-def gen_random_ordered_occupancy(
+def generate_random_ordered_occupancy(
     processor,
     composition=None,
     charge_neutral=False,

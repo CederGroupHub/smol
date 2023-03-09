@@ -626,7 +626,7 @@ class ClusterSubspace(MSONable):
         occu = np.array(occu, dtype=int)
 
         corr = corr_from_occupancy(
-            occu, self.num_corr_functions, self.gen_orbit_list(scmatrix)
+            occu, self.num_corr_functions, self.generate_orbit_list(scmatrix)
         )
         size = self.num_prims_from_matrix(scmatrix)
 
@@ -1095,7 +1095,7 @@ class ClusterSubspace(MSONable):
 
         return sub_fun_ids
 
-    def gen_orbit_list(self, scmatrix):
+    def generate_orbit_list(self, scmatrix):
         """
         Generate list of data to compute correlation vectors.
 
