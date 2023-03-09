@@ -161,57 +161,6 @@ cpdef corr_distance_single_flip(const long[::1] occu_f,
     return out
 
 
-cpdef delta_ewald_single_flip(const long[::1] occu_f,
-                              const long[::1] occu_i,
-                              const double[:, ::1] ewald_matrix,
-                              const long[:, ::1] ewald_indices,
-                              const int site_ind):
-    """Compute the change in electrostatic interaction energy from a flip.
-
-    Args:
-        occu_f (ndarray):
-            encoded occupancy array with flip
-        occu_i (ndarray):
-            encoded occupancy array without flip
-        ewald_matrix (ndarray):
-            Ewald matrix for electrostatic interactions
-        ewald_indices (ndarray):
-            2D array of indices corresponding to a specific site occupation
-            in the ewald matrix
-        site_ind (int):
-            site index for site being flipped
-
-    Returns:
-        float: electrostatic interaction energy difference
-    """
-    cdef int i, j, k, add, sub
-    cdef bint ok
-    cdef double out = 0
-    cdef double out_k
-
-    # values of -1 are vacancies and hence don't have ewald indices
-    add = ewald_indices[site_ind, occu_f[site_ind]]
-    sub = ewald_indices[site_ind, occu_i[site_ind]]
-
-    for k in range(occu_f.shape[0]):
-        i = ewald_indices[k, occu_f[k]]
-        out_k = 0
-        if i != -1 and add != -1:
-            if i != add:
-                out_k = out_k + 2 * ewald_matrix[i, add]
-            else:
-                out_k = out_k + ewald_matrix[i, add]
-
-        j = ewald_indices[k, occu_i[k]]
-        if j != -1 and sub != -1:
-            if j != sub:
-                out_k = out_k - 2 * ewald_matrix[j, sub]
-            else:
-                out_k = out_k - ewald_matrix[j, sub]
-        out += out_k
-    return out
-
-
 cpdef interactions_from_occupancy(const long[::1] occu,
                                   const int num_interactions,
                                   const double offset,
@@ -353,4 +302,55 @@ cpdef interaction_distance_single_flip(const long[::1] occu_f,
         o_view[1, n] = abs(p_f / I - ref_interaction_vector[n])
         o_view[0, n] = abs(p_i / I - ref_interaction_vector[n])
         n += 1
+    return out
+
+
+cpdef delta_ewald_single_flip(const long[::1] occu_f,
+                              const long[::1] occu_i,
+                              const double[:, ::1] ewald_matrix,
+                              const long[:, ::1] ewald_indices,
+                              const int site_ind):
+    """Compute the change in electrostatic interaction energy from a flip.
+
+    Args:
+        occu_f (ndarray):
+            encoded occupancy array with flip
+        occu_i (ndarray):
+            encoded occupancy array without flip
+        ewald_matrix (ndarray):
+            Ewald matrix for electrostatic interactions
+        ewald_indices (ndarray):
+            2D array of indices corresponding to a specific site occupation
+            in the ewald matrix
+        site_ind (int):
+            site index for site being flipped
+
+    Returns:
+        float: electrostatic interaction energy difference
+    """
+    cdef int i, j, k, add, sub
+    cdef bint ok
+    cdef double out = 0
+    cdef double out_k
+
+    # values of -1 are vacancies and hence don't have ewald indices
+    add = ewald_indices[site_ind, occu_f[site_ind]]
+    sub = ewald_indices[site_ind, occu_i[site_ind]]
+
+    for k in range(occu_f.shape[0]):
+        i = ewald_indices[k, occu_f[k]]
+        out_k = 0
+        if i != -1 and add != -1:
+            if i != add:
+                out_k = out_k + 2 * ewald_matrix[i, add]
+            else:
+                out_k = out_k + ewald_matrix[i, add]
+
+        j = ewald_indices[k, occu_i[k]]
+        if j != -1 and sub != -1:
+            if j != sub:
+                out_k = out_k - 2 * ewald_matrix[j, sub]
+            else:
+                out_k = out_k - ewald_matrix[j, sub]
+        out += out_k
     return out
