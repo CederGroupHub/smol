@@ -14,6 +14,7 @@ from smol.moca.processor import (
     ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
     CompositeProcessor,
+    CorrelationDistanceProcessor,
     EwaldProcessor,
 )
 from tests.utils import gen_fake_training_data
@@ -100,6 +101,40 @@ def single_subspace(single_structure):
     return subspace
 
 
+# fixture for all processors
+@pytest.fixture(
+    params=["expansion", "decomposition", "ewald", "composite", "corr_distance"],
+    scope="module",
+)
+def processor(cluster_subspace, rng, request):
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
+    scmatrix = 3 * np.eye(3)
+
+    if request.param == "expansion":
+        proc = ClusterExpansionProcessor(cluster_subspace, scmatrix, coefficients=coefs)
+    elif request.param == "decomposition":
+        expansion = ClusterExpansion(cluster_subspace, coefs)
+        proc = ClusterDecompositionProcessor(
+            cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
+        )
+    elif request.param == "ewald":
+        proc = EwaldProcessor(cluster_subspace, scmatrix, EwaldTerm(), coefficient=1.0)
+    elif request.param == "composite":
+        proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
+        proc.add_processor(
+            ClusterExpansionProcessor(cluster_subspace, scmatrix, coefficients=coefs)
+        )
+        proc.add_processor(
+            EwaldProcessor(cluster_subspace, scmatrix, EwaldTerm(), coefficient=1.0)
+        )
+    elif "corr_distance":
+        print(cluster_subspace.external_terms, "!!!")
+        proc = CorrelationDistanceProcessor(cluster_subspace, scmatrix)
+
+    yield proc
+    cluster_subspace._external_terms = []  # Ewald processor will add one..
+
+
 @pytest.fixture(scope="module")
 def ce_processor(cluster_subspace, rng):
     coefs = 2 * rng.random(cluster_subspace.num_corr_functions)
@@ -109,24 +144,25 @@ def ce_processor(cluster_subspace, rng):
     )
 
 
-@pytest.fixture(params=["CE", "CD"], scope="module")
+@pytest.fixture(params=["expansion", "decomposition"], scope="module")
 def composite_processor(cluster_subspace_ewald, rng, request):
     coefs = 2 * np.random.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace_ewald, supercell_matrix=scmatrix)
-    if request.param == "CE":
+    if request.param == "expansion":
         proc.add_processor(
             ClusterExpansionProcessor(
                 cluster_subspace_ewald, scmatrix, coefficients=coefs[:-1]
             )
         )
-    else:
+    else:  # elif request.param == "decomposition":
         expansion = ClusterExpansion(cluster_subspace_ewald, coefs)
         proc.add_processor(
             ClusterDecompositionProcessor(
                 cluster_subspace_ewald, scmatrix, expansion.cluster_interaction_tensors
             )
         )
+
     proc.add_processor(
         EwaldProcessor(
             cluster_subspace_ewald, scmatrix, EwaldTerm(), coefficient=coefs[-1]

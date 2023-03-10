@@ -15,7 +15,7 @@ from smol.cofe import ClusterSubspace
 from smol.moca import Ensemble, SampleContainer, Sampler
 from smol.moca._trace import Trace
 from smol.moca.kernel import MulticellMetropolis, mckernel_factory
-from smol.moca.processor import FeatureDistanceProcessor
+from smol.moca.processor.feature import FeatureDistanceProcessor
 
 SQS = namedtuple("SQS", ["score", "features", "supercell_matrix", "structure"])
 
@@ -383,8 +383,6 @@ class StochasticSQSGenerator(SQSGenerator):
         if temperatures is None:
             temperatures = np.linspace(5.0, 0.01, 20)  # TODO benchmark this
 
-        # TODO need to have a way to set the initial occupancies for all the kernels
-        #  here....
         self._sampler.anneal(
             temperatures, mcmc_steps, initial_occupancies=initial_occupancies, **kwargs
         )

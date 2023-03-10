@@ -10,12 +10,12 @@ to run Monte Carlo sampling.
 from .composite import CompositeProcessor
 from .ewald import EwaldProcessor
 from .expansion import ClusterDecompositionProcessor, ClusterExpansionProcessor
-from .feature import FeatureDistanceProcessor
+from .feature import CorrelationDistanceProcessor
 
 __all__ = [
     "CompositeProcessor",
     "ClusterExpansionProcessor",
     "ClusterDecompositionProcessor",
     "EwaldProcessor",
-    "FeatureDistanceProcessor",
+    "CorrelationDistanceProcessor",
 ]
