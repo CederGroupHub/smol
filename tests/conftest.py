@@ -16,6 +16,7 @@ from smol.moca.processor import (
     CompositeProcessor,
     CorrelationDistanceProcessor,
     EwaldProcessor,
+    InteractionDistanceProcessor,
 )
 from tests.utils import gen_fake_training_data
 
@@ -103,7 +104,14 @@ def single_subspace(single_structure):
 
 # fixture for all processors
 @pytest.fixture(
-    params=["expansion", "decomposition", "ewald", "composite", "corr_distance"],
+    params=[
+        "expansion",
+        "decomposition",
+        "ewald",
+        "composite",
+        "corr_distance",
+        "int_distance",
+    ],
     scope="module",
 )
 def processor(cluster_subspace, rng, request):
@@ -127,9 +135,13 @@ def processor(cluster_subspace, rng, request):
         proc.add_processor(
             EwaldProcessor(cluster_subspace, scmatrix, EwaldTerm(), coefficient=1.0)
         )
-    elif "corr_distance":
-        print(cluster_subspace.external_terms, "!!!")
+    elif request.param == "corr_distance":
         proc = CorrelationDistanceProcessor(cluster_subspace, scmatrix)
+    else:
+        expansion = ClusterExpansion(cluster_subspace, coefs)
+        proc = InteractionDistanceProcessor(
+            cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
+        )
 
     yield proc
     cluster_subspace._external_terms = []  # Ewald processor will add one..
@@ -233,5 +245,5 @@ def structure_wrangler(single_subspace, rng):
     for entry in gen_fake_training_data(single_subspace.structure, n=10, rng=rng):
         wrangler.add_entry(entry, weights={"random": 2.0})
     yield wrangler
-    # force remove any external terms added in tetts
+    # force remove any external terms added in tests
     wrangler.cluster_subspace._external_terms = []

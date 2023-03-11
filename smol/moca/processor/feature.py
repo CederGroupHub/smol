@@ -72,7 +72,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
                 additional keyword arguments to instantiate the underlying processor
                 being inherited from.
         """
-        self.target = target_vector
+        self.target_vector = target_vector
         if match_weight < 0:
             raise ValueError("The match weight must be a positive number.")
         self.match_tol = match_tol
@@ -135,7 +135,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         feature_vector = (
             super().compute_feature_vector(occupancy) / self.size
         )  # remove scaling
-        feature_vector[1:] = np.abs(feature_vector[1:] - self.target)
+        feature_vector[1:] = np.abs(feature_vector[1:] - self.target_vector)
 
         if self.coefs[0] > 0:
             feature_vector[0] = self.exact_match_max_diameter(feature_vector)
@@ -174,7 +174,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
     def as_dict(self):
         """Return a dictionary representation of the processor."""
         d = super().as_dict()
-        d["target"] = self.target.tolist()
+        d["target_vector"] = self.target_vector.tolist()
         d["match_weight"] = -self.coefs[0]
         return d
 
@@ -183,12 +183,19 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         """Create a processor from a dictionary representation."""
         cluster_subspace = ClusterSubspace.from_dict(d.pop("cluster_subspace"))
         supercell_matrix = np.array(d.pop("supercell_matrix"))
-        target = np.array(d.pop("target"))
+        target_vector = np.array(d.pop("target_vector"))
         match_weight = d.pop("match_weight")
 
         # remove @ and coefficient values:
         d = {k: v for k, v in d.items() if "@" not in k and k != "coefficients"}
-        return cls(cluster_subspace, supercell_matrix, target, match_weight, **d)
+        print(d.keys())
+        return cls(
+            cluster_subspace,
+            supercell_matrix=supercell_matrix,
+            target_vector=target_vector,
+            match_weight=match_weight,
+            **d
+        )
 
 
 class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionProcessor):
@@ -227,7 +234,7 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
                 an array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
             target_vector (ndarray): optional
-                target correaltion vector, if None given as vector of zeros is used.
+                target correlation vector, if None given as vector of zeros is used.
             match_weight (float): optional
                 weight for the in the wL term above. That is how much to weight the
                 largest diameter below which all correlations are matched exactly.
@@ -283,7 +290,7 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
             corr_distances += corr_distance_single_flip(
                 occu_f,
                 occu_i,
-                self.target,
+                self.target_vector,
                 self.num_corr_functions,
                 self._orbit_list,
             )
@@ -381,6 +388,10 @@ class InteractionDistanceProcessor(
         if target_weights is None:
             target_weights = np.ones(cluster_subspace.num_orbits - 1)
 
+        interaction_tensors = tuple(
+            np.array(interaction) for interaction in interaction_tensors
+        )
+
         super().__init__(
             cluster_subspace,
             supercell_matrix,
@@ -415,7 +426,7 @@ class InteractionDistanceProcessor(
             interaction_distances += interaction_distance_single_flip(
                 occu_f,
                 occu_i,
-                self.target,
+                self.target_vector,
                 self.num_orbits,
                 self._orbit_list,
             )

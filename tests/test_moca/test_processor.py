@@ -11,7 +11,9 @@ from smol.moca.processor import (
     ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
     CompositeProcessor,
+    CorrelationDistanceProcessor,
     EwaldProcessor,
+    InteractionDistanceProcessor,
 )
 from smol.moca.processor._base import Processor
 from tests.utils import assert_msonable, gen_random_ordered_structure
@@ -44,6 +46,36 @@ def ewald_processor(cluster_subspace, rng, request):
         coefficient=coef,
         ewald_term=ewald_term,
     )
+
+
+@pytest.fixture(params=["correlation", "interaction"])
+def processor_distance_processor(cluster_subspace, rng, request):
+    # return a processor and the corresponding distance processor
+    scmatrix = 3 * np.eye(3)
+    coefs = np.ones(len(cluster_subspace))
+    if request.param == "correlation":
+        target_weights = rng.random(len(cluster_subspace) - 1)
+        procs = (
+            ClusterExpansionProcessor(cluster_subspace, scmatrix, coefs),
+            CorrelationDistanceProcessor(
+                cluster_subspace, scmatrix, target_weights=target_weights
+            ),
+        )
+    else:
+        expansion = ClusterExpansion(cluster_subspace, coefs)
+        target_weights = rng.random(cluster_subspace.num_orbits - 1)
+        procs = (
+            ClusterDecompositionProcessor(
+                cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
+            ),
+            InteractionDistanceProcessor(
+                cluster_subspace,
+                scmatrix,
+                expansion.cluster_interaction_tensors,
+                target_weights=target_weights,
+            ),
+        )
+    return procs
 
 
 def test_encode_decode_property(ce_processor, rng):
@@ -258,7 +290,65 @@ def test_bad_composite(cluster_subspace, rng):
         )
 
 
-# test feature distances by running the feat distance processor and compare with a
-# the standard processor and difference
-def test_distance_processor(ce_processor):
+def test_distance_processor(processor_distance_processor, rng):
+    # test distance processor results vs compute directly from the corresponding
+    # processor
+    processor, distance_processor = processor_distance_processor
+
+    for _ in range(5):
+        occu = _gen_unconstrained_ordered_occu(processor.get_sublattices(), rng=rng)
+
+        # remove first entry since it is the "exact match diameter" in the distance metric
+        expected = abs(
+            processor.compute_feature_vector(occu)[1:] / processor.size
+            - distance_processor.target_vector
+        )
+        actual = distance_processor.compute_feature_vector(occu)
+        npt.assert_allclose(actual[1:], expected)
+
+        diameter = distance_processor.exact_match_max_diameter(actual)
+        expected = np.dot(
+            distance_processor.coefs, np.concatenate([[diameter], expected])
+        )
+        actual = distance_processor.compute_property(occu)
+        assert actual == pytest.approx(expected)
+
+        for _ in range(100):
+            active_sublattices = [
+                sublatt for sublatt in processor.get_sublattices() if sublatt.is_active
+            ]
+            sublatt = rng.choice(active_sublattices)
+            site = rng.choice(sublatt.sites)
+            new_sp = rng.choice(sublatt.encoding)
+            new_occu = occu.copy()
+            new_occu[site] = new_sp
+            flips = [(site, new_sp)]
+
+            dist_f = abs(
+                processor.compute_feature_vector(new_occu)[1:] / processor.size
+                - distance_processor.target_vector
+            )
+            dist_i = abs(
+                processor.compute_feature_vector(occu)[1:] / processor.size
+                - distance_processor.target_vector
+            )
+
+            distances = distance_processor.compute_feature_vector_distances(occu, flips)
+
+            npt.assert_allclose(distances[0][1:], dist_i, rtol=RTOL, atol=ATOL)
+            npt.assert_allclose(distances[1][1:], dist_f, rtol=RTOL, atol=ATOL)
+
+            diameter_i = distance_processor.exact_match_max_diameter(distances[0])
+            diameter_f = distance_processor.exact_match_max_diameter(distances[1])
+
+            expected = np.dot(
+                distance_processor.coefs,
+                np.concatenate([[diameter_f - diameter_i], dist_f - dist_i]),
+            )
+            actual = distance_processor.compute_property_change(occu, flips)
+            assert actual == pytest.approx(expected)
+
+
+# TODO write this...
+def test_exact_match_max_diameter(processor):
     pass
