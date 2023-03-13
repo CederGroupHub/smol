@@ -20,7 +20,7 @@ from smol.moca.processor import ClusterDecompositionProcessor, ClusterExpansionP
 from smol.moca.processor._base import Processor
 
 
-class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
+class DistanceProcessor(Processor, metaclass=ABCMeta):
     """Abstract class to compute distance from a fixed feature vector.
 
     The distance used to measure distance is,
@@ -198,7 +198,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         )
 
 
-class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionProcessor):
+class CorrelationDistanceProcessor(DistanceProcessor, ClusterExpansionProcessor):
     """CorrelationDistanceProcessor to compute distance from a fixed correlation vector.
 
     The distance used to measure distance is,
@@ -324,8 +324,8 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
         return min(max_matched_diameters.values())
 
 
-class InteractionDistanceProcessor(
-    FeatureDistanceProcessor, ClusterDecompositionProcessor
+class ClusterInteractionDistanceProcessor(
+    DistanceProcessor, ClusterDecompositionProcessor
 ):
     """Compute distances from a fixed cluster interaction vector.
 

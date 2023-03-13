@@ -16,7 +16,7 @@ from smol.moca.processor import (
     CompositeProcessor,
     CorrelationDistanceProcessor,
     EwaldProcessor,
-    InteractionDistanceProcessor,
+    ClusterInteractionDistanceProcessor,
 )
 from tests.utils import gen_fake_training_data
 
@@ -139,7 +139,7 @@ def processor(cluster_subspace, rng, request):
         proc = CorrelationDistanceProcessor(cluster_subspace, scmatrix)
     else:
         expansion = ClusterExpansion(cluster_subspace, coefs)
-        proc = InteractionDistanceProcessor(
+        proc = ClusterInteractionDistanceProcessor(
             cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
         )
 

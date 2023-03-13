@@ -15,7 +15,7 @@ from smol.cofe import ClusterSubspace
 from smol.moca import Ensemble, SampleContainer, Sampler
 from smol.moca._trace import Trace
 from smol.moca.kernel import MulticellMetropolis, mckernel_factory
-from smol.moca.processor.feature import FeatureDistanceProcessor
+from smol.moca.processor.feature import DistanceProcessor
 
 SQS = namedtuple("SQS", ["score", "features", "supercell_matrix", "structure"])
 
@@ -101,7 +101,7 @@ class SQSGenerator(ABC):
         self._processors = [
             derived_class_factory(
                 feature_type.capitalize() + "DistanceProcessor",
-                FeatureDistanceProcessor,
+                DistanceProcessor,
                 cluster_subspace,
                 scm,
                 target_vector=target_vector,

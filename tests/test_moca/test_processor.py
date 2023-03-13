@@ -13,7 +13,7 @@ from smol.moca.processor import (
     CompositeProcessor,
     CorrelationDistanceProcessor,
     EwaldProcessor,
-    InteractionDistanceProcessor,
+    ClusterInteractionDistanceProcessor,
 )
 from smol.moca.processor._base import Processor
 from tests.utils import assert_msonable, gen_random_ordered_structure
@@ -68,7 +68,7 @@ def processor_distance_processor(cluster_subspace, rng, request):
             ClusterDecompositionProcessor(
                 cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
             ),
-            InteractionDistanceProcessor(
+            ClusterInteractionDistanceProcessor(
                 cluster_subspace,
                 scmatrix,
                 expansion.cluster_interaction_tensors,
