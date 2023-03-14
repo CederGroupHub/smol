@@ -6,7 +6,7 @@ import numpy as np
 from cvxpy.constraints.constraint import Constraint
 
 from smol.moca import CompositionSpace
-from smol.solver.upper_bound.indices import get_dim_id_to_var_ids_mapping
+from smol.solver.upper_bound.utils.indices import get_dim_id_to_var_ids_mapping
 
 __author__ = "Fengyu Xie"
 

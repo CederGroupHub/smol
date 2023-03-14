@@ -12,7 +12,7 @@ from smol.moca.processor import (
     ClusterExpansionProcessor,
     EwaldProcessor,
 )
-from smol.solver.upper_bound.indices import (
+from smol.solver.upper_bound.utils.indices import (
     get_dim_id_to_var_ids_mapping,
     get_ewald_id_to_var_id_mapping,
 )
