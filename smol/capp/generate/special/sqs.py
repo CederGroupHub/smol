@@ -88,7 +88,7 @@ class SQSGenerator(ABC):
             for scm in supercell_matrices:
                 if scm.shape != (3, 3):
                     raise ValueError("supercell matrices must be 3x3")
-                if np.linalg.det(scm) != supercell_size:
+                if not np.isclose(np.linalg.det(scm), supercell_size):
                     raise ValueError(
                         "supercell matrices must have determinant equal to "
                         "supercell_size"
