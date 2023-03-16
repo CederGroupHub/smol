@@ -1,6 +1,21 @@
-from smol.utils.cluster_utils.struct cimport _FloatArray1D, _FloatArray2D
-
 __author__ = "Luis Barroso-Luque"
+
+from smol.utils.cluster_utils.struct cimport _FloatArray1D, _FloatArray2D, OrbitC
+
+
+cdef class OrbitContainer:
+    cdef OrbitC* data
+    cdef readonly int size
+
+    cpdef public void set_orbits(self, list orbit_list)
+
+    @staticmethod
+    cdef OrbitC create_struct(
+            int bit_id,
+            float ratio,
+            const double[:, ::1] correlation_tensors,
+            const long[::1] tensor_indices
+    )
 
 
 cdef class FloatArray2DContainer:
