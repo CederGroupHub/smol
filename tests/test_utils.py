@@ -32,7 +32,11 @@ from smol.moca.sampler.mcusher import (
     Swap,
     TableFlip,
 )
-from smol.utils import class_name_from_str, derived_class_factory, get_subclasses
+from smol.utils.class_utils import (
+    class_name_from_str,
+    derived_class_factory,
+    get_subclasses,
+)
 
 
 @pytest.mark.parametrize(
