@@ -1,5 +1,4 @@
-from smol.utils.cluster_utils.struct cimport _FloatArray1D, _FloatArray2D, OrbitC
-
+from smol.utils.cluster_utils.struct cimport _FloatArray1D, _FloatArray2D
 
 __author__ = "Luis Barroso-Luque"
 

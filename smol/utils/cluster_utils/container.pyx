@@ -1,6 +1,6 @@
-from cpython.mem cimport PyMem_Malloc, PyMem_Realloc, PyMem_Free
-from smol.utils.cluster_utils.struct cimport _FloatArray1D, _FloatArray2D, OrbitC
+from cpython.mem cimport PyMem_Free, PyMem_Malloc, PyMem_Realloc
 
+from smol.utils.cluster_utils.struct cimport _FloatArray1D, _FloatArray2D
 
 __author__ = "Luis Barroso-Luque"
 
@@ -97,4 +97,3 @@ cdef class FloatArray1DContainer:
 
     def __dealloc__(self):
         PyMem_Free(self.data)
-
