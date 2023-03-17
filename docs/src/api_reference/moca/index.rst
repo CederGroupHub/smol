@@ -8,8 +8,7 @@ using a cluster expansion Hamiltonian with/or using optional pair potentials.
 .. toctree::
    :maxdepth: 2
 
-   processors
    ensemble
-   sampler
-   samplercontainer
+   processors
    sublattice
+   sampler
