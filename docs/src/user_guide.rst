@@ -179,6 +179,7 @@ The core classes are:
 - :ref:`processors ug`
 
   - :class:`ClusterExpansionProcessor`
+  - :class:`ClusterDecompositionProcessor`
   - :class:`EwaldProcessor`
   - :class:`CompositeProcessor`
 
