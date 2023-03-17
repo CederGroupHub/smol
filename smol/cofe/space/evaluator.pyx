@@ -2,6 +2,7 @@
 
 __author__ = "Luis Barroso-Luque"
 
+
 import numpy as np
 from cython.parallel import prange
 
@@ -48,7 +49,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef double[:] o_view = out
         o_view[0] = 1  # empty cluster
 
-        for i in range(self.size):#, nogil=True):
+        for i in prange(self.size, nogil=True):
             orbit = self.data[i]
             bit_id = orbit.bit_id
             indices = cluster_indices.data[i]
