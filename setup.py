@@ -90,6 +90,13 @@ ext_modules = [
         ["smol/utils/cluster_utils/container" + ext],
         language="c",
     ),
+    Extension(
+        "smol.cofe.space.evaluator",
+        ["smol/cofe/space/evaluator" + ext],
+        extra_compile_args=['-fopenmp'],
+        extra_link_args=['-fopenmp'],
+        language="c",
+    ),
 ]
 
 if USE_CYTHON:

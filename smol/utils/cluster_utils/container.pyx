@@ -9,10 +9,10 @@ from cpython.mem cimport PyMem_Free, PyMem_Malloc, PyMem_Realloc
 
 from smol.utils.cluster_utils.struct cimport (
     OrbitC,
-    _FloatArray1D,
-    _FloatArray2D,
-    _IntArray1D,
-    _IntArray2D,
+    FloatArray1D,
+    FloatArray2D,
+    IntArray1D,
+    IntArray2D,
 )
 
 # Is it possible to "template" for all arraycontainers based on tempita
@@ -98,7 +98,7 @@ cdef class OrbitContainer:
 cdef class FloatArray2DContainer:
     def __cinit__(self, list array_list):
         self.size = len(array_list)
-        self.data = <_FloatArray2D*> PyMem_Malloc(self.size * sizeof(_FloatArray2D))
+        self.data = <FloatArray2D*> PyMem_Malloc(self.size * sizeof(FloatArray2D))
         if not self.data:
             raise MemoryError()
 
@@ -115,8 +115,8 @@ cdef class FloatArray2DContainer:
 
         # if different size then reallocate
         if len(array_list) != self.size:
-            mem = <_FloatArray2D*> PyMem_Realloc(
-                self.data, len(array_list) * sizeof(_FloatArray2D)
+            mem = <FloatArray2D*> PyMem_Realloc(
+                self.data, len(array_list) * sizeof(FloatArray2D)
             )
             if not mem:
                 raise MemoryError()
@@ -128,9 +128,9 @@ cdef class FloatArray2DContainer:
 
 
     @staticmethod
-    cdef _FloatArray2D create_struct(const double[:, ::1] array):
+    cdef FloatArray2D create_struct(const double[:, ::1] array):
         """Set the fields of a _FloatArray2D struct from memoryview."""
-        cdef _FloatArray2D array_struct
+        cdef FloatArray2D array_struct
         array_struct.size_r = array.shape[0]
         array_struct.size_c = array.shape[1]
         array_struct.data = &array[0, 0]
@@ -147,7 +147,7 @@ cdef class FloatArray2DContainer:
 cdef class FloatArray1DContainer:
     def __cinit__(self, list array_list):
         self.size = len(array_list)
-        self.data = <_FloatArray1D*> PyMem_Malloc(self.size * sizeof(_FloatArray1D))
+        self.data = <FloatArray1D*> PyMem_Malloc(self.size * sizeof(FloatArray1D))
         if not self.data:
             raise MemoryError()
 
@@ -164,8 +164,8 @@ cdef class FloatArray1DContainer:
 
         # if different size then reallocate
         if len(array_list) != self.size:
-            mem = <_FloatArray1D*> PyMem_Realloc(
-                self.data, len(array_list) * sizeof(_FloatArray1D)
+            mem = <FloatArray1D*> PyMem_Realloc(
+                self.data, len(array_list) * sizeof(FloatArray1D)
             )
             if not mem:
                 raise MemoryError()
@@ -176,9 +176,9 @@ cdef class FloatArray1DContainer:
             self.data[i] = FloatArray1DContainer.create_struct(array_list[i])
 
     @staticmethod
-    cdef _FloatArray1D create_struct(const double[::1] array):
+    cdef FloatArray1D create_struct(const double[::1] array):
         """Set the fields of a _FloatArray1D struct from memoryview."""
-        cdef _FloatArray1D array_struct
+        cdef FloatArray1D array_struct
         array_struct.size = array.size
         array_struct.data = &array[0]
         return array_struct
@@ -194,7 +194,7 @@ cdef class FloatArray1DContainer:
 cdef class IntArray1DContainer:
     def __cinit__(self, list array_list):
         self.size = len(array_list)
-        self.data = <_IntArray1D*> PyMem_Malloc(self.size * sizeof(_IntArray1D))
+        self.data = <IntArray1D*> PyMem_Malloc(self.size * sizeof(IntArray1D))
         if not self.data:
             raise MemoryError()
 
@@ -211,8 +211,8 @@ cdef class IntArray1DContainer:
 
         # if different size then reallocate
         if len(array_list) != self.size:
-            mem = <_IntArray1D*> PyMem_Realloc(
-                self.data, len(array_list) * sizeof(_IntArray1D)
+            mem = <IntArray1D*> PyMem_Realloc(
+                self.data, len(array_list) * sizeof(IntArray1D)
             )
             if not mem:
                 raise MemoryError()
@@ -223,9 +223,9 @@ cdef class IntArray1DContainer:
             self.data[i] = IntArray1DContainer.create_struct(array_list[i])
 
     @staticmethod
-    cdef _IntArray1D create_struct(const long[::1] array):
+    cdef IntArray1D create_struct(const long[::1] array):
         """Set the fields of a _FloatArray1D struct from memoryview."""
-        cdef _IntArray1D array_struct
+        cdef IntArray1D array_struct
         array_struct.size = array.size
         array_struct.data = &array[0]
         return array_struct
@@ -241,7 +241,7 @@ cdef class IntArray1DContainer:
 cdef class IntArray2DContainer:
     def __cinit__(self, list array_list):
         self.size = len(array_list)
-        self.data = <_IntArray2D*> PyMem_Malloc(self.size * sizeof(_IntArray2D))
+        self.data = <IntArray2D*> PyMem_Malloc(self.size * sizeof(IntArray2D))
         if not self.data:
             raise MemoryError()
 
@@ -258,8 +258,8 @@ cdef class IntArray2DContainer:
 
         # if different size then reallocate
         if len(array_list) != self.size:
-            mem = <_IntArray2D*> PyMem_Realloc(
-                self.data, len(array_list) * sizeof(_IntArray2D)
+            mem = <IntArray2D*> PyMem_Realloc(
+                self.data, len(array_list) * sizeof(IntArray2D)
             )
             if not mem:
                 raise MemoryError()
@@ -270,9 +270,9 @@ cdef class IntArray2DContainer:
             self.data[i] = IntArray2DContainer.create_struct(array_list[i])
 
     @staticmethod
-    cdef _IntArray2D create_struct(const long[:, ::1] array):
+    cdef IntArray2D create_struct(const long[:, ::1] array):
         """Set the fields of a _IntArray2D struct from memoryview."""
-        cdef _IntArray2D array_struct
+        cdef IntArray2D array_struct
         array_struct.size_r = array.shape[0]
         array_struct.size_c = array.shape[1]
         array_struct.data = &array[0, 0]

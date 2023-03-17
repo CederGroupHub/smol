@@ -7,23 +7,23 @@ interaction vectors.
 __author__ = "Luis Barroso-Luque"
 
 
-cdef struct _IntArray1D:
+cdef struct IntArray1D:
     long* data
     int size
 
 
-cdef struct _IntArray2D:
+cdef struct IntArray2D:
     long* data
     int size_r
     int size_c
 
 
-cdef struct _FloatArray1D:
+cdef struct FloatArray1D:
     double* data
     int size
 
 
-cdef struct _FloatArray2D:
+cdef struct FloatArray2D:
     double* data
     int size_r
     int size_c
@@ -32,5 +32,5 @@ cdef struct _FloatArray2D:
 cdef struct OrbitC:
     int bit_id
     float ratio
-    _IntArray1D tensor_indices
-    _FloatArray2D correlation_tensors
+    IntArray1D tensor_indices
+    FloatArray2D correlation_tensors
