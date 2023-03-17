@@ -1376,7 +1376,9 @@ class ClusterSubspace(MSONable):
             # (eg in simply cubic all 6 nn interactions will all be [0, 0]
             # indices. This multiplicity disappears as supercell_structure size
             # increases, so I haven't implemented a more efficient method
-            orbit_indices.append(inds)
+
+            # assure contiguous C order
+            orbit_indices.append(np.ascontiguousarray(inds, dtype=int))
 
         return orbit_indices
 

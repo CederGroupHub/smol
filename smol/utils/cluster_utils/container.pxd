@@ -5,11 +5,11 @@
 __author__ = "Luis Barroso-Luque"
 
 from smol.utils.cluster_utils.struct cimport (
-    OrbitC,
     FloatArray1D,
     FloatArray2D,
     IntArray1D,
     IntArray2D,
+    OrbitC,
 )
 
 

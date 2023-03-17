@@ -93,8 +93,8 @@ ext_modules = [
     Extension(
         "smol.cofe.space.evaluator",
         ["smol/cofe/space/evaluator" + ext],
-        extra_compile_args=['-fopenmp'],
-        extra_link_args=['-fopenmp'],
+        extra_compile_args=["-fopenmp"],
+        extra_link_args=["-fopenmp"],
         language="c",
     ),
 ]
@@ -105,7 +105,14 @@ if USE_CYTHON:
     ext_modules = cythonize(
         ext_modules,
         include_path=[numpy.get_include()],
-        compiler_directives={"language_level": 3},
+        compiler_directives={
+            "language_level": 3,
+            "boundscheck": False,
+            "nonecheck": False,
+            "wraparound": False,
+            "initializedcheck": False,
+            "cdivision": True,
+        },
         **cython_kwargs
     )
 

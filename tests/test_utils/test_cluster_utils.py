@@ -9,7 +9,7 @@ from smol.utils.cluster_utils.container import (
 )
 
 
-# TODO 2D array tests are techincally not passing! and pytests does not catch the exception and fails silently
+# TODO 2D array tests are technically not passing! and pytests does not catch the exception and fails silently
 @pytest.mark.parametrize(
     "IntArrayContainer, dim", [(IntArray1DContainer, 1), (IntArray2DContainer, 2)]
 )

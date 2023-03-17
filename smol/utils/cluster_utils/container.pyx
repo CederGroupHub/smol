@@ -8,11 +8,11 @@ cimport numpy as np
 from cpython.mem cimport PyMem_Free, PyMem_Malloc, PyMem_Realloc
 
 from smol.utils.cluster_utils.struct cimport (
-    OrbitC,
     FloatArray1D,
     FloatArray2D,
     IntArray1D,
     IntArray2D,
+    OrbitC,
 )
 
 # Is it possible to "template" for all arraycontainers based on tempita
@@ -247,6 +247,13 @@ cdef class IntArray2DContainer:
 
         # populate orbits array
         self.set_arrays(array_list)
+
+    def print_contents(self):
+        #cdef long val
+        for i in range(self.size):
+            for j in range(self.data[i].size_r):
+                for k in range(self.data[i].size_c):
+                    print(self.data[i].data[j * self.data[i].size_c + k])
 
     cpdef public void set_arrays(self, list array_list):
         """Populated data using a list of 2D arrays."""

@@ -3,13 +3,14 @@
 __author__ = "Luis Barroso-Luque"
 
 cimport numpy as np
-from smol.utils.cluster_utils.container cimport OrbitContainer, IntArray2DContainer
+
+from smol.utils.cluster_utils.container cimport IntArray2DContainer, OrbitContainer
 
 
 cdef class ClusterSpaceEvaluator(OrbitContainer):
     """ClusterSpaceEvaluator class is used to compute the correlation vectors.
 
-    This extenstion type should rarely be used directly. Instead, use the
+    This extension type should rarely be used directly. Instead, use the
     ClusterSubspace class to create a cluster subspace instance and compute correlation
     vectors using the ClusterSubspace.corr_from_occupancy method.
     """
@@ -20,4 +21,3 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             const int num_corr_functions,
             IntArray2DContainer cluster_indices,
     )
-
