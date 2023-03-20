@@ -96,35 +96,35 @@ cdef class OrbitContainer:
 
 @cython.final
 cdef class FloatArray2DContainer:
-    def __cinit__(self, list array_list):
-        self.size = len(array_list)
+    def __cinit__(self, tuple arrays):
+        self.size = len(arrays)
         self.data = <FloatArray2D*> PyMem_Malloc(self.size * sizeof(FloatArray2D))
         if not self.data:
             raise MemoryError()
 
         # populate orbits array
-        self.set_arrays(array_list)
+        self.set_arrays(arrays)
 
-    cpdef public void set_arrays(self, list array_list):
+    cpdef public void set_arrays(self, tuple arrays):
         """Populated data using a list of 2D arrays."""
         cdef int i
 
-        for array in array_list:
+        for array in arrays:
             if array.ndim != 2:
                 raise ValueError("All arrays must be 2D.")
 
         # if different size then reallocate
-        if len(array_list) != self.size:
+        if len(arrays) != self.size:
             mem = <FloatArray2D*> PyMem_Realloc(
-                self.data, len(array_list) * sizeof(FloatArray2D)
+                self.data, len(arrays) * sizeof(FloatArray2D)
             )
             if not mem:
                 raise MemoryError()
-            self.size = len(array_list)
+            self.size = len(arrays)
             self.data = mem
 
         for i in range(self.size):
-            self.data[i] = FloatArray2DContainer.create_struct(array_list[i])
+            self.data[i] = FloatArray2DContainer.create_struct(arrays[i])
 
 
     @staticmethod
@@ -145,39 +145,39 @@ cdef class FloatArray2DContainer:
 
 @cython.final
 cdef class FloatArray1DContainer:
-    def __cinit__(self, list array_list):
-        self.size = len(array_list)
+    def __cinit__(self, tuple arrays):
+        self.size = len(arrays)
         self.data = <FloatArray1D*> PyMem_Malloc(self.size * sizeof(FloatArray1D))
         if not self.data:
             raise MemoryError()
 
         # populate orbits array
-        self.set_arrays(array_list)
+        self.set_arrays(arrays)
 
-    cpdef public void set_arrays(self, list array_list):
+    cpdef public void set_arrays(self, tuple arrays):
         """Populated data using a list of 1D arrays."""
         cdef int i
 
-        for array in array_list:
+        for array in arrays:
             if array.ndim != 1:
                 raise ValueError("All arrays must be 1D.")
 
         # if different size then reallocate
-        if len(array_list) != self.size:
+        if len(arrays) != self.size:
             mem = <FloatArray1D*> PyMem_Realloc(
-                self.data, len(array_list) * sizeof(FloatArray1D)
+                self.data, len(arrays) * sizeof(FloatArray1D)
             )
             if not mem:
                 raise MemoryError()
-            self.size = len(array_list)
+            self.size = len(arrays)
             self.data = mem
 
         for i in range(self.size):
-            self.data[i] = FloatArray1DContainer.create_struct(array_list[i])
+            self.data[i] = FloatArray1DContainer.create_struct(arrays[i])
 
     @staticmethod
     cdef FloatArray1D create_struct(const double[::1] array):
-        """Set the fields of a _FloatArray1D struct from memoryview."""
+        """Set the fields of a FloatArray1D struct from memoryview."""
         cdef FloatArray1D array_struct
         array_struct.size = array.size
         array_struct.data = &array[0]
@@ -192,35 +192,35 @@ cdef class FloatArray1DContainer:
 
 @cython.final
 cdef class IntArray1DContainer:
-    def __cinit__(self, list array_list):
-        self.size = len(array_list)
+    def __cinit__(self, tuple arrays):
+        self.size = len(arrays)
         self.data = <IntArray1D*> PyMem_Malloc(self.size * sizeof(IntArray1D))
         if not self.data:
             raise MemoryError()
 
         # populate orbits array
-        self.set_arrays(array_list)
+        self.set_arrays(arrays)
 
-    cpdef public void set_arrays(self, list array_list):
+    cpdef public void set_arrays(self, tuple arrays):
         """Populated data using a list of 1D arrays."""
         cdef int i
 
-        for array in array_list:
+        for array in arrays:
             if array.ndim != 1:
                 raise ValueError("All arrays must be 1D.")
 
         # if different size then reallocate
-        if len(array_list) != self.size:
+        if len(arrays) != self.size:
             mem = <IntArray1D*> PyMem_Realloc(
-                self.data, len(array_list) * sizeof(IntArray1D)
+                self.data, len(arrays) * sizeof(IntArray1D)
             )
             if not mem:
                 raise MemoryError()
-            self.size = len(array_list)
+            self.size = len(arrays)
             self.data = mem
 
         for i in range(self.size):
-            self.data[i] = IntArray1DContainer.create_struct(array_list[i])
+            self.data[i] = IntArray1DContainer.create_struct(arrays[i])
 
     @staticmethod
     cdef IntArray1D create_struct(const long[::1] array):
@@ -239,14 +239,14 @@ cdef class IntArray1DContainer:
 
 @cython.final
 cdef class IntArray2DContainer:
-    def __cinit__(self, list array_list):
-        self.size = len(array_list)
+    def __cinit__(self, tuple arrays):
+        self.size = len(arrays)
         self.data = <IntArray2D*> PyMem_Malloc(self.size * sizeof(IntArray2D))
         if not self.data:
             raise MemoryError()
 
         # populate orbits array
-        self.set_arrays(array_list)
+        self.set_arrays(arrays)
 
     def print_contents(self):
         #cdef long val
@@ -255,26 +255,26 @@ cdef class IntArray2DContainer:
                 for k in range(self.data[i].size_c):
                     print(self.data[i].data[j * self.data[i].size_c + k])
 
-    cpdef public void set_arrays(self, list array_list):
+    cpdef public void set_arrays(self, tuple arrays):
         """Populated data using a list of 2D arrays."""
         cdef int i
 
-        for array in array_list:
+        for array in arrays:
             if array.ndim != 2:
                 raise ValueError("All arrays must be 2D.")
 
         # if different size then reallocate
-        if len(array_list) != self.size:
+        if len(arrays) != self.size:
             mem = <IntArray2D*> PyMem_Realloc(
-                self.data, len(array_list) * sizeof(IntArray2D)
+                self.data, len(arrays) * sizeof(IntArray2D)
             )
             if not mem:
                 raise MemoryError()
-            self.size = len(array_list)
+            self.size = len(arrays)
             self.data = mem
 
         for i in range(self.size):
-            self.data[i] = IntArray2DContainer.create_struct(array_list[i])
+            self.data[i] = IntArray2DContainer.create_struct(arrays[i])
 
     @staticmethod
     cdef IntArray2D create_struct(const long[:, ::1] array):
