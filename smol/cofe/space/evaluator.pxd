@@ -4,7 +4,11 @@ __author__ = "Luis Barroso-Luque"
 
 cimport numpy as np
 
-from smol.utils.cluster_utils.container cimport IntArray2DContainer, OrbitContainer
+from smol.utils.cluster_utils.container cimport (
+    FloatArray1DContainer,
+    IntArray2DContainer,
+    OrbitContainer,
+)
 
 
 cdef class ClusterSpaceEvaluator(OrbitContainer):
@@ -18,6 +22,13 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
     cpdef np.ndarray[np.float64_t, ndim=1] corr_from_occupancy(
             self,
             const long[::1] occu,
-            const int num_corr_functions,
+            const int num_corr_functions,  # TODO save this in the evaluator
+            IntArray2DContainer cluster_indices,
+    )
+
+    cpdef np.ndarray[np.float64_t, ndim=1] interactions_from_occupancy(
+            self, const long[::1] occu,
+            const double offset,
+            FloatArray1DContainer cluster_interaction_tensors,
             IntArray2DContainer cluster_indices,
     )
