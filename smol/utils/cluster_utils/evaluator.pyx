@@ -3,6 +3,7 @@
 __author__ = "Luis Barroso-Luque"
 
 
+import cython
 import numpy as np
 from cython.parallel import prange
 
@@ -102,7 +103,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef FloatArray1D interaction_tensor
 
         out = np.zeros(self.size + 1)
-        cdef double[:] o_view = out
+        cdef double[::1] o_view = out
         o_view[0] = offset  # empty cluster
 
         for n in prange(self.size, nogil=True):
@@ -121,7 +122,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
         return out
 
-
+@cython.final
 cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
     """LocalClusterSpaceEvaluator used to compute correlation and interaction vectors.
 
@@ -138,5 +139,101 @@ cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
             self,
             const long[::1] occu_f,
             const long[::1] occu_i,
-            const int num_corr_functions):
-        return
+            const int num_corr_functions,
+            IntArray2DContainer cluster_indices,
+    ):
+        """Computes the correlation difference between two occupancy vectors.
+
+        Args:
+            occu_f (ndarray):
+                encoded occupancy vector with flip
+            occu_i (ndarray):
+                encoded occupancy vector without flip
+            num_corr_functions (int):
+                total number of bit orderings in expansion.
+            cluster_indices (IntArray1DContainer):
+                Container with pointers to arrays with indices of sites of all clusters
+                in each orbit given as a container of arrays.
+
+        Returns:
+            ndarray: correlation vector difference
+        """
+        cdef int i, j, k, n, I, J, K, N, ind_i, ind_f, bit_id
+        cdef double p
+        cdef IntArray2D indices  # flattened tensor indices
+        cdef OrbitC orbit
+
+        out = np.zeros(num_corr_functions)
+        cdef double[:] o_view = out
+
+        for n in prange(self.size, nogil=True):  # loop thru orbits
+            orbit = self.data[n]
+            indices = cluster_indices.data[n]
+            bit_id = orbit.bit_id
+            K = orbit.correlation_tensors.size_r  # index of bit combos
+            J = indices.size_r # cluster index
+            I = indices.size_c # index within cluster
+            N = orbit.correlation_tensors.size_c # size of single flattened tensor
+
+            for k in range(K):  # loop thru bit combos
+                p = 0
+                for j in range(J):  # loop thru clusters
+                    ind_i, ind_f = 0, 0
+                    for i in range(I):  # loop thru sites in cluster
+                        ind_i = ind_i + orbit.tensor_indices.data[i] * occu_i[indices.data[j * I + i]]
+                        ind_f = ind_f + orbit.tensor_indices.data[i] * occu_f[indices.data[j * I + i]]
+                    # sum contribution of correlation of cluster k with occupancy at "index"
+                    p = p + (orbit.correlation_tensors.data[k * N + ind_f] - orbit.correlation_tensors.data[k * N + ind_f])
+                o_view[bit_id] = p / orbit.ratio / J
+                bit_id = bit_id + 1
+
+        return out
+
+    cpdef np.ndarray[np.float64_t, ndim=1] delta_interactions_single_flip(
+            self,
+            const long[::1] occu_f,
+            const long[::1] occu_i,
+            FloatArray1DContainer cluster_interaction_tensors,
+            IntArray2DContainer cluster_indices,
+
+    ):
+        """Computes the cluster interaction vector difference between two occupancy
+        strings.
+        Args:
+            occu_f (ndarray):
+                encoded occupancy vector with flip
+            occu_i (ndarray):
+                encoded occupancy vector without flip
+            cluster_interaction_tensors (IntArray1DContainer):
+                Container with pointers to flattened cluster interaction tensors
+            cluster_indices (IntArray1DContainer):
+                Container with pointers to arrays with indices of sites of all clusters
+                in each orbit given as a container of arrays.
+
+        Returns:
+            ndarray: cluster interaction vector difference
+        """
+        cdef int i, j, n, I, J, ind_i, ind_f
+        cdef double p
+        cdef IntArray2D indices
+        cdef OrbitC orbit
+        cdef FloatArray1D interaction_tensor
+
+        out = np.zeros(self.size + 1)
+        cdef double[::1] o_view = out
+
+        for n in prange(self.size, nogil=True):
+            orbit = self.data[n]
+            indices = cluster_indices.data[n]
+            interaction_tensor = cluster_interaction_tensors.data[n]
+            J = indices.size_r # cluster index
+            I = indices.size_c # index within cluster
+            p = 0
+            for j in range(J):
+                ind_i, ind_f = 0, 0
+                for i in range(I):
+                    ind_i = ind_i + orbit.tensor_indices.data[j] * occu_i[indices.data[i * J + j]]
+                    ind_f = ind_f + orbit.tensor_indices.data[j] * occu_f[indices.data[i * J + j]]
+                p = p + (interaction_tensor.data[ind_f] - interaction_tensor.data[ind_i])
+            o_view[n] = p / orbit.ratio / J
+        return out
