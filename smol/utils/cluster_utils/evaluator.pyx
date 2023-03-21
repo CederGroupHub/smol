@@ -126,16 +126,17 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
     """LocalClusterSpaceEvaluator used to compute correlation and interaction vectors.
 
-    This extension type is meant to compute only the correlations or cluster interactions
-    that include a specific site.
+    This extension type is meant to compute only the correlations or cluster
+    interactions that include a specific site.
 
-    Also allows to compute changes in cluster interactions and
+    Also allows to compute changes in cluster interactions and correlations from
+    changes in a single site.
 
     This extension type should not be used directly. Instead, use corresponding
     Processor classes in smol.moca
     """
 
-    cpdef np.ndarray[np.float64_t, ndim=1] delta_corr_single_flip(
+    cpdef np.ndarray[np.float64_t, ndim=1] delta_correlations_single_flip(
             self,
             const long[::1] occu_f,
             const long[::1] occu_i,
@@ -151,7 +152,7 @@ cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
                 encoded occupancy vector without flip
             num_corr_functions (int):
                 total number of bit orderings in expansion.
-            cluster_indices (IntArray1DContainer):
+            cluster_indices (IntArray2DContainer):
                 Container with pointers to arrays with indices of sites of all clusters
                 in each orbit given as a container of arrays.
 
@@ -164,7 +165,7 @@ cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
         cdef OrbitC orbit
 
         out = np.zeros(num_corr_functions)
-        cdef double[:] o_view = out
+        cdef double[::1] o_view = out
 
         for n in prange(self.size, nogil=True):  # loop thru orbits
             orbit = self.data[n]
@@ -183,7 +184,7 @@ cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
                         ind_i = ind_i + orbit.tensor_indices.data[i] * occu_i[indices.data[j * I + i]]
                         ind_f = ind_f + orbit.tensor_indices.data[i] * occu_f[indices.data[j * I + i]]
                     # sum contribution of correlation of cluster k with occupancy at "index"
-                    p = p + (orbit.correlation_tensors.data[k * N + ind_f] - orbit.correlation_tensors.data[k * N + ind_f])
+                    p = p + (orbit.correlation_tensors.data[k * N + ind_f] - orbit.correlation_tensors.data[k * N + ind_i])
                 o_view[bit_id] = p / orbit.ratio / J
                 bit_id = bit_id + 1
 
@@ -206,7 +207,7 @@ cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
                 encoded occupancy vector without flip
             cluster_interaction_tensors (IntArray1DContainer):
                 Container with pointers to flattened cluster interaction tensors
-            cluster_indices (IntArray1DContainer):
+            cluster_indices (IntArray2DContainer):
                 Container with pointers to arrays with indices of sites of all clusters
                 in each orbit given as a container of arrays.
 
@@ -222,7 +223,7 @@ cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
         out = np.zeros(self.size + 1)
         cdef double[::1] o_view = out
 
-        for n in prange(self.size, nogil=True):
+        for n in range(self.size): #prange(self.size, nogil=True):
             orbit = self.data[n]
             indices = cluster_indices.data[n]
             interaction_tensor = cluster_interaction_tensors.data[n]
@@ -232,8 +233,9 @@ cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
             for j in range(J):
                 ind_i, ind_f = 0, 0
                 for i in range(I):
-                    ind_i = ind_i + orbit.tensor_indices.data[j] * occu_i[indices.data[i * J + j]]
-                    ind_f = ind_f + orbit.tensor_indices.data[j] * occu_f[indices.data[i * J + j]]
+                    ind_i = ind_i + orbit.tensor_indices.data[i] * occu_i[indices.data[j * I + i]]
+                    ind_f = ind_f + orbit.tensor_indices.data[i] * occu_f[indices.data[j * I + i]]
                 p = p + (interaction_tensor.data[ind_f] - interaction_tensor.data[ind_i])
-            o_view[n] = p / orbit.ratio / J
+            o_view[n + 1] = p / orbit.ratio / J
+
         return out

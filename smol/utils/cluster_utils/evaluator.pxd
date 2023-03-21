@@ -30,18 +30,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
 @cython.final
 cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
-    """LocalClusterSpaceEvaluator used to compute correlation and interaction vectors.
-
-    This extension type is meant to compute only the correlations or cluster interactions
-    that include a specific site.
-
-    Also allows to compute changes in cluster interactions and
-
-    This extension type should not be used directly. Instead, use corresponding
-    Processor classes in smol.moca
-    """
-
-    cpdef np.ndarray[np.float64_t, ndim=1] delta_corr_single_flip(
+    cpdef np.ndarray[np.float64_t, ndim=1] delta_correlations_single_flip(
             self,
             const long[::1] occu_f,
             const long[::1] occu_i,
