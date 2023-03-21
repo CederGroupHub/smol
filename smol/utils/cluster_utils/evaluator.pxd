@@ -12,13 +12,6 @@ from smol.utils.cluster_utils.container cimport (
 
 
 cdef class ClusterSpaceEvaluator(OrbitContainer):
-    """ClusterSpaceEvaluator class is used to compute the correlation vectors.
-
-    This extension type should rarely be used directly. Instead, use the
-    ClusterSubspace class to create a cluster subspace instance and compute correlation
-    vectors using the ClusterSubspace.corr_from_occupancy method.
-    """
-
     cpdef np.ndarray[np.float64_t, ndim=1] corr_from_occupancy(
             self,
             const long[::1] occu,
@@ -27,7 +20,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
     )
 
     cpdef np.ndarray[np.float64_t, ndim=1] interactions_from_occupancy(
-            self, const long[::1] occu,
+            self,
+            const long[::1] occu,
             const double offset,
             FloatArray1DContainer cluster_interaction_tensors,
             IntArray2DContainer cluster_indices,

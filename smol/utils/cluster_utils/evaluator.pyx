@@ -17,9 +17,9 @@ from smol.utils.cluster_utils.struct cimport FloatArray1D, IntArray2D, OrbitC
 
 
 cdef class ClusterSpaceEvaluator(OrbitContainer):
-    """ClusterSpaceEvaluator class is used to compute the correlation vectors.
+    """ClusterSpaceEvaluator is used to compute correlation and interaction vectors.
 
-    This extension type should rarely be used directly. Instead, use the
+    This extension type should not be used directly. Instead, use the
     ClusterSubspace class to create a cluster subspace instance and compute correlation
     vectors using the ClusterSubspace.corr_from_occupancy method.
     """
@@ -57,19 +57,19 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             orbit = self.data[n]
             indices = cluster_indices.data[n]
             bit_id = orbit.bit_id
-            I = orbit.correlation_tensors.size_r  # index of bit combos
+            K = orbit.correlation_tensors.size_r  # index of bit combos
             J = indices.size_r # cluster index
-            K = indices.size_c # index within cluster
+            I = indices.size_c # index within cluster
             N = orbit.correlation_tensors.size_c # size of single flattened tensor
 
-            for i in range(I):  # loop thru bit combos
+            for k in range(K):  # loop thru bit combos
                 p = 0
                 for j in range(J):  # loop thru clusters
                     index = 0
-                    for k in range(K):  # loop thru sites in cluster
-                        index = index + orbit.tensor_indices.data[k] * occu[indices.data[j * K + k]]
+                    for i in range(I):  # loop thru sites in cluster
+                        index = index + orbit.tensor_indices.data[i] * occu[indices.data[j * I + i]]
                     # sum contribution of correlation of cluster k with occupancy at "index"
-                    p = p + orbit.correlation_tensors.data[i * N + index]
+                    p = p + orbit.correlation_tensors.data[k * N + index]
                 o_view[bit_id] = p / J
                 bit_id = bit_id + 1
 
@@ -109,14 +109,34 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             orbit = self.data[n]
             indices = cluster_indices.data[n]
             interaction_tensor = cluster_interaction_tensors.data[n]
-            I = indices.size_r # cluster index
-            J = indices.size_c  # index within cluster
+            J = indices.size_r # cluster index
+            I = indices.size_c  # index within cluster
             p = 0
-            for i in range(I):
+            for j in range(J):
                 index = 0
-                for j in range(J):
-                    index = index + orbit.tensor_indices.data[j] * occu[indices.data[i * J + j]]
+                for i in range(I):
+                    index = index + orbit.tensor_indices.data[i] * occu[indices.data[j * I + i]]
                 p = p + interaction_tensor.data[index]
-            o_view[n + 1] = p / I
+            o_view[n + 1] = p / J
 
         return out
+
+
+cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
+    """LocalClusterSpaceEvaluator used to compute correlation and interaction vectors.
+
+    This extension type is meant to compute only the correlations or cluster interactions
+    that include a specific site.
+
+    Also allows to compute changes in cluster interactions and
+
+    This extension type should not be used directly. Instead, use corresponding
+    Processor classes in smol.moca
+    """
+
+    cpdef np.ndarray[np.float64_t, ndim=1] delta_corr_single_flip(
+            self,
+            const long[::1] occu_f,
+            const long[::1] occu_i,
+            const int num_corr_functions):
+        return
