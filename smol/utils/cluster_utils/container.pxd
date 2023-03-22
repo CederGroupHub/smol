@@ -15,8 +15,8 @@ from smol.utils.cluster_utils.struct cimport (
 
 cdef class OrbitContainer:
     cdef OrbitC* data
-    cdef FloatArray1DContainer cluster_interactions
     cdef readonly int size
+    cdef readonly int num_correlations
 
     cpdef public void set_orbits(self, list orbit_list)
 

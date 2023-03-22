@@ -13,10 +13,9 @@ from smol.utils.cluster_utils.container cimport (
 
 
 cdef class ClusterSpaceEvaluator(OrbitContainer):
-    cpdef np.ndarray[np.float64_t, ndim=1] corr_from_occupancy(
+    cpdef np.ndarray[np.float64_t, ndim=1] correlations_from_occupancy(
             self,
             const long[::1] occu,
-            const int num_corr_functions,  # TODO save this in the evaluator
             IntArray2DContainer cluster_indices,
     )
 
@@ -34,7 +33,6 @@ cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
             self,
             const long[::1] occu_f,
             const long[::1] occu_i,
-            const int num_corr_functions,
             IntArray2DContainer cluster_indices)
 
     cpdef np.ndarray[np.float64_t, ndim=1] delta_interactions_single_flip(

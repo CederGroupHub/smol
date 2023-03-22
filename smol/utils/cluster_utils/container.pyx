@@ -30,7 +30,7 @@ cdef class OrbitContainer:
 
     cpdef public void set_orbits(self, list orbit_list):
         """Populated data using a list of orbits."""
-        cdef int i
+        cdef int i, num_corr
 
         # check that dataypes are correct
         for orbit_data in orbit_list:
@@ -57,13 +57,16 @@ cdef class OrbitContainer:
             self.size = len(orbit_list)
             self.data = mem
 
+        num_corr = 0
         for i in range(self.size):
+            num_corr += orbit_list[i][2].shape[0]
             self.data[i] = OrbitContainer.create_struct(
                 orbit_list[i][0],
                 orbit_list[i][1],
                 orbit_list[i][2],
                 orbit_list[i][3],
             )
+        self.num_correlations = num_corr
 
     @staticmethod
     cdef OrbitC create_struct(

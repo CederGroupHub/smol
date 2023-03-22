@@ -107,11 +107,11 @@ if USE_CYTHON:
         include_path=[numpy.get_include()],
         compiler_directives={
             "language_level": 3,
-            # "boundscheck": False,
-            # "nonecheck": False,
-            # "wraparound": False,
-            # "initializedcheck": False,
-            # "cdivision": True,
+            "boundscheck": False,
+            "nonecheck": False,
+            "wraparound": False,
+            "initializedcheck": False,
+            "cdivision": True,
         },
         **cython_kwargs
     )

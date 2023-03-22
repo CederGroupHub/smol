@@ -25,10 +25,9 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
     vectors using the ClusterSubspace.corr_from_occupancy method.
     """
 
-    cpdef np.ndarray[np.float64_t, ndim=1] corr_from_occupancy(
+    cpdef np.ndarray[np.float64_t, ndim=1] correlations_from_occupancy(
             self,
             const long[::1] occu,
-            const int num_corr_functions,
             IntArray2DContainer cluster_indices,
     ):
         """Computes the correlation vector for a given encoded occupancy string.
@@ -36,8 +35,6 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         Args:
             occu (ndarray):
                 encoded occupancy vector
-            num_corr_functions (int):
-                total number of bit orderings in expansion.
             cluster_indices (IntArray1DContainer):
                 Container with pointers to arrays with indices of sites of all clusters
                 in each orbit given as a container of arrays.
@@ -50,8 +47,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef IntArray2D indices  # flattened tensor indices
         cdef OrbitC orbit
 
-        out = np.zeros(num_corr_functions)
-        cdef double[:] o_view = out
+        out = np.zeros(self.num_correlations + 1)
+        cdef double[::1] o_view = out
         o_view[0] = 1  # empty cluster
 
         for n in prange(self.size, nogil=True):  # loop thru orbits
@@ -77,7 +74,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         return out
 
     cpdef np.ndarray[np.float64_t, ndim=1] interactions_from_occupancy(
-            self, const long[::1] occu,
+            self,
+            const long[::1] occu,
             const double offset,
             FloatArray1DContainer cluster_interaction_tensors,
             IntArray2DContainer cluster_indices,
@@ -140,7 +138,6 @@ cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
             self,
             const long[::1] occu_f,
             const long[::1] occu_i,
-            const int num_corr_functions,
             IntArray2DContainer cluster_indices,
     ):
         """Computes the correlation difference between two occupancy vectors.
@@ -150,8 +147,6 @@ cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
                 encoded occupancy vector with flip
             occu_i (ndarray):
                 encoded occupancy vector without flip
-            num_corr_functions (int):
-                total number of bit orderings in expansion.
             cluster_indices (IntArray2DContainer):
                 Container with pointers to arrays with indices of sites of all clusters
                 in each orbit given as a container of arrays.
@@ -164,7 +159,7 @@ cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
         cdef IntArray2D indices  # flattened tensor indices
         cdef OrbitC orbit
 
-        out = np.zeros(num_corr_functions)
+        out = np.zeros(self.num_correlations + 1)
         cdef double[::1] o_view = out
 
         for n in prange(self.size, nogil=True):  # loop thru orbits
@@ -223,7 +218,7 @@ cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
         out = np.zeros(self.size + 1)
         cdef double[::1] o_view = out
 
-        for n in range(self.size): #prange(self.size, nogil=True):
+        for n in prange(self.size, nogil=True):
             orbit = self.data[n]
             indices = cluster_indices.data[n]
             interaction_tensor = cluster_interaction_tensors.data[n]
