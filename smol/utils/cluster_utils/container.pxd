@@ -24,8 +24,8 @@ cdef class OrbitContainer:
     cdef OrbitC create_struct(
             int orbit_id,
             int bit_id,
-            const double[:, ::1] correlation_tensors,
-            const long[::1] tensor_indices,
+            double[:, ::1] correlation_tensors,
+            long[::1] tensor_indices,
     )
 
 
@@ -36,7 +36,7 @@ cdef class FloatArray2DContainer:
     cpdef public void set_arrays(self, tuple arrays)
 
     @staticmethod
-    cdef FloatArray2D create_struct(const double[:, ::1] array)
+    cdef FloatArray2D create_struct(double[:, ::1] array)
 
 
 cdef class FloatArray1DContainer:
@@ -46,7 +46,7 @@ cdef class FloatArray1DContainer:
     cpdef public void set_arrays(self, tuple arrays)
 
     @staticmethod
-    cdef FloatArray1D create_struct(const double[::1] array)
+    cdef FloatArray1D create_struct(double[::1] array)
 
 
 cdef class IntArray1DContainer:
@@ -56,7 +56,7 @@ cdef class IntArray1DContainer:
     cpdef public void set_arrays(self, tuple arrays)
 
     @staticmethod
-    cdef IntArray1D create_struct(const long[::1] array)
+    cdef IntArray1D create_struct(long[::1] array)
 
 
 cdef class IntArray2DContainer:
@@ -66,4 +66,4 @@ cdef class IntArray2DContainer:
     cpdef public void set_arrays(self, tuple arrays)
 
     @staticmethod
-    cdef IntArray2D create_struct(const long[:, ::1] array)
+    cdef IntArray2D create_struct(long[:, ::1] array)

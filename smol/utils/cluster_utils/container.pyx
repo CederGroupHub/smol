@@ -77,8 +77,8 @@ cdef class OrbitContainer:
     cdef OrbitC create_struct(
             int orbit_id,
             int bit_id,
-            const double[:, ::1] correlation_tensors,
-            const long[::1] tensor_indices,
+            double[:, ::1] correlation_tensors,
+            long[::1] tensor_indices,
     ):
         """Set the fields of a OrbitC struct from memoryviews."""
         cdef OrbitC orbit
@@ -136,7 +136,7 @@ cdef class FloatArray2DContainer:
 
 
     @staticmethod
-    cdef FloatArray2D create_struct(const double[:, ::1] array):
+    cdef FloatArray2D create_struct(double[:, ::1] array):
         """Set the fields of a _FloatArray2D struct from memoryview."""
         cdef FloatArray2D array_struct
         array_struct.size_r = array.shape[0]
@@ -184,7 +184,7 @@ cdef class FloatArray1DContainer:
             self.data[i] = FloatArray1DContainer.create_struct(arrays[i])
 
     @staticmethod
-    cdef FloatArray1D create_struct(const double[::1] array):
+    cdef FloatArray1D create_struct(double[::1] array):
         """Set the fields of a FloatArray1D struct from memoryview."""
         cdef FloatArray1D array_struct
         array_struct.size = array.size
@@ -231,7 +231,7 @@ cdef class IntArray1DContainer:
             self.data[i] = IntArray1DContainer.create_struct(arrays[i])
 
     @staticmethod
-    cdef IntArray1D create_struct(const long[::1] array):
+    cdef IntArray1D create_struct(long[::1] array):
         """Set the fields of a _FloatArray1D struct from memoryview."""
         cdef IntArray1D array_struct
         array_struct.size = array.size
@@ -285,7 +285,7 @@ cdef class IntArray2DContainer:
             self.data[i] = IntArray2DContainer.create_struct(arrays[i])
 
     @staticmethod
-    cdef IntArray2D create_struct(const long[:, ::1] array):
+    cdef IntArray2D create_struct(long[:, ::1] array):
         """Set the fields of a _IntArray2D struct from memoryview."""
         cdef IntArray2D array_struct
         array_struct.size_r = array.shape[0]
