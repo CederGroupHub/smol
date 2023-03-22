@@ -69,6 +69,8 @@ def flip_vec_to_reaction(u, bits):
     return from_str + " -> " + to_str
 
 
+# TODO: move composition constraints manager to here and maybe enable
+#  setting constraints with strings like "A + B <= C".
 class CompositionSpace(MSONable):
     """Composition space class.
 

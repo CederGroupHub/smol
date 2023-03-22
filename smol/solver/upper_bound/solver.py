@@ -1,14 +1,20 @@
 """Solver class for the ground state problem of cluster expansion. SCIP only."""
-from collections import Counter
 from types import SimpleNamespace
 from typing import Any, List, NamedTuple, Union
 
 import cvxpy as cp
+from cvxpy.constraints.constraint import Constraint
+from monty.json import MSONable
+from numpy.typing import ArrayLike
 
-from smol.cofe.space.domain import get_species
+from smol.moca.composition import CompositionSpace
 from smol.moca.ensemble import Ensemble
-from smol.moca.processor.base import Processor
-from smol.moca.utils.occu import get_dim_ids_by_sublattice
+from smol.solver.upper_bound.utils.constraints import (
+    get_upper_bound_composition_space_constraints,
+)
+from smol.solver.upper_bound.utils.variables import (
+    get_upper_bound_variables_from_sublattices,
+)
 
 
 class ProblemCanonicals(NamedTuple):
@@ -31,111 +37,78 @@ class ProblemCanonicals(NamedTuple):
     problem: cp.Problem
     objective: cp.Expression
     variables: cp.Variable
+    # Index of variables on each active site.
+    variable_indices: List[List[int]]
     auxiliaries: Union[SimpleNamespace, None]
-    constraints: Union[List[cp.Expression], None]
+    constraints: Union[List[Constraint], None]
 
 
-class CompositionConstraintsManager:
-    """A descriptor class that manages setting composition constraints."""
-
-    def __set_name__(self, owner, name):
-        """Set the private variable names."""
-        self.public_name = name
-        self.private_name = "_" + name
-
-    def __get__(self, obj, objtype=None):
-        """Return the chemical potentials if set None otherwise."""
-        value = getattr(obj, self.private_name, None)
-        return value if value is None else value["value"]
-
-    @staticmethod
-    def _check_single_dict(d):
-        for spec, count in Counter(map(get_species, d.keys())).items():
-            if count > 1:
-                raise ValueError(
-                    f"{count} values of the constraint coefficient for the same "
-                    f"species {spec} were provided.\n Make sure the dictionary "
-                    "you are using has only string keys or only Species "
-                    "objects as keys."
-                )
-
-    @staticmethod
-    def _convert_single_dict(left, bits):
-        # Set a constraint with only one dictionary.
-        CompositionConstraintsManager._check_single_dict(left)
-        n_dims = sum([len(sublattice_bits) for sublattice_bits in bits])
-        dim_ids = get_dim_ids_by_sublattice(bits)
-        left_list = [0 for _ in range(n_dims)]
-        for spec, coef in left.items():
-            spec = get_species(spec)
-            for sl_dim_ids, sl_bits in zip(dim_ids, bits):
-                dim_id = sl_dim_ids[sl_bits.index(spec)]
-                left_list[dim_id] = coef
-        return left_list
-
-    @staticmethod
-    def _convert_sublattice_dicts(left, bits):
-        # Set a constraint with one dict per sub-lattice.
-        n_dims = sum([len(sublattice_bits) for sublattice_bits in bits])
-        dim_ids = get_dim_ids_by_sublattice(bits)
-        left_list = [0 for _ in range(n_dims)]
-        for sl_dict, sl_bits, sl_dim_ids in zip(left, bits, dim_ids):
-            CompositionConstraintsManager._check_single_dict(sl_dict)
-            for spec, coef in sl_dict.items():
-                spec = get_species(spec)
-                dim_id = sl_dim_ids[sl_bits.index(spec)]
-                left_list[dim_id] = coef
-        return left_list
-
-    def __set__(self, obj, value):
-        """Set the table given the owner and value."""
-        if value is None or len(value) == 0:  # call delete if set to None
-            self.__delete__(obj)
-            return
-
-        # value must be list of tuples, each with a list and a number.
-        # No scaling would be done. Take care when filling in!
-        a_matrix = []
-        b_array = []
-        bits = [sublattice.species for sublattice in obj.sublattices]
-        for left, right in value:
-            if isinstance(left, dict):
-                a_matrix.append(self._convert_single_dict(left, bits))
-            else:
-                a_matrix.append(self._convert_sublattice_dicts(left, bits))
-            b_array.append(right)
-
-        # if first instantiation concatenate the natural parameter
-        if not hasattr(obj, self.private_name):
-            setattr(
-                obj,
-                self.private_name,
-                {"value": (a_matrix, b_array)},
-            )
-
-    def __delete__(self, obj):
-        """Delete the boundary condition."""
-        if hasattr(obj, self.private_name):
-            del obj.__dict__[self.private_name]
-
-
-class UpperboundSolver(Ensemble):
+class UpperboundSolver(MSONable):
     """A solver for the upper-bound problem of cluster expansion."""
 
     def __init__(
         self,
-        processor: Processor,
-        chemical_potentials: Any = None,
+        ensemble: Ensemble,
+        initial_occupancy: ArrayLike = None,
         other_equality_constraints: List[Any] = None,
         other_leq_constraints: List[Any] = None,
         other_geq_constraints: List[Any] = None,
     ):
         """Initialize UpperboundSolver.
 
-        Note: splitting sub-lattices or fixing sub-lattice sites are not supported!
         Args:
-            processor(Processor):
-                A processor.
-
+            ensemble(Ensemble):
+                An ensemble to initialize the problem with. If you want to modify
+                sub-lattices, please do that in ensemble before initializing the
+                solver. Sub-lattices can not be modified after giving the ensemble!
+            initial_occupancy(ArrayLike): optional
+                An initial occupancy used to set the occupancy of manually restricted
+                sites that may have more than one allowed species. Also used to set up
+                the initial composition when solving in a canonical ensemble.
+                Must be provided if any site has been manually restricted, or solving
+                canonical ensemble.
+            other_equality_constraints(list[tuple[dict|list[dict], float]]): optional
+                Representation of other equality constraints to add in the
+                composition space. Should be provided as a list of tuples, with
+                the first element in the tuple to specify the left side of the
+                equality, and the second element to specify the right side of
+                the equality. Meanwhile, the first element in the tuple can
+                either be a single dictionary with species as keys and float as
+                values, to specify coefficients to the left side of the equation
+                corresponding to the particular species on all sub-lattices; or
+                be provided as a list of dictionaries, each gives the coefficient in
+                the constraint to the amount of species in each sub-lattice.
+            other_leq_constraints(list[tuple[dict|list[dict], float]]): optional
+                Representation of less-or-equals constraints. Same format as
+                other_equality_constraints.
+            other_geq_constraints(list[tuple[dict|list[dict], float]]): optional
+                Representation of greater-or-equals constraints. Same format as
+                other_equality_constraints.
         """
-        super().__init__(processor, chemical_potentials=chemical_potentials)
+        self._ensemble = ensemble
+
+        bits = [sublattice.species for sublattice in ensemble.sublattices]
+        prim_sublattice_sizes = [
+            len(sublattice.sites) // ensemble.system_size
+            for sublattice in ensemble.sublattices
+        ]
+        self.other_equality_constraints = other_equality_constraints
+        self.other_geq_constraints = other_geq_constraints
+        self.other_leq_constraints = other_leq_constraints
+        self._composition_space = CompositionSpace(
+            bits,
+            prim_sublattice_sizes,
+            charge_balanced=True,
+            other_constraints=self.other_equality_constraints,
+            leq_constraints=self.other_leq_constraints,
+            geq_constraints=self.other_geq_constraints,
+        )
+
+        self._canonical = self._initialize_problem()
+
+    def _initialize_problem(self):
+        """Generate variables, objective and constraints."""
+        variables, variable_indices = get_upper_bound_variables_from_sublattices(
+            self._ensemble.sublattices, self._ensemble.num_sites
+        )
+        get_upper_bound_composition_space_constraints()
