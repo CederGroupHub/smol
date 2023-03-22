@@ -29,12 +29,11 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             IntArray2DContainer cluster_indices,
     )
 
-@cython.final
-cdef class LocalClusterSpaceEvaluator(OrbitContainer):
     cpdef np.ndarray[np.float64_t, ndim=1] delta_correlations_single_flip(
             self,
             const long[::1] occu_f,
             const long[::1] occu_i,
+            const long[::1] cluster_ratio,
             IntArray2DContainer cluster_indices)
 
     cpdef np.ndarray[np.float64_t, ndim=1] delta_interactions_single_flip(
@@ -42,5 +41,6 @@ cdef class LocalClusterSpaceEvaluator(OrbitContainer):
             const long[::1] occu_f,
             const long[::1] occu_i,
             FloatArray1DContainer cluster_interaction_tensors,
+            const long[::1] cluster_ratio,
             IntArray2DContainer cluster_indices
     )

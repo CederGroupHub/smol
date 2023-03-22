@@ -17,6 +17,10 @@ from smol.utils.cluster_utils.container cimport (
 from smol.utils.cluster_utils.struct cimport FloatArray1D, IntArray2D, OrbitC
 
 
+# TODO decide if better to only have a single evaluator class (merge local)
+# TODO implement using these in Subspace and Processors
+#  Subspace really only needs a single instance! then use the cluster_indices for different supercells
+#  Procs might need a different one for each symmetrically distinct site, but actually could do a single one too
 @cython.final
 cdef class ClusterSpaceEvaluator(OrbitContainer):
     """ClusterSpaceEvaluator is used to compute correlation and interaction vectors.
@@ -121,24 +125,11 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
         return out
 
-@cython.final
-cdef class LocalClusterSpaceEvaluator(OrbitContainer):
-    """LocalClusterSpaceEvaluator used to compute correlation and interaction vectors.
-
-    This extension type is meant to compute only the correlations or cluster
-    interactions that include a specific site.
-
-    Also allows to compute changes in cluster interactions and correlations from
-    changes in a single site.
-
-    This extension type should not be used directly. Instead, use corresponding
-    Processor classes in smol.moca
-    """
-
     cpdef np.ndarray[np.float64_t, ndim=1] delta_correlations_single_flip(
             self,
             const long[::1] occu_f,
             const long[::1] occu_i,
+            const long[::1] cluster_ratio,
             IntArray2DContainer cluster_indices,
     ):
         """Computes the correlation difference between two occupancy vectors.
@@ -148,6 +139,9 @@ cdef class LocalClusterSpaceEvaluator(OrbitContainer):
                 encoded occupancy vector with flip
             occu_i (ndarray):
                 encoded occupancy vector without flip
+            cluster_ratio (ndarray):
+                ratio of number of clusters in each entry of cluster_indices to the total
+                number of the clusters in a structure for the corresponding cluster.
             cluster_indices (IntArray2DContainer):
                 Container with pointers to arrays with indices of sites of all clusters
                 in each orbit given as a container of arrays.
@@ -181,7 +175,7 @@ cdef class LocalClusterSpaceEvaluator(OrbitContainer):
                         ind_f = ind_f + orbit.tensor_indices.data[i] * occu_f[indices.data[j * I + i]]
                     # sum contribution of correlation of cluster k with occupancy at "index"
                     p = p + (orbit.correlation_tensors.data[k * N + ind_f] - orbit.correlation_tensors.data[k * N + ind_i])
-                o_view[bit_id] = p / orbit.ratio / J
+                o_view[bit_id] = p / cluster_ratio[n] / J
                 bit_id = bit_id + 1
 
         return out
@@ -191,6 +185,7 @@ cdef class LocalClusterSpaceEvaluator(OrbitContainer):
             const long[::1] occu_f,
             const long[::1] occu_i,
             FloatArray1DContainer cluster_interaction_tensors,
+            const long[::1] cluster_ratio,
             IntArray2DContainer cluster_indices,
 
     ):
@@ -203,6 +198,9 @@ cdef class LocalClusterSpaceEvaluator(OrbitContainer):
                 encoded occupancy vector without flip
             cluster_interaction_tensors (IntArray1DContainer):
                 Container with pointers to flattened cluster interaction tensors
+            cluster_ratio (ndarray):
+                ratio of number of clusters in each entry of cluster_indices to the total
+                number of the clusters in a structure for the corresponding cluster.
             cluster_indices (IntArray2DContainer):
                 Container with pointers to arrays with indices of sites of all clusters
                 in each orbit given as a container of arrays.
@@ -232,6 +230,6 @@ cdef class LocalClusterSpaceEvaluator(OrbitContainer):
                     ind_i = ind_i + orbit.tensor_indices.data[i] * occu_i[indices.data[j * I + i]]
                     ind_f = ind_f + orbit.tensor_indices.data[i] * occu_f[indices.data[j * I + i]]
                 p = p + (interaction_tensor.data[ind_f] - interaction_tensor.data[ind_i])
-            o_view[n + 1] = p / orbit.ratio / J
+            o_view[orbit.id] = p / cluster_ratio[n] / J
 
         return out

@@ -30,7 +30,7 @@ cdef struct FloatArray2D:
 
 
 cdef struct OrbitC:
+    int id
     int bit_id
-    float ratio
     IntArray1D tensor_indices
     FloatArray2D correlation_tensors

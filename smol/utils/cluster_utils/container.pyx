@@ -29,15 +29,20 @@ cdef class OrbitContainer:
         self.set_orbits(orbit_list)
 
     cpdef public void set_orbits(self, list orbit_list):
-        """Populated data using a list of orbits."""
+        """Populated data using a list of orbit data.
+
+        The orbit data should be given as a list of tuples where is tuple has the
+        following information for the corresponding orbit:
+        (orbit id, orbit bit_id, flattened correlation tensors, tensor indices)
+        """
         cdef int i, num_corr
 
         # check that dataypes are correct
         for orbit_data in orbit_list:
             if not isinstance(orbit_data[0], int):
+                raise TypeError("id must be an integer.")
+            if not isinstance(orbit_data[1], int):
                 raise TypeError("bit_id must be an integer.")
-            if not isinstance(orbit_data[1], float):
-                raise TypeError("ratio must be a float.")
             if not isinstance(orbit_data[2], np.ndarray):
                 raise TypeError("correlation_tensors must be a numpy array.")
             if not isinstance(orbit_data[3], np.ndarray):
@@ -70,16 +75,16 @@ cdef class OrbitContainer:
 
     @staticmethod
     cdef OrbitC create_struct(
+            int orbit_id,
             int bit_id,
-            float ratio,
             const double[:, ::1] correlation_tensors,
             const long[::1] tensor_indices,
     ):
         """Set the fields of a OrbitC struct from memoryviews."""
         cdef OrbitC orbit
 
+        orbit.id = orbit_id
         orbit.bit_id = bit_id
-        orbit.ratio = ratio
 
         orbit.correlation_tensors.size_r = correlation_tensors.shape[0]
         orbit.correlation_tensors.size_c = correlation_tensors.shape[1]

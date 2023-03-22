@@ -22,10 +22,10 @@ cdef class OrbitContainer:
 
     @staticmethod
     cdef OrbitC create_struct(
+            int orbit_id,
             int bit_id,
-            float ratio,
             const double[:, ::1] correlation_tensors,
-            const long[::1] tensor_indices
+            const long[::1] tensor_indices,
     )
 
 
