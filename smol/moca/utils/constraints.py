@@ -265,7 +265,6 @@ class CompositionConstraintsManager:
         constraints_leq = []
         constraints_geq = []
         bits = [sublattice.species for sublattice in obj.sublattices]
-        # TODO: should also allow directly taking in the a matrix and the b array.
 
         def _contains_dict(item):
             if isinstance(item, dict):
