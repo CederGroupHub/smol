@@ -3,6 +3,7 @@
 __author__ = "Luis Barroso-Luque"
 
 cimport numpy as np
+
 import cython
 
 from smol.utils.cluster_utils.container cimport (
@@ -12,6 +13,7 @@ from smol.utils.cluster_utils.container cimport (
 )
 
 
+@cython.final
 cdef class ClusterSpaceEvaluator(OrbitContainer):
     cpdef np.ndarray[np.float64_t, ndim=1] correlations_from_occupancy(
             self,
@@ -28,7 +30,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
     )
 
 @cython.final
-cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
+cdef class LocalClusterSpaceEvaluator(OrbitContainer):
     cpdef np.ndarray[np.float64_t, ndim=1] delta_correlations_single_flip(
             self,
             const long[::1] occu_f,

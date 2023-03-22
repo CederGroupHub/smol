@@ -17,6 +17,7 @@ from smol.utils.cluster_utils.container cimport (
 from smol.utils.cluster_utils.struct cimport FloatArray1D, IntArray2D, OrbitC
 
 
+@cython.final
 cdef class ClusterSpaceEvaluator(OrbitContainer):
     """ClusterSpaceEvaluator is used to compute correlation and interaction vectors.
 
@@ -121,7 +122,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         return out
 
 @cython.final
-cdef class LocalClusterSpaceEvaluator(ClusterSpaceEvaluator):
+cdef class LocalClusterSpaceEvaluator(OrbitContainer):
     """LocalClusterSpaceEvaluator used to compute correlation and interaction vectors.
 
     This extension type is meant to compute only the correlations or cluster
