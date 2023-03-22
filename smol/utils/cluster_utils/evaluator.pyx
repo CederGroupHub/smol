@@ -30,6 +30,10 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
     vectors using the ClusterSubspace.corr_from_occupancy method.
     """
 
+    def __cinit__(self, list orbit_list, int num_orbits, int num_corr_functions):
+        self.num_orbits = num_orbits
+        self.num_corr = num_corr_functions
+
     cpdef np.ndarray[np.float64_t, ndim=1] correlations_from_occupancy(
             self,
             const long[::1] occu,
@@ -52,7 +56,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef IntArray2D indices  # flattened tensor indices
         cdef OrbitC orbit
 
-        out = np.zeros(self.num_correlations + 1)
+        out = np.zeros(self.num_corr)
         cdef double[::1] o_view = out
         o_view[0] = 1  # empty cluster
 
@@ -105,7 +109,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef OrbitC orbit
         cdef FloatArray1D interaction_tensor
 
-        out = np.zeros(self.size + 1)
+        out = np.zeros(self.num_orbits)
         cdef double[::1] o_view = out
         o_view[0] = offset  # empty cluster
 
@@ -121,7 +125,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
                 for i in range(I):
                     index = index + orbit.tensor_indices.data[i] * occu[indices.data[j * I + i]]
                 p = p + interaction_tensor.data[index]
-            o_view[n + 1] = p / J
+            o_view[orbit.id] = p / J
 
         return out
 
@@ -129,7 +133,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             self,
             const long[::1] occu_f,
             const long[::1] occu_i,
-            const long[::1] cluster_ratio,
+            const double[::1] cluster_ratio,
             IntArray2DContainer cluster_indices,
     ):
         """Computes the correlation difference between two occupancy vectors.
@@ -154,7 +158,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef IntArray2D indices  # flattened tensor indices
         cdef OrbitC orbit
 
-        out = np.zeros(self.num_correlations + 1)
+        out = np.zeros(self.num_corr)
         cdef double[::1] o_view = out
 
         for n in prange(self.size, nogil=True):  # loop thru orbits
@@ -185,7 +189,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             const long[::1] occu_f,
             const long[::1] occu_i,
             FloatArray1DContainer cluster_interaction_tensors,
-            const long[::1] cluster_ratio,
+            const double[::1] cluster_ratio,
             IntArray2DContainer cluster_indices,
 
     ):
@@ -214,7 +218,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef OrbitC orbit
         cdef FloatArray1D interaction_tensor
 
-        out = np.zeros(self.size + 1)
+        out = np.zeros(self.num_orbits)
         cdef double[::1] o_view = out
 
         for n in prange(self.size, nogil=True):

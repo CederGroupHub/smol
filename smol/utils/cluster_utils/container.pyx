@@ -15,11 +15,11 @@ from smol.utils.cluster_utils.struct cimport (
     OrbitC,
 )
 
-# Is it possible to "template" for all arraycontainers based on tempita
+# Is it possible to "template" for all array containers based on tempita
 
 
 cdef class OrbitContainer:
-    def __cinit__(self, list orbit_list):
+    def __cinit__(self, list orbit_list, *args):
         self.size = len(orbit_list)
         self.data = <OrbitC*> PyMem_Malloc(self.size * sizeof(OrbitC))
         if not self.data:
@@ -35,7 +35,7 @@ cdef class OrbitContainer:
         following information for the corresponding orbit:
         (orbit id, orbit bit_id, flattened correlation tensors, tensor indices)
         """
-        cdef int i, num_corr
+        cdef int i
 
         # check that dataypes are correct
         for orbit_data in orbit_list:
@@ -62,16 +62,13 @@ cdef class OrbitContainer:
             self.size = len(orbit_list)
             self.data = mem
 
-        num_corr = 0
         for i in range(self.size):
-            num_corr += orbit_list[i][2].shape[0]
             self.data[i] = OrbitContainer.create_struct(
                 orbit_list[i][0],
                 orbit_list[i][1],
                 orbit_list[i][2],
                 orbit_list[i][3],
             )
-        self.num_correlations = num_corr
 
     @staticmethod
     cdef OrbitC create_struct(

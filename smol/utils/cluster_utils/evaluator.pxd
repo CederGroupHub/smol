@@ -15,6 +15,9 @@ from smol.utils.cluster_utils.container cimport (
 
 @cython.final
 cdef class ClusterSpaceEvaluator(OrbitContainer):
+    cdef int num_corr  # total number of correlation functions
+    cdef int num_orbits  # total number of orbits
+
     cpdef np.ndarray[np.float64_t, ndim=1] correlations_from_occupancy(
             self,
             const long[::1] occu,
@@ -33,7 +36,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             self,
             const long[::1] occu_f,
             const long[::1] occu_i,
-            const long[::1] cluster_ratio,
+            const double[::1] cluster_ratio,
             IntArray2DContainer cluster_indices)
 
     cpdef np.ndarray[np.float64_t, ndim=1] delta_interactions_single_flip(
@@ -41,6 +44,6 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             const long[::1] occu_f,
             const long[::1] occu_i,
             FloatArray1DContainer cluster_interaction_tensors,
-            const long[::1] cluster_ratio,
+            const double[::1] cluster_ratio,
             IntArray2DContainer cluster_indices
     )
