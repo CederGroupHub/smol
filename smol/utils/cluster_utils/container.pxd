@@ -4,6 +4,7 @@
 
 __author__ = "Luis Barroso-Luque"
 
+import cython
 from smol.utils.cluster_utils.struct cimport (
     FloatArray1D,
     FloatArray2D,
@@ -16,7 +17,6 @@ from smol.utils.cluster_utils.struct cimport (
 cdef class OrbitContainer:
     cdef OrbitC* data
     cdef readonly int size
-    cdef readonly int num_correlations
 
     cpdef public void set_orbits(self, list orbit_list)
 
@@ -29,6 +29,7 @@ cdef class OrbitContainer:
     )
 
 
+@cython.final
 cdef class FloatArray2DContainer:
     cdef FloatArray2D* data
     cdef readonly int size
@@ -39,6 +40,7 @@ cdef class FloatArray2DContainer:
     cdef FloatArray2D create_struct(double[:, ::1] array)
 
 
+@cython.final
 cdef class FloatArray1DContainer:
     cdef FloatArray1D* data
     cdef readonly int size
@@ -49,6 +51,7 @@ cdef class FloatArray1DContainer:
     cdef FloatArray1D create_struct(double[::1] array)
 
 
+@cython.final
 cdef class IntArray1DContainer:
     cdef IntArray1D* data
     cdef readonly int size
@@ -59,6 +62,7 @@ cdef class IntArray1DContainer:
     cdef IntArray1D create_struct(long[::1] array)
 
 
+@cython.final
 cdef class IntArray2DContainer:
     cdef IntArray2D* data
     cdef readonly int size
