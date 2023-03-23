@@ -290,7 +290,7 @@ def get_upper_bound_objective_from_ewald_processor(
             expression += ewald_matrix[i, j] * row_var * col_var
 
     # No need to multiply because system size already included.
-    return expression
+    return expression * ewald_processor.coefs
 
 
 def get_upper_bound_objective_from_chemical_potentials(
@@ -302,6 +302,7 @@ def get_upper_bound_objective_from_chemical_potentials(
 ) -> Union[cp.Expression, Number]:
     """Get the objective function from chemical potentials.
 
+    Notice: returns the -mu N term. Negation already included.
     Args:
         sublattices(list[Sublattice]):
             Sub-lattices to build the upper-bound problem on.
@@ -355,4 +356,4 @@ def get_upper_bound_objective_from_chemical_potentials(
             expression += chemical_table[site_id, initial_occupancy[site_id]]
 
     # No need to multiply because system size already included.
-    return expression
+    return -1 * expression

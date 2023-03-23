@@ -220,6 +220,7 @@ class UpperboundSolver(MSONable):
             objective = _handle_single_processor(processor)
         # E - mu N for semi-grand ensemble.
         if self._ensemble.chemical_potentials is not None:
+            # Chemical potential term already includes the "-" before mu N.
             objective += get_upper_bound_objective_from_chemical_potentials(
                 sublattices,
                 variables,
