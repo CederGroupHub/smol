@@ -101,8 +101,9 @@ def map_ewald_indices_to_variable_indices(
     Returns:
         list[int]:
             Index of cvxpy variable corresponding to each ewald matrix row. If a
-            row corresponds to a site with only one allowed species, it will be
-            marked as -1 (always occupied).
+            row corresponds to a site with only one allowed species or the species
+            on a manually restricted site in a pre-defined initial occupancy,
+            it will be marked as -1 (always occupied).
             If a row corresponds to a site manually restricted to
             be occupied by other species rather than the species corresponding to
             this row, it will be marked as -2 (never occupied).
@@ -124,7 +125,7 @@ def map_ewald_indices_to_variable_indices(
                 continue
             if site_id in sublattice.active_sites:
                 var_id = variable_indices[site_id][species_id]
-            # Always occupied.
+            # Inactive sub-lattice. Fixed to always effective.
             elif len(sublattice.species) == 1:
                 var_id = -1
             elif len(sublattice.species) == 0:
@@ -132,6 +133,7 @@ def map_ewald_indices_to_variable_indices(
                     f"Encountered empty sub-lattice on site {site_id}."
                     f" Sub-lattice: {sublattice}."
                 )
+            # Manually restricted site.
             else:
                 if initial_occupancy is None:
                     raise ValueError(
@@ -142,10 +144,10 @@ def map_ewald_indices_to_variable_indices(
                 else:
                     # Site manually restricted to initial occupancy.
                     if sublattice.encoding[species_id] == initial_occupancy[site_id]:
-                        # Fixed to always occupy.
+                        # Fixed to always effective.
                         var_id = -1
                     else:
-                        # Fixed to never occupy.
+                        # Fixed to never effective.
                         var_id = -2
             ewald_ids_to_var_ids.append(var_id)
 

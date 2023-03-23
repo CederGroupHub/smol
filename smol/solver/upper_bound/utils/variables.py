@@ -52,21 +52,21 @@ def get_upper_bound_variables_from_sublattices(
 
 
 def get_occupancy_from_variables(
-    variables: cp.Variable,
-    variable_indices: List[List[int]],
     sublattices: List[Sublattice],
+    variable_values: ArrayLike,
+    variable_indices: List[List[int]],
     initial_occupancy: ArrayLike = None,
 ) -> np.ndarray:
-    """Get encoded occupancy array from variables.
+    """Get encoded occupancy array from value of variables.
 
     Args:
-        variables(cp.Variable):
-            cvxpy variables storing the ground-state result.
+        sublattices(list[Sublattice]):
+            Sub-lattices to build the upper-bound problem on.
+        variable_values(ArrayLike):
+            Value of cvxpy variables storing the ground-state result.
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be empty.
-        sublattices(list[Sublattice]):
-            Sub-lattices to build the upper-bound problem on.
         initial_occupancy(ArrayLike): optional
             An initial occupancy used to set the occupancy of manually restricted
             sites that may have more than one allowed species.
@@ -74,8 +74,8 @@ def get_occupancy_from_variables(
     Returns:
         np.ndarray: Encoded occupancy string.
     """
-    if variables.value is None:
-        raise ValueError("CVX variables are not solved yet!")
+    values = np.round(variable_values).astype(int)
+
     num_sites = len(variable_indices)
     occu = np.zeros(num_sites, dtype=int) - 1
     site_sublattice_ids = np.zeros(num_sites, dtype=int) - 1
@@ -87,7 +87,7 @@ def get_occupancy_from_variables(
         sublattice = sublattices[site_sublattice_ids[site_id]]
         # Active.
         if len(indices) > 0:
-            species_ids_on_site = np.where(variables.value[indices])[0]
+            species_ids_on_site = np.where(values[indices] == 1)[0]
             if len(species_ids_on_site) > 1:
                 raise ValueError(f"More than one species occupied site {site_id}!")
             occu[site_id] = sublattice.encoding[species_ids_on_site[0]]
@@ -115,3 +115,48 @@ def get_occupancy_from_variables(
         raise ValueError(f"Variables does not match given indices: {variable_indices}!")
 
     return occu
+
+
+def get_variable_values_from_occupancy(
+    sublattices: List[Sublattice],
+    occupancy: ArrayLike,
+    variable_indices: List[List[int]],
+):
+    """Get value of variables from encoded occupancy array.
+
+    Args:
+        sublattices(list[Sublattice]):
+            Sub-lattices to build the upper-bound problem on.
+        occupancy(ArrayLike): optional
+            An encoded occupancy array. Does not check whether it satisfies
+            constraints.
+        variable_indices(list[list[int]]):
+            List of variable indices corresponding to each active site index and
+            index of species in its site space. Inactive sites will be empty.
+
+    Returns:
+        np.ndarray: Value of boolean variables in 0 and 1.
+    """
+    # Variable indices are continuous.
+    num_variables = (
+        max((max(sub) if len(sub) > 0 else -1) for sub in variable_indices) + 1
+    )
+    values = np.zeros(num_variables, dtype=int)
+
+    num_sites = len(variable_indices)
+    site_sublattice_ids = np.zeros(num_sites, dtype=int) - 1
+    for sublattice_id, sublattice in enumerate(sublattices):
+        site_sublattice_ids[sublattice.sites] = sublattice_id
+
+    for site_id, var_ids in enumerate(variable_indices):
+        sublattice_id = site_sublattice_ids[site_id]
+        sublattice = sublattices[sublattice_id]
+
+        active_var_id_on_site = np.where(occupancy[site_id] == sublattice.encoding)[0][
+            0
+        ]
+        active_var_id = var_ids[active_var_id_on_site]
+        values[active_var_id] = 1
+
+    # No check, just return.
+    return values

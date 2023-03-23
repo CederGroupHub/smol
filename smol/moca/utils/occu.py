@@ -25,9 +25,9 @@ def get_dim_ids_by_sublattice(bits):
 
 # Parsing will be faster based on table.
 def get_dim_ids_table(sublattices, active_only=False):
-    """Get the dimension indices of all (site, code) in n-representation.
+    """Get the dimension indices of all (site, code) in "couts" representation.
 
-    This will be used to efficiently map occupancy to n-representation.
+    This will be used to efficiently map occupancy to "couts" representation.
     Args:
         sublattices(smol.moca.Sublattice):
             All sub-lattices, active or not. The union
@@ -37,6 +37,9 @@ def get_dim_ids_table(sublattices, active_only=False):
             If true, will count un-restricted sites on all
             sub-lattices only. Default to false, will count
             all sites and sub-lattices.
+    Returns:
+        np.ndarray: a table storing the index of components corresponding to each
+        site (rows) and each species on the site (columns).
     """
     n_row = sum(len(sublatt.sites) for sublatt in sublattices)
     n_col = max(max(sublatt.encoding) for sublatt in sublattices) + 1
