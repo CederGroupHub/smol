@@ -42,6 +42,7 @@ from smol.cofe.space.basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
 from smol.correlations import corr_from_occupancy
 from smol.utils.cluster_utils.container import IntArray2DContainer
+from smol.utils.cluster_utils.evaluator import ClusterSpaceEvaluator
 from smol.utils.exceptions import (
     SYMMETRY_ERROR_MESSAGE,
     StructureMatchError,
@@ -189,6 +190,7 @@ class ClusterSubspace(MSONable):
             self._site_matcher = site_matcher
 
         self._orbits = orbits
+        self._evaluator = ClusterSpaceEvaluator(self._get_orbit_data(self.orbits))
         self._external_terms = []  # List will hold external terms (i.e. Ewald)
 
         # Dict to cache orbit index mappings, as OrbitIndices named tuples
@@ -957,7 +959,10 @@ class ClusterSubspace(MSONable):
 
         self._assign_orbit_ids()  # Re-assign ids
         # Clear the cached supercell orbit mappings
+        # TODO instead of resetting this, just remove the orbit ids
         self._supercell_orbit_inds = {}
+        # rest the evaluator
+        self._evaluator.set_orbits(self._get_orbit_data(self.orbits))
 
     def remove_corr_functions(self, corr_ids):
         """Remove correlation functions by their ID's.
@@ -1198,6 +1203,20 @@ class ClusterSubspace(MSONable):
 
         orbit_indices = tuple(orbit_indices)
         return OrbitIndices(orbit_indices, IntArray2DContainer(orbit_indices))
+
+    @staticmethod
+    def _get_orbit_data(orbits):
+        """Gather orbit data necessary to create a ClusterSpaceEvaluator."""
+        orbit_data = tuple(
+            (
+                orbit.id,
+                orbit.bit_id,
+                orbit.flat_correlation_tensors,
+                orbit.flat_tensor_indices,
+            )
+            for orbit in orbits
+        )
+        return orbit_data
 
     @staticmethod
     def _gen_orbits_from_cutoffs(
