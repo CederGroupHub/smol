@@ -279,7 +279,7 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
 
     # check that the matrix was cached
     m_hash = tuple(sorted(tuple(s.tolist()) for s in supercell_matrix))
-    assert cluster_subspace._supercell_orb_inds[
+    assert cluster_subspace._supercell_orbit_inds[
         m_hash
     ] is cluster_subspace.supercell_orbit_mappings(supercell_matrix)
 
@@ -359,7 +359,7 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
 
     # Symmetrically equivalent matrices should give the same correlation
     # vectors on the same structure, when using the default orbit mapping.
-    cluster_subspace._supercell_orb_inds = {}
+    cluster_subspace._supercell_orbit_inds = {}
     for structure, expected in zip(structures, corrs):
         predicted = cluster_subspace.corr_from_structure(
             structure, scmatrix=supercell_matrix
@@ -499,10 +499,10 @@ def test_msonable(cluster_subspace_ewald, rng):
     assert_msonable(cluster_subspace_ewald)
 
     subspace = ClusterSubspace.from_dict(cluster_subspace_ewald.as_dict())
-    for key in cluster_subspace_ewald._supercell_orb_inds.keys():
+    for key in cluster_subspace_ewald._supercell_orbit_inds.keys():
         for arr1, arr2 in zip(
-            subspace._supercell_orb_inds[key],
-            cluster_subspace_ewald._supercell_orb_inds[key],
+            subspace._supercell_orbit_inds[key],
+            cluster_subspace_ewald._supercell_orbit_inds[key],
         ):
             npt.assert_array_equal(arr1, arr2)
 
