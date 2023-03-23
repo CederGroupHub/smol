@@ -17,58 +17,63 @@ from smol.utils.cluster_utils.struct cimport (
 
 # Is it possible to "template" for all array containers based on tempita
 
-
+# TODO keep python reference to container contents so that GC never accidentally collects
+#  the contents....  save them in an __init__ call
 cdef class OrbitContainer:
-    def __cinit__(self, list orbit_list, *args):
-        self.size = len(orbit_list)
+    def __init__(self, tuple orbit_data, *args):
+        # keep a python reference to the orbit_list so that it is not garbage collected
+        self._orbit_data = orbit_data
+
+    def __cinit__(self, tuple orbit_data, *args):
+        self.size = len(orbit_data)
         self.data = <OrbitC*> PyMem_Malloc(self.size * sizeof(OrbitC))
         if not self.data:
             raise MemoryError()
 
         # populate orbits array
-        self.set_orbits(orbit_list)
+        self.set_orbits(orbit_data)
 
-    cpdef public void set_orbits(self, list orbit_list):
+    cpdef public void set_orbits(self, tuple orbit_data):
         """Populated data using a list of orbit data.
 
-        The orbit data should be given as a list of tuples where is tuple has the
+        The orbit data should be given as a tuple of tuples where each tuple has the
         following information for the corresponding orbit:
         (orbit id, orbit bit_id, flattened correlation tensors, tensor indices)
         """
         cdef int i
 
         # check that dataypes are correct
-        for orbit_data in orbit_list:
-            if not isinstance(orbit_data[0], int):
+        for data in orbit_data:
+            if not isinstance(data[0], int):
                 raise TypeError("id must be an integer.")
-            if not isinstance(orbit_data[1], int):
+            if not isinstance(data[1], int):
                 raise TypeError("bit_id must be an integer.")
-            if not isinstance(orbit_data[2], np.ndarray):
+            if not isinstance(data[2], np.ndarray):
                 raise TypeError("correlation_tensors must be a numpy array.")
-            if not isinstance(orbit_data[3], np.ndarray):
+            if not isinstance(data[3], np.ndarray):
                 raise TypeError("tensor_indices must be a numpy array.")
-            if orbit_data[2].ndim != 2:
+            if data[2].ndim != 2:
                 raise ValueError("correlation_tensors must be 2D.")
-            if orbit_data[3].ndim != 1:
+            if data[3].ndim != 1:
                 raise ValueError("tensor_indices must be 1D.")
 
         # if different size then reallocate
-        if len(orbit_list) != self.size:
+        if len(orbit_data) != self.size:
             mem = <OrbitC*> PyMem_Realloc(
-                self.data, len(orbit_list) * sizeof(OrbitC)
+                self.data, len(orbit_data) * sizeof(OrbitC)
             )
             if not mem:
                 raise MemoryError()
-            self.size = len(orbit_list)
+
+            self.size = len(orbit_data)
             self.data = mem
 
-        for i in range(self.size):
+        for i, data in enumerate(orbit_data):
             self.data[i] = OrbitContainer.create_struct(
-                orbit_list[i][0],
-                orbit_list[i][1],
-                orbit_list[i][2],
-                orbit_list[i][3],
+                data[0], data[1], data[2], data[3]
             )
+
+        self._orbit_data = orbit_data
 
     @staticmethod
     cdef OrbitC create_struct(
@@ -101,6 +106,10 @@ cdef class OrbitContainer:
 
 @cython.final
 cdef class FloatArray2DContainer:
+    def __init__(self, tuple arrays):
+        # keep a python reference to the orbit_list so that it is not garbage collected
+        self._arrays = arrays
+
     def __cinit__(self, tuple arrays):
         self.size = len(arrays)
         self.data = <FloatArray2D*> PyMem_Malloc(self.size * sizeof(FloatArray2D))
@@ -131,6 +140,8 @@ cdef class FloatArray2DContainer:
         for i in range(self.size):
             self.data[i] = FloatArray2DContainer.create_struct(arrays[i])
 
+        self._arrays = arrays
+
 
     @staticmethod
     cdef FloatArray2D create_struct(double[:, ::1] array):
@@ -150,6 +161,10 @@ cdef class FloatArray2DContainer:
 
 @cython.final
 cdef class FloatArray1DContainer:
+    def __init__(self, tuple arrays):
+        # keep a python reference to the orbit_list so that it is not garbage collected
+        self._arrays = arrays
+
     def __cinit__(self, tuple arrays):
         self.size = len(arrays)
         self.data = <FloatArray1D*> PyMem_Malloc(self.size * sizeof(FloatArray1D))
@@ -180,6 +195,8 @@ cdef class FloatArray1DContainer:
         for i in range(self.size):
             self.data[i] = FloatArray1DContainer.create_struct(arrays[i])
 
+        self._arrays = arrays
+
     @staticmethod
     cdef FloatArray1D create_struct(double[::1] array):
         """Set the fields of a FloatArray1D struct from memoryview."""
@@ -197,6 +214,10 @@ cdef class FloatArray1DContainer:
 
 @cython.final
 cdef class IntArray1DContainer:
+    def __init__(self, tuple arrays):
+        # keep a python reference to the orbit_list so that it is not garbage collected
+        self._arrays = arrays
+
     def __cinit__(self, tuple arrays):
         self.size = len(arrays)
         self.data = <IntArray1D*> PyMem_Malloc(self.size * sizeof(IntArray1D))
@@ -227,6 +248,8 @@ cdef class IntArray1DContainer:
         for i in range(self.size):
             self.data[i] = IntArray1DContainer.create_struct(arrays[i])
 
+        self._arrays = arrays
+
     @staticmethod
     cdef IntArray1D create_struct(long[::1] array):
         """Set the fields of a _FloatArray1D struct from memoryview."""
@@ -244,6 +267,10 @@ cdef class IntArray1DContainer:
 
 @cython.final
 cdef class IntArray2DContainer:
+    def __init__(self, tuple arrays):
+        # keep a python reference to the orbit_list so that it is not garbage collected
+        self._arrays = arrays
+
     def __cinit__(self, tuple arrays):
         self.size = len(arrays)
         self.data = <IntArray2D*> PyMem_Malloc(self.size * sizeof(IntArray2D))
@@ -280,6 +307,8 @@ cdef class IntArray2DContainer:
 
         for i in range(self.size):
             self.data[i] = IntArray2DContainer.create_struct(arrays[i])
+
+        self._arrays = arrays
 
     @staticmethod
     cdef IntArray2D create_struct(long[:, ::1] array):

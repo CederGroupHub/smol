@@ -1,1 +1,1 @@
-"""Cython based utilities for computing correlantion and cluster interactions."""
+"""Cython based utilities for computing correlations and cluster interactions."""

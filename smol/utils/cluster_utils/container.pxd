@@ -17,8 +17,9 @@ from smol.utils.cluster_utils.struct cimport (
 cdef class OrbitContainer:
     cdef OrbitC* data
     cdef readonly int size
+    cdef tuple _orbit_data
 
-    cpdef public void set_orbits(self, list orbit_list)
+    cpdef public void set_orbits(self, tuple orbit_data)
 
     @staticmethod
     cdef OrbitC create_struct(
@@ -33,6 +34,7 @@ cdef class OrbitContainer:
 cdef class FloatArray2DContainer:
     cdef FloatArray2D* data
     cdef readonly int size
+    cdef tuple _arrays
 
     cpdef public void set_arrays(self, tuple arrays)
 
@@ -44,6 +46,7 @@ cdef class FloatArray2DContainer:
 cdef class FloatArray1DContainer:
     cdef FloatArray1D* data
     cdef readonly int size
+    cdef tuple _arrays
 
     cpdef public void set_arrays(self, tuple arrays)
 
@@ -55,6 +58,7 @@ cdef class FloatArray1DContainer:
 cdef class IntArray1DContainer:
     cdef IntArray1D* data
     cdef readonly int size
+    cdef tuple _arrays
 
     cpdef public void set_arrays(self, tuple arrays)
 
@@ -66,6 +70,7 @@ cdef class IntArray1DContainer:
 cdef class IntArray2DContainer:
     cdef IntArray2D* data
     cdef readonly int size
+    cdef tuple _arrays
 
     cpdef public void set_arrays(self, tuple arrays)
 
