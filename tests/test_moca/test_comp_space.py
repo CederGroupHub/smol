@@ -58,7 +58,7 @@ def comp_space_lmtpo2():
         charge_balanced=True,
         optimize_basis=True,
         table_ergodic=True,
-        other_constraints=[([2, 1, 0, 0, 0], 7 / 6)],
+        other_constraints=[([2, 1, 0, 0, 0], 7 / 6, "eq")],
     )
 
 
@@ -78,15 +78,13 @@ def comp_space_lmtpo3():
         charge_balanced=True,
         optimize_basis=True,
         table_ergodic=True,
-        leq_constraints=[
-            ([0, 1, 0, 0, 0], 5 / 6),
-            ([0, 0, 0, 1, 0], 5 / 6),
-            ([2, 1, 0, 0, 0], 8 / 6),
-        ],
-        geq_constraints=[
-            ([0, 1, 0, 0, 0], 1 / 6),
-            ([0, 0, 0, 1, 0], 1 / 6),
-            ([2, 1, 0, 0, 0], 5 / 6),
+        other_constraints=[
+            ([0, 1, 0, 0, 0], 5 / 6, "<="),
+            ([0, 0, 0, 1, 0], 5 / 6, "<="),
+            ([2, 1, 0, 0, 0], 8 / 6, "<="),
+            ([0, 1, 0, 0, 0], 1 / 6, ">="),
+            ([0, 0, 0, 1, 0], 1 / 6, ">="),
+            ([2, 1, 0, 0, 0], 5 / 6, ">="),
         ],
     )
 
@@ -103,7 +101,7 @@ def comp_space_lmntof():
 
     bits = [[li, ni, mn, ti], [o, f]]
     sublattice_sizes = [1, 1]
-    other_constraints = [([0, 1, -1, 0, 0, 0], 0), ([0, 0, 1, -1, 0, 0], 0)]
+    other_constraints = [([0, 1, -1, 0, 0, 0], 0, "eq"), ([0, 0, 1, -1, 0, 0], 0, "eq")]
     return CompositionSpace(
         bits,
         sublattice_sizes,
@@ -379,6 +377,26 @@ def test_enumerate_grid(comp_space_lmtpo, comp_space_lmtpo2, comp_space_lmtpo3):
     std2 = np.array(sorted(std2.tolist()), dtype=int)
     npt.assert_array_equal(grid, std)
     npt.assert_array_equal(grid, std2)
+    # Test inequality constraints are all correctly parsed and satisfied.
+    ns = [
+        comp_space_lmtpo3.translate_format(
+            x,
+            supercell_size=8,
+            from_format="coordinates",
+            to_format="counts",
+            rounding=True,
+        )
+        for x in grid
+    ]
+    ns = np.array(ns, dtype=int)
+    assert comp_space_lmtpo3._A_leq.shape == (3, ns.shape[1])
+    assert comp_space_lmtpo3._A_geq.shape == (3, ns.shape[1])
+    a_leq = comp_space_lmtpo3._A_leq
+    b_leq = comp_space_lmtpo3._b_leq
+    a_geq = comp_space_lmtpo3._A_leq
+    b_geq = comp_space_lmtpo3._b_leq
+    assert np.all(a_leq @ ns.T <= b_leq[None, :] + NUM_TOL)
+    assert np.all(a_geq @ ns.T >= b_geq[None, :] - NUM_TOL)
 
     grid1 = comp_space_lmtpo.get_composition_grid(supercell_size=10, step=2)
     grid2 = comp_space_lmtpo.get_composition_grid(supercell_size=5, step=1) * 2

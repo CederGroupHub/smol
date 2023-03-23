@@ -264,7 +264,7 @@ class CompositionConstraintsManager:
         constraints_eq = []
         constraints_leq = []
         constraints_geq = []
-        bits = [sublattice.species for sublattice in obj.sublattices]
+        bits = obj.bits
 
         def _contains_dict(item):
             if isinstance(item, dict):
