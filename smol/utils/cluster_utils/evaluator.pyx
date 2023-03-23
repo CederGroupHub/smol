@@ -17,10 +17,7 @@ from smol.utils.cluster_utils.container cimport (
 from smol.utils.cluster_utils.struct cimport FloatArray1D, IntArray2D, OrbitC
 
 
-# TODO decide if better to only have a single evaluator class (merge local)
 # TODO implement using these in Subspace and Processors
-#  Subspace really only needs a single instance! then use the cluster_indices for different supercells
-#  Procs might need a different one for each symmetrically distinct site, but actually could do a single one too
 @cython.final
 cdef class ClusterSpaceEvaluator(OrbitContainer):
     """ClusterSpaceEvaluator is used to compute correlation and interaction vectors.
@@ -30,9 +27,39 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
     vectors using the ClusterSubspace.corr_from_occupancy method.
     """
 
-    def __cinit__(self, list orbit_list, int num_orbits, int num_corr_functions):
+    def __cinit__(
+            self,
+            tuple orbit_data,
+            int num_orbits,
+            int num_corr_functions,
+            double offset = 0.0,
+            tuple cluster_interaction_tensors = None):
         self.num_orbits = num_orbits
         self.num_corr = num_corr_functions
+        self.offset = offset
+
+        if cluster_interaction_tensors is None:
+            cluster_interaction_tensors = tuple(data[2].sum(axis=0) for data in orbit_data)
+
+        self.cluster_interactions = FloatArray1DContainer(cluster_interaction_tensors)
+
+    cpdef public void set_cluster_interactions(
+            self, tuple cluster_interaction_tensors, double offset
+    ):
+        """Sets the cluster interaction tensors.
+
+        Args:
+            cluster_interaction_tensors (tuple):
+                Tuple of ndarrays cluster interaction tensors.
+            offset (float):
+                interaction value for the constant term (i.e. the grand mean).
+        """
+        if len(cluster_interaction_tensors) != self.size:
+            raise ValueError(
+                "Number of cluster interaction tensors must be equal to the number of orbits."
+            )
+        self.cluster_interactions.set_arrays(cluster_interaction_tensors)
+        self.offset = offset
 
     cpdef np.ndarray[np.float64_t, ndim=1] correlations_from_occupancy(
             self,

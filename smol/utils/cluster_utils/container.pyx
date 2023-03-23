@@ -21,6 +21,14 @@ from smol.utils.cluster_utils.struct cimport (
 #  the contents....  save them in an __init__ call
 cdef class OrbitContainer:
     def __init__(self, tuple orbit_data, *args):
+        """Python initialization
+
+        Args:
+            orbit_data (tuple):
+                The orbit data should be given as a list of tuples where is tuple has
+                the following information for the corresponding orbit:
+                (orbit id, orbit bit_id, flattened correlation tensors, tensor indices)
+        """
         # keep a python reference to the orbit_list so that it is not garbage collected
         self._orbit_data = orbit_data
 
@@ -34,12 +42,7 @@ cdef class OrbitContainer:
         self.set_orbits(orbit_data)
 
     cpdef public void set_orbits(self, tuple orbit_data):
-        """Populated data using a list of orbit data.
-
-        The orbit data should be given as a tuple of tuples where each tuple has the
-        following information for the corresponding orbit:
-        (orbit id, orbit bit_id, flattened correlation tensors, tensor indices)
-        """
+        """Populated data using a list of orbit data."""
         cdef int i
 
         # check that dataypes are correct

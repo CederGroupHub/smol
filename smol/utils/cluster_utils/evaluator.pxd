@@ -17,6 +17,12 @@ from smol.utils.cluster_utils.container cimport (
 cdef class ClusterSpaceEvaluator(OrbitContainer):
     cdef int num_corr  # total number of correlation functions
     cdef int num_orbits  # total number of orbits
+    cdef public double offset  # offset for the interaction tensor
+    cdef FloatArray1DContainer cluster_interactions
+
+    cpdef public void set_cluster_interactions(
+            self, tuple cluster_interaction_tensors, double offset
+    )
 
     cpdef np.ndarray[np.float64_t, ndim=1] correlations_from_occupancy(
             self,
