@@ -113,7 +113,6 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             self,
             const long[::1] occu,
             const double offset,
-            FloatArray1DContainer cluster_interaction_tensors,
             IntArray2DContainer cluster_indices,
     ):
         """Computes the cluster interaction vector for a given encoded occupancy string.
@@ -122,8 +121,6 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
                 encoded occupancy vector
             offset (float):
                 eci value for the constant term.
-            cluster_interaction_tensors (IntArray1DContainer):
-                Container with pointers to flattened cluster interaction tensors
             cluster_indices (IntArray1DContainer):
                 Container with pointers to arrays with indices of sites of all clusters
                 in each orbit given as a container of arrays.
@@ -143,7 +140,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         for n in prange(self.size, nogil=True):
             orbit = self.data[n]
             indices = cluster_indices.data[n]
-            interaction_tensor = cluster_interaction_tensors.data[n]
+            interaction_tensor = self.cluster_interactions.data[n]
             J = indices.size_r # cluster index
             I = indices.size_c  # index within cluster
             p = 0
@@ -215,20 +212,18 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             self,
             const long[::1] occu_f,
             const long[::1] occu_i,
-            FloatArray1DContainer cluster_interaction_tensors,
             const double[::1] cluster_ratio,
             IntArray2DContainer cluster_indices,
 
     ):
         """Computes the cluster interaction vector difference between two occupancy
         strings.
+
         Args:
             occu_f (ndarray):
                 encoded occupancy vector with flip
             occu_i (ndarray):
                 encoded occupancy vector without flip
-            cluster_interaction_tensors (IntArray1DContainer):
-                Container with pointers to flattened cluster interaction tensors
             cluster_ratio (ndarray):
                 ratio of number of clusters in each entry of cluster_indices to the total
                 number of the clusters in a structure for the corresponding cluster.
@@ -251,7 +246,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         for n in prange(self.size, nogil=True):
             orbit = self.data[n]
             indices = cluster_indices.data[n]
-            interaction_tensor = cluster_interaction_tensors.data[n]
+            interaction_tensor = self.cluster_interactions.data[n]
             J = indices.size_r # cluster index
             I = indices.size_c # index within cluster
             p = 0

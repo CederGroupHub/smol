@@ -34,7 +34,6 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             self,
             const long[::1] occu,
             const double offset,
-            FloatArray1DContainer cluster_interaction_tensors,
             IntArray2DContainer cluster_indices,
     )
 
@@ -49,7 +48,6 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             self,
             const long[::1] occu_f,
             const long[::1] occu_i,
-            FloatArray1DContainer cluster_interaction_tensors,
             const double[::1] cluster_ratio,
             IntArray2DContainer cluster_indices
     )
