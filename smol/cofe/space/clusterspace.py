@@ -190,16 +190,17 @@ class ClusterSubspace(MSONable):
             self._site_matcher = site_matcher
 
         self._orbits = orbits
-        self._evaluator = ClusterSpaceEvaluator(self._get_orbit_data(self.orbits))
+        # assign the cluster ids
+        self._assign_orbit_ids()
+        self._evaluator = ClusterSpaceEvaluator(
+            self._get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+        )
         self._external_terms = []  # List will hold external terms (i.e. Ewald)
 
         # Dict to cache orbit index mappings, as OrbitIndices named tuples
         # this prevents doing another structure match with the _site_matcher for
         # structures that have already been matched
         self._supercell_orbit_inds = {}
-
-        # assign the cluster ids
-        self._assign_orbit_ids()
 
     @classmethod
     def from_cutoffs(
@@ -962,7 +963,9 @@ class ClusterSubspace(MSONable):
         # TODO instead of resetting this, just remove the orbit ids
         self._supercell_orbit_inds = {}
         # rest the evaluator
-        self._evaluator.set_orbits(self._get_orbit_data(self.orbits))
+        self._evaluator.reset_data(
+            self._get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+        )
 
     def remove_corr_functions(self, corr_ids):
         """Remove correlation functions by their ID's.

@@ -20,6 +20,13 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
     cdef public double offset  # offset for the interaction tensor
     cdef FloatArray1DContainer cluster_interactions
 
+    cpdef public void reset_data(
+            self,
+            tuple orbit_data,
+            int num_orbits,
+            int num_corr_functions,
+    )
+
     cpdef public void set_cluster_interactions(
             self, tuple cluster_interaction_tensors, double offset
     )

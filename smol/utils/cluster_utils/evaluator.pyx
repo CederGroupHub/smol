@@ -33,7 +33,25 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             int num_orbits,
             int num_corr_functions,
             double offset = 0.0,
-            tuple cluster_interaction_tensors = None):
+            tuple cluster_interaction_tensors = None
+    ):
+        """Initialize ClusterSpaceEvaluator extension type.
+
+        Args:
+            orbit_data (tuple):
+                Tuple of tuples with orbit data. Each tuple contains the following data:
+                    - orbit bit id
+                    - orbit tensor indices
+                    - orbit correlation tensors
+            num_orbits (int):
+                Number of orbits.
+            num_corr_functions (int):
+                Number of correlation functions.
+            offset (float):
+                interaction value for the constant term (i.e. the grand mean).
+            cluster_interaction_tensors (tuple):
+                Tuple of ndarrays cluster interaction tensors.
+        """
         self.num_orbits = num_orbits
         self.num_corr = num_corr_functions
         self.offset = offset
@@ -42,6 +60,29 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             cluster_interaction_tensors = tuple(data[2].sum(axis=0) for data in orbit_data)
 
         self.cluster_interactions = FloatArray1DContainer(cluster_interaction_tensors)
+
+    cpdef public void reset_data(
+            self,
+            tuple orbit_data,
+            int num_orbits,
+            int num_corr_functions,
+    ):
+        """Reset data of ClusterSpaceEvaluator extension type.
+
+        Args:
+            orbit_data (tuple):
+                Tuple of tuples with orbit data. Each tuple contains the following data:
+                    - orbit bit id
+                    - orbit tensor indices
+                    - orbit correlation tensors
+            num_orbits (int):
+                Number of orbits.
+            num_corr_functions (int):
+                Number of correlation functions.
+        """
+        self.num_orbits = num_orbits
+        self.num_corr = num_corr_functions
+        self.set_orbits(orbit_data)
 
     cpdef public void set_cluster_interactions(
             self, tuple cluster_interaction_tensors, double offset

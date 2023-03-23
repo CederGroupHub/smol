@@ -279,9 +279,13 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
 
     # check that the matrix was cached
     m_hash = tuple(sorted(tuple(s.tolist()) for s in supercell_matrix))
-    assert cluster_subspace._supercell_orbit_inds[
-        m_hash
-    ] is cluster_subspace.supercell_orbit_mappings(supercell_matrix)
+    orbit_indices = cluster_subspace._supercell_orbit_inds[m_hash]
+    assert orbit_indices.arrays is cluster_subspace.supercell_orbit_mappings(
+        supercell_matrix
+    )
+    assert orbit_indices.container.size == len(
+        cluster_subspace.supercell_orbit_mappings(supercell_matrix)
+    )
 
     # Test that symmetrically equivalent matrices really produce the
     # same correlation vector for the same occupancy.
@@ -501,8 +505,8 @@ def test_msonable(cluster_subspace_ewald, rng):
     subspace = ClusterSubspace.from_dict(cluster_subspace_ewald.as_dict())
     for key in cluster_subspace_ewald._supercell_orbit_inds.keys():
         for arr1, arr2 in zip(
-            subspace._supercell_orbit_inds[key],
-            cluster_subspace_ewald._supercell_orbit_inds[key],
+            subspace._supercell_orbit_inds[key].arrays,
+            cluster_subspace_ewald._supercell_orbit_inds[key].arrays,
         ):
             npt.assert_array_equal(arr1, arr2)
 
