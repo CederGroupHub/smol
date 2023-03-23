@@ -393,10 +393,11 @@ def test_enumerate_grid(comp_space_lmtpo, comp_space_lmtpo2, comp_space_lmtpo3):
     assert comp_space_lmtpo3._A_geq.shape == (3, ns.shape[1])
     a_leq = comp_space_lmtpo3._A_leq
     b_leq = comp_space_lmtpo3._b_leq
-    a_geq = comp_space_lmtpo3._A_leq
-    b_geq = comp_space_lmtpo3._b_leq
-    assert np.all(a_leq @ ns.T <= b_leq[None, :] + NUM_TOL)
-    assert np.all(a_geq @ ns.T >= b_geq[None, :] - NUM_TOL)
+    a_geq = comp_space_lmtpo3._A_geq
+    b_geq = comp_space_lmtpo3._b_geq
+
+    assert np.all(a_leq @ ns.T / 8 <= b_leq[:, None] + NUM_TOL)
+    assert np.all(a_geq @ ns.T / 8 >= b_geq[:, None] - NUM_TOL)
 
     grid1 = comp_space_lmtpo.get_composition_grid(supercell_size=10, step=2)
     grid2 = comp_space_lmtpo.get_composition_grid(supercell_size=5, step=1) * 2

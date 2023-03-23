@@ -297,7 +297,8 @@ class CompositionSpace(MSONable):
             # No-longer enforce integers in a and b.
             # Integerize a.
             a_new, scale = integerize_vector(a)
-            A.append(np.round(a * scale).astype(int))
+            # Convert to array before multiplying!!
+            A.append(np.round(np.array(a) * scale).astype(int))
             b.append(bb * scale)
         self._A = np.array(A, dtype=int)
         self._b = np.array(b)  # per-prim

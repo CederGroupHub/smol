@@ -1,4 +1,5 @@
 """Utility manager that converts input of composition constraints to equations."""
+import itertools
 import re
 from collections import Counter
 from numbers import Number
@@ -171,26 +172,49 @@ def convert_constraint_string(entry, bits):
     left_vec = [0 for _ in range(n_dims)]
 
     # Add left.
-    for coef, spec, sl_id in left_string:
+    for coef, spec, sl_id in left_pack:
         # Specified to constrain the species on only one sub-lattice.
         if sl_id is not None:
+            if spec not in bits[sl_id]:
+                raise ValueError(
+                    f"Species {spec} cannot be found in the"
+                    f" specified sub-lattice {sl_id}!"
+                )
             dim_id = dim_ids[sl_id][bits[sl_id].index(spec)]
             left_vec[dim_id] += coef
         # The corresponding species on all sub-lattices should be constrained.
         else:
+            if spec not in itertools.chain(*bits):
+                raise ValueError(
+                    f"Species {spec} cannot be found in any"
+                    f" sub-lattice! Consider only species in"
+                    f" {set(itertools.chain(*bits))}!"
+                )
             for species, sub_dim_ids in zip(bits, dim_ids):
                 if spec in species:
                     dim_id = sub_dim_ids[species.index(spec)]
                     left_vec[dim_id] += coef
 
     # Subtract right.
-    for coef, spec, sl_id in right_string:
+    for coef, spec, sl_id in right_pack:
         # Specified to constrain the species on only one sub-lattice.
         if sl_id is not None:
+            if spec not in bits[sl_id]:
+                raise ValueError(
+                    f"Species {spec} cannot be found in the"
+                    f" specified sub-lattice {sl_id}."
+                    f" Consider species {bits[sl_id]}!"
+                )
             dim_id = dim_ids[sl_id][bits[sl_id].index(spec)]
             left_vec[dim_id] -= coef
         # The corresponding species on all sub-lattices should be constrained.
         else:
+            if spec not in itertools.chain(*bits):
+                raise ValueError(
+                    f"Species {spec} cannot be found in any"
+                    f" sub-lattice! Consider only species in"
+                    f" {set(itertools.chain(*bits))}!"
+                )
             for species, sub_dim_ids in zip(bits, dim_ids):
                 if spec in species:
                     dim_id = sub_dim_ids[species.index(spec)]
@@ -234,9 +258,16 @@ class CompositionConstraintsManager:
         left_list = [0 for _ in range(n_dims)]
         for spec, coef in left.items():
             spec = get_species(spec)
+            if spec not in itertools.chain(*bits):
+                raise ValueError(
+                    f"Species {spec} cannot be found in any"
+                    f" sub-lattice! Consider only species in"
+                    f" {set(itertools.chain(*bits))}!"
+                )
             for sl_dim_ids, sl_bits in zip(dim_ids, bits):
-                dim_id = sl_dim_ids[sl_bits.index(spec)]
-                left_list[dim_id] = coef
+                if spec in sl_bits:
+                    dim_id = sl_dim_ids[sl_bits.index(spec)]
+                    left_list[dim_id] = coef
         return left_list
 
     @staticmethod
@@ -245,10 +276,18 @@ class CompositionConstraintsManager:
         n_dims = sum([len(sublattice_bits) for sublattice_bits in bits])
         dim_ids = get_dim_ids_by_sublattice(bits)
         left_list = [0 for _ in range(n_dims)]
-        for sl_dict, sl_bits, sl_dim_ids in zip(left, bits, dim_ids):
+        for sl_id, (sl_dict, sl_bits, sl_dim_ids) in enumerate(
+            zip(left, bits, dim_ids)
+        ):
             CompositionConstraintsManager._check_single_dict(sl_dict)
             for spec, coef in sl_dict.items():
                 spec = get_species(spec)
+                if spec not in sl_bits:
+                    raise ValueError(
+                        f"Species {spec} cannot be found on"
+                        f" given sub-lattice {sl_id}. Consider"
+                        f" species {sl_bits}!"
+                    )
                 dim_id = sl_dim_ids[sl_bits.index(spec)]
                 left_list[dim_id] = coef
         return left_list
@@ -270,12 +309,12 @@ class CompositionConstraintsManager:
             if isinstance(item, dict):
                 return True
             elif hasattr(item, "__iter__"):
-                return any(_contains_dict(sub_item) for sub_item in item)
+                return any(isinstance(sub_item, dict) for sub_item in item)
             return False
 
         for entry in value:
             if isinstance(entry, (tuple, list)):
-                if _contains_dict(entry):
+                if _contains_dict(entry[0]):
                     left, right, relation = entry
                     # Constraint specified as non lattice-specific dictionary.
                     if isinstance(left, dict):

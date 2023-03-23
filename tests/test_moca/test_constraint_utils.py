@@ -60,13 +60,13 @@ def bits():
 
 def test_convert_constraint_string(bits):
     cases = [
-        ("- Li+ +3 O2-  <= - 10.2", ([-1, 0, 0, 0, -1, 3, 0, 0], -10.2, "leq")),
-        ("- Li+(0) + O2- = 2", ([-1, 0, 0, 0, 0, 1, 0, 0], 2, "eq")),
+        ("- Li+ +3 O2-  <= - 10.2", ([-1, 0, 0, 0, -1, 3, 0, 0], -10.2, "<=")),
+        ("- Li+(0) + O2- = 2", ([-1, 0, 0, 0, 0, 1, 0, 0], 2, "=")),
         (
             "- Li+(0) + 5 O- - 1.5 >= 4 Li+(1) - Mn3+ + Vacancy(0)",
-            ([-1, 1, 0, 1, -4, 1, 5, 0], 1.5, "geq"),
+            ([-1, 1, 0, -1, -4, 0, 5, 0], 1.5, ">="),
         ),
-        ("- Li+ + 3 F- == 2 Ti4+", ([-1, 0, 2, 0, -1, 1, 0, 3], 0, "eq")),
+        ("- Li+ + 3 F- == 2 Ti4+", ([-1, 0, -2, 0, -1, 0, 0, 3], 0, "==")),
     ]
 
     for s, standard in cases:
@@ -84,6 +84,8 @@ def test_convert_constraint_string(bits):
         _ = convert_constraint_string("- Li+ +3 O2->= - 10.2", bits)
     # Bad case when species can not be found on any sub-lattice
     with pytest.raises(ValueError):
+        _ = convert_constraint_string("- K+(0) +3 O2- <= - 10.2", bits)
+    with pytest.raises(ValueError):
         _ = convert_constraint_string("- K+ +3 O2- <= - 10.2", bits)
 
 
@@ -95,7 +97,7 @@ def test_constraints_manager(bits):
         [1, 3, 4, 0, 1, -2, -1, -1],
         [1, 1, 1, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 1, 1, 1],
-        [-2, 0, 1, 0, 0, 0, 0, 0],
+        [-2, 0, 1, 0, -2, 0, 0, 0],
         [1, 1, 1, 2, 0, 4, -1, 3],
     ]
     b_eq_std = [0, 10, 6, 6, 4]
