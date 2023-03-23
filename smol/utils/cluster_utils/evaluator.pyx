@@ -153,7 +153,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
         return out
 
-    cpdef np.ndarray[np.float64_t, ndim=1] delta_correlations_single_flip(
+    cpdef np.ndarray[np.float64_t, ndim=1] delta_correlations_from_occupancies(
             self,
             const long[::1] occu_f,
             const long[::1] occu_i,
@@ -208,7 +208,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
         return out
 
-    cpdef np.ndarray[np.float64_t, ndim=1] delta_interactions_single_flip(
+    cpdef np.ndarray[np.float64_t, ndim=1] delta_interactions_from_occupancies(
             self,
             const long[::1] occu_f,
             const long[::1] occu_i,
