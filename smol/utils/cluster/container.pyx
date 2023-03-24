@@ -17,8 +17,7 @@ from smol.utils.cluster.struct cimport (
 
 # Is it possible to "template" for all array containers based on tempita
 
-# TODO keep python reference to container contents so that GC never accidentally collects
-#  the contents....  save them in an __init__ call
+
 cdef class OrbitContainer:
     def __init__(self, tuple orbit_data, *args):
         """Python initialization
