@@ -15,18 +15,18 @@ from smol.moca.processor import (
     EwaldProcessor,
 )
 from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
-from smol.solver.upper_bound.utils.constraints import (
+from smol.solver.upper_bound.constraints import (
     get_upper_bound_composition_space_constraints,
     get_upper_bound_fixed_composition_constraints,
     get_upper_bound_normalization_constraints,
 )
-from smol.solver.upper_bound.utils.objectives import (
+from smol.solver.upper_bound.objectives import (
     get_upper_bound_objective_from_chemical_potentials,
     get_upper_bound_objective_from_decomposition_processor,
     get_upper_bound_objective_from_ewald_processor,
     get_upper_bound_objective_from_expansion_processor,
 )
-from smol.solver.upper_bound.utils.variables import (
+from smol.solver.upper_bound.variables import (
     get_occupancy_from_variables,
     get_upper_bound_variables_from_sublattices,
 )
