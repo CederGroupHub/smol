@@ -86,6 +86,11 @@ ext = ".pyx" if USE_CYTHON else ".c"
 ext_modules = [
     Extension("smol.correlations", ["smol/correlations" + ext], language="c"),
     Extension(
+        "smol.utils.cluster_utils.ewald",
+        ["smol/utils/cluster_utils/ewald" + ext],
+        language="c",
+    ),
+    Extension(
         "smol.utils.cluster_utils.container",
         ["smol/utils/cluster_utils/container" + ext],
         language="c",
