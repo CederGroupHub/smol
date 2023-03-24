@@ -40,8 +40,8 @@ from smol.cofe.space import (
 )
 from smol.cofe.space.basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
-from smol.utils.cluster_utils.container import IntArray2DContainer
-from smol.utils.cluster_utils.evaluator import ClusterSpaceEvaluator
+from smol.utils.cluster.container import IntArray2DContainer
+from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
 from smol.utils.exceptions import (
     SYMMETRY_ERROR_MESSAGE,
     StructureMatchError,

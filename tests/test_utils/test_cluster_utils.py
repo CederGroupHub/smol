@@ -1,6 +1,6 @@
 import pytest
 
-from smol.utils.cluster_utils.container import (
+from smol.utils.cluster.container import (
     FloatArray1DContainer,
     FloatArray2DContainer,
     IntArray1DContainer,
