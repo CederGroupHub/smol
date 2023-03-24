@@ -223,6 +223,7 @@ class ClusterDecompositionProcessor(Processor):
         )
 
         self.n_orbits = self.cluster_subspace.num_orbits
+        self._interaction_tensors = interaction_tensors  # keep these for serialization
         # should we just create a new evaluator here instead of changing the subspace
         # evaluator?
         flat_interaction_tensors = tuple(
