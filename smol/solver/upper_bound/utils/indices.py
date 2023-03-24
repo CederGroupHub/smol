@@ -54,7 +54,9 @@ def get_variable_indices_for_each_composition_component(
         dim_ids = sublattice_dim_ids[sublattice_id]
         if site_id in sublattice.active_sites:
             for species_id, dim_id in enumerate(dim_ids):
-                var_ids_for_dims[dim_id][0].append(variable_indices[species_id])
+                var_ids_for_dims[dim_id][0].append(
+                    variable_indices[site_id][species_id]
+                )
         # Inactive sites always contribute to one certain component.
         elif len(sublattice.species) == 1:
             var_ids_for_dims[dim_ids[0]][1] += 1

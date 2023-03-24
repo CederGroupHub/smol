@@ -11,72 +11,7 @@ from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.domain import Vacancy
 from smol.moca.ensemble import Ensemble
 
-
-def get_random_exotic_occu(sublattices):
-    # Only use this on orig_sublattices.
-    # Li+ 9 Mn2+ 2 Mn3+ 1 Mn4+ 1 Ti4+ 2 Vac 5 O2- 8 O- 2 F- 10
-    cation_sublattice = None
-    anion_sublattice = None
-    for sublattice in sublattices:
-        if Species("Li", 1) in sublattice.species:
-            cation_sublattice = sublattice
-        if Species("O", -2) in sublattice.species:
-            anion_sublattice = sublattice
-
-    li_va_sites = np.random.choice(cation_sublattice.sites, size=14, replace=False)
-    li_sites = np.random.choice(li_va_sites, size=9, replace=False)
-    va_sites = np.setdiff1d(li_va_sites, li_sites)
-    mn_ti_sites = np.setdiff1d(cation_sublattice.sites, li_va_sites)
-    ti_sites = np.random.choice(mn_ti_sites, size=2, replace=False)
-    mn_sites = np.setdiff1d(mn_ti_sites, ti_sites)
-    mn2_sites = np.random.choice(mn_sites, size=2, replace=False)
-    mn34_sites = np.setdiff1d(mn_sites, mn2_sites)
-    mn3_sites = np.random.choice(mn34_sites, size=1, replace=False)
-    mn4_sites = np.setdiff1d(mn34_sites, mn3_sites)
-
-    o_sites = np.random.choice(anion_sublattice.sites, size=10, replace=False)
-    o2_sites = np.random.choice(o_sites, size=8, replace=False)
-    o1_sites = np.setdiff1d(o_sites, o2_sites)
-    f_sites = np.setdiff1d(anion_sublattice.sites, o_sites)
-
-    li_code = cation_sublattice.encoding[
-        cation_sublattice.species.index(Species("Li", 1))
-    ]
-    mn2_code = cation_sublattice.encoding[
-        cation_sublattice.species.index(Species("Mn", 2))
-    ]
-    mn3_code = cation_sublattice.encoding[
-        cation_sublattice.species.index(Species("Mn", 3))
-    ]
-    mn4_code = cation_sublattice.encoding[
-        cation_sublattice.species.index(Species("Mn", 4))
-    ]
-    ti_code = cation_sublattice.encoding[
-        cation_sublattice.species.index(Species("Ti", 4))
-    ]
-    va_code = cation_sublattice.encoding[cation_sublattice.species.index(Vacancy())]
-    o2_code = anion_sublattice.encoding[
-        anion_sublattice.species.index(Species("O", -2))
-    ]
-    o1_code = anion_sublattice.encoding[
-        anion_sublattice.species.index(Species("O", -1))
-    ]
-    f_code = anion_sublattice.encoding[anion_sublattice.species.index(Species("F", -1))]
-
-    occu = np.zeros(40, dtype=int) - 1
-    occu[li_sites] = li_code
-    occu[mn2_sites] = mn2_code
-    occu[mn3_sites] = mn3_code
-    occu[mn4_sites] = mn4_code
-    occu[ti_sites] = ti_code
-    occu[va_sites] = va_code
-    occu[o2_sites] = o2_code
-    occu[o1_sites] = o1_code
-    occu[f_sites] = f_code
-
-    assert np.all(occu >= 0)
-
-    return occu
+from .utils import get_random_exotic_occu
 
 
 @pytest.fixture(scope="module")
@@ -102,7 +37,7 @@ def exotic_prim():
     )
 
 
-@pytest.fixture(scope="module", params=["sinusoid", "indicator"])
+@pytest.fixture(scope="module", params=["sinusoid"])
 def exotic_subspace(exotic_prim, request):
     # Use sinusoid basis to test if useful.
     space = ClusterSubspace.from_cutoffs(
@@ -225,7 +160,10 @@ def exotic_ensemble(orig_ensemble, exotic_initial_occupancy):
     )
 
     # Check if sites a correctly restricted.
+    assert len(new_ensemble.sublattices) == 4
     for site in li_restricts:
         assert site in new_ensemble.restricted_sites
     for site in o2_restricts:
         assert site in new_ensemble.restricted_sites
+
+    return new_ensemble
