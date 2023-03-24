@@ -16,6 +16,7 @@ from copy import deepcopy
 from importlib import import_module
 
 import numpy as np
+from monty.dev import deprecated
 from monty.json import MSONable
 from pymatgen.analysis.structure_matcher import (
     OrderDisorderElementComparator,
@@ -1109,6 +1110,12 @@ class ClusterSubspace(MSONable):
 
         return sub_fun_ids
 
+    @deprecated(
+        message=(
+            "This function is deprecated and will be removed in version 0.4.0.\n"
+            "You should not have really been using this function anyway..."
+        )
+    )
     def gen_orbit_list(self, scmatrix):
         """
         Generate list of data to compute correlation vectors.
