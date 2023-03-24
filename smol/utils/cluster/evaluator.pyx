@@ -9,22 +9,21 @@ from cython.parallel import prange
 
 cimport numpy as np
 
-from smol.utils.cluster_utils.container cimport (
+from smol.utils.cluster.container cimport (
     FloatArray1DContainer,
     IntArray2DContainer,
     OrbitContainer,
 )
-from smol.utils.cluster_utils.struct cimport FloatArray1D, IntArray2D, OrbitC
+from smol.utils.cluster.struct cimport FloatArray1D, IntArray2D, OrbitC
 
 
-# TODO implement using these in Subspace and Processors
 @cython.final
 cdef class ClusterSpaceEvaluator(OrbitContainer):
     """ClusterSpaceEvaluator is used to compute correlation and interaction vectors.
 
     This extension type should not be used directly. Instead, use the
     ClusterSubspace class to create a cluster subspace instance and compute correlation
-    vectors using the ClusterSubspace.corr_from_occupancy method.
+    vectors using the ClusterSubspace.corr_from_structure method.
     """
 
     def __cinit__(
@@ -153,15 +152,12 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
     cpdef np.ndarray[np.float64_t, ndim=1] interactions_from_occupancy(
             self,
             const long[::1] occu,
-            const double offset,
             IntArray2DContainer cluster_indices,
     ):
         """Computes the cluster interaction vector for a given encoded occupancy string.
         Args:
             occu (ndarray):
                 encoded occupancy vector
-            offset (float):
-                eci value for the constant term.
             cluster_indices (IntArray1DContainer):
                 Container with pointers to arrays with indices of sites of all clusters
                 in each orbit given as a container of arrays.
@@ -176,7 +172,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
         out = np.zeros(self.num_orbits)
         cdef double[::1] o_view = out
-        o_view[0] = offset  # empty cluster
+        o_view[0] = self.offset  # empty cluster
 
         for n in prange(self.size, nogil=True):
             orbit = self.data[n]

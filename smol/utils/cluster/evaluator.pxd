@@ -6,7 +6,7 @@ cimport numpy as np
 
 import cython
 
-from smol.utils.cluster_utils.container cimport (
+from smol.utils.cluster.container cimport (
     FloatArray1DContainer,
     IntArray2DContainer,
     OrbitContainer,
@@ -40,7 +40,6 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
     cpdef np.ndarray[np.float64_t, ndim=1] interactions_from_occupancy(
             self,
             const long[::1] occu,
-            const double offset,
             IntArray2DContainer cluster_indices,
     )
 

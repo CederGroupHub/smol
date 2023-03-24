@@ -7,7 +7,7 @@ cimport cython
 cimport numpy as np
 from cpython.mem cimport PyMem_Free, PyMem_Malloc, PyMem_Realloc
 
-from smol.utils.cluster_utils.struct cimport (
+from smol.utils.cluster.struct cimport (
     FloatArray1D,
     FloatArray2D,
     IntArray1D,

@@ -12,10 +12,6 @@ from collections import defaultdict, namedtuple
 import numpy as np
 
 from smol.cofe.space.clusterspace import ClusterSubspace, OrbitIndices
-from smol.correlations import (
-    delta_interactions_single_flip,
-    interactions_from_occupancy,
-)
 from smol.moca.processor.base import Processor
 from smol.utils.cluster.container import IntArray2DContainer
 from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
@@ -80,16 +76,15 @@ class ClusterExpansionProcessor(Processor):
         for orbit, cluster_indices in zip(
             cluster_subspace.orbits, self._indices.arrays
         ):
+            orbit_data = (
+                orbit.id,
+                orbit.bit_id,
+                orbit.flat_correlation_tensors,
+                orbit.flat_tensor_indices,
+            )
             for site_ind in np.unique(cluster_indices):
                 in_inds = np.any(cluster_indices == site_ind, axis=-1)
                 ratio = len(cluster_indices) / np.sum(in_inds)
-                orbit_data = (
-                    orbit.id,
-                    orbit.bit_id,
-                    orbit.flat_correlation_tensors,
-                    orbit.flat_tensor_indices,
-                )
-
                 data_by_sites[site_ind].append(
                     (orbit_data, cluster_indices[in_inds], ratio)
                 )
@@ -228,34 +223,62 @@ class ClusterDecompositionProcessor(Processor):
         )
 
         self.n_orbits = self.cluster_subspace.num_orbits
-        self._fac_tensors = interaction_tensors
+        # should we just create a new evaluator here instead of changing the subspace
+        # evaluator?
+        flat_interaction_tensors = tuple(
+            np.ravel(tensor, order="C") for tensor in interaction_tensors[1:]
+        )
+        self._subspace.evaluator.set_cluster_interactions(
+            tuple(flat_interaction_tensors), offset=interaction_tensors[0]
+        )
 
-        # List of orbit information and supercell site indices to compute corr
-        self._orbit_list = []
-        # Dictionary of orbits by site index and information
-        # necessary to compute local changes in correlation vectors from flips
-        self._orbits_by_sites = defaultdict(list)
-        # Prepare necessary information for local updates
-        mappings = self._subspace.supercell_orbit_mappings(supercell_matrix)
-        for cluster_indices, interaction_tensor, orbit in zip(
-            mappings, self._fac_tensors[1:], self._subspace.orbits
+        # orbit indices mapping all sites in this supercell to clusters in each
+        # orbit. This is used to compute the correlation vector.
+        self._indices = cluster_subspace.get_orbit_indices(supercell_matrix)
+
+        # Dictionary of orbits data by site index necessary to compute local changes in
+        # correlation vectors from flips
+        data_by_sites = defaultdict(list)
+        # We also store a reduced cluster index array where only the rows with the site
+        # index are stored. The ratio is also needed because the correlations are
+        # averages over the full cluster indices array.
+        for orbit, cluster_indices, interaction_tensor in zip(
+            cluster_subspace.orbits, self._indices.arrays, flat_interaction_tensors
         ):
-            flat_interaction_tensor = np.ravel(interaction_tensor, order="C")
-            self._orbit_list.append(
-                (orbit.flat_tensor_indices, flat_interaction_tensor, cluster_indices)
+            orbit_data = (
+                orbit.id,
+                orbit.bit_id,
+                orbit.flat_correlation_tensors,
+                orbit.flat_tensor_indices,
             )
             for site_ind in np.unique(cluster_indices):
                 in_inds = np.any(cluster_indices == site_ind, axis=-1)
                 ratio = len(cluster_indices) / np.sum(in_inds)
-                self._orbits_by_sites[site_ind].append(
-                    (
-                        orbit.id,
-                        ratio,
-                        orbit.flat_tensor_indices,
-                        flat_interaction_tensor,
-                        cluster_indices[in_inds],
-                    )
+                data_by_sites[site_ind].append(
+                    (orbit_data, cluster_indices[in_inds], ratio, interaction_tensor)
                 )
+
+        # now unpack the data, create the local evaluators and store them in a
+        # dictionary indexed by site index.
+        self._eval_data_by_sites = {}
+        for site, data in data_by_sites.items():
+            # we don't really need a different evaluator for each site since sym
+            # equivalent sites can share the same one, same goes for ratio.
+            evaluator = ClusterSpaceEvaluator(
+                tuple(d[0] for d in data),
+                cluster_subspace.num_orbits,
+                cluster_subspace.num_corr_functions,
+            )
+            indices = tuple(d[1] for d in data)
+            orbit_indices = OrbitIndices(indices, IntArray2DContainer(indices))
+            ratio = np.array([d[2] for d in data])
+            flat_interaction_tensors = tuple(d[3] for d in data)
+            evaluator.set_cluster_interactions(
+                flat_interaction_tensors, interaction_tensors[0]
+            )
+            self._eval_data_by_sites[site] = LocalEvalData(
+                evaluator, orbit_indices, ratio
+            )
 
     def compute_feature_vector(self, occupancy):
         """Compute the cluster interaction vector for a given occupancy string.
@@ -270,8 +293,8 @@ class ClusterDecompositionProcessor(Processor):
             array: correlation vector
         """
         return (
-            interactions_from_occupancy(
-                occupancy, self.n_orbits, self._fac_tensors[0], self._orbit_list
+            self._subspace.evaluator.interactions_from_occupancy(
+                occupancy, self._indices.container
             )
             * self.size
         )
@@ -299,9 +322,11 @@ class ClusterDecompositionProcessor(Processor):
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            site_orbit_list = self._orbits_by_sites[f[0]]
-            delta_interactions += delta_interactions_single_flip(
-                occu_f, occu_i, self.n_orbits, site_orbit_list
+            eval_data = self._eval_data_by_sites[f[0]]
+            delta_interactions += (
+                eval_data.evaluator.delta_interactions_from_occupancies(
+                    occu_f, occu_i, eval_data.ratio, eval_data.indices.container
+                )
             )
             occu_i = occu_f
 
@@ -316,7 +341,7 @@ class ClusterDecompositionProcessor(Processor):
         """
         d = super().as_dict()
         d["interaction_tensors"] = [
-            interaction.tolist() for interaction in self._fac_tensors
+            interaction.tolist() for interaction in self._interaction_tensors
         ]
         return d
 

@@ -5,7 +5,7 @@
 __author__ = "Luis Barroso-Luque"
 
 import cython
-from smol.utils.cluster_utils.struct cimport (
+from smol.utils.cluster.struct cimport (
     FloatArray1D,
     FloatArray2D,
     IntArray1D,
