@@ -249,6 +249,7 @@ def test_remove_corr_functions(cluster_subspace, rng):
         subspace.remove_corr_functions(ids)
 
 
+# TODO update test to use evaluator
 @pytest.mark.xfail(raises=StructureMatchError)
 def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
     # check that all supercell_structure index groups map to the correct
@@ -807,6 +808,7 @@ def _encode_occu(occu, bits):
     return np.array([bit.index(sp) for sp, bit in zip(occu, bits)])
 
 
+# TODO update test to use evaluator
 def test_vs_CASM_pairs(single_structure):
     species = [{"Li+": 0.1}] * 3 + ["Br-"]
     coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75), (0.5, 0.5, 0.5), (0, 0, 0))
@@ -853,6 +855,7 @@ def test_vs_CASM_pairs(single_structure):
     npt.assert_allclose(corr, [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0])
 
 
+# TODO update test to use evaluator
 def test_vs_CASM_triplets(single_structure):
     """
     Test vs casm generated correlation with occupancy basis.
@@ -906,6 +909,7 @@ def test_vs_CASM_triplets(single_structure):
     )
 
 
+# TODO update test to use evaluator
 def test_vs_CASM_multicomp(single_structure):
     cs = ClusterSubspace.from_cutoffs(single_structure, {2: 5}, basis="indicator")
     m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]

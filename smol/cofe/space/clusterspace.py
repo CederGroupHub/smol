@@ -40,7 +40,6 @@ from smol.cofe.space import (
 )
 from smol.cofe.space.basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
-from smol.correlations import corr_from_occupancy
 from smol.utils.cluster_utils.container import IntArray2DContainer
 from smol.utils.cluster_utils.evaluator import ClusterSpaceEvaluator
 from smol.utils.exceptions import (
@@ -635,11 +634,8 @@ class ClusterSubspace(MSONable):
         occu = self.occupancy_from_structure(
             structure, scmatrix=scmatrix, site_mapping=site_mapping, encode=True
         )
-        occu = np.array(occu, dtype=int)
-
-        corr = corr_from_occupancy(
-            occu, self.num_corr_functions, self.gen_orbit_list(scmatrix)
-        )
+        indices = self._get_orbit_indices(scmatrix)
+        corr = self._evaluator.correlations_from_occupancy(occu, indices.container)
         size = self.num_prims_from_matrix(scmatrix)
 
         if self.external_terms:
@@ -873,6 +869,10 @@ class ClusterSubspace(MSONable):
         """
         for orbit in self.orbits:
             orbit.transform_site_bases(new_basis, orthonormal)
+        # rest the evaluator
+        self._evaluator.reset_data(
+            self._get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+        )
 
     def rotate_site_basis(self, singlet_id, angle, index1=0, index2=1):
         """Apply a rotation to a site basis.
@@ -911,6 +911,10 @@ class ClusterSubspace(MSONable):
                     site_basis.rotate(angle, index1, index2)
                     rotated.append(site_basis)
             orbit.reset_bases()
+        # rest the evaluator
+        self._evaluator.reset_data(
+            self._get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+        )
 
     def remove_orbits(self, orbit_ids):
         """Remove whole orbits by their ids.
