@@ -36,7 +36,7 @@ cdef class FloatArray2DContainer:
     cdef readonly int size
     cdef tuple _arrays
 
-    cpdef public void set_arrays(self, tuple arrays)
+    cpdef public void set_arrays(self, tuple arrays) except *
 
     @staticmethod
     cdef FloatArray2D create_struct(double[:, ::1] array)
@@ -48,7 +48,7 @@ cdef class FloatArray1DContainer:
     cdef readonly int size
     cdef tuple _arrays
 
-    cpdef public void set_arrays(self, tuple arrays)
+    cpdef public void set_arrays(self, tuple arrays)  except *
 
     @staticmethod
     cdef FloatArray1D create_struct(double[::1] array)
@@ -60,7 +60,7 @@ cdef class IntArray1DContainer:
     cdef readonly int size
     cdef tuple _arrays
 
-    cpdef public void set_arrays(self, tuple arrays)
+    cpdef public void set_arrays(self, tuple arrays)  except *
 
     @staticmethod
     cdef IntArray1D create_struct(long[::1] array)
@@ -72,7 +72,7 @@ cdef class IntArray2DContainer:
     cdef readonly int size
     cdef tuple _arrays
 
-    cpdef public void set_arrays(self, tuple arrays)
+    cpdef public void set_arrays(self, tuple arrays)  except *
 
     @staticmethod
     cdef IntArray2D create_struct(long[:, ::1] array)

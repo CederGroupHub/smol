@@ -9,7 +9,6 @@ from smol.utils.cluster.container import (
 )
 
 
-# TODO 2D array tests are technically not passing! and pytests does not catch the exception and fails silently
 @pytest.mark.parametrize(
     "IntArrayContainer, dim", [(IntArray1DContainer, 1), (IntArray2DContainer, 2)]
 )
@@ -36,6 +35,12 @@ def test_int_container(IntArrayContainer, dim, rng):
 
     assert len(container) == 12
 
+    with pytest.raises(ValueError):
+        new_arrays = tuple(
+            rng.integers(1, 5, size=(dim + 1) * (rng.integers(1, 5),)) for _ in range(12)
+        )
+        container.set_arrays(new_arrays)
+
 
 @pytest.mark.parametrize(
     "FloatContainer, dim", [(FloatArray1DContainer, 1), (FloatArray2DContainer, 2)]
@@ -60,10 +65,11 @@ def test_float_container(FloatContainer, dim, rng):
     container.set_arrays(new_arrays)
     assert len(container) == 12
 
-    # TODO figure out why exception raised in cython is not captured by pytest
-    # with pytest.raises(Exception):
-    #    array_list = [rng.random(tuple(rng.integers(1, 5, size=dim + 1))) for _ in range(10)]
-    #    container.set_arrays(array_list)
+    with pytest.raises(ValueError):
+        array_list = tuple(
+            rng.random(tuple(rng.integers(1, 5, size=dim + 1))) for _ in range(10)
+        )
+        container.set_arrays(array_list)
 
 
 def test_orbit_container(rng):

@@ -121,7 +121,7 @@ cdef class FloatArray2DContainer:
         # populate orbits array
         self.set_arrays(arrays)
 
-    cpdef public void set_arrays(self, tuple arrays):
+    cpdef public void set_arrays(self, tuple arrays) except *:
         """Populated data using a list of 2D arrays."""
         cdef int i
 
@@ -176,7 +176,7 @@ cdef class FloatArray1DContainer:
         # populate orbits array
         self.set_arrays(arrays)
 
-    cpdef public void set_arrays(self, tuple arrays):
+    cpdef public void set_arrays(self, tuple arrays) except *:
         """Populated data using a list of 1D arrays."""
         cdef int i
 
@@ -229,7 +229,7 @@ cdef class IntArray1DContainer:
         # populate orbits array
         self.set_arrays(arrays)
 
-    cpdef public void set_arrays(self, tuple arrays):
+    cpdef public void set_arrays(self, tuple arrays) except *:
         """Populated data using a list of 1D arrays."""
         cdef int i
 
@@ -282,14 +282,7 @@ cdef class IntArray2DContainer:
         # populate orbits array
         self.set_arrays(arrays)
 
-    def print_contents(self):
-        #cdef long val
-        for i in range(self.size):
-            for j in range(self.data[i].size_r):
-                for k in range(self.data[i].size_c):
-                    print(self.data[i].data[j * self.data[i].size_c + k])
-
-    cpdef public void set_arrays(self, tuple arrays):
+    cpdef public void set_arrays(self, tuple arrays)  except *:
         """Populated data using a list of 2D arrays."""
         cdef int i
 
