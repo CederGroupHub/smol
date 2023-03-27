@@ -40,7 +40,7 @@ cdef class OrbitContainer:
         # populate orbits array
         self.set_orbits(orbit_data)
 
-    cpdef public void set_orbits(self, tuple orbit_data):
+    cpdef public void set_orbits(self, tuple orbit_data) except *:
         """Populated data using a list of orbit data."""
         cdef int i
 

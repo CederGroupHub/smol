@@ -37,7 +37,8 @@ def test_int_container(IntArrayContainer, dim, rng):
 
     with pytest.raises(ValueError):
         new_arrays = tuple(
-            rng.integers(1, 5, size=(dim + 1) * (rng.integers(1, 5),)) for _ in range(12)
+            rng.integers(1, 5, size=(dim + 1) * (rng.integers(1, 5),))
+            for _ in range(12)
         )
         container.set_arrays(new_arrays)
 
@@ -108,4 +109,50 @@ def test_orbit_container(rng):
     container.set_orbits(tuple(new_orbit_data))
     assert len(container) == 12
 
-    # TODO write test for invalid types and shapes
+    with pytest.raises(TypeError):
+        new_orbit_data[-1] = (
+            "S",
+            bit_id,
+            correlation_tensors,
+            tensor_indices,
+        )  # orbit_id must be an int
+        container.set_orbits(tuple(new_orbit_data))
+
+    with pytest.raises(TypeError):
+        new_orbit_data[-1] = (
+            orbit_id,
+            "X",
+            correlation_tensors,
+            tensor_indices,
+        )  # bit_id must be an int
+        container.set_orbits(tuple(new_orbit_data))
+
+    with pytest.raises(TypeError):
+        new_orbit_data[-1] = (orbit_id, bit_id, "X", tensor_indices)
+        container.set_orbits(
+            tuple(new_orbit_data)
+        )  # correlation_tensors must be a numpy array
+
+    with pytest.raises(TypeError):
+        new_orbit_data[-1] = (orbit_id, bit_id, correlation_tensors, "X")
+        container.set_orbits(
+            tuple(new_orbit_data)
+        )  # tensor_indices must be a numpy array
+
+    with pytest.raises(ValueError):
+        new_orbit_data[-1] = (
+            orbit_id,
+            bit_id,
+            rng.integers(1, 5, size=10),
+            tensor_indices,
+        )
+        container.set_orbits(tuple(new_orbit_data))  # correlation_tensors must be 2D
+
+    with pytest.raises(ValueError):
+        new_orbit_data[-1] = (
+            orbit_id,
+            bit_id,
+            correlation_tensors,
+            rng.integers(1, 5, size=(2, 2)),
+        )
+        container.set_orbits(tuple(new_orbit_data))  # tensor_indices must be 1D

@@ -3231,9 +3231,9 @@ static int __pyx_pf_4smol_5utils_7cluster_9container_14OrbitContainer_2__cinit__
  *         # populate orbits array
  *         self.set_orbits(orbit_data)             # <<<<<<<<<<<<<<
  *
- *     cpdef public void set_orbits(self, tuple orbit_data):
+ *     cpdef public void set_orbits(self, tuple orbit_data) except *:
  */
-  ((struct __pyx_vtabstruct_4smol_5utils_7cluster_9container_OrbitContainer *)__pyx_v_self->__pyx_vtab)->set_orbits(__pyx_v_self, __pyx_v_orbit_data, 0);
+  ((struct __pyx_vtabstruct_4smol_5utils_7cluster_9container_OrbitContainer *)__pyx_v_self->__pyx_vtab)->set_orbits(__pyx_v_self, __pyx_v_orbit_data, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 41, __pyx_L1_error)
 
   /* "smol/utils/cluster/container.pyx":34
  *         self._orbit_data = orbit_data
@@ -3257,7 +3257,7 @@ static int __pyx_pf_4smol_5utils_7cluster_9container_14OrbitContainer_2__cinit__
 /* "smol/utils/cluster/container.pyx":43
  *         self.set_orbits(orbit_data)
  *
- *     cpdef public void set_orbits(self, tuple orbit_data):             # <<<<<<<<<<<<<<
+ *     cpdef public void set_orbits(self, tuple orbit_data) except *:             # <<<<<<<<<<<<<<
  *         """Populated data using a list of orbit data."""
  *         cdef int i
  */
@@ -3772,7 +3772,7 @@ void __pyx_f_4smol_5utils_7cluster_9container_14OrbitContainer_set_orbits(struct
   /* "smol/utils/cluster/container.pyx":43
  *         self.set_orbits(orbit_data)
  *
- *     cpdef public void set_orbits(self, tuple orbit_data):             # <<<<<<<<<<<<<<
+ *     cpdef public void set_orbits(self, tuple orbit_data) except *:             # <<<<<<<<<<<<<<
  *         """Populated data using a list of orbit data."""
  *         cdef int i
  */
@@ -3786,7 +3786,7 @@ void __pyx_f_4smol_5utils_7cluster_9container_14OrbitContainer_set_orbits(struct
   __Pyx_XDECREF(__pyx_t_4);
   __PYX_XDEC_MEMVIEW(&__pyx_t_11, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_12, 1);
-  __Pyx_WriteUnraisable("smol.utils.cluster.container.OrbitContainer.set_orbits", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __Pyx_AddTraceback("smol.utils.cluster.container.OrbitContainer.set_orbits", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_data);
   __Pyx_RefNannyFinishContext();
@@ -3823,7 +3823,8 @@ static PyObject *__pyx_pf_4smol_5utils_7cluster_9container_14OrbitContainer_4set
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("set_orbits", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_void_to_None(__pyx_f_4smol_5utils_7cluster_9container_14OrbitContainer_set_orbits(__pyx_v_self, __pyx_v_orbit_data, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
+  __pyx_f_4smol_5utils_7cluster_9container_14OrbitContainer_set_orbits(__pyx_v_self, __pyx_v_orbit_data, 1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 43, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_void_to_None(NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;

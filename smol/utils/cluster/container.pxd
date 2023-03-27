@@ -19,7 +19,7 @@ cdef class OrbitContainer:
     cdef readonly int size
     cdef tuple _orbit_data
 
-    cpdef public void set_orbits(self, tuple orbit_data)
+    cpdef public void set_orbits(self, tuple orbit_data) except *
 
     @staticmethod
     cdef OrbitC create_struct(
