@@ -272,6 +272,8 @@ class ClusterExpansion(MSONable):
         )
         return np.dot(self.coefs, corrs)
 
+
+    # TODO use evaluator here, set interactions in init, uppdate if pruned, add test using this code
     def compute_cluster_interactions(self, structure, normalize=True):
         """Compute the vector of cluster interaction values for given structure.
 

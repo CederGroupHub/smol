@@ -156,10 +156,6 @@ def test_interactions_from_occu(cluster_subspace, supercell_matrix, rng):
                 occu, indices.container
             ),
         )
-        # npt.assert_allclose(
-        #    interactions,
-        #    cluster_subspace.corr_from_structure(structure, scmatrix=supercell_matrix),
-        # )
 
         # test correlation changes
         occu_f = occu.copy()
