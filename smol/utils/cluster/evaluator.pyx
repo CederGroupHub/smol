@@ -127,7 +127,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef double[::1] o_view = out
         o_view[0] = 1  # empty cluster
 
-        for n in prange(self.size, nogil=True):  # loop thru orbits
+        for n in prange(self.size, nogil=True, schedule="guided"):  # loop thru orbits
             orbit = self.data[n]
             indices = cluster_indices.data[n]
             bit_id = orbit.bit_id
@@ -174,7 +174,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef double[::1] o_view = out
         o_view[0] = self.offset  # empty cluster
 
-        for n in prange(self.size, nogil=True):
+        for n in prange(self.size, nogil=True, schedule="guided"):
             orbit = self.data[n]
             indices = cluster_indices.data[n]
             interaction_tensor = self.cluster_interactions.data[n]
