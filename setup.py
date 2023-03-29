@@ -84,6 +84,7 @@ else:
 
 ext = ".pyx" if USE_CYTHON else ".c"
 ext_modules = [
+    # TODO set this up to compile on windows/mac look at how sklearn does it
     Extension(
         "smol.utils.cluster.evaluator",
         ["smol/utils/cluster/evaluator" + ext],
@@ -94,8 +95,6 @@ ext_modules = [
     Extension(
         "smol.utils.cluster.ewald",
         ["smol/utils/cluster/ewald" + ext],
-        extra_compile_args=["-fopenmp"],
-        extra_link_args=["-fopenmp"],
         language="c",
     ),
     Extension(
