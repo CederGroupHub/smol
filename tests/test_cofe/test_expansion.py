@@ -145,7 +145,7 @@ def test_prune(cluster_expansion):
     # check energy computed with interactions also matches
     ints = np.array(
         [
-            expansion.compute_cluster_interactions(s, scmatrix=m)
+            expansion.cluster_interactions_from_structure(s, scmatrix=m)
             for s, m in zip(cluster_expansion.structures, cluster_expansion.scmatrices)
         ]
     )

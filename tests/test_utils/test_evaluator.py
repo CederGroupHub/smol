@@ -164,7 +164,7 @@ def test_interactions_from_occu(cluster_subspace, supercell_matrix, rng):
         # calculations from cluster expansion
         npt.assert_allclose(
             interactions,
-            expansion.compute_cluster_interactions(
+            expansion.cluster_interactions_from_structure(
                 structure, scmatrix=supercell_matrix
             ),
         )

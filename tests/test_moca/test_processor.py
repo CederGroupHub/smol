@@ -215,7 +215,7 @@ def test_compute_cluster_interactions(cluster_subspace, rng):
     struct = processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
     proc_interactions = processor.compute_feature_vector(occu) / processor.size
-    exp_interactions = expansion.compute_cluster_interactions(struct)
+    exp_interactions = expansion.cluster_interactions_from_structure(struct)
     npt.assert_allclose(proc_interactions, exp_interactions)
     pred_energy = expansion.predict(struct, normalized=True)
     assert sum(

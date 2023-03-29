@@ -286,7 +286,7 @@ class ClusterExpansion(MSONable):
         )
         return np.dot(self.coefs, corrs)
 
-    def compute_cluster_interactions(
+    def cluster_interactions_from_structure(
         self, structure, normalized=True, scmatrix=None, site_mapping=None
     ):
         """Compute the vector of cluster interaction values for given structure.
