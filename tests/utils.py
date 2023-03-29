@@ -154,10 +154,10 @@ def gen_fake_training_data(prim_structure, n=10, rng=None):
     return training_data
 
 
-def compute_cluster_interactions(expansion, structure, normalized=True):
+def compute_cluster_interactions(expansion, structure, normalized=True, scmatrix=None):
     # compute cluster interactions from definitionas in pure python
     corrs = expansion.cluster_subspace.corr_from_structure(
-        structure, normalized=normalized
+        structure, normalized=normalized, scmatrix=scmatrix
     )
     vals = expansion.eci * corrs
     interactions = np.array(

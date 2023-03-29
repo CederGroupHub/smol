@@ -316,7 +316,7 @@ class ClusterExpansion(MSONable):
             scmatrix = self._subspace.scmatrix_from_structure(structure)
 
         occu = self.cluster_subspace.occupancy_from_structure(
-            structure, scmatrix=scmatrix, site_mapping=site_mapping
+            structure, scmatrix=scmatrix, site_mapping=site_mapping, encode=True
         )
         indices = self._subspace.get_orbit_indices(scmatrix)
         interactions = self._subspace.evaluator.interactions_from_occupancy(

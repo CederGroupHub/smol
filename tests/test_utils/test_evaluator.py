@@ -56,6 +56,7 @@ def test_corr_from_occu(cluster_subspace, supercell_matrix, rng):
             structure, encode=True, scmatrix=supercell_matrix
         )
 
+        # legacy cython function
         corr = corr_from_occupancy(occu, len(cluster_subspace), orbit_list)
 
         npt.assert_allclose(
@@ -146,19 +147,24 @@ def test_interactions_from_occu(cluster_subspace, supercell_matrix, rng):
             structure, encode=True, scmatrix=supercell_matrix
         )
 
-        interactions = interactions_from_occupancy(
-            occu, cluster_subspace.num_orbits, offset, orbit_list
-        )
+        # compare with explicit calculation of interactions
+        # (see utils.compute_cluster_interactions)
+        interactions = compute_cluster_interactions(expansion, structure, scmatrix=supercell_matrix)
 
+        # legacy cython function
         npt.assert_allclose(
-            interactions, compute_cluster_interactions(expansion, structure)
+            interactions,
+            interactions_from_occupancy(
+            occu, cluster_subspace.num_orbits, offset, orbit_list)
         )
 
+        # calculations from cluster expansion
         npt.assert_allclose(
-            expansion.compute_cluster_interactions(structure),
-            compute_cluster_interactions(expansion, structure),
+            interactions,
+            expansion.compute_cluster_interactions(structure, scmatrix=supercell_matrix),
         )
 
+        # explicit calls to evaluator
         npt.assert_allclose(
             interactions,
             cluster_subspace.evaluator.interactions_from_occupancy(
@@ -169,11 +175,8 @@ def test_interactions_from_occu(cluster_subspace, supercell_matrix, rng):
         # test correlation changes
         occu_f = occu.copy()
         occu_f[0] = 0 if occu[0] != 0 else 1
-        occu_f[1] = 0 if occu[0] != 0 else 1
-        interactions_f = interactions_from_occupancy(
-            occu_f, cluster_subspace.num_orbits, offset, orbit_list
-        )
 
+        # legacy cython function
         npt.assert_allclose(
             delta_interactions_single_flip(
                 occu_f, occu, cluster_subspace.num_orbits, orbit_list_ratio
@@ -183,7 +186,12 @@ def test_interactions_from_occu(cluster_subspace, supercell_matrix, rng):
             ),
         )
 
-        # check that it also matches the full difference
+        # check that it also matches a full difference with > 1 flips
+        occu_f[1] = 0 if occu[0] != 0 else 1
+        interactions_f = interactions_from_occupancy(
+            occu_f, cluster_subspace.num_orbits, offset, orbit_list
+        )
+
         npt.assert_allclose(
             interactions_f - interactions,
             cluster_subspace.evaluator.delta_interactions_from_occupancies(
