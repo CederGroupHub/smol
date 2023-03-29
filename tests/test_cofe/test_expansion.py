@@ -97,7 +97,7 @@ def test_predict(cluster_expansion, rng):
     # This will make it safer to structure skew, because pymatgen can't seem
     # to figure out highly skewed supercell matrix correctly.
     energies_pred = np.array(
-        [expansion_new.predict(s, scmatrix=scmatrix, normalize=True) for s in pool]
+        [expansion_new.predict(s, scmatrix=scmatrix, normalized=True) for s in pool]
     )
     np.testing.assert_almost_equal(energies, energies_pred, decimal=6)
 
@@ -137,7 +137,7 @@ def test_prune(cluster_expansion):
     npt.assert_array_equal(new_feature_matrix, pruned_feat_matrix)
     # check new predictions
     preds = [
-        expansion.predict(s, normalize=True, scmatrix=m)
+        expansion.predict(s, normalized=True, scmatrix=m)
         for s, m in zip(cluster_expansion.structures, cluster_expansion.scmatrices)
     ]
     npt.assert_allclose(preds, np.dot(pruned_feat_matrix, new_coefs))

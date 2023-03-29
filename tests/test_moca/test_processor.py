@@ -217,7 +217,7 @@ def test_compute_cluster_interactions(cluster_subspace, rng):
     proc_interactions = processor.compute_feature_vector(occu) / processor.size
     exp_interactions = expansion.compute_cluster_interactions(struct)
     npt.assert_allclose(proc_interactions, exp_interactions)
-    pred_energy = expansion.predict(struct, normalize=True)
+    pred_energy = expansion.predict(struct, normalized=True)
     assert sum(
         cluster_subspace.orbit_multiplicities * proc_interactions
     ) == pytest.approx(pred_energy, abs=ATOL)

@@ -255,27 +255,39 @@ class ClusterExpansion(MSONable):
         """
         return self._feat_matrix
 
-    def predict(self, structure, normalize=False, scmatrix=None):
+    def predict(self, structure, normalized=False, scmatrix=None, site_mapping=None):
         """Predict the fitted property for a given set of structures.
 
         Args:
             structure (Structure):
                 Structures to predict from
-            normalize (bool): optional
+            normalized (bool): optional
                 Whether to return the predicted property normalized
                 by the prim cell size.
-            scmatrix (Arraylike): optional
-                3 x 3 Supercell matrix of structure.
+            scmatrix (ndarray): optional
+                supercell matrix relating the prim structure to the given
+                structure. Passing this if it has already been matched will
+                make things much quicker. You are responsible that the
+                supercell matrix is correct.
+            site_mapping (list): optional
+                Site mapping as obtained by
+                :code:`StructureMatcher.get_mapping` such that the elements of
+                site_mapping represent the indices of the matching sites to the prim
+                structure. If you pass this option, you are fully responsible that the
+                mappings are correct!
         Returns:
             float
         """
         corrs = self.cluster_subspace.corr_from_structure(
-            structure, scmatrix=scmatrix, normalized=normalize
+            structure,
+            scmatrix=scmatrix,
+            normalized=normalized,
+            site_mapping=site_mapping,
         )
         return np.dot(self.coefs, corrs)
 
     def compute_cluster_interactions(
-        self, structure, scmatrix=None, normalized=True, site_mapping=None
+        self, structure, normalized=True, scmatrix=None, site_mapping=None
     ):
         """Compute the vector of cluster interaction values for given structure.
 
@@ -285,14 +297,14 @@ class ClusterExpansion(MSONable):
         Args:
             structure (Structure):
                 Structures to predict from
+            normalized (bool):
+                Whether to return the predicted property normalized by
+                the prim cell size.
             scmatrix (ndarray): optional
                 supercell matrix relating the prim structure to the given
                 structure. Passing this if it has already been matched will
                 make things much quicker. You are responsible that the
                 supercell matrix is correct.
-            normalized (bool):
-                Whether to return the predicted property normalized by
-                the prim cell size.
             site_mapping (list): optional
                 Site mapping as obtained by
                 :code:`StructureMatcher.get_mapping` such that the elements of
