@@ -63,6 +63,13 @@ class ClusterExpansionProcessor(Processor):
                 f"subspace."
             )
 
+        # evaluator for the correlation functions
+        self._evaluator = ClusterSpaceEvaluator(
+            cluster_subspace._get_orbit_data(cluster_subspace.orbits),
+            cluster_subspace.num_orbits,
+            cluster_subspace.num_corr_functions
+        )
+
         # orbit indices mapping all sites in this supercell to clusters in each
         # orbit. This is used to compute the correlation vector.
         self._indices = cluster_subspace.get_orbit_indices(supercell_matrix)
@@ -121,7 +128,7 @@ class ClusterExpansionProcessor(Processor):
             array: correlation vector
         """
         return (
-            self._subspace.evaluator.correlations_from_occupancy(
+            self._evaluator.correlations_from_occupancy(
                 occupancy, self._indices.container
             )
             * self.size
@@ -222,15 +229,18 @@ class ClusterDecompositionProcessor(Processor):
             coefficients=cluster_subspace.orbit_multiplicities,
         )
 
-        self.n_orbits = self.cluster_subspace.num_orbits
         self._interaction_tensors = interaction_tensors  # keep these for serialization
-        # should we just create a new evaluator here instead of changing the subspace
-        # evaluator?
+
         flat_interaction_tensors = tuple(
             np.ravel(tensor, order="C") for tensor in interaction_tensors[1:]
         )
-        self._subspace.evaluator.set_cluster_interactions(
-            tuple(flat_interaction_tensors), offset=interaction_tensors[0]
+
+        self._evaluator = ClusterSpaceEvaluator(
+            cluster_subspace._get_orbit_data(cluster_subspace.orbits),
+            cluster_subspace.num_orbits,
+            cluster_subspace.num_corr_functions,
+            interaction_tensors[0],
+            flat_interaction_tensors,
         )
 
         # orbit indices mapping all sites in this supercell to clusters in each
@@ -294,7 +304,7 @@ class ClusterDecompositionProcessor(Processor):
             array: correlation vector
         """
         return (
-            self._subspace.evaluator.interactions_from_occupancy(
+            self._evaluator.interactions_from_occupancy(
                 occupancy, self._indices.container
             )
             * self.size
@@ -319,7 +329,7 @@ class ClusterDecompositionProcessor(Processor):
             array: change in cluster interaction vector
         """
         occu_i = occupancy
-        delta_interactions = np.zeros(self.n_orbits)
+        delta_interactions = np.zeros(self.cluster_subspace.num_orbits)
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
