@@ -12,13 +12,19 @@ def cluster_expansion(cluster_subspace, rng):
     reg = Ridge(alpha=1e-8, fit_intercept=False)
     n = rng.integers(50, 100)
     feat_matrix = np.empty((n, len(cluster_subspace)))
-    structures = []
+    structures, scmatrices = [], []
     for i in range(n):
+        scmatrix = np.eye(3, dtype=int) * rng.integers(2, 4)
+        scmatrix[0, 1] = 2  # Intentionally made less symmetric
+        scmatrix[1, 2] = 1
         structure = gen_random_structure(
-            cluster_subspace.structure, size=rng.integers(2, 5), rng=rng
+            cluster_subspace.structure, size=scmatrix, rng=rng
         )
         structures.append(structure)
-        feat_matrix[i] = cluster_subspace.corr_from_structure(structure)
+        scmatrices.append(scmatrix)
+        feat_matrix[i] = cluster_subspace.corr_from_structure(
+            structure, scmatrix=scmatrix
+        )
 
     prop_vec = -5 * rng.random(n)
     reg.fit(feat_matrix, prop_vec)
@@ -26,8 +32,10 @@ def cluster_expansion(cluster_subspace, rng):
         reg, feature_matrix=feat_matrix, property_vector=prop_vec
     )
     expansion = ClusterExpansion(cluster_subspace, reg.coef_, reg_data)
-    # bind the structures to the expansion willy nilly
+    # bind the structures and matrices to the expansion willy nilly
     expansion.structures = structures
+    expansion.scmatrices = scmatrices
+
     return expansion
 
 
@@ -96,6 +104,7 @@ def test_predict(cluster_expansion, rng):
 
 def test_prune(cluster_expansion):
     expansion = cluster_expansion.copy()
+
     thresh = 1e-2
     expansion.prune(threshold=thresh)
     ids = [i for i, coef in enumerate(cluster_expansion.coefs) if abs(coef) >= thresh]
@@ -121,14 +130,29 @@ def test_prune(cluster_expansion):
     # check that recomputing features produces what's expected
     new_feature_matrix = np.array(
         [
-            expansion.cluster_subspace.corr_from_structure(s)
-            for s in cluster_expansion.structures
+            expansion.cluster_subspace.corr_from_structure(s, scmatrix=m)
+            for s, m in zip(cluster_expansion.structures, cluster_expansion.scmatrices)
         ]
     )
     npt.assert_array_equal(new_feature_matrix, pruned_feat_matrix)
     # check new predictions
-    preds = [expansion.predict(s, normalize=True) for s in cluster_expansion.structures]
+    preds = [
+        expansion.predict(s, normalize=True, scmatrix=m)
+        for s, m in zip(cluster_expansion.structures, cluster_expansion.scmatrices)
+    ]
     npt.assert_allclose(preds, np.dot(pruned_feat_matrix, new_coefs))
+
+    # check energy computed with interactions also matches
+    ints = np.array(
+        [
+            expansion.compute_cluster_interactions(s, scmatrix=m)
+            for s, m in zip(cluster_expansion.structures, cluster_expansion.scmatrices)
+        ]
+    )
+    preds = np.sum(
+        cluster_expansion.cluster_subspace.orbit_multiplicities * ints, axis=1
+    )
+    npt.assert_allclose(preds, np.dot(pruned_feat_matrix, new_coefs), atol=1e-5)
 
 
 def test_msonable(cluster_expansion):

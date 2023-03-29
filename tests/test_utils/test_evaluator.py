@@ -149,19 +149,24 @@ def test_interactions_from_occu(cluster_subspace, supercell_matrix, rng):
 
         # compare with explicit calculation of interactions
         # (see utils.compute_cluster_interactions)
-        interactions = compute_cluster_interactions(expansion, structure, scmatrix=supercell_matrix)
+        interactions = compute_cluster_interactions(
+            expansion, structure, scmatrix=supercell_matrix
+        )
 
         # legacy cython function
         npt.assert_allclose(
             interactions,
             interactions_from_occupancy(
-            occu, cluster_subspace.num_orbits, offset, orbit_list)
+                occu, cluster_subspace.num_orbits, offset, orbit_list
+            ),
         )
 
         # calculations from cluster expansion
         npt.assert_allclose(
             interactions,
-            expansion.compute_cluster_interactions(structure, scmatrix=supercell_matrix),
+            expansion.compute_cluster_interactions(
+                structure, scmatrix=supercell_matrix
+            ),
         )
 
         # explicit calls to evaluator

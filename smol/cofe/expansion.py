@@ -158,14 +158,7 @@ class ClusterExpansion(MSONable):
         self.coefs = coefficients
         self.regression_data = regression_data
         self._subspace = cluster_subspace.copy()
-
-        flat_interaction_tensors = tuple(
-            np.ravel(tensor, order="C")
-            for tensor in self.cluster_interaction_tensors[1:]
-        )
-        self._subspace.evaluator.set_cluster_interactions(
-            flat_interaction_tensors, offset=self.cluster_interaction_tensors[0]
-        )
+        self._set_evaluator_data()
 
         # make copy for possible changes/pruning
         self._feat_matrix = (
@@ -281,7 +274,6 @@ class ClusterExpansion(MSONable):
         )
         return np.dot(self.coefs, corrs)
 
-    # TODO use evaluator here, set interactions in init, uppdate if pruned, add test using this code
     def compute_cluster_interactions(
         self, structure, scmatrix=None, normalized=True, site_mapping=None
     ):
@@ -366,9 +358,29 @@ class ClusterExpansion(MSONable):
         if hasattr(self, "cluster_interaction_tensors"):  # reset cache
             del self.cluster_interaction_tensors
 
+        # reset the evaluator
+        self._set_evaluator_data(set_orbits=True)
+
     def copy(self):
         """Return a copy of self."""
         return ClusterExpansion.from_dict(self.as_dict())
+
+    def _set_evaluator_data(self, set_orbits=False):
+        """Set the orbit and cluster interaction data in evaluator."""
+        if set_orbits:
+            self._subspace.evaluator.reset_data(
+                self._subspace._get_orbit_data(self._subspace.orbits),
+                self._subspace.num_orbits,
+                self._subspace.num_corr_functions,
+            )
+
+        flat_interaction_tensors = tuple(
+            np.ravel(tensor, order="C")
+            for tensor in self.cluster_interaction_tensors[1:]
+        )
+        self._subspace.evaluator.set_cluster_interactions(
+            flat_interaction_tensors, offset=self.cluster_interaction_tensors[0]
+        )
 
     def __str__(self):
         """Pretty string for printing."""
