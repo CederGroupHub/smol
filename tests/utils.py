@@ -152,3 +152,23 @@ def gen_fake_training_data(prim_structure, n=10, rng=None):
         energy *= -len(struct)
         training_data.append(ComputedStructureEntry(struct, energy))
     return training_data
+
+
+def compute_cluster_interactions(expansion, structure, normalized=True):
+    # compute cluster interactions from definitionas in pure python
+    corrs = expansion.cluster_subspace.corr_from_structure(
+        structure, normalized=normalized
+    )
+    vals = expansion.eci * corrs
+    interactions = np.array(
+        [
+            np.sum(
+                vals[expansion.eci_orbit_ids == i]
+                * expansion.cluster_subspace.function_ordering_multiplicities[
+                    expansion.eci_orbit_ids == i
+                ]
+            )
+            for i in range(len(expansion.cluster_subspace.orbits) + 1)
+        ]
+    )
+    return interactions

@@ -157,7 +157,17 @@ class ClusterExpansion(MSONable):
 
         self.coefs = coefficients
         self.regression_data = regression_data
+        # TODO make a deep copy of this so that if pruned it does not cause bugs to
+        #  other objects that may have been instantiated with the same subspace
         self._subspace = cluster_subspace
+        flat_interaction_tensors = tuple(
+            np.ravel(tensor, order="C")
+            for tensor in self.cluster_interaction_tensors[1:]
+        )
+        self._subspace.evaluator.set_cluster_interactions(
+            flat_interaction_tensors, offset=self.cluster_interaction_tensors[0]
+        )
+
         # make copy for possible changes/pruning
         self._feat_matrix = (
             regression_data.feature_matrix.copy()
@@ -272,9 +282,10 @@ class ClusterExpansion(MSONable):
         )
         return np.dot(self.coefs, corrs)
 
-
     # TODO use evaluator here, set interactions in init, uppdate if pruned, add test using this code
-    def compute_cluster_interactions(self, structure, normalize=True):
+    def compute_cluster_interactions(
+        self, structure, scmatrix=None, normalized=True, site_mapping=None
+    ):
         """Compute the vector of cluster interaction values for given structure.
 
         A cluster interaction is simply a vector made up of the sum of all cluster
@@ -283,28 +294,38 @@ class ClusterExpansion(MSONable):
         Args:
             structure (Structure):
                 Structures to predict from
-            normalize (bool):
+            scmatrix (ndarray): optional
+                supercell matrix relating the prim structure to the given
+                structure. Passing this if it has already been matched will
+                make things much quicker. You are responsible that the
+                supercell matrix is correct.
+            normalized (bool):
                 Whether to return the predicted property normalized by
                 the prim cell size.
+            site_mapping (list): optional
+                Site mapping as obtained by
+                :code:`StructureMatcher.get_mapping` such that the elements of
+                site_mapping represent the indices of the matching sites to the prim
+                structure. If you pass this option, you are fully responsible that the
+                mappings are correct!
 
         Returns: ndarray
             vector of cluster interaction values
         """
-        corrs = self.cluster_subspace.corr_from_structure(
-            structure, normalized=normalize
+        if scmatrix is None:
+            scmatrix = self._subspace.scmatrix_from_structure(structure)
+
+        occu = self.cluster_subspace.occupancy_from_structure(
+            structure, scmatrix=scmatrix, site_mapping=site_mapping
         )
-        vals = self.eci * corrs
-        interactions = np.array(
-            [
-                np.sum(
-                    vals[self.eci_orbit_ids == i]
-                    * self._subspace.function_ordering_multiplicities[
-                        self.eci_orbit_ids == i
-                    ]
-                )  # noqa
-                for i in range(len(self._subspace.orbits) + 1)
-            ]
+        indices = self._subspace.get_orbit_indices(scmatrix)
+        interactions = self._subspace.evaluator.interactions_from_occupancy(
+            occu, indices.container
         )
+
+        if not normalized:
+            interactions *= self._subspace.num_prims_from_matrix(scmatrix)
+
         return interactions
 
     def prune(self, threshold=0, with_multiplicity=False):
