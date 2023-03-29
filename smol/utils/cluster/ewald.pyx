@@ -3,11 +3,11 @@
 __author__ = "William D. Richards"
 
 
-cpdef delta_ewald_single_flip(const long[::1] occu_f,
-                              const long[::1] occu_i,
-                              const double[:, ::1] ewald_matrix,
-                              const long[:, ::1] ewald_indices,
-                              const int site_ind):
+cpdef double delta_ewald_single_flip(const long[::1] occu_f,
+                                     const long[::1] occu_i,
+                                     const double[:, ::1] ewald_matrix,
+                                     const long[:, ::1] ewald_indices,
+                                     const int site_ind) nogil:
     """Compute the change in electrostatic interaction energy from a flip.
 
     Args:
@@ -35,6 +35,8 @@ cpdef delta_ewald_single_flip(const long[::1] occu_f,
     add = ewald_indices[site_ind, occu_f[site_ind]]
     sub = ewald_indices[site_ind, occu_i[site_ind]]
 
+    # single threaded seems good enough for the majority of systems
+    # if multiple threads are ever needed this can be replaced with prange
     for k in range(occu_f.shape[0]):
         i = ewald_indices[k, occu_f[k]]
         out_k = 0

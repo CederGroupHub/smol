@@ -94,6 +94,8 @@ ext_modules = [
     Extension(
         "smol.utils.cluster.ewald",
         ["smol/utils/cluster/ewald" + ext],
+        extra_compile_args=["-fopenmp"],
+        extra_link_args=["-fopenmp"],
         language="c",
     ),
     Extension(
