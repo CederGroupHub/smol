@@ -109,7 +109,7 @@ cdef class OrbitContainer:
 @cython.final
 cdef class FloatArray2DContainer:
     def __init__(self, tuple arrays):
-        # keep a python reference to the orbit_list so that it is not garbage collected
+        # keep a python reference to the arrays so that it is not garbage collected
         self._arrays = arrays
 
     def __cinit__(self, tuple arrays):
@@ -164,7 +164,7 @@ cdef class FloatArray2DContainer:
 @cython.final
 cdef class FloatArray1DContainer:
     def __init__(self, tuple arrays):
-        # keep a python reference to the orbit_list so that it is not garbage collected
+        # keep a python reference to the arrays so that it is not garbage collected
         self._arrays = arrays
 
     def __cinit__(self, tuple arrays):
@@ -217,7 +217,7 @@ cdef class FloatArray1DContainer:
 @cython.final
 cdef class IntArray1DContainer:
     def __init__(self, tuple arrays):
-        # keep a python reference to the orbit_list so that it is not garbage collected
+        # keep a python reference to the arrays so that it is not garbage collected
         self._arrays = arrays
 
     def __cinit__(self, tuple arrays):
@@ -270,7 +270,7 @@ cdef class IntArray1DContainer:
 @cython.final
 cdef class IntArray2DContainer:
     def __init__(self, tuple arrays):
-        # keep a python reference to the orbit_list so that it is not garbage collected
+        # keep a python reference to the arrays so that it is not garbage collected
         self._arrays = arrays
 
     def __cinit__(self, tuple arrays):
