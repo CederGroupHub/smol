@@ -157,9 +157,8 @@ class ClusterExpansion(MSONable):
 
         self.coefs = coefficients
         self.regression_data = regression_data
-        # TODO make a deep copy of this so that if pruned it does not cause bugs to
-        #  other objects that may have been instantiated with the same subspace
-        self._subspace = cluster_subspace
+        self._subspace = cluster_subspace.copy()
+
         flat_interaction_tensors = tuple(
             np.ravel(tensor, order="C")
             for tensor in self.cluster_interaction_tensors[1:]
