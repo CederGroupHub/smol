@@ -191,7 +191,6 @@ class Processor(MSONable, metaclass=ABCMeta):
 
     def encode_occupancy(self, occupancy):
         """Encode occupancy string of Species object to ints."""
-        # TODO check if setting to intc improves speed
         return np.array(
             [
                 species.index(spec)

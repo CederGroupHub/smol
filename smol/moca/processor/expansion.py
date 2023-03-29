@@ -67,7 +67,7 @@ class ClusterExpansionProcessor(Processor):
         self._evaluator = ClusterSpaceEvaluator(
             cluster_subspace._get_orbit_data(cluster_subspace.orbits),
             cluster_subspace.num_orbits,
-            cluster_subspace.num_corr_functions
+            cluster_subspace.num_corr_functions,
         )
 
         # orbit indices mapping all sites in this supercell to clusters in each
