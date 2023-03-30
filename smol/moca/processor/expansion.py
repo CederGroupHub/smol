@@ -13,6 +13,7 @@ import numpy as np
 
 from smol.cofe.space.clusterspace import ClusterSubspace, OrbitIndices
 from smol.moca.processor.base import Processor
+from smol.utils.cluster.setthreads import SetThreads
 from smol.utils.cluster.container import IntArray2DContainer
 from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
 
@@ -40,7 +41,9 @@ class ClusterExpansionProcessor(Processor):
             Same as :code:`ClusterSubspace.n_bit_orderings`.
     """
 
-    def __init__(self, cluster_subspace, supercell_matrix, coefficients):
+    num_threads = SetThreads("_evaluator")
+
+    def __init__(self, cluster_subspace, supercell_matrix, coefficients, num_threads=None):
         """Initialize a ClusterExpansionProcessor.
 
         Args:
@@ -51,6 +54,11 @@ class ClusterExpansionProcessor(Processor):
                 Cluster Expansion prim structure.
             coefficients (ndarray):
                 fit coefficients for the represented cluster expansion.
+            num_threads (int): optional
+                Number of threads to use to compute a correlation vector. Note that
+                this is not saved when serializing the ClusterSubspace with the
+                as_dict method, so if you are loading a ClusterSubspace from a
+                file then make sure to set the number of threads as desired.
         """
         super().__init__(cluster_subspace, supercell_matrix, coefficients)
 
@@ -69,6 +77,7 @@ class ClusterExpansionProcessor(Processor):
             cluster_subspace.num_orbits,
             cluster_subspace.num_corr_functions,
         )
+        self.num_threads = num_threads
 
         # orbit indices mapping all sites in this supercell to clusters in each
         # orbit. This is used to compute the correlation vector.
@@ -106,6 +115,8 @@ class ClusterExpansionProcessor(Processor):
                 tuple(d[0] for d in data),
                 cluster_subspace.num_orbits,
                 cluster_subspace.num_corr_functions,
+                # TODO allow this to be updated by setting num_threads
+                self.num_threads
             )
             indices = tuple(d[1] for d in data)
             orbit_indices = OrbitIndices(indices, IntArray2DContainer(indices))
@@ -200,7 +211,9 @@ class ClusterDecompositionProcessor(Processor):
     high component systems.
     """
 
-    def __init__(self, cluster_subspace, supercell_matrix, interaction_tensors):
+    num_threads = SetThreads("_evaluator")
+
+    def __init__(self, cluster_subspace, supercell_matrix, interaction_tensors, num_threads=None):
         """Initialize an ClusterDecompositionProcessor.
 
         Args:
@@ -212,7 +225,12 @@ class ClusterDecompositionProcessor(Processor):
             interaction_tensors (sequence of ndarray):
                 Sequence of ndarray where each array corresponds to the
                 cluster interaction tensor. These should be in the same order as their
-                corresponding orbits in the given cluster_subspace
+                corresponding orbits in the given cluster_subspace.
+            num_threads (int): optional
+                Number of threads to use to compute a correlation vector. Note that
+                this is not saved when serializing the ClusterSubspace with the
+                as_dict method, so if you are loading a ClusterSubspace from a
+                file then make sure to set the number of threads as desired.
         """
         if len(interaction_tensors) != cluster_subspace.num_orbits:
             raise ValueError(
@@ -239,9 +257,11 @@ class ClusterDecompositionProcessor(Processor):
             cluster_subspace._get_orbit_data(cluster_subspace.orbits),
             cluster_subspace.num_orbits,
             cluster_subspace.num_corr_functions,
+            1,  # set threads to here so we can set it later
             interaction_tensors[0],
             flat_interaction_tensors,
         )
+        self.num_threads = num_threads
 
         # orbit indices mapping all sites in this supercell to clusters in each
         # orbit. This is used to compute the correlation vector.
@@ -273,19 +293,21 @@ class ClusterDecompositionProcessor(Processor):
         # dictionary indexed by site index.
         self._eval_data_by_sites = {}
         for site, data in data_by_sites.items():
-            # we don't really need a different evaluator for each site since sym
-            # equivalent sites can share the same one, same goes for ratio.
-            evaluator = ClusterSpaceEvaluator(
-                tuple(d[0] for d in data),
-                cluster_subspace.num_orbits,
-                cluster_subspace.num_corr_functions,
-            )
+            orbit_data = tuple(d[0] for d in data)
             indices = tuple(d[1] for d in data)
             orbit_indices = OrbitIndices(indices, IntArray2DContainer(indices))
             ratio = np.array([d[2] for d in data])
             flat_interaction_tensors = tuple(d[3] for d in data)
-            evaluator.set_cluster_interactions(
-                flat_interaction_tensors, interaction_tensors[0]
+            # we don't really need a different evaluator for each site since sym
+            # equivalent sites can share the same one, same goes for ratio.
+            evaluator = ClusterSpaceEvaluator(
+                orbit_data,
+                cluster_subspace.num_orbits,
+                cluster_subspace.num_corr_functions,
+                # TODO allow this to be updated by setting num_threads
+                self.num_threads,
+                interaction_tensors[0],
+                flat_interaction_tensors,
             )
             self._eval_data_by_sites[site] = LocalEvalData(
                 evaluator, orbit_indices, ratio

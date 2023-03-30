@@ -19,6 +19,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
     cdef int num_orbits  # total number of orbits
     cdef public double offset  # offset for the interaction tensor
     cdef FloatArray1DContainer cluster_interactions
+    cdef public int num_threads
 
     cpdef public void reset_data(
             self,

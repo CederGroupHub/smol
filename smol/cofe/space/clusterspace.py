@@ -43,6 +43,7 @@ from smol.cofe.space.basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
 from smol.utils.cluster.container import IntArray2DContainer
 from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
+from smol.utils.cluster.setthreads import SetThreads
 from smol.utils.exceptions import (
     SYMMETRY_ERROR_MESSAGE,
     StructureMatchError,
@@ -90,6 +91,8 @@ class ClusterSubspace(MSONable):
             in the subspace.
     """
 
+    num_threads = SetThreads("_evaluator")
+
     def __init__(
         self,
         structure,
@@ -98,6 +101,7 @@ class ClusterSubspace(MSONable):
         orbits,
         supercell_matcher=None,
         site_matcher=None,
+        num_threads=None,
         **matcher_kwargs,
     ):
         """Initialize a ClusterSubspace.
@@ -130,6 +134,11 @@ class ClusterSubspace(MSONable):
                 supercell of the prim structure . If you pass this directly you
                 should know how to set the matcher up, otherwise matching your
                 relaxed structures can fail, a lot.
+            num_threads (int): optional
+                Number of threads to use to compute a correlation vector. Note that
+                this is not saved when serializing the ClusterSubspace with the
+                as_dict method, so if you are loading a ClusterSubspace from a
+                file then make sure to set the number of threads as desired.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
                 through to the StructureMatchers. Structures that don't match
@@ -190,12 +199,17 @@ class ClusterSubspace(MSONable):
             self._site_matcher = site_matcher
 
         self._orbits = orbits
+        self._external_terms = []  # List will hold external terms (i.e. Ewald)
+
         # assign the cluster ids
         self._assign_orbit_ids()
+
+        # create evaluator
         self._evaluator = ClusterSpaceEvaluator(
             self._get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
         )
-        self._external_terms = []  # List will hold external terms (i.e. Ewald)
+        # set the number of threads to use
+        self.num_threads = num_threads
 
         # Dict to cache orbit index mappings, as OrbitIndices named tuples
         # this prevents doing another structure match with the _site_matcher for
@@ -212,6 +226,7 @@ class ClusterSubspace(MSONable):
         use_concentration=False,
         supercell_matcher=None,
         site_matcher=None,
+        num_threads=None,
         **matcher_kwargs,
     ):
         """Create a ClusterSubspace from diameter cutoffs.
@@ -258,6 +273,11 @@ class ClusterSubspace(MSONable):
                 supercell of the prim structure . If you pass this directly you
                 should know how to set the matcher up, otherwise matching your
                 relaxed structures will fail, a lot.
+            num_threads (int): optional
+                Number of threads to use to compute a correlation vector. Note that
+                this is not saved when serializing the ClusterSubspace with the
+                as_dict method, so if you are loading a ClusterSubspace from a
+                file then make sure to set the number of threads as desired.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
                 through to the StructureMatchers. Structures that don't match
@@ -288,6 +308,7 @@ class ClusterSubspace(MSONable):
             orbits=orbits,
             supercell_matcher=supercell_matcher,
             site_matcher=site_matcher,
+            num_threads=num_threads,
             **matcher_kwargs,
         )
 

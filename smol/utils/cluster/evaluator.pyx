@@ -31,6 +31,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             tuple orbit_data,
             int num_orbits,
             int num_corr_functions,
+            int num_threads = 1,
             double offset = 0.0,
             tuple cluster_interaction_tensors = None
     ):
@@ -53,6 +54,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         """
         self.num_orbits = num_orbits
         self.num_corr = num_corr_functions
+        self.num_threads = num_threads
         self.offset = offset
 
         if cluster_interaction_tensors is None:
@@ -127,7 +129,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef double[::1] o_view = out
         o_view[0] = 1  # empty cluster
 
-        for n in prange(self.size, nogil=True, schedule="guided"):  # loop thru orbits
+        # loop thru orbits
+        for n in prange(self.size, nogil=True, schedule="guided", num_threads=self.num_threads):
             orbit = self.data[n]
             indices = cluster_indices.data[n]
             bit_id = orbit.bit_id
@@ -174,7 +177,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef double[::1] o_view = out
         o_view[0] = self.offset  # empty cluster
 
-        for n in prange(self.size, nogil=True, schedule="guided"):
+        for n in prange(self.size, nogil=True, schedule="guided", num_threads=self.num_threads):
             orbit = self.data[n]
             indices = cluster_indices.data[n]
             interaction_tensor = self.cluster_interactions.data[n]
@@ -211,8 +214,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
                 Container with pointers to arrays with indices of sites of all clusters
                 in each orbit given as a container of arrays.
 
-        Returns:
-            ndarray: correlation vector difference
+        Returns: ndarray
+            correlation vector difference
         """
         cdef int i, j, k, n, I, J, K, N, ind_i, ind_f, bit_id
         cdef double p
@@ -222,7 +225,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         out = np.zeros(self.num_corr)
         cdef double[::1] o_view = out
 
-        for n in prange(self.size, nogil=True):  # loop thru orbits
+        # loop thru orbits
+        for n in prange(self.size, nogil=True, num_threads=self.num_threads):
             orbit = self.data[n]
             indices = cluster_indices.data[n]
             bit_id = orbit.bit_id
@@ -268,8 +272,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
                 Container with pointers to arrays with indices of sites of all clusters
                 in each orbit given as a container of arrays.
 
-        Returns:
-            ndarray: cluster interaction vector difference
+        Returns: ndarray
+            cluster interaction vector difference
         """
         cdef int i, j, n, I, J, ind_i, ind_f
         cdef double p
@@ -280,7 +284,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         out = np.zeros(self.num_orbits)
         cdef double[::1] o_view = out
 
-        for n in prange(self.size, nogil=True):
+        for n in prange(self.size, nogil=True, num_threads=self.num_threads):
             orbit = self.data[n]
             indices = cluster_indices.data[n]
             interaction_tensor = self.cluster_interactions.data[n]
