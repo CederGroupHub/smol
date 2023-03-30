@@ -57,6 +57,11 @@ def test_encode_decode_property(composite_processor, rng):
     npt.assert_equal(occu, composite_processor.encode_occupancy(decoccu))
 
 
+def test_set_threads():
+    # TODO implenent this
+    pass
+
+
 def test_site_spaces(ce_processor):
     assert all(
         sp in ce_processor.structure.composition

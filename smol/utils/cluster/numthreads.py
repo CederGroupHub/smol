@@ -2,7 +2,7 @@
 
 from os import cpu_count
 
-DEFAULT_NUM_THREADS = 4 if cpu_count() >= 4 else cpu_count()
+DEFAULT_NUM_THREADS = 2 if cpu_count() >= 2 else cpu_count()
 
 
 class SetNumThreads:
@@ -21,7 +21,7 @@ class SetNumThreads:
         self._obj_name = multithreaded_object_name
         self._attr_name = thread_attr_name
 
-    def __get__(self, instance, owner):
+    def __get__(self, instance, objtype=None):
         """Get the number of threads used by the evaluator to compute correlations."""
         return getattr(getattr(instance, self._obj_name), self._attr_name)
 

@@ -7,7 +7,8 @@ EwaldProcessor class to handle changes in the electrostatic interaction energy.
 
 __author__ = "Luis Barroso-Luque"
 
-from collections import defaultdict, namedtuple
+from collections import defaultdict
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -16,10 +17,22 @@ from smol.moca.processor.base import Processor
 from smol.utils.cluster.container import IntArray2DContainer
 from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
 from smol.utils.cluster.numthreads import SetNumThreads
+from smol.utils.descriptor import SetMany
 
-# a named tuple to the data for local evaluation updates of correlation and cluster
-# interaction vector.
-LocalEvalData = namedtuple("LocalEvalData", ["evaluator", "indices", "ratio"])
+
+@dataclass
+class LocalEvalData:
+    """Holds data for local evaluation updates.
+
+    A dataclass to the data for local evaluation updates of correlation and cluster
+    interaction vectors.
+    """
+
+    site_index: int
+    evaluator: ClusterSpaceEvaluator = field(repr=False)
+    indices: OrbitIndices = field(repr=False)
+    cluster_ratio: np.ndarray
+    num_threads: int = field(default=SetNumThreads("evaluator"), repr=True)
 
 
 class ClusterExpansionProcessor(Processor):
@@ -41,10 +54,16 @@ class ClusterExpansionProcessor(Processor):
             Same as :code:`ClusterSubspace.n_bit_orderings`.
     """
 
-    num_threads = SetNumThreads("_evaluator")
+    num_threads = SetMany("num_threads", "_eval_data_by_sites")
+    num_threads_full = SetNumThreads("_evaluator")
 
     def __init__(
-        self, cluster_subspace, supercell_matrix, coefficients, num_threads=None
+        self,
+        cluster_subspace,
+        supercell_matrix,
+        coefficients,
+        num_threads=None,
+        num_threads_full=None,
     ):
         """Initialize a ClusterExpansionProcessor.
 
@@ -57,8 +76,15 @@ class ClusterExpansionProcessor(Processor):
             coefficients (ndarray):
                 fit coefficients for the represented cluster expansion.
             num_threads (int): optional
-                Number of threads to use to compute a correlation vector. Note that
-                this is not saved when serializing the ClusterSubspace with the
+                Number of threads to use to compute `updates in a correlation vector
+                from local changes. If None is given the number of threads are set
+                to the same as set in the given :class:`ClusterSubspace`.
+                Note that this is not saved when serializing the ClusterSubspace with
+                the as_dict method, so if you are loading a ClusterSubspace from a
+                file then make sure to set the number of threads as desired.
+            num_threads_full (int): optional
+                Number of threads to use to compute a full correlation vector. Note
+                that this is not saved when serializing the ClusterSubspace with the
                 as_dict method, so if you are loading a ClusterSubspace from a
                 file then make sure to set the number of threads as desired.
         """
@@ -79,12 +105,13 @@ class ClusterExpansionProcessor(Processor):
             cluster_subspace.num_orbits,
             cluster_subspace.num_corr_functions,
         )
-        self.num_threads = num_threads
 
         # orbit indices mapping all sites in this supercell to clusters in each
         # orbit. This is used to compute the correlation vector.
         self._indices = cluster_subspace.get_orbit_indices(supercell_matrix)
 
+        # TODO there is a lot of repeated code here and in the CD __init__
+        # TODO we should probably refactor this to avoid this and make testing easier
         # Dictionary of orbits data by site index necessary to compute local changes in
         # correlation vectors from flips
         data_by_sites = defaultdict(list)
@@ -117,15 +144,20 @@ class ClusterExpansionProcessor(Processor):
                 tuple(d[0] for d in data),
                 cluster_subspace.num_orbits,
                 cluster_subspace.num_corr_functions,
-                # TODO allow this to be updated by setting num_threads
-                self.num_threads,
             )
             indices = tuple(d[1] for d in data)
             orbit_indices = OrbitIndices(indices, IntArray2DContainer(indices))
             ratio = np.array([d[2] for d in data])
             self._eval_data_by_sites[site] = LocalEvalData(
-                evaluator, orbit_indices, ratio
+                site, evaluator, orbit_indices, ratio, 1
             )
+
+        # Set the number of threads to use for the full correlation vector
+        self.num_threads_full = (
+            num_threads_full if num_threads_full else cluster_subspace.num_threads
+        )
+        # Set the number of threads to use for the local correlation vector
+        self.num_threads = num_threads
 
     def compute_feature_vector(self, occupancy):
         """Compute the correlation vector for a given occupancy string.
@@ -206,17 +238,23 @@ class ClusterDecompositionProcessor(Processor):
     for further analysis you're probably better off with a standard
     ClusterExpansionProcessor
 
-    However if you don't need correlation vectors, then this is probably
+    However, if you don't need correlation vectors, then this is probably
     more efficient and more importantly the scaling complexity with model size
     is in terms of number of orbits (instead of number of corr functions).
     This can give substantial speedups when doing MC calculations of complex
     high component systems.
     """
 
-    num_threads = SetNumThreads("_evaluator")
+    num_threads = SetMany("num_threads", "_eval_data_by_sites")
+    num_threads_full = SetNumThreads("_evaluator")
 
     def __init__(
-        self, cluster_subspace, supercell_matrix, interaction_tensors, num_threads=None
+        self,
+        cluster_subspace,
+        supercell_matrix,
+        interaction_tensors,
+        num_threads=None,
+        num_threads_full=None,
     ):
         """Initialize an ClusterDecompositionProcessor.
 
@@ -265,7 +303,6 @@ class ClusterDecompositionProcessor(Processor):
             interaction_tensors[0],
             flat_interaction_tensors,
         )
-        self.num_threads = num_threads
 
         # orbit indices mapping all sites in this supercell to clusters in each
         # orbit. This is used to compute the correlation vector.
@@ -308,14 +345,20 @@ class ClusterDecompositionProcessor(Processor):
                 orbit_data,
                 cluster_subspace.num_orbits,
                 cluster_subspace.num_corr_functions,
-                # TODO allow this to be updated by setting num_threads
-                self.num_threads,
+                1,  # set to single thread, will be set by num_threads later
                 interaction_tensors[0],
                 flat_interaction_tensors,
             )
             self._eval_data_by_sites[site] = LocalEvalData(
-                evaluator, orbit_indices, ratio
+                site, evaluator, orbit_indices, ratio, 1
             )
+
+        # Set the number of threads to use for the full correlation vector
+        self.num_threads_full = (
+            num_threads_full if num_threads_full else cluster_subspace.num_threads
+        )
+        # Set the number of threads to use for the local correlation vector
+        self.num_threads = num_threads
 
     def compute_feature_vector(self, occupancy):
         """Compute the cluster interaction vector for a given occupancy string.
