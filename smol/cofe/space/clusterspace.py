@@ -43,7 +43,7 @@ from smol.cofe.space.basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
 from smol.utils.cluster.container import IntArray2DContainer
 from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
-from smol.utils.cluster.setthreads import SetThreads
+from smol.utils.cluster.numthreads import SetNumThreads
 from smol.utils.exceptions import (
     SYMMETRY_ERROR_MESSAGE,
     StructureMatchError,
@@ -91,7 +91,7 @@ class ClusterSubspace(MSONable):
             in the subspace.
     """
 
-    num_threads = SetThreads("_evaluator")
+    num_threads = SetNumThreads("_evaluator")
 
     def __init__(
         self,

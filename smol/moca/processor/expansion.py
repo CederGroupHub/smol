@@ -13,9 +13,9 @@ import numpy as np
 
 from smol.cofe.space.clusterspace import ClusterSubspace, OrbitIndices
 from smol.moca.processor.base import Processor
-from smol.utils.cluster.setthreads import SetThreads
 from smol.utils.cluster.container import IntArray2DContainer
 from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
+from smol.utils.cluster.numthreads import SetNumThreads
 
 # a named tuple to the data for local evaluation updates of correlation and cluster
 # interaction vector.
@@ -41,9 +41,11 @@ class ClusterExpansionProcessor(Processor):
             Same as :code:`ClusterSubspace.n_bit_orderings`.
     """
 
-    num_threads = SetThreads("_evaluator")
+    num_threads = SetNumThreads("_evaluator")
 
-    def __init__(self, cluster_subspace, supercell_matrix, coefficients, num_threads=None):
+    def __init__(
+        self, cluster_subspace, supercell_matrix, coefficients, num_threads=None
+    ):
         """Initialize a ClusterExpansionProcessor.
 
         Args:
@@ -116,7 +118,7 @@ class ClusterExpansionProcessor(Processor):
                 cluster_subspace.num_orbits,
                 cluster_subspace.num_corr_functions,
                 # TODO allow this to be updated by setting num_threads
-                self.num_threads
+                self.num_threads,
             )
             indices = tuple(d[1] for d in data)
             orbit_indices = OrbitIndices(indices, IntArray2DContainer(indices))
@@ -211,9 +213,11 @@ class ClusterDecompositionProcessor(Processor):
     high component systems.
     """
 
-    num_threads = SetThreads("_evaluator")
+    num_threads = SetNumThreads("_evaluator")
 
-    def __init__(self, cluster_subspace, supercell_matrix, interaction_tensors, num_threads=None):
+    def __init__(
+        self, cluster_subspace, supercell_matrix, interaction_tensors, num_threads=None
+    ):
         """Initialize an ClusterDecompositionProcessor.
 
         Args:

@@ -5,7 +5,7 @@ from os import cpu_count
 DEFAULT_NUM_THREADS = 4 if cpu_count() >= 4 else cpu_count()
 
 
-class SetThreads:
+class SetNumThreads:
     """
     A descriptor used to set threads of an attributed object that has multi-threading.
 
