@@ -1,5 +1,6 @@
 """Solver class for the ground state problem of cluster expansion. SCIP only."""
 from typing import List, NamedTuple, Union
+from warnings import warn
 
 import cvxpy as cp
 import numpy as np
@@ -306,6 +307,11 @@ class UpperboundSolver(MSONable):
                 values of boolean variables in the ground-state solution, and
                 the minimized ground-state energy.
         """
+        if (
+            self._ground_state_solution is not None
+            and self._ground_state_energy is not None
+        ):
+            warn("Ground state already solved before. Will overwrite previous result.")
         self.problem.solve(
             solver=self.solver, warm_start=self.warm_start, **self.solver_options
         )
@@ -318,7 +324,7 @@ class UpperboundSolver(MSONable):
         self._initialize_problem()
 
     def _raise_unsolved(self):
-        if self._ground_state_solution is None:
+        if self._ground_state_solution is None or self._ground_state_energy is None:
             raise RuntimeError(
                 "The ground state of the current system is not"
                 " solved before or was not successful. Call"

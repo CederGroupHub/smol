@@ -1,6 +1,10 @@
 """Test constraints to the upper-bound problem."""
-import pytest
+import itertools
 
+import pytest
+from pymatgen.core import Species
+
+from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
 from smol.solver.upper_bound.constraints import (
     get_upper_bound_composition_space_constraints,
     get_upper_bound_fixed_composition_constraints,
@@ -120,17 +124,81 @@ def test_comp_space_constraints(exotic_ensemble, exotic_initial_occupancy):
             ],
             initial_occupancy=exotic_initial_occupancy,
         )
+    with pytest.raises(ValueError):
+        _ = get_upper_bound_composition_space_constraints(
+            exotic_ensemble.sublattices,
+            variables,
+            variable_indices,
+            other_constraints=[
+                "F- == 1000",  # Unsatisfiable.
+            ],
+            initial_occupancy=exotic_initial_occupancy,
+        )
+    with pytest.raises(ValueError):
+        _ = get_upper_bound_composition_space_constraints(
+            exotic_ensemble.sublattices,
+            variables,
+            variable_indices,
+            other_constraints=[
+                "F- >= 1000",  # Unsatisfiable.
+            ],
+            initial_occupancy=exotic_initial_occupancy,
+        )
+    with pytest.raises(ValueError):
+        _ = get_upper_bound_composition_space_constraints(
+            exotic_ensemble.sublattices,
+            variables,
+            variable_indices,
+            other_constraints=[
+                "F- <= 1",  # Unsatisfiable.
+            ],
+            initial_occupancy=exotic_initial_occupancy,
+        )
 
 
 def test_fixed_composition_constraints(exotic_ensemble, exotic_initial_occupancy):
     variables, variable_indices = get_upper_bound_variables_from_sublattices(
         exotic_ensemble.sublattices, exotic_ensemble.num_sites
     )
+    bits = [s.species for s in exotic_ensemble]
+    n_dims = sum([len(sl_species) for sl_species in bits])
+    table = get_dim_ids_table(exotic_ensemble.sublattices)
+    fixed_counts = occu_to_counts(exotic_initial_occupancy, n_dims, table)
     constraints = get_upper_bound_fixed_composition_constraints(
         exotic_ensemble.sublattices,
         variables,
         variable_indices,
+        fixed_composition=fixed_counts,
         initial_occupancy=exotic_initial_occupancy,
     )
 
-    # TODO: finish this.
+    # F- is fixed and always satisfied, will not appear.
+    assert len(constraints) == 8
+    for _ in range(20):
+        rand_val = get_random_neutral_variable_values(
+            exotic_ensemble.sublattices,
+            exotic_initial_occupancy,
+            variable_indices,
+            canonical=True,
+        )  # Force canonical constraints, will always satisfy.
+        variables.value = rand_val
+        results = [c.value() for c in constraints]
+        assert results == [True for _ in range(8)]
+    flatten_bits = list(itertools.chain(*bits))
+    flatten_bits.remove(Species("F", -1))
+    assert len(flatten_bits) == 8
+    ti_id = flatten_bits.index(Species("Ti", 4))
+    mn4_id = flatten_bits.index(Species("Mn", 4))
+    for _ in range(20):
+        rand_val = get_random_neutral_variable_values(
+            exotic_ensemble.sublattices,
+            exotic_initial_occupancy,
+            variable_indices,
+            force_flip=True,
+        )  # Force Ti-Mn4 flip, will not satisfy Ti, Mn constraints
+        variables.value = rand_val
+        results = [c.value() for c in constraints]
+        assumed_results = [
+            (False if i in [ti_id, mn4_id] else True) for i in range(len(flatten_bits))
+        ]
+        assert results == assumed_results

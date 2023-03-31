@@ -77,15 +77,15 @@ def exotic_expansion(exotic_subspace, exotic_coefs):
 def orig_ensemble(exotic_expansion, request):
     if request.param[0] == "semigrand":
         chemical_potentials = {
-            "Li+": 0,
-            "Mn2+": 0,
-            "Mn3+": 0,
-            "Mn4+": 0,
-            "Ti4+": 0,
-            "Vacancy": 0,
-            "O2-": 0,
-            "O2-": 0,
-            "F-": 0,
+            "Li+": np.random.normal(),
+            "Mn2+": np.random.normal(),
+            "Mn3+": np.random.normal(),
+            "Mn4+": np.random.normal(),
+            "Ti4+": np.random.normal(),
+            "Vacancy": np.random.normal(),
+            "O2-": np.random.normal(),
+            "O-": np.random.normal(),
+            "F-": np.random.normal(),
         }
     else:
         chemical_potentials = None

@@ -4,6 +4,7 @@ from typing import List, Tuple, Union
 
 import cvxpy as cp
 import numpy as np
+from cvxpy import Expression
 from cvxpy.constraints.constraint import Constraint
 from numpy.typing import ArrayLike
 
@@ -110,7 +111,15 @@ def get_upper_bound_composition_space_constraints(
             if len(indices) > 0:
                 expression += cp.sum(variables[indices]) * a[dim_id]
             expression += n_fixed * a[dim_id]
-        constraints.append(expression == b)
+        if not isinstance(expression, Expression):
+            if expression != b:
+                raise ValueError(
+                    f"Constraint {a} == {b} can never be satisfied because"
+                    f" the number of restricted sites can not match this"
+                    f" requirement!"
+                )
+        else:
+            constraints.append(expression == b)
 
     # LEQ.
     for cid, (a, b) in enumerate(zip(comp_space._A_leq, comp_space._b_leq)):
@@ -126,7 +135,15 @@ def get_upper_bound_composition_space_constraints(
             if len(indices) > 0:
                 expression += cp.sum(variables[indices]) * a[dim_id]
             expression += n_fixed * a[dim_id]
-        constraints.append(expression <= b)
+        if not isinstance(expression, Expression):
+            if expression > b:
+                raise ValueError(
+                    f"Constraint {a} <= {b} can never be satisfied because"
+                    f" the number of restricted sites can not match this"
+                    f" requirement!"
+                )
+        else:
+            constraints.append(expression <= b)
 
     # GEQ.
     for cid, (a, b) in enumerate(zip(comp_space._A_geq, comp_space._b_geq)):
@@ -142,7 +159,15 @@ def get_upper_bound_composition_space_constraints(
             if len(indices) > 0:
                 expression += cp.sum(variables[indices]) * a[dim_id]
             expression += n_fixed * a[dim_id]
-        constraints.append(expression >= b)
+        if not isinstance(expression, Expression):
+            if expression < b:
+                raise ValueError(
+                    f"Constraint {a} >= {b} can never be satisfied because"
+                    f" the number of restricted sites can not match this"
+                    f" requirement!"
+                )
+        else:
+            constraints.append(expression >= b)
 
     return constraints
 
@@ -196,6 +221,15 @@ def get_upper_bound_fixed_composition_constraints(
                 f" is always occupied by {n_fixed} species, more than"
                 f" the number allowed!"
             )
-        constraints.append(expression == fixed_composition[dim_id])
+        if not isinstance(expression, Expression):
+            if expression != fixed_composition[dim_id]:
+                raise ValueError(
+                    f"Fixed composition {fixed_composition} can not"
+                    f" be satisfied because the {dim_id}'th component"
+                    f" is restricted to be occupied by {expression} species,"
+                    f" not equals to the number required!"
+                )
+        else:
+            constraints.append(expression == fixed_composition[dim_id])
 
     return constraints
