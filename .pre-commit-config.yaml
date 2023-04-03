@@ -65,7 +65,7 @@ repos:
     - flake8-rst==0.8.0
     # - flake8-docstrings==1.6.0  # fix these
     # - flake8-rst-docstrings==0.2.3
-    
+
 - repo: https://github.com/pycqa/pydocstyle
   rev: 6.3.0  # pick a git hash / tag to point to
   hooks:
