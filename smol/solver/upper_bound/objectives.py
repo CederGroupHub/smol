@@ -20,7 +20,6 @@ from smol.solver.upper_bound.utils.indices import map_ewald_indices_to_variable_
 __author__ = "Fengyu Xie"
 
 
-# TODO: rewrite objective function and solver tests after linearizing.
 def get_expression_and_auxiliary_from_terms(
     cluster_terms: List[Tuple[List[int], Number]], variables: cp.Variable
 ) -> Tuple[cp.Expression, cp.Variable, List[List[int]], List[Constraint]]:
@@ -38,10 +37,10 @@ def get_expression_and_auxiliary_from_terms(
             cvxpy variables storing the ground-state result.
     Returns:
         cp.Expression, cp.Variable, list[list[int]], list[Constraint]:
-        The linearized energy expression, auxiliary slack variables for each
-        multi-body product term, a list containing the indices of variables whose
-        product equals to the corresponding auxiliary slack variable, and linearize
-        constraints for each multi-body product term.
+            The linearized energy expression, auxiliary slack variables for each
+            multi-body product term, a list containing the indices of variables whose
+            product equals to the corresponding auxiliary slack variable, and
+            linearize constraints for each multi-body product term.
     """
     # Simplify cluster terms first.
     sorted_terms = [(tuple(sorted(inds)), fac) for inds, fac in cluster_terms]
@@ -54,7 +53,10 @@ def get_expression_and_auxiliary_from_terms(
 
     expression = 0
     n_slack = len([inds for inds in simplified_terms.keys() if len(inds) > 1])
-    aux_variables = cp.Variable(n_slack, boolean=True)
+    if n_slack == 0:
+        aux_variables = None
+    else:
+        aux_variables = cp.Variable(n_slack, boolean=True)
     indices_in_aux_products = [[] for _ in range(n_slack)]
     aux_constraints = []
     aux_id = 0
@@ -77,12 +79,35 @@ def get_expression_and_auxiliary_from_terms(
             aux_id += 1
 
     if not isinstance(expression, cp.Expression):
-        raise ValueError(
+        raise RuntimeError(
             f"The energy function {expression} has no configuration"
             f" degree of freedom. Cannot be optimized!"
         )
 
     return expression, aux_variables, indices_in_aux_products, aux_constraints
+
+
+def get_auxiliary_variable_values(
+    variable_values: ArrayLike[int], indices_in_auxiliary_products: List[List[int]]
+) -> ArrayLike[Number]:
+    """Get the value of auxiliary variables.
+
+    Args:
+        variable_values(np.ndarray):
+            Values of site variables.
+        indices_in_auxiliary_products(list[list[int]]):
+            A list containing the indices of variables whose product equals to the
+            corresponding auxiliary slack variable.
+    Returns:
+        np.ndarray:
+            Values of auxiliary variables subjecting to auxiliary constraints.
+    """
+    variable_values = np.array(variable_values).astype(int)
+    aux_values = np.ones(len(indices_in_auxiliary_products), dtype=int)
+    for i, inds in enumerate(indices_in_auxiliary_products):
+        aux_values[i] = np.product(variable_values[inds])
+
+    return aux_values.astype(int)
 
 
 def get_upper_bound_terms_from_expansion_processor(

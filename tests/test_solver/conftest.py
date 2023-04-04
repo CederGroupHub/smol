@@ -41,7 +41,7 @@ def exotic_prim():
 def exotic_subspace(exotic_prim, request):
     # Use sinusoid basis to test if useful.
     space = ClusterSubspace.from_cutoffs(
-        exotic_prim, {2: 6, 3: 3, 4: 3}, basis=request.param
+        exotic_prim, {2: 4, 3: 3, 4: 2}, basis=request.param
     )
     space.add_external_term(EwaldTerm)
     return space

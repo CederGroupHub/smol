@@ -9,6 +9,8 @@ import numpy as np
 from smol.cofe.space.domain import get_species
 from smol.moca.utils.occu import get_dim_ids_by_sublattice
 
+__author__ = "Fengyu Xie"
+
 
 def handle_side_string(side: str):
     """Handle the strings separated by relation operators.

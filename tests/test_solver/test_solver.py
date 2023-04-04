@@ -1,5 +1,5 @@
 """Test solver class construction and usage."""
-
+import numpy as np
 import numpy.testing as npt
 import pytest
 from pymatgen.analysis.structure_matcher import StructureMatcher
@@ -10,6 +10,7 @@ from smol.solver.upper_bound.variables import get_variable_values_from_occupancy
 from ..utils import assert_msonable
 
 
+# Both SCIP, GUROBI tried on this instance.
 @pytest.fixture(params=["SCIP", "GUROBI"])
 def exotic_solver(exotic_ensemble, exotic_initial_occupancy, request):
     return UpperboundSolver(
@@ -59,4 +60,14 @@ def test_setting_results(exotic_solver):
         _ = exotic_solver.ground_state_energy
 
 
-# Do a small scale test.
+# Do a small scale solving test.
+def test_solve(exotic_solver):
+    _, energy = exotic_solver.solve()
+    # Optimality not tested.
+    occu = exotic_solver._ensemble.processor.occupancy_from_structure(
+        exotic_solver.ground_state_structure
+    )
+    features = exotic_solver._ensemble.compute_feature_vector(occu)
+    true_energy = np.dot(features, exotic_solver._ensemble.natural_parameters)
+
+    assert np.isclose(energy, true_energy)

@@ -22,6 +22,7 @@ from smol.solver.upper_bound.constraints import (
     get_upper_bound_normalization_constraints,
 )
 from smol.solver.upper_bound.objectives import (
+    get_auxiliary_variable_values,
     get_expression_and_auxiliary_from_terms,
     get_upper_bound_terms_from_chemical_potentials,
     get_upper_bound_terms_from_decomposition_processor,
@@ -32,6 +33,8 @@ from smol.solver.upper_bound.variables import (
     get_occupancy_from_variables,
     get_upper_bound_variables_from_sublattices,
 )
+
+__author__ = "Fengyu Xie"
 
 
 class ProblemCanonicals(NamedTuple):
@@ -271,6 +274,15 @@ class UpperboundSolver(MSONable):
         self._ground_state_occupancy = None
         self._ground_state_structure = None
 
+    def _set_canonical_values(self):
+        """Set canonical values according to the reloaded solution."""
+        self._raise_unsolved()
+        self._canonicals.variables.value = self._ground_state_solution
+        aux_values = get_auxiliary_variable_values(
+            self._ground_state_solution, self._canonicals.indices_in_auxiliary_products
+        )
+        self._canonicals.auxiliary_variables.value = aux_values
+
     @property
     def problem(self):
         """The cvxpy problem for solving upper-bound of ground-state.
@@ -340,8 +352,8 @@ class UpperboundSolver(MSONable):
         self.problem.solve(
             solver=self.solver, warm_start=self.warm_start, **self.solver_options
         )
-        self._ground_state_solution = self.variables.value
-        self._ground_state_energy = self.problem.value
+        self._ground_state_solution = self.variables.value.astype(int)
+        self._ground_state_energy = self.objective_function.value
         return self._ground_state_solution, self._ground_state_energy
 
     def reset(self):
@@ -470,5 +482,6 @@ class UpperboundSolver(MSONable):
             solution = np.array(solution).astype(int)  # Save as 0 and 1.
         socket._ground_state_solution = solution
         socket._ground_state_energy = d.get("_ground_state_energy")
+        socket._set_canonical_values()
 
         return socket
