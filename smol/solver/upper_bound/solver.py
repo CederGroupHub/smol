@@ -22,10 +22,11 @@ from smol.solver.upper_bound.constraints import (
     get_upper_bound_normalization_constraints,
 )
 from smol.solver.upper_bound.objectives import (
-    get_upper_bound_objective_from_chemical_potentials,
-    get_upper_bound_objective_from_decomposition_processor,
-    get_upper_bound_objective_from_ewald_processor,
-    get_upper_bound_objective_from_expansion_processor,
+    get_expression_and_auxiliary_from_terms,
+    get_upper_bound_terms_from_chemical_potentials,
+    get_upper_bound_terms_from_decomposition_processor,
+    get_upper_bound_terms_from_ewald_processor,
+    get_upper_bound_terms_from_expansion_processor,
 )
 from smol.solver.upper_bound.variables import (
     get_occupancy_from_variables,
@@ -41,21 +42,34 @@ class ProblemCanonicals(NamedTuple):
             The cvxpy problem to solve.
         variables (cp.Variable):
             Variables corresponding to each species on each site to be optimized.
+        variable_indices (cp.Variable):
+            List of variable index corresponding to each active site index and species
+            indices in its site space. Inactive or restricted sites will not have any
+            variable.
+        auxiliary_variables (cp.Variable):
+            Slack variables used to linearize polynomial pseudo-boolean objective
+            terms.
+        indices_in_auxiliary_products (list[list[int]]):
+            A list containing the indices of variables whose product equals to the
+            corresponding auxiliary slack variable.
         objective_function (cp.Expression):
             Objective function to be minimized. Usually energy per super-cell.
-        auxiliaries (SimpleNamespace of cp.Variable or cp.Expression):
-            SimpleNamespace with auxiliary cp.Variable or cp.Expression objects.
-            The namespace should be defined by the Regressor generating it.
         constraints (list of cp.Constraint):
             List of constraints.
+        num_auxiliary_constraints(int):
+            Number of slack linearize constraints. Slack constraints are always
+            the last constraints in the list.
     """
 
     problem: cp.Problem
     variables: cp.Variable
     # Index of variables on each active site.
     variable_indices: List[List[int]]
+    auxiliary_variables: cp.Variable
+    indices_in_auxiliary_products: List[List[int]]
     objective_function: cp.Expression
     constraints: Union[List[Constraint], None]
+    num_auxiliary_constraints: int
 
 
 class UpperboundSolver(MSONable):
@@ -181,26 +195,24 @@ class UpperboundSolver(MSONable):
             )
 
         def _handle_single_processor(proc):
+            # Give energy terms in the expression.
             if isinstance(proc, ClusterExpansionProcessor):
-                return get_upper_bound_objective_from_expansion_processor(
+                return get_upper_bound_terms_from_expansion_processor(
                     sublattices,
-                    variables,
                     variable_indices,
                     expansion_processor=proc,
                     initial_occupancy=self._initial_occupancy,
                 )
             if isinstance(proc, ClusterDecompositionProcessor):
-                return get_upper_bound_objective_from_decomposition_processor(
+                return get_upper_bound_terms_from_decomposition_processor(
                     sublattices,
-                    variables,
                     variable_indices,
                     decomposition_processor=proc,
                     initial_occupancy=self._initial_occupancy,
                 )
             if isinstance(proc, EwaldProcessor):
-                return get_upper_bound_objective_from_ewald_processor(
+                return get_upper_bound_terms_from_ewald_processor(
                     sublattices,
-                    variables,
                     variable_indices,
                     ewald_processor=proc,
                     initial_occupancy=self._initial_occupancy,
@@ -214,30 +226,43 @@ class UpperboundSolver(MSONable):
         # Objective energy function.
         processor = self._ensemble.processor
         if isinstance(processor, CompositeProcessor):
-            objective = 0
+            terms = []
             for p in processor.processors:
-                objective += _handle_single_processor(p)
+                terms.extend(_handle_single_processor(p))
         else:
-            objective = _handle_single_processor(processor)
+            terms = _handle_single_processor(processor)
         # E - mu N for semi-grand ensemble.
         if self._ensemble.chemical_potentials is not None:
             # Chemical potential term already includes the "-" before mu N.
-            objective += get_upper_bound_objective_from_chemical_potentials(
-                sublattices,
-                variables,
-                variable_indices,
-                chemical_table=self._ensemble._chemical_potentials["table"],
-                initial_occupancy=self._initial_occupancy,
+            terms.extend(
+                get_upper_bound_terms_from_chemical_potentials(
+                    sublattices,
+                    variable_indices,
+                    chemical_table=self._ensemble._chemical_potentials["table"],
+                    initial_occupancy=self._initial_occupancy,
+                )
             )
 
-        problem = cp.Problem(cp.Minimize(objective), constraints)
+        (
+            objective_func,
+            aux_variables,
+            indices_in_aux_products,
+            aux_constraints,
+        ) = get_expression_and_auxiliary_from_terms(terms, variables)
+        n_aux_constraints = len(aux_constraints)
+        constraints.extend(aux_constraints)
+
+        problem = cp.Problem(cp.Minimize(objective_func), constraints)
 
         self._canonicals = ProblemCanonicals(
             problem=problem,
             variables=variables,
             variable_indices=variable_indices,
-            objective_function=objective,
+            auxiliary_variables=aux_variables,
+            indices_in_auxiliary_products=indices_in_aux_products,
+            objective_function=objective_func,
             constraints=constraints,
+            num_auxiliary_constraints=n_aux_constraints,
         )
 
         # Clear solution.
