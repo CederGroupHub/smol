@@ -61,6 +61,7 @@ def test_occupancy_from_variables(exotic_ensemble, exotic_initial_occupancy):
             exotic_ensemble.sublattices,
             rand_vals,
             variable_indices,
+            exotic_initial_occupancy,
         )
         # Constrained sites must be the same.
         npt.assert_array_equal(
@@ -98,3 +99,7 @@ def test_variables_from_occupancy(exotic_ensemble, exotic_initial_occupancy):
             exotic_ensemble.sublattices, rand_occu, variable_indices
         ).astype(int)
         npt.assert_array_equal(rand_val, test_val)
+        # print("Variable indices:\n", variable_indices)
+        # print("rand_occu:\n", rand_occu)
+        # print("rand_val:\n", rand_val)
+        # assert False

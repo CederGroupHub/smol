@@ -121,7 +121,7 @@ def get_variable_values_from_occupancy(
     sublattices: List[Sublattice],
     occupancy: ArrayLike,
     variable_indices: List[List[int]],
-):
+) -> np.ndarray:
     """Get value of variables from encoded occupancy array.
 
     Args:
@@ -152,11 +152,12 @@ def get_variable_values_from_occupancy(
         sublattice_id = site_sublattice_ids[site_id]
         sublattice = sublattices[sublattice_id]
 
-        active_var_id_on_site = np.where(occupancy[site_id] == sublattice.encoding)[0][
-            0
-        ]
-        active_var_id = var_ids[active_var_id_on_site]
-        values[active_var_id] = 1
+        if len(var_ids) > 0:
+            active_var_ids_on_site = np.where(
+                occupancy[site_id] == sublattice.encoding
+            )[0]
+            active_var_ids = np.array(var_ids, dtype=int)[active_var_ids_on_site]
+            values[active_var_ids] = 1
 
     # No check, just return.
     return values

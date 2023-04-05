@@ -62,9 +62,9 @@ def test_comp_space_constraints(exotic_ensemble, exotic_initial_occupancy):
             "Ti4+ = 2",  # Broken when force_flip, kept when canonical. 3rd.
             "Mn3+ + Mn2+ <= 3",  # Always true. 4th.
             "Mn4+ + Mn3+ + Mn2+ >= 7",  # Never true. GEQ comes after LEQ. 5th.
-            " >= -1",  # Always True. Skipped.
-            " <= 1.5",  # Always True. Skipped.
-            " = 0.0",  # Always True. Skipped.
+            "0 >= -1",  # Always True. Skipped.
+            "0 <= 1.5",  # Always True. Skipped.
+            "0.0 = 0.0",  # Always True. Skipped.
         ],
         initial_occupancy=exotic_initial_occupancy,
     )
@@ -160,7 +160,7 @@ def test_fixed_composition_constraints(exotic_ensemble, exotic_initial_occupancy
     variables, variable_indices = get_upper_bound_variables_from_sublattices(
         exotic_ensemble.sublattices, exotic_ensemble.num_sites
     )
-    bits = [s.species for s in exotic_ensemble]
+    bits = [s.species for s in exotic_ensemble.sublattices]
     n_dims = sum([len(sl_species) for sl_species in bits])
     table = get_dim_ids_table(exotic_ensemble.sublattices)
     fixed_counts = occu_to_counts(exotic_initial_occupancy, n_dims, table)

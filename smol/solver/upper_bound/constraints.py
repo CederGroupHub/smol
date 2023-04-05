@@ -108,7 +108,7 @@ def get_upper_bound_composition_space_constraints(
         expression = 0
         for dim_id, (indices, n_fixed) in enumerate(variables_per_component):
             # Active sub-lattice.
-            if len(indices) > 0:
+            if len(indices) > 0 and not np.isclose(a[dim_id], 0):
                 expression += cp.sum(variables[indices]) * a[dim_id]
             expression += n_fixed * a[dim_id]
         if not isinstance(expression, Expression):
@@ -122,52 +122,54 @@ def get_upper_bound_composition_space_constraints(
             constraints.append(expression == b)
 
     # LEQ.
-    for cid, (a, b) in enumerate(zip(comp_space._A_leq, comp_space._b_leq)):
-        # Null constraints.
-        if np.allclose(a, 0) and b >= 0:
-            continue
-        if np.allclose(a, 0) and b < 0:
-            raise ValueError(f"Unsatisfiable constraint an<=b, a: {a}, b: {b}.")
+    if comp_space._A_leq is not None and comp_space._b_leq is not None:
+        for cid, (a, b) in enumerate(zip(comp_space._A_leq, comp_space._b_leq)):
+            # Null constraints.
+            if np.allclose(a, 0) and b >= 0:
+                continue
+            if np.allclose(a, 0) and b < 0:
+                raise ValueError(f"Unsatisfiable constraint an<=b, a: {a}, b: {b}.")
 
-        expression = 0
-        for dim_id, (indices, n_fixed) in enumerate(variables_per_component):
-            # Active sub-lattice.
-            if len(indices) > 0:
-                expression += cp.sum(variables[indices]) * a[dim_id]
-            expression += n_fixed * a[dim_id]
-        if not isinstance(expression, Expression):
-            if expression > b:
-                raise ValueError(
-                    f"Constraint {a} <= {b} can never be satisfied because"
-                    f" the number of restricted sites can not match this"
-                    f" requirement!"
-                )
-        else:
-            constraints.append(expression <= b)
+            expression = 0
+            for dim_id, (indices, n_fixed) in enumerate(variables_per_component):
+                # Active sub-lattice.
+                if len(indices) > 0 and not np.isclose(a[dim_id], 0):
+                    expression += cp.sum(variables[indices]) * a[dim_id]
+                expression += n_fixed * a[dim_id]
+            if not isinstance(expression, Expression):
+                if expression > b:
+                    raise ValueError(
+                        f"Constraint {a} <= {b} can never be satisfied because"
+                        f" the number of restricted sites can not match this"
+                        f" requirement!"
+                    )
+            else:
+                constraints.append(expression <= b)
 
     # GEQ.
-    for cid, (a, b) in enumerate(zip(comp_space._A_geq, comp_space._b_geq)):
-        # Null constraints.
-        if np.allclose(a, 0) and b <= 0:
-            continue
-        if np.allclose(a, 0) and b > 0:
-            raise ValueError(f"Unsatisfiable constraint an>=b, a: {a}, b: {b}.")
+    if comp_space._A_geq is not None and comp_space._b_geq is not None:
+        for cid, (a, b) in enumerate(zip(comp_space._A_geq, comp_space._b_geq)):
+            # Null constraints.
+            if np.allclose(a, 0) and b <= 0:
+                continue
+            if np.allclose(a, 0) and b > 0:
+                raise ValueError(f"Unsatisfiable constraint an>=b, a: {a}, b: {b}.")
 
-        expression = 0
-        for dim_id, (indices, n_fixed) in enumerate(variables_per_component):
-            # Active sub-lattice.
-            if len(indices) > 0:
-                expression += cp.sum(variables[indices]) * a[dim_id]
-            expression += n_fixed * a[dim_id]
-        if not isinstance(expression, Expression):
-            if expression < b:
-                raise ValueError(
-                    f"Constraint {a} >= {b} can never be satisfied because"
-                    f" the number of restricted sites can not match this"
-                    f" requirement!"
-                )
-        else:
-            constraints.append(expression >= b)
+            expression = 0
+            for dim_id, (indices, n_fixed) in enumerate(variables_per_component):
+                # Active sub-lattice.
+                if len(indices) > 0 and not np.isclose(a[dim_id], 0):
+                    expression += cp.sum(variables[indices]) * a[dim_id]
+                expression += n_fixed * a[dim_id]
+            if not isinstance(expression, Expression):
+                if expression < b:
+                    raise ValueError(
+                        f"Constraint {a} >= {b} can never be satisfied because"
+                        f" the number of restricted sites can not match this"
+                        f" requirement!"
+                    )
+            else:
+                constraints.append(expression >= b)
 
     return constraints
 

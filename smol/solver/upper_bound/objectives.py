@@ -89,18 +89,19 @@ def get_expression_and_auxiliary_from_terms(
 
 def get_auxiliary_variable_values(
     variable_values: ArrayLike[int], indices_in_auxiliary_products: List[List[int]]
-) -> ArrayLike[Number]:
-    """Get the value of auxiliary variables.
+) -> np.ndarray:
+    """Get the value of auxiliary variables from site variables.
 
     Args:
-        variable_values(np.ndarray):
+        variable_values(ArrayLike[bool, int]):
             Values of site variables.
         indices_in_auxiliary_products(list[list[int]]):
             A list containing the indices of variables whose product equals to the
             corresponding auxiliary slack variable.
     Returns:
         np.ndarray:
-            Values of auxiliary variables subjecting to auxiliary constraints.
+            Values of auxiliary variables subjecting to auxiliary constraints,
+            as 0 and 1.
     """
     variable_values = np.array(variable_values).astype(int)
     aux_values = np.ones(len(indices_in_auxiliary_products), dtype=int)
@@ -161,6 +162,9 @@ def get_upper_bound_terms_from_expansion_processor(
         for bid in range(n_bit_combos):
             for cid in range(n_clusters):
                 # Get possible occupancy states for each site.
+                # TODO: this site_states could be wrong as split sub-lattices
+                #  do not give the same bits and codes as before, but cluster
+                #  tensor uses original bits!
                 site_states = []
                 for sid_in_cluster in range(n_sites):
                     sid_in_supercell = mapping[cid, sid_in_cluster]
@@ -181,7 +185,7 @@ def get_upper_bound_terms_from_expansion_processor(
                                 f" {sid_in_supercell}."
                                 f" Sub-lattice: {sublattice}."
                             )
-                        # Active sublattice, but site manually restricted.
+                        # Active sub-lattice, but site manually restricted.
                         else:
                             if initial_occupancy is None:
                                 raise ValueError(
@@ -198,7 +202,6 @@ def get_upper_bound_terms_from_expansion_processor(
 
                 # Only one of these cluster states can be active when a solution is valid.
                 for cluster_state in product(*site_states):
-                    pass
                     # Tuple can be used to query a single element.
                     cluster_factor = corr_tensors[tuple((bid, *cluster_state))]
                     cluster_variable_indices = []
@@ -256,6 +259,7 @@ def get_upper_bound_terms_from_decomposition_processor(
     orbit_terms = [[] for _ in range(decomposition_processor.n_orbits)]
     # TODO: Change this to _interaction_tensors after merging luis/optimize4 branch.
     orbit_tensors = decomposition_processor._fac_tensors
+    # Use list in inner-layer as tuple does not support value assignment.
     orbit_terms[0] = [([], orbit_tensors[0])]
 
     num_sites = len(variable_indices)
@@ -321,7 +325,7 @@ def get_upper_bound_terms_from_decomposition_processor(
                         cluster_variable_indices.append(var_id)
                 # Divide by n_clusters to normalize.
                 orbit_terms[n].append(
-                    (cluster_variable_indices, cluster_factor / n_clusters)
+                    [cluster_variable_indices, cluster_factor / n_clusters]
                 )
 
         n += 1
