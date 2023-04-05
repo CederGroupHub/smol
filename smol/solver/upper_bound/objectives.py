@@ -370,7 +370,7 @@ def get_upper_bound_terms_from_ewald_processor(
     n_ewald_rows = ewald_matrix.shape[0]
 
     ewald_to_var_ids = map_ewald_indices_to_variable_indices(
-        sublattices, variable_indices, initial_occupancy
+        sublattices, ewald_processor.structure, variable_indices, initial_occupancy
     )
     # Do not diagonalize because ewald matrix already contains 1/2.
     for i in n_ewald_rows:

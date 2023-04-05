@@ -21,14 +21,14 @@ def test_upper_variables_and_indices(exotic_ensemble):
     assert len(variable_indices) == exotic_ensemble.num_sites
     # Variable indices must be continuous.
     assert (
-        variables.shape
+        variables.size
         == max(
             (max(site_vars) if len(site_vars) > 0 else -1)
             for site_vars in variable_indices
         )
         + 1
     )
-    assert list(range(variables.shape)) == sorted(
+    assert list(range(variables.size)) == sorted(
         set(itertools.chain(*variable_indices))
     )
 
@@ -73,7 +73,9 @@ def test_occupancy_from_variables(exotic_ensemble, exotic_initial_occupancy):
             exotic_ensemble.restricted_sites,
         ):
             sublattice = exotic_ensemble.sublattices[site_sublattice_ids[site_id]]
-            expected_vals = (sublattice.encoding == rand_occu[site_id]).astype(int)
+            expected_vals = np.array(sublattice.encoding == rand_occu[site_id]).astype(
+                int
+            )
             input_vals = rand_vals[variable_indices[site_id]].astype(int)
             npt.assert_array_equal(expected_vals, input_vals)
 

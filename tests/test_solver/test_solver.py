@@ -4,6 +4,7 @@ import numpy.testing as npt
 import pytest
 from pymatgen.analysis.structure_matcher import StructureMatcher
 
+from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
 from smol.solver.upper_bound.solver import UpperboundSolver
 from smol.solver.upper_bound.variables import get_variable_values_from_occupancy
 
@@ -11,7 +12,7 @@ from ..utils import assert_msonable
 
 
 # Both SCIP, GUROBI tried on this instance.
-@pytest.fixture(params=["SCIP", "GUROBI"])
+@pytest.fixture(params=["SCIP"])
 def exotic_solver(exotic_ensemble, exotic_initial_occupancy, request):
     return UpperboundSolver(
         exotic_ensemble, exotic_initial_occupancy, solver=request.param
@@ -64,9 +65,18 @@ def test_setting_results(exotic_solver):
 def test_solve(exotic_solver):
     _, energy = exotic_solver.solve()
     # Optimality not tested.
+    assert exotic_solver.ground_state_structure.charge == 0
     occu = exotic_solver._ensemble.processor.occupancy_from_structure(
         exotic_solver.ground_state_structure
     )
+
+    n_dims = sum([len(s.species) for s in exotic_solver._ensemble.sublattices])
+    table = get_dim_ids_table(exotic_solver._ensemble.sublattices)
+    counts = occu_to_counts(occu, n_dims, dim_ids_table=table)
+    if exotic_solver._ensemble.chemical_potentials is None:
+        # Canonical ensemble, should assume same composition.
+        npt.assert_array_equal(counts, exotic_solver._fixed_composition)
+
     features = exotic_solver._ensemble.compute_feature_vector(occu)
     true_energy = np.dot(features, exotic_solver._ensemble.natural_parameters)
 

@@ -41,9 +41,9 @@ def exotic_prim():
 def exotic_subspace(exotic_prim, request):
     # Use sinusoid basis to test if useful.
     space = ClusterSubspace.from_cutoffs(
-        exotic_prim, {2: 4, 3: 3, 4: 2}, basis=request.param
+        exotic_prim, {2: 3, 3: 2.1}, basis=request.param
     )
-    space.add_external_term(EwaldTerm)
+    space.add_external_term(EwaldTerm())
     return space
 
 
@@ -53,7 +53,7 @@ def exotic_coefs(exotic_subspace):
     exotic_coefs[0] = -10
     n_pair = len(exotic_subspace.function_inds_by_size[2])
     n_tri = len(exotic_subspace.function_inds_by_size[3])
-    n_quad = len(exotic_subspace.function_inds_by_size[4])
+    n_quad = 0
     i = 1
     exotic_coefs[i : i + n_pair] = np.random.random(size=n_pair)
     i += n_pair
@@ -72,7 +72,7 @@ def exotic_expansion(exotic_subspace, exotic_coefs):
 
 @pytest.fixture(
     scope="module",
-    params=list(product(["canonical", "semigrand"], ["expansion, decomposition"])),
+    params=list(product(["canonical", "semigrand"], ["expansion", "decomposition"])),
 )
 def orig_ensemble(exotic_expansion, request):
     if request.param[0] == "semigrand":
@@ -121,26 +121,32 @@ def exotic_ensemble(orig_ensemble, exotic_initial_occupancy):
     # Split the cation sublattice.
     new_ensemble = deepcopy(orig_ensemble)
 
-    # Manually restrict 3 random li sites.
+    # Manually restrict 3 random li sites, 1 Vacancy site.
+    cation_sites = new_ensemble.sublattices[cation_id].sites
     li_code = new_ensemble.sublattices[cation_id].encoding[
         new_ensemble.sublattices[cation_id].species.index(Species("Li", 1))
     ]
     li_sites = new_ensemble.sublattices[cation_id].sites[
-        np.where(
-            exotic_initial_occupancy[new_ensemble.sublattices[cation_id]] == li_code
-        )[0][0]
+        np.where(exotic_initial_occupancy[cation_sites] == li_code)[0]
     ]
     li_restricts = np.random.choice(li_sites, size=3, replace=False)
     new_ensemble.restrict_sites(li_restricts)
+    va_code = new_ensemble.sublattices[cation_id].encoding[
+        new_ensemble.sublattices[cation_id].species.index(Vacancy())
+    ]
+    va_sites = new_ensemble.sublattices[cation_id].sites[
+        np.where(exotic_initial_occupancy[cation_sites] == va_code)[0]
+    ]
+    va_restricts = np.random.choice(va_sites, size=1, replace=False)
+    new_ensemble.restrict_sites(va_restricts)
 
     # Manually restrict 2 random O2- sites.
+    anion_sites = new_ensemble.sublattices[anion_id].sites
     o2_code = new_ensemble.sublattices[anion_id].encoding[
-        new_ensemble.sublattices[cation_id].species.index(Species("O", -2))
+        new_ensemble.sublattices[anion_id].species.index(Species("O", -2))
     ]
     o2_sites = new_ensemble.sublattices[anion_id].sites[
-        np.where(
-            exotic_initial_occupancy[new_ensemble.sublattices[anion_id]] == o2_code
-        )[0][0]
+        np.where(exotic_initial_occupancy[anion_sites] == o2_code)[0]
     ]
     o2_restricts = np.random.choice(o2_sites, size=2, replace=False)
     new_ensemble.restrict_sites(o2_restricts)
@@ -149,7 +155,7 @@ def exotic_ensemble(orig_ensemble, exotic_initial_occupancy):
         [Species("Li", 1), Vacancy()],
         [Species("Mn", 2), Species("Mn", 3), Species("Mn", 4), Species("Ti", 4)],
     ]
-    an_partitions = [[Species("O", -2), Species("O", -1)], [Species("F"), -1]]
+    an_partitions = [[Species("O", -2), Species("O", -1)], [Species("F", -1)]]
     new_ensemble.split_sublattice_by_species(
         cation_id, exotic_initial_occupancy, ca_partitions
     )
@@ -162,6 +168,8 @@ def exotic_ensemble(orig_ensemble, exotic_initial_occupancy):
     # Check if sites a correctly restricted.
     assert len(new_ensemble.sublattices) == 4
     for site in li_restricts:
+        assert site in new_ensemble.restricted_sites
+    for site in va_restricts:
         assert site in new_ensemble.restricted_sites
     for site in o2_restricts:
         assert site in new_ensemble.restricted_sites

@@ -103,12 +103,12 @@ class UpperboundSolver(MSONable):
                 canonical ensemble.
             fixed_composition(ArrayLike): optional
                 An array of floats corresponding to the "counts" format of composition
-                in CompositionSpace. See moca.composition.
+                in CompositionSpace. See moca.composition. Unit is per super-cell.
                 If the ensemble is canonical (no chemical potential has been set), will
                 need to constrain the ground-state problem to a fixed composition.
-                If initial_occupancy is provided, fixed_composition is not used, and the
+                If initial_occupancy is provided while fixed_composition is None,
                 composition will be fixed to that of initial_occupancy.
-                Will be ignored in a semi-grand canonical ensemble.
+                Will be ignored in a semi-grand ensemble.
                 If any of initial_occupancy or fixed_composition is provided, you are
                 fully responsible to ensure that they satisfy charge balance and other
                 constraints.

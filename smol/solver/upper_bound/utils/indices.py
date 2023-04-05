@@ -1,11 +1,12 @@
 """Handle conversion of variable indices."""
 
-from typing import List, Tuple
+from typing import List, Union
 
 import numpy as np
 from numpy.typing import ArrayLike
+from pymatgen.core import Structure
 
-from smol.cofe.space.domain import Vacancy
+from smol.cofe.space.domain import Vacancy, get_allowed_species
 from smol.moca.ensemble import Sublattice
 from smol.moca.utils.occu import get_dim_ids_by_sublattice
 
@@ -16,7 +17,7 @@ def get_variable_indices_for_each_composition_component(
     sublattices: List[Sublattice],
     variable_indices: List[List[int]],
     initial_occupancy: ArrayLike = None,
-) -> List[Tuple[List[int], int]]:
+) -> List[List[Union[List[int], int]]]:
     """Get variables and the number of restricted sites for each composition component.
 
     Composition components are the components in a vector representation of composition
@@ -32,7 +33,7 @@ def get_variable_indices_for_each_composition_component(
             sites that may have more than one allowed species.
             Must be provided if any site has been manually restricted.
     Returns:
-        list[tuple[list[int], int]]:
+        list[Tuple[list[int], int]]:
             A list of tuples containing indices of variables falling under each
             composition component, and the number of sites manually restricted
             or naturally inactive to always be occupied by the species corresponding
@@ -47,7 +48,7 @@ def get_variable_indices_for_each_composition_component(
     for sublattice_id, sublattice in enumerate(sublattices):
         site_sublattice_ids[sublattice.sites] = sublattice_id
 
-    var_ids_for_dims = [([], 0) for _ in range(n_dims)]
+    var_ids_for_dims = [[[], 0] for _ in range(n_dims)]
     for site_id in range(num_sites):
         sublattice_id = site_sublattice_ids[site_id]
         sublattice = sublattices[sublattice_id]
@@ -85,6 +86,7 @@ def get_variable_indices_for_each_composition_component(
 
 def map_ewald_indices_to_variable_indices(
     sublattices: List[Sublattice],
+    processor_supercell_structure: Structure,
     variable_indices: List[List[int]],
     initial_occupancy: ArrayLike = None,
 ) -> List[int]:
@@ -93,6 +95,11 @@ def map_ewald_indices_to_variable_indices(
     Args:
         sublattices(list[Sublattice]):
             Sub-lattices to build the upper-bound problem on.
+        processor_supercell_structure(Structure):
+            The structure attribute of ensemble Processor. This is required
+            to correctly parse the rows in the ewald_structure of an
+            EwaldTerm, as the given sub-lattices might come form a split
+            ensemble, whose site_spaces can not match the ewald_structure.
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be empty.
@@ -117,40 +124,48 @@ def map_ewald_indices_to_variable_indices(
     for sublattice_id, sublattice in enumerate(sublattices):
         site_sublattice_ids[sublattice.sites] = sublattice_id
 
+    original_bits = get_allowed_species(processor_supercell_structure)
+
     ewald_ids_to_var_ids = []
     for site_id in range(num_sites):
         sublattice = sublattices[site_sublattice_ids[site_id]]
         site_space = sublattice.species
-        for species_id, species in enumerate(site_space):
+        for orig_species_id, orig_species in enumerate(original_bits[site_id]):
             # Vacancies are always skipped.
-            if isinstance(species, Vacancy):
+            if isinstance(orig_species, Vacancy):
                 continue
-            if site_id in sublattice.active_sites:
-                var_id = variable_indices[site_id][species_id]
-            # Inactive sub-lattice. Fixed to always effective.
-            elif len(sublattice.species) == 1:
-                var_id = -1
-            elif len(sublattice.species) == 0:
-                raise ValueError(
-                    f"Encountered empty sub-lattice on site {site_id}."
-                    f" Sub-lattice: {sublattice}."
-                )
-            # Manually restricted site.
-            else:
-                if initial_occupancy is None:
-                    raise ValueError(
-                        f"Site {site_id} was manually restricted in"
-                        f" sub-lattice: {sublattice}, but no initial"
-                        f" occupancy was specified!"
-                    )
-                else:
-                    # Site manually restricted to initial occupancy.
-                    if sublattice.encoding[species_id] == initial_occupancy[site_id]:
-                        # Fixed to always effective.
-                        var_id = -1
+
+            # Index of species in the ensemble's sub-lattice.
+            if orig_species in site_space:
+                species_id = site_space.index(orig_species)
+                if len(site_space) > 1:
+                    # Active site.
+                    if site_id in sublattice.active_sites:
+                        var_id = variable_indices[site_id][species_id]
+                    # Manually restricted site.
                     else:
-                        # Fixed to never effective.
-                        var_id = -2
+                        if initial_occupancy is None:
+                            raise ValueError(
+                                f"Site {site_id} was manually restricted in"
+                                f" sub-lattice: {sublattice}, but no initial"
+                                f" occupancy was specified!"
+                            )
+                        if (
+                            sublattice.encoding[species_id]
+                            == initial_occupancy[site_id]
+                        ):
+                            # Fixed to always effective.
+                            var_id = -1
+                        else:
+                            # Fixed to never effective.
+                            var_id = -2
+                else:
+                    # Inactive sub-lattice.
+                    var_id = -1
+            # No longer in site_space after splitting. Never to be active.
+            else:
+                var_id = -2
+
             ewald_ids_to_var_ids.append(var_id)
 
     return ewald_ids_to_var_ids
