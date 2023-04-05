@@ -240,10 +240,9 @@ class Ensemble(MSONable):
     @property
     def restricted_sites(self):
         """Get indices of all restricted sites."""
-        sites = []
-        for sublattice in self.sublattices:
-            sites += sublattice.restricted_sites
-        return sites
+        return np.concatenate(
+            [sublattice.restricted_sites for sublattice in self.sublattices]
+        )
 
     @property
     def species(self):
