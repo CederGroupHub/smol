@@ -13,6 +13,7 @@ from smol.moca.utils.occu import get_dim_ids_by_sublattice
 __author__ = "Fengyu Xie"
 
 
+# TODO: rewrite based on updates in variable_indices.
 def get_variable_indices_for_each_composition_component(
     sublattices: List[Sublattice],
     variable_indices: List[List[int]],
@@ -44,9 +45,7 @@ def get_variable_indices_for_each_composition_component(
     n_dims = sum([len(dims) for dims in sublattice_dim_ids])
 
     num_sites = len(variable_indices)
-    site_sublattice_ids = np.zeros(num_sites, dtype=int) - 1
-    for sublattice_id, sublattice in enumerate(sublattices):
-        site_sublattice_ids[sublattice.sites] = sublattice_id
+    site_sublattice_ids = get_sublattice_indices_by_site(sublattices)
 
     var_ids_for_dims = [[[], 0] for _ in range(n_dims)]
     for site_id in range(num_sites):
@@ -120,9 +119,7 @@ def map_ewald_indices_to_variable_indices(
             function.
     """
     num_sites = len(variable_indices)
-    site_sublattice_ids = np.zeros(num_sites, dtype=int) - 1
-    for sublattice_id, sublattice in enumerate(sublattices):
-        site_sublattice_ids[sublattice.sites] = sublattice_id
+    site_sublattice_ids = get_sublattice_indices_by_site(sublattices)
 
     original_bits = get_allowed_species(processor_supercell_structure)
 
@@ -169,3 +166,28 @@ def map_ewald_indices_to_variable_indices(
             ewald_ids_to_var_ids.append(var_id)
 
     return ewald_ids_to_var_ids
+
+
+def get_sublattice_indices_by_site(sublattices: List[Sublattice]) -> np.array:
+    """Get the indices of sub-lattice to which each site belong.
+
+    Args:
+        sublattices(list[Sublattice]):
+            Sub-lattices to build the upper-bound problem on.
+            Must contain all sites in the ensemble, and the site indices must start from
+            0 and be continuous.
+    Returns:
+        np.ndarray[int]:
+            An array containing the sub-lattice index where each site belongs to.
+            Used to quickly access the sub-lattice information.
+    """
+    num_sites = sum([len(sublattice.sites) for sublattice in sublattices])
+    site_sublattice_ids = np.zeros(num_sites, dtype=int) - 1
+    for sublattice_id, sublattice in enumerate(sublattices):
+        site_sublattice_ids[sublattice.sites] = sublattice_id
+    if np.any(site_sublattice_ids) < 0:
+        raise ValueError(
+            f"Provided sub-lattices: {sublattices} do not contain all"
+            f" sites in ensemble, or the site-indices are not continuous!"
+        )
+    return site_sublattice_ids
