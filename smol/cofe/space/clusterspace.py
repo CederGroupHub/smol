@@ -15,7 +15,7 @@ from copy import deepcopy
 from importlib import import_module
 
 import numpy as np
-from monty.json import MSONable
+from monty.json import MSONable, jsanitize
 from pymatgen.analysis.structure_matcher import (
     OrderDisorderElementComparator,
     StructureMatcher,
@@ -1516,11 +1516,11 @@ class ClusterSubspace(MSONable):
             "@class": self.__class__.__name__,
             "structure": self.structure.as_dict(),
             "expansion_structure": self.expansion_structure.as_dict(),
-            "symops": [so.as_dict() for so in self.symops],
-            "orbits": {s: [o.as_dict() for o in v] for s, v in self._orbits.items()},
             "sc_matcher": self._sc_matcher.as_dict(),
             "site_matcher": self._site_matcher.as_dict(),
-            "external_terms": [et.as_dict() for et in self.external_terms],
+            "symops": jsanitize(self.symops, strict=True),
+            "orbits": jsanitize(self._orbits, strict=True),
+            "external_terms": jsanitize(self.external_terms, strict=True),
             "_supercell_orb_inds": _supercell_orb_inds,
         }
         return cs_dict
