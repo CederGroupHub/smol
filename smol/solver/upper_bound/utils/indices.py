@@ -1,24 +1,21 @@
 """Handle conversion of variable indices."""
 
-from typing import List, Union
+from typing import List, Tuple
 
 import numpy as np
-from numpy.typing import ArrayLike
 from pymatgen.core import Structure
 
 from smol.cofe.space.domain import Vacancy, get_allowed_species
 from smol.moca.ensemble import Sublattice
-from smol.moca.utils.occu import get_dim_ids_by_sublattice
 
 __author__ = "Fengyu Xie"
 
 
-# TODO: rewrite based on updates in variable_indices.
 def get_variable_indices_for_each_composition_component(
     sublattices: List[Sublattice],
     variable_indices: List[List[int]],
-    initial_occupancy: ArrayLike = None,
-) -> List[List[Union[List[int], int]]]:
+    processor_structure: Structure,
+) -> List[Tuple[List[int], int]]:
     """Get variables and the number of restricted sites for each composition component.
 
     Composition components are the components in a vector representation of composition
@@ -28,11 +25,13 @@ def get_variable_indices_for_each_composition_component(
             Sub-lattices to build the upper-bound problem on.
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
-            index of species in its site space. Inactive sites will be empty.
-        initial_occupancy(ArrayLike): optional
-            An initial occupancy used to set the occupancy of manually restricted
-            sites that may have more than one allowed species.
-            Must be provided if any site has been manually restricted.
+            index of species in its site space. Inactive sites will be marked by
+            either -1 or -2. See documentation in solver.upper_bound.variables.
+        processor_structure(Structure):
+            The supercell structure stored in a processor's structure attribute.
+            The sub-lattices must match the processor structure, or they must be the result
+            of splitting with the initial_occupancy. See smol.moca.sublattice for the
+            explanation of splitting a sub-lattice.
     Returns:
         list[Tuple[list[int], int]]:
             A list of tuples containing indices of variables falling under each
@@ -40,72 +39,44 @@ def get_variable_indices_for_each_composition_component(
             or naturally inactive to always be occupied by the species corresponding
             to this component. Used to quickly generate composition constraints.
     """
-    bits = [sublattice.species for sublattice in sublattices]
-    sublattice_dim_ids = get_dim_ids_by_sublattice(bits)
-    n_dims = sum([len(dims) for dims in sublattice_dim_ids])
+    orig_site_spaces = get_allowed_species(processor_structure)
 
-    num_sites = len(variable_indices)
-    site_sublattice_ids = get_sublattice_indices_by_site(sublattices)
-
-    var_ids_for_dims = [[[], 0] for _ in range(n_dims)]
-    for site_id in range(num_sites):
-        sublattice_id = site_sublattice_ids[site_id]
-        sublattice = sublattices[sublattice_id]
-        dim_ids = sublattice_dim_ids[sublattice_id]
-        if site_id in sublattice.active_sites:
-            for species_id, dim_id in enumerate(dim_ids):
-                var_ids_for_dims[dim_id][0].append(
-                    variable_indices[site_id][species_id]
-                )
-        # Inactive sites always contribute to one certain component.
-        elif len(sublattice.species) == 1:
-            var_ids_for_dims[dim_ids[0]][1] += 1
-        elif len(sublattice.species) == 0:
-            raise ValueError(
-                f"Encountered empty sub-lattice on site {site_id}."
-                f" Sub-lattice: {sublattice}."
-            )
-        else:
-            if initial_occupancy is None:
-                raise ValueError(
-                    f"Site {site_id} was manually restricted in"
-                    f" sub-lattice: {sublattice}, but no initial"
-                    f" occupancy was specified!"
-                )
-            else:
-                # Manually fixed to initial occupancy.
-                species_id = np.where(
-                    sublattice.encoding == initial_occupancy[site_id]
-                )[0][0]
-                dim_id = dim_ids[species_id]
-                var_ids_for_dims[dim_id][1] += 1
+    var_ids_for_dims = []
+    for sublattice in sublattices:
+        for sp_id, species in sublattice.species:
+            active_var_inds = []
+            num_fixed = 0
+            for site_id in sublattice.sites:
+                orig_site_space = orig_site_spaces[site_id]
+                orig_sp_id = orig_site_space.index(species)
+                var_ind = variable_indices[site_id][orig_sp_id]
+                # Active variable.
+                if var_ind >= 0:
+                    active_var_inds.append(var_ind)
+                # Always true.
+                elif var_ind == -1:
+                    num_fixed += 1
+            var_ids_for_dims.append((active_var_inds, num_fixed))
 
     return var_ids_for_dims
 
 
 def map_ewald_indices_to_variable_indices(
-    sublattices: List[Sublattice],
-    processor_supercell_structure: Structure,
+    processor_structure: Structure,
     variable_indices: List[List[int]],
-    initial_occupancy: ArrayLike = None,
 ) -> List[int]:
     """Map row indices in ewald matrix to indices of boolean variables.
 
     Args:
-        sublattices(list[Sublattice]):
-            Sub-lattices to build the upper-bound problem on.
-        processor_supercell_structure(Structure):
+        processor_structure(Structure):
             The structure attribute of ensemble Processor. This is required
             to correctly parse the rows in the ewald_structure of an
             EwaldTerm, as the given sub-lattices might come form a split
             ensemble, whose site_spaces can not match the ewald_structure.
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
-            index of species in its site space. Inactive sites will be empty.
-        initial_occupancy(ArrayLike): optional
-            An initial occupancy used to set the occupancy of manually restricted
-            sites that may have more than one allowed species.
-            Must be provided if any site has been manually restricted.
+            index of species in its site space. Inactive sites will be marked by
+            either -1 or -2. See documentation in solver.upper_bound.variables.
     Returns:
         list[int]:
             Index of cvxpy variable corresponding to each ewald matrix row. If a
@@ -119,51 +90,16 @@ def map_ewald_indices_to_variable_indices(
             function.
     """
     num_sites = len(variable_indices)
-    site_sublattice_ids = get_sublattice_indices_by_site(sublattices)
 
-    original_bits = get_allowed_species(processor_supercell_structure)
+    orig_site_spaces = get_allowed_species(processor_structure)
 
     ewald_ids_to_var_ids = []
     for site_id in range(num_sites):
-        sublattice = sublattices[site_sublattice_ids[site_id]]
-        site_space = sublattice.species
-        for orig_species_id, orig_species in enumerate(original_bits[site_id]):
+        for orig_sp_id, orig_species in enumerate(orig_site_spaces[site_id]):
             # Vacancies are always skipped.
             if isinstance(orig_species, Vacancy):
                 continue
-
-            # Index of species in the ensemble's sub-lattice.
-            if orig_species in site_space:
-                species_id = site_space.index(orig_species)
-                if len(site_space) > 1:
-                    # Active site.
-                    if site_id in sublattice.active_sites:
-                        var_id = variable_indices[site_id][species_id]
-                    # Manually restricted site.
-                    else:
-                        if initial_occupancy is None:
-                            raise ValueError(
-                                f"Site {site_id} was manually restricted in"
-                                f" sub-lattice: {sublattice}, but no initial"
-                                f" occupancy was specified!"
-                            )
-                        if (
-                            sublattice.encoding[species_id]
-                            == initial_occupancy[site_id]
-                        ):
-                            # Fixed to always effective.
-                            var_id = -1
-                        else:
-                            # Fixed to never effective.
-                            var_id = -2
-                else:
-                    # Inactive sub-lattice.
-                    var_id = -1
-            # No longer in site_space after splitting. Never to be active.
-            else:
-                var_id = -2
-
-            ewald_ids_to_var_ids.append(var_id)
+            ewald_ids_to_var_ids.append(variable_indices[site_id][orig_sp_id])
 
     return ewald_ids_to_var_ids
 

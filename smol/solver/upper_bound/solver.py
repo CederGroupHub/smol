@@ -22,12 +22,14 @@ from smol.solver.upper_bound.constraints import (
     get_upper_bound_normalization_constraints,
 )
 from smol.solver.upper_bound.objectives import (
-    get_auxiliary_variable_values,
-    get_expression_and_auxiliary_from_terms,
     get_upper_bound_terms_from_chemical_potentials,
     get_upper_bound_terms_from_decomposition_processor,
     get_upper_bound_terms_from_ewald_processor,
     get_upper_bound_terms_from_expansion_processor,
+)
+from smol.solver.upper_bound.utils.terms import (
+    get_auxiliary_variable_values,
+    get_expression_and_auxiliary_from_terms,
 )
 from smol.solver.upper_bound.variables import (
     get_occupancy_from_variables,
@@ -48,7 +50,7 @@ class ProblemCanonicals(NamedTuple):
         variable_indices (cp.Variable):
             List of variable index corresponding to each active site index and species
             indices in its site space. Inactive or restricted sites will not have any
-            variable.
+            variable, but be marked as -1 or -2. See solver.upper_bound.variables.
         auxiliary_variables (cp.Variable):
             Slack variables used to linearize polynomial pseudo-boolean objective
             terms.
@@ -132,6 +134,7 @@ class UpperboundSolver(MSONable):
                See cvxpy and the specific solver documentations for detail.
         """
         self._ensemble = ensemble
+        self._structure = self._ensemble.processor.structure
 
         self._other_constraints = other_constraints
         if initial_occupancy is not None:
@@ -167,7 +170,7 @@ class UpperboundSolver(MSONable):
         """Generate variables, objective and constraints."""
         sublattices = self._ensemble.sublattices
         variables, variable_indices = get_upper_bound_variables_from_sublattices(
-            sublattices, self._ensemble.num_sites
+            sublattices, self._ensemble.num_sites, self._initial_occupancy
         )
 
         # Add constraints.
@@ -181,8 +184,8 @@ class UpperboundSolver(MSONable):
                     sublattices,
                     variables,
                     variable_indices,
+                    self.structure,
                     self._fixed_composition,
-                    self._initial_occupancy,
                 )
             )
         # Semi-grand ensemble.
@@ -192,8 +195,8 @@ class UpperboundSolver(MSONable):
                     sublattices,
                     variables,
                     variable_indices,
+                    self.structure,
                     self._other_constraints,
-                    self._initial_occupancy,
                 )
             )
 
@@ -204,26 +207,22 @@ class UpperboundSolver(MSONable):
                     sublattices,
                     variable_indices,
                     expansion_processor=proc,
-                    initial_occupancy=self._initial_occupancy,
                 )
             if isinstance(proc, ClusterDecompositionProcessor):
                 return get_upper_bound_terms_from_decomposition_processor(
                     sublattices,
                     variable_indices,
                     decomposition_processor=proc,
-                    initial_occupancy=self._initial_occupancy,
                 )
             if isinstance(proc, EwaldProcessor):
                 return get_upper_bound_terms_from_ewald_processor(
-                    sublattices,
                     variable_indices,
                     ewald_processor=proc,
-                    initial_occupancy=self._initial_occupancy,
                 )
             raise NotImplementedError(
                 f"Ground state upper-bound objective function"
                 f" not implemented for processor type:"
-                f" {type(proc)}"
+                f" {type(proc)}!"
             )
 
         # Objective energy function.
@@ -239,10 +238,8 @@ class UpperboundSolver(MSONable):
             # Chemical potential term already includes the "-" before mu N.
             terms.extend(
                 get_upper_bound_terms_from_chemical_potentials(
-                    sublattices,
                     variable_indices,
                     chemical_table=self._ensemble._chemical_potentials["table"],
-                    initial_occupancy=self._initial_occupancy,
                 )
             )
 
@@ -282,6 +279,11 @@ class UpperboundSolver(MSONable):
             self._ground_state_solution, self._canonicals.indices_in_auxiliary_products
         )
         self._canonicals.auxiliary_variables.value = aux_values
+
+    @property
+    def structure(self):
+        """Supercell structure of the ensemble without any split."""
+        return self.structure
 
     @property
     def problem(self):
@@ -401,7 +403,6 @@ class UpperboundSolver(MSONable):
                 self._ensemble.sublattices,
                 self._ground_state_solution,
                 self.variable_indices,
-                self._initial_occupancy,
             )
         return self._ground_state_occupancy
 
