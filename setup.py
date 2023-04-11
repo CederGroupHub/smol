@@ -18,19 +18,16 @@ test new ones. Finally, although conceived mainly for method development, smol c
 (and is being) used in production for materials science research applications.
 """
 
-import sys
 import os
 import shutil
-
-from setuptools import Extension, Command, setup
-from setuptools.command.build_ext import build_ext
+import sys
 
 # get numpy to include headers
 import numpy
+from setuptools import Command, Extension, setup
+from setuptools.command.build_ext import build_ext
 
-
-# TODO import stuff here, then check openmp compatibility and add flags
-# from smol.utils._build import
+from smol.utils._build import check_openmp_support, get_openmp_flag
 
 COMPILE_OPTIONS = {
     "msvc": [
@@ -46,14 +43,13 @@ LINK_OPTIONS = {
     "mingw32": [["-Wl, --allow-multiple-definition"]],
     "other": [],
 }
+
 COMPILER_DIRECTIVES = {
     "language_level": 3,
 }
 
-
 if sys.platform.startswith("darwin"):
     COMPILE_OPTIONS["other"] += ["-mcpu=native", "-stdlib=libc++"]
-
 
 
 # custom clean command to remove .c files
@@ -99,14 +95,19 @@ class CleanCommand(Command):
 # http://stackoverflow.com/questions/724664/python-distutils-how-to-get-a-compiler-that-is-going-to-be-used  # noqa
 class build_ext_options:
     def build_options(self):
+        OMP_SUPPORTED = check_openmp_support(self.compiler)
         for e in self.extensions:
             e.extra_compile_args += COMPILE_OPTIONS.get(
                 self.compiler.compiler_type, COMPILE_OPTIONS["other"]
             )
-        for e in self.extensions:
+
             e.extra_link_args += LINK_OPTIONS.get(
                 self.compiler.compiler_type, LINK_OPTIONS["other"]
             )
+            if OMP_SUPPORTED:
+                omp_flag = get_openmp_flag(self.compiler)
+                e.extra_compile_args += omp_flag
+                e.extra_link_args += omp_flag
 
 
 class build_ext_subclass(build_ext, build_ext_options):
@@ -128,7 +129,6 @@ else:
 
 ext = ".pyx" if USE_CYTHON else ".c"
 ext_modules = [
-    # TODO set this up to compile on windows/mac look at how sklearn does it
     Extension(
         "smol.utils.cluster.evaluator",
         ["smol/utils/cluster/evaluator" + ext],

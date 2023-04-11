@@ -1,19 +1,25 @@
-"""Utilities for building smol with OpenMP. Borrowed mostly from scikit-learn."""
+"""Utilities for building smol with OpenMP. Borrowed mostly from astropy and sklearn."""
 
-import os
-import sys
-import traceback
 import glob
+import os
+import subprocess
+import sys
 import tempfile
 import textwrap
-import subprocess
+import traceback
 import warnings
 
 from setuptools.command.build_ext import customize_compiler, new_compiler
 
+OMP_FLAGS = {
+    "msvc": ["/openmp"],
+    "mingw32": ["-fopenmp"],
+    "other": ["-fopenmp"],
+}
+
 
 def compile_test_program(code, extra_preargs=None, extra_postargs=None):
-    """Check that some C code can be compiled and run"""
+    """Check that some C code can be compiled and run."""
     ccompiler = new_compiler()
     customize_compiler(ccompiler)
 
@@ -60,25 +66,9 @@ def compile_test_program(code, extra_preargs=None, extra_postargs=None):
     return output
 
 
-def basic_check_build():
-    """Check basic compilation and linking of C code"""
-    if "PYODIDE_PACKAGE_ABI" in os.environ:
-        # The following check won't work in pyodide
-        return
-
-    code = textwrap.dedent("""\
-        #include <stdio.h>
-        int main(void) {
-        return 0;
-        }
-        """)
-    compile_test_program(code)
-
-
-def get_openmp_flag():
-    if sys.platform == "win32":
-        return ["/openmp"]
-    elif sys.platform == "darwin" and "openmp" in os.getenv("CPPFLAGS", ""):
+def get_openmp_flag(compiler):
+    """Find the correct flag to enable OpenMP support."""
+    if sys.platform.startswith("darwin") and "openmp" in os.getenv("CPPFLAGS", ""):
         # -fopenmp can't be passed as compile flag when using Apple-clang.
         # OpenMP support has to be enabled during preprocessing.
         #
@@ -91,17 +81,14 @@ def get_openmp_flag():
         # export LDFLAGS="$LDFLAGS -Wl,-rpath,/usr/local/opt/libomp/lib
         #                          -L/usr/local/opt/libomp/lib -lomp"
         return []
-    # Default flag for GCC and clang:
-    return ["-fopenmp"]
+    else:
+        return OMP_FLAGS.get(compiler.compiler_type, OMP_FLAGS["other"])
 
 
-def check_openmp_support():
-    """Check whether OpenMP test code can be compiled and run"""
-    if "PYODIDE_PACKAGE_ABI" in os.environ:
-        # Pyodide doesn't support OpenMP
-        return False
-
-    code = textwrap.dedent("""\
+def check_openmp_support(compiler):
+    """Check whether OpenMP test code can be compiled and run."""
+    code = textwrap.dedent(
+        """\
         #include <omp.h>
         #include <stdio.h>
         int main(void) {
@@ -109,8 +96,8 @@ def check_openmp_support():
         printf("nthreads=%d\\n", omp_get_num_threads());
         return 0;
         }
-        """)
-
+        """
+    )
     extra_preargs = os.getenv("LDFLAGS", None)
     if extra_preargs is not None:
         extra_preargs = extra_preargs.strip().split(" ")
@@ -119,10 +106,10 @@ def check_openmp_support():
         extra_preargs = [
             flag
             for flag in extra_preargs
-            if flag.startswith(("-L", "-Wl,-rpath", "-l", "-Wl,--sysroot=/"))
+            if flag.startswith(("-L", "-Wl,-rpath", "-l"))
         ]
 
-    extra_postargs = get_openmp_flag()
+    extra_postargs = get_openmp_flag(compiler)
 
     try:
         output = compile_test_program(
@@ -151,14 +138,15 @@ def check_openmp_support():
         traceback.print_exc()
 
     if not openmp_supported:
-        message = textwrap.dedent("""
+        message = textwrap.dedent(
+            """
 
                             ***********
                             * WARNING *
                             ***********
 
             It seems that smol cannot be built with OpenMP.
-            
+
             - See exception traceback for more details.
 
             - Make sure you have followed the installation instructions:
@@ -176,7 +164,8 @@ def check_openmp_support():
               parallelism.
 
                                 ***\n
-            """)
+            """
+        )
         warnings.warn(message)
 
     return openmp_supported
