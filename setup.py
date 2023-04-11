@@ -19,13 +19,18 @@ test new ones. Finally, although conceived mainly for method development, smol c
 """
 
 import sys
+import os
+import shutil
 
-from setuptools import Extension, dist, setup
+from setuptools import Extension, Command, setup
 from setuptools.command.build_ext import build_ext
 
 # get numpy to include headers
-dist.Distribution().fetch_build_eggs(["numpy>=1.20"])
 import numpy
+
+
+# TODO import stuff here, then check openmp compatibility and add flags
+# from smol.utils._build import
 
 COMPILE_OPTIONS = {
     "msvc": [
@@ -48,6 +53,45 @@ COMPILER_DIRECTIVES = {
 
 if sys.platform.startswith("darwin"):
     COMPILE_OPTIONS["other"] += ["-mcpu=native", "-stdlib=libc++"]
+
+
+
+# custom clean command to remove .c files
+# taken from sklearn setup.py
+class CleanCommand(Command):
+    description = "Remove build artifacts from the source tree"
+
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        # Remove c files if we are not within a sdist package
+        cwd = os.path.abspath(os.path.dirname(__file__))
+        remove_c_files = not os.path.exists(os.path.join(cwd, "PKG-INFO"))
+        if remove_c_files:
+            print("Will remove generated .c files")
+        if os.path.exists("build"):
+            shutil.rmtree("build")
+        for dirpath, dirnames, filenames in os.walk("smol"):
+            for filename in filenames:
+                root, extension = os.path.splitext(filename)
+
+                if extension in [".so", ".pyd", ".dll", ".pyc"]:
+                    os.unlink(os.path.join(dirpath, filename))
+
+                if remove_c_files and extension in [".c"]:
+                    pyx_file = str.replace(filename, extension, ".pyx")
+                    if os.path.exists(os.path.join(dirpath, pyx_file)):
+                        os.unlink(os.path.join(dirpath, filename))
+
+            for dirname in dirnames:
+                if dirname == "__pycache__":
+                    shutil.rmtree(os.path.join(dirpath, dirname))
 
 
 # By subclassing build_extensions we have the actual compiler that will be used which is
@@ -126,10 +170,14 @@ if USE_CYTHON:
         **cython_kwargs
     )
 
+cmdclass = {
+    "clean": CleanCommand,
+    "build_ext": build_ext_subclass,
+}
 
 setup(
     use_scm_version={"version_scheme": "python-simplified-semver"},
     ext_modules=ext_modules,
-    cmdclass={"build_ext": build_ext_subclass},
+    cmdclass=cmdclass,
     include_dirs=numpy.get_include(),
 )
