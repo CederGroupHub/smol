@@ -14,6 +14,7 @@ import numpy as np
 
 from smol.cofe.space.clusterspace import ClusterSubspace, OrbitIndices
 from smol.moca.processor.base import Processor
+from smol.utils.cluster import get_orbit_data
 from smol.utils.cluster.container import IntArray2DContainer
 from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
 from smol.utils.cluster.numthreads import SetNumThreads
@@ -101,7 +102,7 @@ class ClusterExpansionProcessor(Processor):
 
         # evaluator for the correlation functions
         self._evaluator = ClusterSpaceEvaluator(
-            cluster_subspace._get_orbit_data(cluster_subspace.orbits),
+            get_orbit_data(cluster_subspace.orbits),
             cluster_subspace.num_orbits,
             cluster_subspace.num_corr_functions,
         )
@@ -296,7 +297,7 @@ class ClusterDecompositionProcessor(Processor):
         )
 
         self._evaluator = ClusterSpaceEvaluator(
-            cluster_subspace._get_orbit_data(cluster_subspace.orbits),
+            get_orbit_data(cluster_subspace.orbits),
             cluster_subspace.num_orbits,
             cluster_subspace.num_corr_functions,
             1,  # set threads to here so we can set it later

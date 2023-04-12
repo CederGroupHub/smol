@@ -20,6 +20,7 @@ import numpy as np
 from monty.json import MSONable, jsanitize
 
 from smol.cofe.space.clusterspace import ClusterSubspace
+from smol.utils.cluster import get_orbit_data
 
 
 @dataclass
@@ -381,7 +382,7 @@ class ClusterExpansion(MSONable):
         """Set the orbit and cluster interaction data in evaluator."""
         if set_orbits:
             self._subspace.evaluator.reset_data(
-                self._subspace._get_orbit_data(self._subspace.orbits),
+                get_orbit_data(self._subspace.orbits),
                 self._subspace.num_orbits,
                 self._subspace.num_corr_functions,
             )

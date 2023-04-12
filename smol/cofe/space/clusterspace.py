@@ -41,6 +41,7 @@ from smol.cofe.space import (
 )
 from smol.cofe.space.basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
+from smol.utils.cluster import get_orbit_data
 from smol.utils.cluster.container import IntArray2DContainer
 from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
 from smol.utils.cluster.numthreads import SetNumThreads
@@ -206,7 +207,7 @@ class ClusterSubspace(MSONable):
 
         # create evaluator
         self._evaluator = ClusterSpaceEvaluator(
-            self._get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+            get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
         )
         # set the number of threads to use
         self.num_threads = num_threads
@@ -904,7 +905,7 @@ class ClusterSubspace(MSONable):
             orbit.transform_site_bases(new_basis, orthonormal)
         # rest the evaluator
         self._evaluator.reset_data(
-            self._get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+            get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
         )
 
     def rotate_site_basis(self, singlet_id, angle, index1=0, index2=1):
@@ -946,7 +947,7 @@ class ClusterSubspace(MSONable):
             orbit.reset_bases()
         # rest the evaluator
         self._evaluator.reset_data(
-            self._get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+            get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
         )
 
     def remove_orbits(self, orbit_ids):
@@ -1001,7 +1002,7 @@ class ClusterSubspace(MSONable):
         self._supercell_orbit_inds = {}
         # reset the evaluator
         self._evaluator.reset_data(
-            self._get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+            get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
         )
 
     def remove_corr_functions(self, corr_ids):
@@ -1049,7 +1050,7 @@ class ClusterSubspace(MSONable):
         else:
             self._assign_orbit_ids()  # Re-assign ids
             self._evaluator.reset_data(
-                self._get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+                get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
             )
 
     def copy(self):
@@ -1253,20 +1254,6 @@ class ClusterSubspace(MSONable):
 
         orbit_indices = tuple(orbit_indices)
         return OrbitIndices(orbit_indices, IntArray2DContainer(orbit_indices))
-
-    @staticmethod
-    def _get_orbit_data(orbits):
-        """Gather orbit data necessary to create a ClusterSpaceEvaluator."""
-        orbit_data = tuple(
-            (
-                orbit.id,
-                orbit.bit_id,
-                orbit.flat_correlation_tensors,
-                orbit.flat_tensor_indices,
-            )
-            for orbit in orbits
-        )
-        return orbit_data
 
     @staticmethod
     def _gen_orbits_from_cutoffs(
