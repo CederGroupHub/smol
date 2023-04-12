@@ -1,75 +1,57 @@
 """Test objective functions generation."""
-from itertools import product
-
-import cvxpy as cp
 import numpy as np
-import pytest
+import numpy.testing as npt
 
 from smol.moca.processor import ClusterExpansionProcessor
 from smol.solver.upper_bound.objectives import (
-    get_auxiliary_variable_values,
-    get_expression_and_auxiliary_from_terms,
     get_upper_bound_terms_from_chemical_potentials,
     get_upper_bound_terms_from_decomposition_processor,
     get_upper_bound_terms_from_ewald_processor,
     get_upper_bound_terms_from_expansion_processor,
+)
+from smol.solver.upper_bound.utils.terms import (
+    get_auxiliary_variable_values,
+    get_expression_and_auxiliary_from_terms,
 )
 from smol.solver.upper_bound.variables import (
     get_occupancy_from_variables,
     get_upper_bound_variables_from_sublattices,
 )
 
-from .utils import get_random_variable_values
-
-
-def test_expression_from_terms():
-    x = cp.Variable(2, boolean=True)
-    # Empty expression.
-    terms = []
-    with pytest.raises(RuntimeError):
-        _ = get_expression_and_auxiliary_from_terms(terms, x)
-    # Expression with only constant.
-    terms = [([], -1), ([], 100)]
-    with pytest.raises(RuntimeError):
-        _ = get_expression_and_auxiliary_from_terms(terms, x)
-    # Correct expression, which is to be evaluated.
-    # A very simple test case.
-    # 0 + 2 x0 -3 x1 + x0 * x1.
-    terms = [([], -1), ([], 1), ([0], 2), ([1], -3), ([0, 1], -1), ([1, 0], 2)]
-    func, y, indices, aux_cons = get_expression_and_auxiliary_from_terms(terms, x)
-    assert y.size == 1
-    assert len(indices) == 1
-    assert list(indices[0]) == [0, 1]
-    assert len(aux_cons) == 3
-    assert isinstance(func, cp.Expression)
-    for val0, val1 in product(*[[0, 1], [0, 1]]):
-        true_val = 2 * val0 - 3 * val1 + val0 * val1
-        x.value = np.array([val0, val1], dtype=int)
-        y.value = val0 * val1
-        assert func.value == true_val
-        # Auxiliary constraints should always be satisfied.
-        for con in aux_cons:
-            assert con.value()
+from .utils import (
+    evaluate_correlations_from_variable_values,
+    get_random_variable_values,
+    validate_correlations_from_occupancy,
+    validate_interactions_from_occupancy,
+)
 
 
 def test_expansion_upper(exotic_ensemble, exotic_initial_occupancy):
     variables, variable_indices = get_upper_bound_variables_from_sublattices(
-        exotic_ensemble.sublattices, exotic_ensemble.num_sites
+        exotic_ensemble.sublattices,
+        exotic_ensemble.processor.structure,
+        exotic_initial_occupancy,
     )
     proc = exotic_ensemble.processor.processors[0]
     if isinstance(proc, ClusterExpansionProcessor):
         terms = get_upper_bound_terms_from_expansion_processor(
-            exotic_ensemble.sublattices,
             variable_indices,
             expansion_processor=proc,
-            initial_occupancy=exotic_initial_occupancy,
+        )
+        grouped_terms = get_upper_bound_terms_from_expansion_processor(
+            variable_indices,
+            expansion_processor=proc,
+            group_output_by_function=True,
         )
     else:
         terms = get_upper_bound_terms_from_decomposition_processor(
-            exotic_ensemble.sublattices,
             variable_indices,
             decomposition_processor=proc,
-            initial_occupancy=exotic_initial_occupancy,
+        )
+        grouped_terms = get_upper_bound_terms_from_decomposition_processor(
+            variable_indices,
+            decomposition_processor=proc,
+            group_output_by_orbit=True,
         )
     objective, aux, aux_indices, aux_cons = get_expression_and_auxiliary_from_terms(
         terms, variables
@@ -81,7 +63,15 @@ def test_expansion_upper(exotic_ensemble, exotic_initial_occupancy):
             exotic_ensemble.sublattices,
             rand_val,
             variable_indices,
-            exotic_initial_occupancy,
+        )
+        if isinstance(proc, ClusterExpansionProcessor):
+            validate_correlations_from_occupancy(proc, rand_occu)
+        else:
+            validate_interactions_from_occupancy(proc, rand_occu)
+
+        corr = evaluate_correlations_from_variable_values(grouped_terms, rand_val)
+        npt.assert_array_almost_equal(
+            corr, proc.compute_feature_vector(rand_occu) / proc.size
         )
         variables.value = rand_val
         aux.value = aux_val
@@ -94,14 +84,14 @@ def test_expansion_upper(exotic_ensemble, exotic_initial_occupancy):
 
 def test_ewald_upper(exotic_ensemble, exotic_initial_occupancy):
     variables, variable_indices = get_upper_bound_variables_from_sublattices(
-        exotic_ensemble.sublattices, exotic_ensemble.num_sites
+        exotic_ensemble.sublattices,
+        exotic_ensemble.processor.structure,
+        exotic_initial_occupancy,
     )
     proc = exotic_ensemble.processor.processors[1]
     terms = get_upper_bound_terms_from_ewald_processor(
-        exotic_ensemble.sublattices,
         variable_indices,
         ewald_processor=proc,
-        initial_occupancy=exotic_initial_occupancy,
     )
     objective, aux, aux_indices, aux_cons = get_expression_and_auxiliary_from_terms(
         terms, variables
@@ -117,7 +107,6 @@ def test_ewald_upper(exotic_ensemble, exotic_initial_occupancy):
             exotic_ensemble.sublattices,
             rand_val,
             variable_indices,
-            exotic_initial_occupancy,
         )
         variables.value = rand_val
         aux.value = aux_val
@@ -130,15 +119,15 @@ def test_ewald_upper(exotic_ensemble, exotic_initial_occupancy):
 
 def test_chemical_potentials_upper(exotic_ensemble, exotic_initial_occupancy):
     variables, variable_indices = get_upper_bound_variables_from_sublattices(
-        exotic_ensemble.sublattices, exotic_ensemble.num_sites
+        exotic_ensemble.sublattices,
+        exotic_ensemble.processor.structure,
+        exotic_initial_occupancy,
     )
     # Only test semi-grand ensemble.
     if exotic_ensemble.chemical_potentials is not None:
         terms = get_upper_bound_terms_from_chemical_potentials(
-            exotic_ensemble.sublattices,
             variable_indices,
             exotic_ensemble._chemical_potentials["table"],
-            exotic_initial_occupancy,
         )
         objective, aux, aux_indices, aux_cons = get_expression_and_auxiliary_from_terms(
             terms, variables
@@ -153,10 +142,9 @@ def test_chemical_potentials_upper(exotic_ensemble, exotic_initial_occupancy):
                 exotic_ensemble.sublattices,
                 rand_val,
                 variable_indices,
-                exotic_initial_occupancy,
             )
             variables.value = rand_val
             energy_obj = objective.value
-            # The last number is chemical work.
-            energy_true = exotic_ensemble.compute_feature_vector(rand_occu)[-1]
+            # The last number is -1 * chemical work.
+            energy_true = -1 * exotic_ensemble.compute_feature_vector(rand_occu)[-1]
             assert np.isclose(energy_obj, energy_true)

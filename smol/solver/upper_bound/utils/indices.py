@@ -43,7 +43,7 @@ def get_variable_indices_for_each_composition_component(
 
     var_ids_for_dims = []
     for sublattice in sublattices:
-        for sp_id, species in sublattice.species:
+        for species in sublattice.species:
             active_var_inds = []
             num_fixed = 0
             for site_id in sublattice.sites:

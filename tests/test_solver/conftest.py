@@ -49,17 +49,17 @@ def exotic_subspace(exotic_prim, request):
 
 @pytest.fixture(scope="module")
 def exotic_coefs(exotic_subspace):
-    exotic_coefs = np.empty(exotic_subspace.num_corr_functions + 1)
+    exotic_coefs = np.zeros(exotic_subspace.num_corr_functions + 1)
     exotic_coefs[0] = -10
     n_pair = len(exotic_subspace.function_inds_by_size[2])
     n_tri = len(exotic_subspace.function_inds_by_size[3])
     n_quad = 0
     i = 1
-    exotic_coefs[i : i + n_pair] = np.random.random(size=n_pair)
+    exotic_coefs[i : i + n_pair] = np.random.normal(size=n_pair)
     i += n_pair
-    exotic_coefs[i : i + n_tri] = np.random.random(size=n_tri) * 0.4
+    exotic_coefs[i : i + n_tri] = np.random.normal(size=n_tri) * 0.4
     i += n_tri
-    exotic_coefs[i : i + n_quad] = np.random.random(size=n_quad) * 0.1
+    exotic_coefs[i : i + n_quad] = np.random.normal(size=n_quad) * 0.1
 
     exotic_coefs[-1] = 0.2
     return exotic_coefs

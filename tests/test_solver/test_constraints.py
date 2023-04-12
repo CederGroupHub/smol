@@ -15,9 +15,11 @@ from smol.solver.upper_bound.variables import get_upper_bound_variables_from_sub
 from .utils import get_random_neutral_variable_values, get_random_variable_values
 
 
-def test_normalization(exotic_ensemble):
+def test_normalization(exotic_ensemble, exotic_initial_occupancy):
     variables, variable_indices = get_upper_bound_variables_from_sublattices(
-        exotic_ensemble.sublattices, exotic_ensemble.num_sites
+        exotic_ensemble.sublattices,
+        exotic_ensemble.processor.structure,
+        exotic_initial_occupancy,
     )
     constraints = get_upper_bound_normalization_constraints(variables, variable_indices)
     assert len(constraints) == exotic_ensemble.num_sites - len(
@@ -33,13 +35,15 @@ def test_normalization(exotic_ensemble):
 
 def test_comp_space_constraints(exotic_ensemble, exotic_initial_occupancy):
     variables, variable_indices = get_upper_bound_variables_from_sublattices(
-        exotic_ensemble.sublattices, exotic_ensemble.num_sites
+        exotic_ensemble.sublattices,
+        exotic_ensemble.processor.structure,
+        exotic_initial_occupancy,
     )
     constraints = get_upper_bound_composition_space_constraints(
         exotic_ensemble.sublattices,
         variables,
         variable_indices,
-        initial_occupancy=exotic_initial_occupancy,
+        exotic_ensemble.processor.structure,
     )
 
     # Only 1 charge balance because normalization skipped.
@@ -57,16 +61,16 @@ def test_comp_space_constraints(exotic_ensemble, exotic_initial_occupancy):
         exotic_ensemble.sublattices,
         variables,
         variable_indices,
+        exotic_ensemble.processor.structure,
         other_constraints=[
             "Mn4+ == 1",  # Broken when force_flip, kept when canonical. 2nd.
             "Ti4+ = 2",  # Broken when force_flip, kept when canonical. 3rd.
-            "Mn3+ + Mn2+ <= 3",  # Always true. 4th.
             "Mn4+ + Mn3+ + Mn2+ >= 7",  # Never true. GEQ comes after LEQ. 5th.
+            "Mn3+ + Mn2+ <= 3",  # Always true. 4th.
             "0 >= -1",  # Always True. Skipped.
             "0 <= 1.5",  # Always True. Skipped.
             "0.0 = 0.0",  # Always True. Skipped.
         ],
-        initial_occupancy=exotic_initial_occupancy,
     )
 
     assert len(constraints) == 5
@@ -99,66 +103,68 @@ def test_comp_space_constraints(exotic_ensemble, exotic_initial_occupancy):
             exotic_ensemble.sublattices,
             variables,
             variable_indices,
+            exotic_ensemble.processor.structure,
             other_constraints=[
                 " == 10",  # Unsatisfiable.
             ],
-            initial_occupancy=exotic_initial_occupancy,
         )
     with pytest.raises(ValueError):
         _ = get_upper_bound_composition_space_constraints(
             exotic_ensemble.sublattices,
             variables,
             variable_indices,
+            exotic_ensemble.processor.structure,
             other_constraints=[
                 " >= 1",  # Unsatisfiable.
             ],
-            initial_occupancy=exotic_initial_occupancy,
         )
     with pytest.raises(ValueError):
         _ = get_upper_bound_composition_space_constraints(
             exotic_ensemble.sublattices,
             variables,
             variable_indices,
+            exotic_ensemble.processor.structure,
             other_constraints=[
                 " <= -1",  # Unsatisfiable.
             ],
-            initial_occupancy=exotic_initial_occupancy,
         )
     with pytest.raises(ValueError):
         _ = get_upper_bound_composition_space_constraints(
             exotic_ensemble.sublattices,
             variables,
             variable_indices,
+            exotic_ensemble.processor.structure,
             other_constraints=[
                 "F- == 1000",  # Unsatisfiable.
             ],
-            initial_occupancy=exotic_initial_occupancy,
         )
     with pytest.raises(ValueError):
         _ = get_upper_bound_composition_space_constraints(
             exotic_ensemble.sublattices,
             variables,
             variable_indices,
+            exotic_ensemble.processor.structure,
             other_constraints=[
                 "F- >= 1000",  # Unsatisfiable.
             ],
-            initial_occupancy=exotic_initial_occupancy,
         )
     with pytest.raises(ValueError):
         _ = get_upper_bound_composition_space_constraints(
             exotic_ensemble.sublattices,
             variables,
             variable_indices,
+            exotic_ensemble.processor.structure,
             other_constraints=[
                 "F- <= 1",  # Unsatisfiable.
             ],
-            initial_occupancy=exotic_initial_occupancy,
         )
 
 
 def test_fixed_composition_constraints(exotic_ensemble, exotic_initial_occupancy):
     variables, variable_indices = get_upper_bound_variables_from_sublattices(
-        exotic_ensemble.sublattices, exotic_ensemble.num_sites
+        exotic_ensemble.sublattices,
+        exotic_ensemble.processor.structure,
+        exotic_initial_occupancy,
     )
     bits = [s.species for s in exotic_ensemble.sublattices]
     n_dims = sum([len(sl_species) for sl_species in bits])
@@ -168,8 +174,8 @@ def test_fixed_composition_constraints(exotic_ensemble, exotic_initial_occupancy
         exotic_ensemble.sublattices,
         variables,
         variable_indices,
+        exotic_ensemble.processor.structure,
         fixed_composition=fixed_counts,
-        initial_occupancy=exotic_initial_occupancy,
     )
 
     # F- is fixed and always satisfied, will not appear.

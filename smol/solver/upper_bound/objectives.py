@@ -1,12 +1,11 @@
 """Generate energy terms from processor to be converted into cvxpy."""
 from copy import deepcopy
 from itertools import product
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import numpy as np
 from numpy.typing import ArrayLike
 
-from smol.moca.ensemble import Sublattice
 from smol.moca.processor import (
     ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
@@ -18,37 +17,40 @@ __author__ = "Fengyu Xie"
 
 
 def get_upper_bound_terms_from_expansion_processor(
-    sublattices: List[Sublattice],
     variable_indices: List[List[int]],
     expansion_processor: ClusterExpansionProcessor,
-) -> List[Tuple[List[int], float]]:
+    group_output_by_function: bool = False,
+) -> Union[
+    List[Tuple[List[int], float, float]], List[List[Tuple[List[int], float, float]]]
+]:
     """Get the cluster terms from cluster expansion processor.
 
     Args:
-        sublattices(list[Sublattice]):
-            Sub-lattices to build the upper-bound problem on.
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
             either -1 or -2. See documentation in solver.upper_bound.variables.
         expansion_processor(ClusterExpansionProcessor):
             A cluster expansion processor to generate objective function with.
+        group_output_by_function(bool): optional
+            Whether to group the resulting terms by correlation functions, such
+            that the output will be a list of lists, with each sub-list corresponding
+            to a correlation function. Default is false.
+            This is used specifically for checking the value of each correlation
+            function in the objective function.
     Returns:
-        list[tuple(list[int], float)]:
+        list[tuple(list[int], float, float)]:
             A list of tuples, each represents a cluster term in the energy
             representation, containing indices of variables to be taken product with,
-            and the factor before the boolean product.
+            the correlation factor, and the corresponding coefficient.
             Energy is taken per super-cell.
+            If group_output_by_function is enabled, the output will be a list of lists,
+            with each sub-list corresponding to a correlation function.
     """
     coefs = expansion_processor.coefs
     # Store variable indices and the constant product in the cluster term.
     cluster_terms = [[] for _ in range(expansion_processor.num_corr_functions)]
     cluster_terms[0] = [([], 1.0)]
-
-    num_sites = len(variable_indices)
-    site_sublattice_ids = np.zeros(num_sites, dtype=int) - 1
-    for sublattice_id, sublattice in enumerate(sublattices):
-        site_sublattice_ids[sublattice.sites] = sublattice_id
 
     space = expansion_processor.cluster_subspace
     sc_matrix = expansion_processor.supercell_matrix
@@ -96,42 +98,58 @@ def get_upper_bound_terms_from_expansion_processor(
                         var_id = variable_indices[sid_in_supercell][species_id_in_site]
                         if var_id >= 0:
                             cluster_variable_indices.append(var_id)
+                        else:
+                            assert var_id == -1
                     # Divide by n_clusters to normalize.
                     cluster_terms[n].append(
-                        (cluster_variable_indices, cluster_factor / n_clusters)
+                        [cluster_variable_indices, cluster_factor / n_clusters]
                     )
             n += 1
 
     # Put in system size and coefficients info.
-    return [
-        (inds, factor * coef * expansion_processor.size)
-        for terms, coef in zip(cluster_terms, coefs)
-        for inds, factor in terms
-    ]
+    if not group_output_by_function:
+        return [
+            (inds, factor, coef * expansion_processor.size)
+            for terms, coef in zip(cluster_terms, coefs)
+            for inds, factor in terms
+        ]
+    else:
+        return [
+            [(inds, factor, coef * expansion_processor.size) for inds, factor in terms]
+            for terms, coef in zip(cluster_terms, coefs)
+        ]
 
 
 def get_upper_bound_terms_from_decomposition_processor(
-    sublattices: List[Sublattice],
     variable_indices: List[List[int]],
     decomposition_processor: ClusterDecompositionProcessor,
-) -> List[Tuple[List[int], float]]:
+    group_output_by_orbit: bool = False,
+) -> Union[
+    List[Tuple[List[int], float, float]], List[List[Tuple[List[int], float, float]]]
+]:
     """Get the cluster terms from cluster decomposition processor.
 
     Args:
-        sublattices(list[Sublattice]):
-            Sub-lattices to build the upper-bound problem on.
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
             either -1 or -2. See documentation in solver.upper_bound.variables.
         decomposition_processor(ClusterDecompositionProcessor):
             A cluster decomposition processor to generate objective function with.
+        group_output_by_orbit(bool): optional
+            Whether to group the resulting terms by orbits, such
+            that the output will be a list of lists, with each sub-list corresponding
+            to an orbit. Default is false.
+            This is used specifically for checking the value of each interaction
+            term in the objective function.
     Returns:
-        list[tuple(list[int], float)]:
+        list[tuple(list[int], float, float)]:
             A list of tuples, each represents a cluster term in the energy
             representation, containing indices of variables to be taken product with,
-            and the factor before the boolean product.
+            the interaction factor and the multiplicity coefficient.
             Energy is taken per super-cell.
+            If group_output_by_orbit is enabled, the output will be a list of lists,
+            with each sub-list corresponding to an orbit.
     """
     coefs = decomposition_processor.coefs  # Actually multiplicities.
     orbit_terms = [[] for _ in range(decomposition_processor.n_orbits)]
@@ -139,11 +157,6 @@ def get_upper_bound_terms_from_decomposition_processor(
     orbit_tensors = decomposition_processor._fac_tensors
     # Use list in inner-layer as tuple does not support value assignment.
     orbit_terms[0] = [([], orbit_tensors[0])]
-
-    num_sites = len(variable_indices)
-    site_sublattice_ids = np.zeros(num_sites, dtype=int) - 1
-    for sublattice_id, sublattice in enumerate(sublattices):
-        site_sublattice_ids[sublattice.sites] = sublattice_id
 
     n = 1
     space = decomposition_processor.cluster_subspace
@@ -175,7 +188,7 @@ def get_upper_bound_terms_from_decomposition_processor(
 
             # Only one of these cluster states can be active when a solution is valid.
             for cluster_state in product(*site_states):
-                cluster_factor = orbit_tensors[tuple((n, *cluster_state))]
+                cluster_factor = orbit_tensors[n][tuple(cluster_state)]
                 cluster_variable_indices = []
                 # Get index to query.
                 for sid_in_cluster in range(n_sites):
@@ -185,6 +198,8 @@ def get_upper_bound_terms_from_decomposition_processor(
                     var_id = variable_indices[sid_in_supercell][species_id_in_site]
                     if var_id >= 0:
                         cluster_variable_indices.append(var_id)
+                    else:
+                        assert var_id == -1
                 # Divide by n_clusters to normalize.
                 orbit_terms[n].append(
                     [cluster_variable_indices, cluster_factor / n_clusters]
@@ -193,17 +208,26 @@ def get_upper_bound_terms_from_decomposition_processor(
         n += 1
 
     # Put in system size and coefficients info.
-    return [
-        (inds, factor * coef * decomposition_processor.size)
-        for terms, coef in zip(orbit_terms, coefs)
-        for inds, factor in terms
-    ]
+    if not group_output_by_orbit:
+        return [
+            (inds, factor, coef * decomposition_processor.size)
+            for terms, coef in zip(orbit_terms, coefs)
+            for inds, factor in terms
+        ]
+    else:
+        return [
+            [
+                (inds, factor, coef * decomposition_processor.size)
+                for inds, factor in terms
+            ]
+            for terms, coef in zip(orbit_terms, coefs)
+        ]
 
 
 def get_upper_bound_terms_from_ewald_processor(
     variable_indices: List[List[int]],
     ewald_processor: EwaldProcessor,
-) -> List[Tuple[List[int], float]]:
+) -> List[Tuple[List[int], float, float]]:
     """Get the objective function from cluster expansion processor.
 
     Args:
@@ -216,10 +240,10 @@ def get_upper_bound_terms_from_ewald_processor(
             You are fully responsible for checking variables have the correct site
             orderings as will be in ewald_processor.
     Returns:
-        list[tuple(list[int], float)]:
+        list[tuple(list[int], float, float)]:
             A list of tuples, each represents a cluster term in the energy
             representation, containing indices of variables to be taken product with,
-            and the factor before the boolean product.
+            and the factors before the boolean product.
             Energy is taken per super-cell.
     """
     ewald_matrix = ewald_processor.ewald_matrix
@@ -233,8 +257,8 @@ def get_upper_bound_terms_from_ewald_processor(
         variable_indices,
     )
     # Do not diagonalize because ewald matrix already contains 1/2.
-    for i in n_ewald_rows:
-        for j in n_ewald_rows:
+    for i in range(n_ewald_rows):
+        for j in range(n_ewald_rows):
             row_var_id = ewald_to_var_ids[i]
             col_var_id = ewald_to_var_ids[j]
             # Some species are never possible on some sites because of
@@ -249,7 +273,7 @@ def get_upper_bound_terms_from_ewald_processor(
             # Diagonal should also be a point term.
             if col_var_id != -1 and col_var_id != row_var_id:
                 ewald_variable_indices.append(col_var_id)
-            ewald_cluster_terms.append((ewald_variable_indices, ewald_factor))
+            ewald_cluster_terms.append((ewald_variable_indices, ewald_factor, 1.0))
 
     # No need to multiply because system size is already included.
     return ewald_cluster_terms
@@ -258,7 +282,7 @@ def get_upper_bound_terms_from_ewald_processor(
 def get_upper_bound_terms_from_chemical_potentials(
     variable_indices: List[List[int]],
     chemical_table: ArrayLike,
-) -> List[Tuple[List[int], float]]:
+) -> List[Tuple[List[int], float, float]]:
     """Get the objective function from chemical potentials.
 
     Notice: returns the -mu N term. Negation already included.
@@ -287,9 +311,9 @@ def get_upper_bound_terms_from_chemical_potentials(
             mu = chemical_table[site_id, code]
             # Multiply -1 to give E - mu * N.
             if var_id >= 0:
-                point_terms.append(([var_id], -1 * mu))
+                point_terms.append(([var_id], -1 * mu, 1.0))
             elif var_id == -1:
-                point_terms.append(([], -1 * mu))
+                point_terms.append(([], -1 * mu, 1.0))
 
     # No need to multiply because system size already included.
     return point_terms

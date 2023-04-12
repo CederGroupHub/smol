@@ -1,11 +1,14 @@
 """Utilities to perform solver tests. Only valid for exotic ensemble."""
 import random
+from copy import deepcopy
 
 import numpy as np
+import numpy.testing as npt
 from pymatgen.core import Species
 
 from smol.cofe.space.domain import Vacancy
 from smol.moca.sampler.mcusher import Swap
+from smol.solver.upper_bound.utils.indices import get_sublattice_indices_by_site
 from smol.solver.upper_bound.variables import get_variable_values_from_occupancy
 
 
@@ -79,9 +82,7 @@ def get_random_exotic_occu(sublattices):
 def get_random_variable_values(sublattices):
     # Not always charge balanced.
     num_sites = sum(len(s.sites) for s in sublattices)
-    site_sublattice_ids = np.zeros(num_sites, dtype=int) - 1
-    for sublattice_id, sublattice in enumerate(sublattices):
-        site_sublattice_ids[sublattice.sites] = sublattice_id
+    site_sublattice_ids = get_sublattice_indices_by_site(sublattices)
 
     values = []
     for site_id in range(num_sites):
@@ -143,3 +144,72 @@ def get_random_neutral_variable_values(
         sublattices, initial_occupancy, canonical=canonical, force_flip=force_flip
     )
     return get_variable_values_from_occupancy(sublattices, rand_occu, variable_indices)
+
+
+def validate_correlations_from_occupancy(expansion_processor, occupancy):
+    # Check whether our interpretation of corr function is correct.
+    occupancy = np.array(occupancy, dtype=int)
+    space = expansion_processor.cluster_subspace
+    sc_matrix = expansion_processor.supercell_matrix
+    mappings = space.supercell_orbit_mappings(sc_matrix)
+
+    corr = np.zeros(space.num_corr_functions)
+    corr[0] = 1
+    for orbit, mapping in zip(space.orbits, mappings):
+        # Use un-flatten version now for easier access.
+        n = deepcopy(orbit.bit_id)
+        corr_tensors = orbit.correlation_tensors
+        n_bit_combos = corr_tensors.shape[0]  # index of bit combos
+        mapping = np.array(mapping, dtype=int)
+        n_clusters = mapping.shape[0]  # cluster image index
+        for bid in range(n_bit_combos):
+            for cid in range(n_clusters):
+                cluster_state = occupancy[mapping[cid]].tolist()
+                corr[n] += corr_tensors[tuple((bid, *cluster_state))]
+            corr[n] /= n_clusters
+            n += 1
+    npt.assert_array_almost_equal(
+        corr * expansion_processor.size,
+        expansion_processor.compute_feature_vector(occupancy),
+    )
+
+
+def validate_interactions_from_occupancy(decomposition_processor, occupancy):
+    # Check whether our interpretation of corr function is correct.
+    orbit_tensors = decomposition_processor._fac_tensors
+    occupancy = np.array(occupancy, dtype=int)
+    space = decomposition_processor.cluster_subspace
+    sc_matrix = decomposition_processor.supercell_matrix
+    mappings = space.supercell_orbit_mappings(sc_matrix)
+
+    corr = np.zeros(decomposition_processor.n_orbits)
+    corr[0] = orbit_tensors[0]
+    n = 1
+    for mapping in mappings:
+        # Use un-flatten version now for easier access.
+        mapping = np.array(mapping, dtype=int)
+        n_clusters = mapping.shape[0]  # cluster image index
+        for cid in range(n_clusters):
+            cluster_state = occupancy[mapping[cid]].tolist()
+            corr[n] += orbit_tensors[n][tuple(cluster_state)]
+        corr[n] /= n_clusters
+        n += 1
+    npt.assert_array_almost_equal(
+        corr * decomposition_processor.size,
+        decomposition_processor.compute_feature_vector(occupancy),
+    )
+
+
+def evaluate_correlations_from_variable_values(grouped_terms, variable_values):
+    # Evaluate correlation functions or interactions from variable values.
+    variable_values = np.array(variable_values, dtype=int)
+    corr = []
+    for group in grouped_terms:
+        f = 0
+        for var_inds, corr_factor, coef in group:
+            if len(var_inds) == 0:
+                f += corr_factor
+            else:
+                f += corr_factor * np.product(variable_values[var_inds])
+        corr.append(f)
+    return np.array(corr)

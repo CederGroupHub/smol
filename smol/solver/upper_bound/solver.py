@@ -204,13 +204,11 @@ class UpperboundSolver(MSONable):
             # Give energy terms in the expression.
             if isinstance(proc, ClusterExpansionProcessor):
                 return get_upper_bound_terms_from_expansion_processor(
-                    sublattices,
                     variable_indices,
                     expansion_processor=proc,
                 )
             if isinstance(proc, ClusterDecompositionProcessor):
                 return get_upper_bound_terms_from_decomposition_processor(
-                    sublattices,
                     variable_indices,
                     decomposition_processor=proc,
                 )

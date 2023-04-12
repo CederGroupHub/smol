@@ -67,7 +67,7 @@ def get_upper_bound_variables_from_sublattices(
         orig_site_space = orig_site_spaces[site_id]
         # Only active sites are assigned with variables.
         site_variable_indices = []
-        for species in enumerate(orig_site_space):
+        for species in orig_site_space:
             # Species in the site space after splitting.
             if species in current_site_space:
                 # The current_site_space is active.
@@ -110,7 +110,7 @@ def get_upper_bound_variables_from_sublattices(
             # (always false).
             else:
                 site_variable_indices.append(-2)
-            variable_indices.append(site_variable_indices)
+        variable_indices.append(site_variable_indices)
 
     return cp.Variable(n_variables, boolean=True), variable_indices
 

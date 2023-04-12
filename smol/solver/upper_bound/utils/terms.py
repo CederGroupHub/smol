@@ -10,7 +10,7 @@ from numpy.typing import ArrayLike
 # TODO: in the future, allow writing solver input files from terms,
 #  which may support non-linear objectives and constraints.
 def get_auxiliary_variable_values(
-    variable_values: ArrayLike[int], indices_in_auxiliary_products: List[List[int]]
+    variable_values: ArrayLike, indices_in_auxiliary_products: List[List[int]]
 ) -> np.ndarray:
     """Get the value of auxiliary variables from site variables.
 
@@ -34,7 +34,7 @@ def get_auxiliary_variable_values(
 
 
 def get_expression_and_auxiliary_from_terms(
-    cluster_terms: List[Tuple[List[int], float]],
+    cluster_terms: List[Tuple[List[int], float, float]],
     variables: cp.Variable,
 ) -> Tuple[cp.Expression, cp.Variable, List[List[int]], List[Constraint]]:
     """Convert the cluster terms into linear function and auxiliary variables.
@@ -57,13 +57,15 @@ def get_expression_and_auxiliary_from_terms(
             linearize constraints for each multi-body product term.
     """
     # Simplify cluster terms first.
-    sorted_terms = [(tuple(sorted(inds)), fac) for inds, fac in cluster_terms]
+    sorted_terms = [
+        (tuple(sorted(inds)), fac1, fac2) for inds, fac1, fac2 in cluster_terms
+    ]
     simplified_terms = {}
-    for inds, fac in sorted_terms:
+    for inds, fac1, fac2 in sorted_terms:
         if inds not in simplified_terms:
-            simplified_terms[inds] = fac
+            simplified_terms[inds] = fac1 * fac2
         else:
-            simplified_terms[inds] += fac
+            simplified_terms[inds] += fac1 * fac2
 
     expression = 0
     n_slack = len([inds for inds in simplified_terms.keys() if len(inds) > 1])
@@ -71,7 +73,7 @@ def get_expression_and_auxiliary_from_terms(
         aux_variables = None
     else:
         aux_variables = cp.Variable(n_slack, boolean=True)
-    indices_in_aux_products = [[] for _ in range(n_slack)]
+    indices_in_aux_products = []
     aux_constraints = []
     aux_id = 0
     for inds, fac in simplified_terms.items():

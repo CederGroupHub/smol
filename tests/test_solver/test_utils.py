@@ -1,4 +1,7 @@
 """Test utility functions for upper-bound."""
+from itertools import product
+
+import cvxpy as cp
 import numpy as np
 import numpy.testing as npt
 import pytest
@@ -6,25 +9,28 @@ from pymatgen.core import Species
 
 from smol.cofe.space.domain import Vacancy, get_allowed_species
 from smol.solver.upper_bound.utils.indices import (
+    get_sublattice_indices_by_site,
     get_variable_indices_for_each_composition_component,
     map_ewald_indices_to_variable_indices,
+)
+from smol.solver.upper_bound.utils.terms import (
+    get_auxiliary_variable_values,
+    get_expression_and_auxiliary_from_terms,
 )
 from smol.solver.upper_bound.variables import get_upper_bound_variables_from_sublattices
 
 
 def test_variable_indices_for_components(exotic_ensemble, exotic_initial_occupancy):
     variables, variable_indices = get_upper_bound_variables_from_sublattices(
-        exotic_ensemble.sublattices, exotic_ensemble.num_sites
+        exotic_ensemble.sublattices,
+        exotic_ensemble.processor.structure,
+        exotic_initial_occupancy,
     )
 
-    # When initial occupancy not given, expect an error.
-    with pytest.raises(ValueError):
-        _ = get_variable_indices_for_each_composition_component(
-            exotic_ensemble.sublattices, variable_indices
-        )
-
     var_inds_for_components = get_variable_indices_for_each_composition_component(
-        exotic_ensemble.sublattices, variable_indices, exotic_initial_occupancy
+        exotic_ensemble.sublattices,
+        variable_indices,
+        exotic_ensemble.processor.structure,
     )
     # Total 9 species on all sub-lattices.
     assert len(var_inds_for_components) == 9
@@ -33,7 +39,7 @@ def test_variable_indices_for_components(exotic_ensemble, exotic_initial_occupan
         sub_bits = sublattice.species
         sl_active_variables = np.array(
             [
-                variable_indices[i]
+                [v for v in variable_indices[i] if v >= 0]
                 for i in range(exotic_ensemble.num_sites)
                 if i in sublattice.active_sites
             ],
@@ -106,26 +112,17 @@ def test_variable_indices_for_components(exotic_ensemble, exotic_initial_occupan
 
 def test_ewald_indices(exotic_ensemble, exotic_initial_occupancy):
     variables, variable_indices = get_upper_bound_variables_from_sublattices(
-        exotic_ensemble.sublattices, exotic_ensemble.num_sites
+        exotic_ensemble.sublattices,
+        exotic_ensemble.processor.structure,
+        exotic_initial_occupancy,
     )
     assert len(variable_indices) == exotic_ensemble.num_sites
     ew_processor = exotic_ensemble.processor.processors[-1]
-    num_sites = len(variable_indices)
-    site_sublattice_ids = np.zeros(num_sites, dtype=int) - 1
-    for sublattice_id, sublattice in enumerate(exotic_ensemble.sublattices):
-        site_sublattice_ids[sublattice.sites] = sublattice_id
-
-    # When initial occupancy not given, expect an error.
-    with pytest.raises(ValueError):
-        _ = map_ewald_indices_to_variable_indices(
-            exotic_ensemble.sublattices, ew_processor.structure, variable_indices
-        )
+    site_sublattice_ids = get_sublattice_indices_by_site(exotic_ensemble.sublattices)
 
     ew_to_var_id = map_ewald_indices_to_variable_indices(
-        exotic_ensemble.sublattices,
         ew_processor.structure,
         variable_indices,
-        exotic_initial_occupancy,
     )
 
     n_ew_rows = len(exotic_ensemble.processor.processors[-1]._ewald_structure)
@@ -194,3 +191,47 @@ def test_ewald_indices(exotic_ensemble, exotic_initial_occupancy):
     assert ew_id == n_ew_rows
     # print("expected:\n", expects)
     npt.assert_array_equal(expects, ew_to_var_id)
+
+
+def test_expression_from_terms():
+    x = cp.Variable(2, boolean=True)
+    # Empty expression.
+    terms = []
+    with pytest.raises(RuntimeError):
+        _ = get_expression_and_auxiliary_from_terms(terms, x)
+    # Expression with only constant.
+    terms = [([], -1, 1.0), ([], 100, 1.0)]
+    with pytest.raises(RuntimeError):
+        _ = get_expression_and_auxiliary_from_terms(terms, x)
+    # Correct expression, which is to be evaluated.
+    # A very simple test case.
+    # 0 + 2 x0 -3 x1 + x0 * x1.
+    terms = [
+        ([], -1, 1),
+        ([], 1, 1),
+        ([0], 2, 1),
+        ([1], -3, 1),
+        ([0, 1], -1, 1),
+        ([1, 0], 2, 1),
+    ]
+    func, y, indices, aux_cons = get_expression_and_auxiliary_from_terms(terms, x)
+    assert y.size == 1
+    assert len(indices) == 1
+    assert list(indices[0]) == [0, 1]
+    assert len(aux_cons) == 3
+    assert isinstance(func, cp.Expression)
+    for val0, val1 in product(*[[0, 1], [0, 1]]):
+        true_val = 2 * val0 - 3 * val1 + val0 * val1
+        x.value = np.array([val0, val1], dtype=int)
+        y.value = [val0 * val1]
+        assert func.value == true_val
+        # Auxiliary constraints should always be satisfied.
+        for con in aux_cons:
+            assert con.value()
+
+    for rand_vals in product(*[[0, 1], [0, 1]]):
+        rand_vals = np.array(rand_vals)
+        rand_aux_vals = get_auxiliary_variable_values(rand_vals, indices)
+        for ii, inds in enumerate(indices):
+            assert len(inds) > 1
+            assert np.product(rand_vals[inds]) == rand_aux_vals[ii]
