@@ -66,6 +66,19 @@ def compile_test_program(code, extra_preargs=None, extra_postargs=None):
     return output
 
 
+def basic_check_build():
+    """Check basic compilation and linking of C code."""
+    code = textwrap.dedent(
+        """\
+        #include <stdio.h>
+        int main(void) {
+        return 0;
+        }
+        """
+    )
+    compile_test_program(code)
+
+
 def get_openmp_flag(compiler):
     """Find the correct flag to enable OpenMP support."""
     if sys.platform.startswith("darwin") and "openmp" in os.getenv("CPPFLAGS", ""):
@@ -169,3 +182,32 @@ def check_openmp_support(compiler):
         warnings.warn(message)
 
     return openmp_supported
+
+
+def cythonize_extensions(extensions, **cythonize_kwargs):
+    """Cythonize extensions."""
+    import numpy
+    from Cython.Build import cythonize
+
+    # Fast fail before cythonization if compiler fails compiling basic test
+    # code even without OpenMP
+    basic_check_build()
+
+    n_jobs = os.cpu_count()
+
+    compiler_directives = {
+        "language_level": 3,
+        "boundscheck": False,  # set to True for debugging
+        "nonecheck": False,
+        "wraparound": False,
+        "initializedcheck": False,
+        "cdivision": True,
+        **cythonize_kwargs,
+    }
+
+    return cythonize(
+        extensions,
+        nthreads=n_jobs,
+        include_path=[numpy.get_include()],
+        compiler_directives=compiler_directives,
+    )

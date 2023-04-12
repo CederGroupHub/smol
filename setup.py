@@ -27,7 +27,11 @@ import numpy
 from setuptools import Command, Extension, setup
 from setuptools.command.build_ext import build_ext
 
-from smol.utils._build import check_openmp_support, get_openmp_flag
+from smol.utils._build import (
+    check_openmp_support,
+    cythonize_extensions,
+    get_openmp_flag,
+)
 
 COMPILE_OPTIONS = {
     "msvc": [
@@ -117,58 +121,37 @@ class build_ext_subclass(build_ext, build_ext_options):
 
 
 # Compile option for cython extensions
-if "--use-cython" in sys.argv:
-    USE_CYTHON = True
-    cython_kwargs = {}
-    sys.argv.remove("--use-cython")
-    if "--annotate-cython" in sys.argv:
-        cython_kwargs["annotate"] = True
-        sys.argv.remove("--annotate-cython")
-else:
-    USE_CYTHON = False
+cython_kwargs = {}
+if "--force-cython" in sys.argv:
+    cython_kwargs["force"] = True
+    sys.argv.remove("--force-cython")
+if "--annotate-cython" in sys.argv:
+    cython_kwargs["annotate"] = True
+    sys.argv.remove("--annotate-cython")
 
-ext = ".pyx" if USE_CYTHON else ".c"
-ext_modules = [
+
+extensions = [
     Extension(
         "smol.utils.cluster.evaluator",
-        ["smol/utils/cluster/evaluator" + ext],
-        extra_compile_args=["-fopenmp"],
-        extra_link_args=["-fopenmp"],
+        ["smol/utils/cluster/evaluator.pyx"],
         language="c",
     ),
     Extension(
         "smol.utils.cluster.ewald",
-        ["smol/utils/cluster/ewald" + ext],
+        ["smol/utils/cluster/ewald.pyx"],
         language="c",
     ),
     Extension(
         "smol.utils.cluster.container",
-        ["smol/utils/cluster/container" + ext],
+        ["smol/utils/cluster/container.pyx"],
         language="c",
     ),
     Extension(
         "smol.utils.cluster.correlations",
-        ["smol/utils/cluster/correlations" + ext],
+        ["smol/utils/cluster/correlations.pyx"],
         language="c",
     ),
 ]
-
-if USE_CYTHON:
-    from Cython.Build import cythonize
-
-    ext_modules = cythonize(
-        ext_modules,
-        include_path=[numpy.get_include()],
-        compiler_directives={
-            "language_level": 3,
-            "boundscheck": False,
-            "nonecheck": False,
-            "wraparound": False,
-            "initializedcheck": False,
-            "cdivision": True,
-        },
-        **cython_kwargs
-    )
 
 cmdclass = {
     "clean": CleanCommand,
@@ -177,7 +160,7 @@ cmdclass = {
 
 setup(
     use_scm_version={"version_scheme": "python-simplified-semver"},
-    ext_modules=ext_modules,
+    ext_modules=cythonize_extensions(extensions, **cython_kwargs),
     cmdclass=cmdclass,
     include_dirs=numpy.get_include(),
 )
