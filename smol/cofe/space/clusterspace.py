@@ -999,7 +999,7 @@ class ClusterSubspace(MSONable):
         # Clear the cached supercell orbit mappings
         # TODO instead of resetting this, just remove the orbit ids
         self._supercell_orbit_inds = {}
-        # rest the evaluator
+        # reset the evaluator
         self._evaluator.reset_data(
             self._get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
         )
@@ -1044,9 +1044,13 @@ class ClusterSubspace(MSONable):
                     )
 
         if empty_orbit_ids:
+            # ids are reassigned and evaluator reset in remove_orbits
             self.remove_orbits(empty_orbit_ids)
         else:
             self._assign_orbit_ids()  # Re-assign ids
+            self._evaluator.reset_data(
+                self._get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+            )
 
     def copy(self):
         """Deep copy of instance."""
