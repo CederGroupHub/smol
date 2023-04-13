@@ -1,5 +1,8 @@
 name: test
 
+env:
+  scip-version: 8.0.0
+
 on:
   push:
     branches:
