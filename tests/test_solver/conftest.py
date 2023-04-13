@@ -37,7 +37,7 @@ def exotic_prim():
     )
 
 
-@pytest.fixture(scope="module", params=["sinusoid"])
+@pytest.fixture(scope="module", params=["indicator", "sinusoid"])
 def exotic_subspace(exotic_prim, request):
     # Use sinusoid basis to test if useful.
     space = ClusterSubspace.from_cutoffs(

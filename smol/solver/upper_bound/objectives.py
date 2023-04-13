@@ -76,7 +76,7 @@ def get_upper_bound_terms_from_expansion_processor(
                     # -1 should never co-appear with non-negative variable index
                     # on a site.
                     # Some active variables exist.
-                    if np.any(site_variable_indices) >= 0:
+                    if np.any(site_variable_indices >= 0):
                         site_states.append(
                             np.where(site_variable_indices >= 0)[0].tolist()
                         )
@@ -178,7 +178,7 @@ def get_upper_bound_terms_from_decomposition_processor(
                 # -1 should never co-appear with non-negative variable index
                 # on a site.
                 # Some active variables exist.
-                if np.any(site_variable_indices) >= 0:
+                if np.any(site_variable_indices >= 0):
                     site_states.append(np.where(site_variable_indices >= 0)[0].tolist())
                 # Nothing active, then one must be -1. Can not have multiple -1.
                 else:
@@ -266,14 +266,18 @@ def get_upper_bound_terms_from_ewald_processor(
             if row_var_id == -2 or col_var_id == -2:
                 continue
 
-            ewald_factor = ewald_matrix[i, j] * ewald_processor.coefs
+            ewald_factor = ewald_matrix[i, j]
             ewald_variable_indices = []
             if row_var_id != -1:
                 ewald_variable_indices.append(row_var_id)
             # Diagonal should also be a point term.
             if col_var_id != -1 and col_var_id != row_var_id:
                 ewald_variable_indices.append(col_var_id)
-            ewald_cluster_terms.append((ewald_variable_indices, ewald_factor, 1.0))
+            # Ewald processor coefficient is forced to be a 1D array.
+            # Should convert it back.
+            ewald_cluster_terms.append(
+                (ewald_variable_indices, ewald_factor, float(ewald_processor.coefs))
+            )
 
     # No need to multiply because system size is already included.
     return ewald_cluster_terms

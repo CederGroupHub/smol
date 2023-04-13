@@ -121,7 +121,7 @@ def get_sublattice_indices_by_site(sublattices: List[Sublattice]) -> np.array:
     site_sublattice_ids = np.zeros(num_sites, dtype=int) - 1
     for sublattice_id, sublattice in enumerate(sublattices):
         site_sublattice_ids[sublattice.sites] = sublattice_id
-    if np.any(site_sublattice_ids) < 0:
+    if np.any(site_sublattice_ids < 0):
         raise ValueError(
             f"Provided sub-lattices: {sublattices} do not contain all"
             f" sites in ensemble, or the site-indices are not continuous!"

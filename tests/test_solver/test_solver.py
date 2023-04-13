@@ -1,5 +1,5 @@
 """Test solver class construction and usage."""
-from itertools import product
+from itertools import permutations, product
 
 import numpy as np
 import numpy.testing as npt
@@ -17,11 +17,9 @@ from ..utils import assert_msonable
 
 
 # Only SCIP tried on this instance.
-@pytest.fixture(params=["SCIP"])
-def exotic_solver(exotic_ensemble, exotic_initial_occupancy, request):
-    return UpperboundSolver(
-        exotic_ensemble, exotic_initial_occupancy, solver=request.param
-    )
+@pytest.fixture
+def exotic_solver(exotic_ensemble, exotic_initial_occupancy):
+    return UpperboundSolver(exotic_ensemble, exotic_initial_occupancy)
 
 
 def test_msonable(exotic_solver, exotic_initial_occupancy):
@@ -68,9 +66,8 @@ def test_setting_results(exotic_solver):
 
 @pytest.fixture(scope="module")
 def simple_prim():
-    lat = Lattice.cubic(3.0)
     return Structure(
-        lat,
+        Lattice.cubic(3.0),
         [{"Li": 0.5, "Ag": 0.5}],
         [[0, 0, 0]],
     )
@@ -80,7 +77,7 @@ def simple_prim():
 def simple_subspace(simple_prim, request):
     # Use sinusoid basis to test if useful.
     space = ClusterSubspace.from_cutoffs(
-        simple_prim, {2: 4.5, 3: 3.1}, basis=request.param
+        simple_prim, {2: 4.5, 3: 4.5}, basis=request.param
     )
     return space
 
@@ -127,7 +124,7 @@ def simple_ensemble(simple_expansion, request):
 
 
 # Only SCIP tried on this instance.
-@pytest.fixture(params=["SCIP"])
+@pytest.fixture(params=["SCIP", "GUROBI"])
 def simple_solver(simple_ensemble, request):
     if simple_ensemble.chemical_potentials is not None:
         return UpperboundSolver(simple_ensemble, solver=request.param)
@@ -140,15 +137,19 @@ def simple_solver(simple_ensemble, request):
 
 # Do a small scale solving test.
 def test_solve(simple_solver):
-    _, energy = simple_solver.solve()
+    solution, energy = simple_solver.solve()
 
     occu = simple_solver._ensemble.processor.occupancy_from_structure(
         simple_solver.ground_state_structure
     )
+    sol_occu = get_variable_values_from_occupancy(
+        simple_solver.sublattices, occu, simple_solver.variable_indices
+    )
+    npt.assert_array_equal(solution, sol_occu)
 
-    n_dims = sum([len(s.species) for s in simple_solver._ensemble.sublattices])
+    n_dims = sum([len(s.species) for s in simple_solver.sublattices])
     assert n_dims == 2
-    table = get_dim_ids_table(simple_solver._ensemble.sublattices)
+    table = get_dim_ids_table(simple_solver.sublattices)
     counts = occu_to_counts(occu, n_dims, dim_ids_table=table)
     if simple_solver._ensemble.chemical_potentials is None:
         # Canonical ensemble, should assume same composition.
@@ -158,3 +159,17 @@ def test_solve(simple_solver):
     true_energy = np.dot(features, simple_solver._ensemble.natural_parameters)
 
     assert np.isclose(energy, true_energy)
+
+    # Exhaust all other configurations. None should have higher energy than optimal.
+    if simple_solver._ensemble.chemical_potentials is not None:
+        other_states = list(product(range(2), repeat=8))
+    else:
+        other_states = set(permutations([0] * 4 + [1] * 4))
+    for other_state in other_states:
+        other_state = np.array(list(other_state), dtype=int)
+        other_feats = simple_solver._ensemble.compute_feature_vector(other_state)
+        other_energy = np.dot(other_feats, simple_solver._ensemble.natural_parameters)
+        # allow just a tiny slack.
+        assert other_energy >= energy - 1e-6
+        if np.allclose(other_state, occu):
+            assert np.isclose(energy, other_energy)

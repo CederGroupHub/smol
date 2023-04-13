@@ -25,6 +25,11 @@ jobs:
         with:
           python-version:  ${{ matrix.python_version }}
 
+      - name: Install dependencies
+        run: |
+          wget --quiet --no-check-certificate https://scipopt.org/download/release/SCIPOptSuite-${{ env.scip-version }}-Linux-ubuntu.deb
+          sudo apt-get update && sudo apt install -y ./SCIPOptSuite-${{ env.scip-version }}-Linux-ubuntu.deb
+
       - name: Cache pip
         uses: actions/cache@v3
         with:

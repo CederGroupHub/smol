@@ -135,6 +135,7 @@ class UpperboundSolver(MSONable):
         """
         self._ensemble = ensemble
         self._structure = self._ensemble.processor.structure
+        self._sublattices = self._ensemble.sublattices
 
         self._other_constraints = other_constraints
         if initial_occupancy is not None:
@@ -142,13 +143,12 @@ class UpperboundSolver(MSONable):
         else:
             self._initial_occupancy = None
 
+        # Can always be set, but will only be used in a canonical ensemble.
         if fixed_composition is not None:
             self._fixed_composition = np.array(fixed_composition, dtype=int)
         elif self._initial_occupancy is not None:
-            n_dims = sum(len(s.species) for s in self._ensemble.sublattices)
-            dim_ids_table = get_dim_ids_table(
-                self._ensemble.sublattices, active_only=False
-            )
+            n_dims = sum(len(s.species) for s in self.sublattices)
+            dim_ids_table = get_dim_ids_table(self.sublattices, active_only=False)
             self._fixed_composition = occu_to_counts(
                 self._initial_occupancy, n_dims, dim_ids_table
             )
@@ -168,9 +168,9 @@ class UpperboundSolver(MSONable):
 
     def _initialize_problem(self):
         """Generate variables, objective and constraints."""
-        sublattices = self._ensemble.sublattices
+        sublattices = self.sublattices
         variables, variable_indices = get_upper_bound_variables_from_sublattices(
-            sublattices, self._ensemble.num_sites, self._initial_occupancy
+            sublattices, self.structure, self._initial_occupancy
         )
 
         # Add constraints.
@@ -271,7 +271,11 @@ class UpperboundSolver(MSONable):
 
     def _set_canonical_values(self):
         """Set canonical values according to the reloaded solution."""
-        self._raise_unsolved()
+        try:
+            self._raise_unsolved()
+        except RuntimeError:
+            warn("Loaded model is not solved before. Need to call solve()!")
+            return
         self._canonicals.variables.value = self._ground_state_solution
         aux_values = get_auxiliary_variable_values(
             self._ground_state_solution, self._canonicals.indices_in_auxiliary_products
@@ -280,8 +284,22 @@ class UpperboundSolver(MSONable):
 
     @property
     def structure(self):
-        """Supercell structure of the ensemble without any split."""
-        return self.structure
+        """Supercell structure of the ensemble without any split.
+
+        Returns:
+            Structure.
+        """
+        return self._structure
+
+    @property
+    def sublattices(self):
+        """Sub-lattices to build the problem on.
+
+        Potentially contains split sub-lattices or manually restricted sites.
+        Returns:
+            List[Sublattice].
+        """
+        return self._sublattices
 
     @property
     def problem(self):
@@ -336,6 +354,24 @@ class UpperboundSolver(MSONable):
         """
         return self._canonicals.constraints
 
+    @property
+    def auxiliary_variables(self):
+        """Auxiliary variables for linearizing the problem.
+
+        Returns:
+            cp.Variable.
+        """
+        return self._canonicals.auxiliary_variables
+
+    @property
+    def indices_in_auxiliary_products(self):
+        """Indices of variables in cluster terms corresponding to auxiliary variables.
+
+        Returns:
+            List[List[int]].
+        """
+        return self._canonicals.indices_in_auxiliary_products
+
     def solve(self):
         """Solve the MIP problem.
 
@@ -348,7 +384,7 @@ class UpperboundSolver(MSONable):
             self._ground_state_solution is not None
             and self._ground_state_energy is not None
         ):
-            warn("Ground state already solved before. Will overwrite previous result.")
+            warn("Ground state already solved before. Overwriting previous result!")
         self.problem.solve(
             solver=self.solver, warm_start=self.warm_start, **self.solver_options
         )
@@ -398,8 +434,8 @@ class UpperboundSolver(MSONable):
         self._raise_unsolved()
         if self._ground_state_occupancy is None:
             self._ground_state_occupancy = get_occupancy_from_variables(
-                self._ensemble.sublattices,
-                self._ground_state_solution,
+                self.sublattices,
+                self.ground_state_solution,
                 self.variable_indices,
             )
         return self._ground_state_occupancy
@@ -440,7 +476,7 @@ class UpperboundSolver(MSONable):
                 if self._fixed_composition is not None
                 else None
             ),
-            # Convert species object to strings, if any.
+            # Convert species object to string, if any.
             "other_constraints": jsanitize(self._other_constraints),
             "warm_start": self.warm_start,
             "solver": self.solver,
