@@ -1,6 +1,6 @@
 nbgitpuller
 numpy>=1.20.1
-monty==2022.9.9
+monty==2023.4.10
 pymatgen==2023.3.23
 scikit-learn==1.2.2
 h5py==3.8.0
