@@ -111,7 +111,7 @@ def test_variable_indices_for_components(exotic_ensemble, exotic_initial_occupan
 
 
 def test_ewald_indices(exotic_ensemble, exotic_initial_occupancy):
-    variables, variable_indices = get_upper_bound_variables_from_sublattices(
+    _, variable_indices = get_upper_bound_variables_from_sublattices(
         exotic_ensemble.sublattices,
         exotic_ensemble.processor.structure,
         exotic_initial_occupancy,

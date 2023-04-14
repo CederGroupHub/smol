@@ -40,24 +40,32 @@ def get_upper_bound_normalization_constraints(
     return constraints
 
 
+def _extract_constraint_matrix(comp_space, constraint_type):
+    """Get the constraint matrix of a specific type."""
+    if constraint_type in ["==", "=", "eq"]:
+        mat_a = comp_space._A
+        vec_b = comp_space._b
+        constraint_type = "=="
+    elif constraint_type in ["<=", "leq"]:
+        mat_a = comp_space._A_leq if comp_space._A_leq is not None else []
+        vec_b = comp_space._b_leq if comp_space._b_leq is not None else []
+        constraint_type = "<="
+    elif constraint_type in [">=", "geq"]:
+        mat_a = comp_space._A_geq if comp_space._A_geq is not None else []
+        vec_b = comp_space._b_geq if comp_space._b_geq is not None else []
+        constraint_type = ">="
+    else:
+        raise NotImplementedError(f"Constraint type {constraint_type} not supported!")
+    return mat_a, vec_b, constraint_type
+
+
 def _get_upper_bound_formula_constraints(
     comp_space, constraint_type, variables, variables_per_component, skip_cids=None
 ):
     """Get a specific type of composition constraints."""
-    if constraint_type in ["==", "=", "eq"]:
-        mat_a = comp_space._A
-        vec_b = comp_space._b
-        constraint_type = "eq"
-    elif constraint_type in ["<=", "leq"]:
-        mat_a = comp_space._A_leq if comp_space._A_leq is not None else []
-        vec_b = comp_space._b_leq if comp_space._b_leq is not None else []
-        constraint_type = "leq"
-    elif constraint_type in [">=", "geq"]:
-        mat_a = comp_space._A_geq if comp_space._A_geq is not None else []
-        vec_b = comp_space._b_geq if comp_space._b_geq is not None else []
-        constraint_type = "geq"
-    else:
-        raise NotImplementedError(f"Constraint type {constraint_type} not supported!")
+    mat_a, vec_b, constraint_type = _extract_constraint_matrix(
+        comp_space, constraint_type
+    )
 
     constraints = []
     skip_cids = skip_cids or []
@@ -66,21 +74,13 @@ def _get_upper_bound_formula_constraints(
         if cid in skip_cids:
             continue
         if np.allclose(a, 0):
-            if constraint_type == "eq":
-                if not np.isclose(b, 0):
-                    raise ValueError(f"Unsatisfiable constraint an=b, a: {a}, b: {b}.")
-                else:
-                    continue
-            if constraint_type == "leq":
-                if b < 0:
-                    raise ValueError(f"Unsatisfiable constraint an<=b, a: {a}, b: {b}.")
-                else:
-                    continue
-            if constraint_type == "geq":
-                if b > 0:
-                    raise ValueError(f"Unsatisfiable constraint an>=b, a: {a}, b: {b}.")
-                else:
-                    continue
+            if constraint_type == "==" and not np.isclose(b, 0):
+                raise ValueError(f"Unsatisfiable constraint an=b, a: {a}, b: {b}.")
+            if constraint_type == "<=" and b < 0:
+                raise ValueError(f"Unsatisfiable constraint an<=b, a: {a}, b: {b}.")
+            if constraint_type == ">=" and b > 0:
+                raise ValueError(f"Unsatisfiable constraint an>=b, a: {a}, b: {b}.")
+            continue
 
         expression = 0
         for dim_id, (indices, n_fixed) in enumerate(variables_per_component):
@@ -89,30 +89,22 @@ def _get_upper_bound_formula_constraints(
                 expression += cp.sum(variables[indices]) * a[dim_id]
             expression += n_fixed * a[dim_id]
         if not isinstance(expression, Expression):
-            if constraint_type == "eq" and expression != b:
+            if (
+                (constraint_type == "==" and expression != b)
+                or (constraint_type == "<=" and expression > b)
+                or (constraint_type == ">=" and expression < b)
+            ):
                 raise ValueError(
-                    f"Constraint {a} == {b} can never be satisfied because"
-                    f" the number of restricted sites can not satisfy this"
-                    f" requirement!"
-                )
-            if constraint_type == "leq" and expression > b:
-                raise ValueError(
-                    f"Constraint {a} <= {b} can never be satisfied because"
-                    f" the number of restricted sites can not satisfy this"
-                    f" requirement!"
-                )
-            if constraint_type == "geq" and expression < b:
-                raise ValueError(
-                    f"Constraint {a} >= {b} can never be satisfied because"
-                    f" the number of restricted sites can not satisfy this"
-                    f" requirement!"
+                    f"Constraint {a} {constraint_type} {b} can never be"
+                    f" satisfied because the number of restricted sites"
+                    f" can not satisfy this requirement!"
                 )
         else:
-            if constraint_type == "eq":
+            if constraint_type == "==":
                 constraints.append(expression == b)
-            if constraint_type == "leq":
+            if constraint_type == "<=":
                 constraints.append(expression <= b)
-            if constraint_type == "geq":
+            if constraint_type == ">=":
                 constraints.append(expression >= b)
 
     return constraints
