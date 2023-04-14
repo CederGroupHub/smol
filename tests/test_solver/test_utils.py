@@ -7,17 +7,17 @@ import numpy.testing as npt
 import pytest
 from pymatgen.core import Species
 
-from smol.cofe.space.domain import Vacancy, get_allowed_species
-from smol.solver.upper_bound.utils.indices import (
+from smol.capp.generate.solver import get_upper_bound_variables_from_sublattices
+from smol.capp.generate.solver.upper_bound.utils.indices import (
     get_sublattice_indices_by_site,
     get_variable_indices_for_each_composition_component,
     map_ewald_indices_to_variable_indices,
 )
-from smol.solver.upper_bound.utils.terms import (
+from smol.capp.generate.solver.upper_bound.utils.terms import (
     get_auxiliary_variable_values,
     get_expression_and_auxiliary_from_terms,
 )
-from smol.solver.upper_bound.variables import get_upper_bound_variables_from_sublattices
+from smol.cofe.space.domain import Vacancy, get_allowed_species
 
 
 def test_variable_indices_for_components(exotic_ensemble, exotic_initial_occupancy):

@@ -3,13 +3,15 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
-from smol.cofe.space.domain import get_allowed_species
-from smol.solver.upper_bound.utils.indices import get_sublattice_indices_by_site
-from smol.solver.upper_bound.variables import (
+from smol.capp.generate.solver import (
     get_occupancy_from_variables,
     get_upper_bound_variables_from_sublattices,
     get_variable_values_from_occupancy,
 )
+from smol.capp.generate.solver.upper_bound.utils.indices import (
+    get_sublattice_indices_by_site,
+)
+from smol.cofe.space.domain import get_allowed_species
 
 from .utils import get_random_variable_values
 

@@ -5,10 +5,12 @@ import numpy as np
 import numpy.testing as npt
 from pymatgen.core import Species
 
+from smol.capp.generate.solver import get_variable_values_from_occupancy
+from smol.capp.generate.solver.upper_bound.utils.indices import (
+    get_sublattice_indices_by_site,
+)
 from smol.cofe.space.domain import Vacancy
 from smol.moca.sampler.mcusher import Swap
-from smol.solver.upper_bound.utils.indices import get_sublattice_indices_by_site
-from smol.solver.upper_bound.variables import get_variable_values_from_occupancy
 
 
 def get_random_exotic_occu(sublattices):

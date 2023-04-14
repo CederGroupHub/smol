@@ -8,11 +8,11 @@ from cvxpy import Expression
 from cvxpy.constraints.constraint import Constraint
 from pymatgen.core import Structure
 
-from smol.moca.composition import CompositionSpace
-from smol.moca.ensemble import Sublattice
-from smol.solver.upper_bound.utils.indices import (
+from smol.capp.generate.solver.upper_bound.utils.indices import (
     get_variable_indices_for_each_composition_component,
 )
+from smol.moca.composition import CompositionSpace
+from smol.moca.ensemble import Sublattice
 
 __author__ = "Fengyu Xie"
 

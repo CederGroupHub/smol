@@ -8,6 +8,25 @@ from cvxpy.constraints.constraint import Constraint
 from monty.json import MSONable, jsanitize
 from numpy.typing import ArrayLike
 
+from smol.capp.generate.solver.upper_bound.constraints import (
+    get_upper_bound_composition_space_constraints,
+    get_upper_bound_fixed_composition_constraints,
+    get_upper_bound_normalization_constraints,
+)
+from smol.capp.generate.solver.upper_bound.objectives import (
+    get_upper_bound_terms_from_chemical_potentials,
+    get_upper_bound_terms_from_decomposition_processor,
+    get_upper_bound_terms_from_ewald_processor,
+    get_upper_bound_terms_from_expansion_processor,
+)
+from smol.capp.generate.solver.upper_bound.utils.terms import (
+    get_auxiliary_variable_values,
+    get_expression_and_auxiliary_from_terms,
+)
+from smol.capp.generate.solver.upper_bound.variables import (
+    get_occupancy_from_variables,
+    get_upper_bound_variables_from_sublattices,
+)
 from smol.moca.ensemble import Ensemble
 from smol.moca.processor import (
     ClusterDecompositionProcessor,
@@ -16,25 +35,6 @@ from smol.moca.processor import (
     EwaldProcessor,
 )
 from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
-from smol.solver.upper_bound.constraints import (
-    get_upper_bound_composition_space_constraints,
-    get_upper_bound_fixed_composition_constraints,
-    get_upper_bound_normalization_constraints,
-)
-from smol.solver.upper_bound.objectives import (
-    get_upper_bound_terms_from_chemical_potentials,
-    get_upper_bound_terms_from_decomposition_processor,
-    get_upper_bound_terms_from_ewald_processor,
-    get_upper_bound_terms_from_expansion_processor,
-)
-from smol.solver.upper_bound.utils.terms import (
-    get_auxiliary_variable_values,
-    get_expression_and_auxiliary_from_terms,
-)
-from smol.solver.upper_bound.variables import (
-    get_occupancy_from_variables,
-    get_upper_bound_variables_from_sublattices,
-)
 
 __author__ = "Fengyu Xie"
 
