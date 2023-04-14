@@ -40,6 +40,84 @@ def get_upper_bound_normalization_constraints(
     return constraints
 
 
+def _get_upper_bound_formula_constraints(
+    comp_space, constraint_type, variables, variables_per_component, skip_cids=None
+):
+    """Get a specific type of composition constraints."""
+    if constraint_type in ["==", "=", "eq"]:
+        mat_a = comp_space._A
+        vec_b = comp_space._b
+        constraint_type = "eq"
+    elif constraint_type in ["<=", "leq"]:
+        mat_a = comp_space._A_leq if comp_space._A_leq is not None else []
+        vec_b = comp_space._b_leq if comp_space._b_leq is not None else []
+        constraint_type = "leq"
+    elif constraint_type in [">=", "geq"]:
+        mat_a = comp_space._A_geq if comp_space._A_geq is not None else []
+        vec_b = comp_space._b_geq if comp_space._b_geq is not None else []
+        constraint_type = "geq"
+    else:
+        raise NotImplementedError(f"Constraint type {constraint_type} not supported!")
+
+    constraints = []
+    skip_cids = skip_cids or []
+    for cid, (a, b) in enumerate(zip(mat_a, vec_b)):
+        # Null constraints.
+        if cid in skip_cids:
+            continue
+        if np.allclose(a, 0):
+            if constraint_type == "eq":
+                if not np.isclose(b, 0):
+                    raise ValueError(f"Unsatisfiable constraint an=b, a: {a}, b: {b}.")
+                else:
+                    continue
+            if constraint_type == "leq":
+                if b < 0:
+                    raise ValueError(f"Unsatisfiable constraint an<=b, a: {a}, b: {b}.")
+                else:
+                    continue
+            if constraint_type == "geq":
+                if b > 0:
+                    raise ValueError(f"Unsatisfiable constraint an>=b, a: {a}, b: {b}.")
+                else:
+                    continue
+
+        expression = 0
+        for dim_id, (indices, n_fixed) in enumerate(variables_per_component):
+            # Active sub-lattice.
+            if len(indices) > 0 and not np.isclose(a[dim_id], 0):
+                expression += cp.sum(variables[indices]) * a[dim_id]
+            expression += n_fixed * a[dim_id]
+        if not isinstance(expression, Expression):
+            if constraint_type == "eq" and expression != b:
+                raise ValueError(
+                    f"Constraint {a} == {b} can never be satisfied because"
+                    f" the number of restricted sites can not satisfy this"
+                    f" requirement!"
+                )
+            if constraint_type == "leq" and expression > b:
+                raise ValueError(
+                    f"Constraint {a} <= {b} can never be satisfied because"
+                    f" the number of restricted sites can not satisfy this"
+                    f" requirement!"
+                )
+            if constraint_type == "geq" and expression < b:
+                raise ValueError(
+                    f"Constraint {a} >= {b} can never be satisfied because"
+                    f" the number of restricted sites can not satisfy this"
+                    f" requirement!"
+                )
+        else:
+            if constraint_type == "eq":
+                constraints.append(expression == b)
+            if constraint_type == "leq":
+                constraints.append(expression <= b)
+            if constraint_type == "geq":
+                constraints.append(expression >= b)
+
+    return constraints
+
+
 def get_upper_bound_composition_space_constraints(
     sublattices: List[Sublattice],
     variables: cp.Variable,
@@ -101,79 +179,24 @@ def get_upper_bound_composition_space_constraints(
     if np.allclose(comp_space._A[0, :], 0) and np.isclose(comp_space._b[0], 0):
         # Neutral alloy, no need to constrain charge.
         skip_cids = [0] + skip_cids
+
+    # EQ, LEQ and GEQ. No skip in LEQ and GEQ.
     constraints = []
-    for cid, (a, b) in enumerate(zip(comp_space._A, comp_space._b)):
-        # Null constraints.
-        if cid in skip_cids or (np.allclose(a, 0) and np.isclose(b, 0)):
-            continue
-        if np.allclose(a, 0) and not np.isclose(b, 0):
-            raise ValueError(f"Unsatisfiable constraint an=b, a: {a}, b: {b}.")
-
-        expression = 0
-        for dim_id, (indices, n_fixed) in enumerate(variables_per_component):
-            # Active sub-lattice.
-            if len(indices) > 0 and not np.isclose(a[dim_id], 0):
-                expression += cp.sum(variables[indices]) * a[dim_id]
-            expression += n_fixed * a[dim_id]
-        if not isinstance(expression, Expression):
-            if expression != b:
-                raise ValueError(
-                    f"Constraint {a} == {b} can never be satisfied because"
-                    f" the number of restricted sites can not match this"
-                    f" requirement!"
-                )
-        else:
-            constraints.append(expression == b)
-
-    # LEQ.
-    if comp_space._A_leq is not None and comp_space._b_leq is not None:
-        for cid, (a, b) in enumerate(zip(comp_space._A_leq, comp_space._b_leq)):
-            # Null constraints.
-            if np.allclose(a, 0) and b >= 0:
-                continue
-            if np.allclose(a, 0) and b < 0:
-                raise ValueError(f"Unsatisfiable constraint an<=b, a: {a}, b: {b}.")
-
-            expression = 0
-            for dim_id, (indices, n_fixed) in enumerate(variables_per_component):
-                # Active sub-lattice.
-                if len(indices) > 0 and not np.isclose(a[dim_id], 0):
-                    expression += cp.sum(variables[indices]) * a[dim_id]
-                expression += n_fixed * a[dim_id]
-            if not isinstance(expression, Expression):
-                if expression > b:
-                    raise ValueError(
-                        f"Constraint {a} <= {b} can never be satisfied because"
-                        f" the number of restricted sites can not match this"
-                        f" requirement!"
-                    )
-            else:
-                constraints.append(expression <= b)
-
-    # GEQ.
-    if comp_space._A_geq is not None and comp_space._b_geq is not None:
-        for cid, (a, b) in enumerate(zip(comp_space._A_geq, comp_space._b_geq)):
-            # Null constraints.
-            if np.allclose(a, 0) and b <= 0:
-                continue
-            if np.allclose(a, 0) and b > 0:
-                raise ValueError(f"Unsatisfiable constraint an>=b, a: {a}, b: {b}.")
-
-            expression = 0
-            for dim_id, (indices, n_fixed) in enumerate(variables_per_component):
-                # Active sub-lattice.
-                if len(indices) > 0 and not np.isclose(a[dim_id], 0):
-                    expression += cp.sum(variables[indices]) * a[dim_id]
-                expression += n_fixed * a[dim_id]
-            if not isinstance(expression, Expression):
-                if expression < b:
-                    raise ValueError(
-                        f"Constraint {a} >= {b} can never be satisfied because"
-                        f" the number of restricted sites can not match this"
-                        f" requirement!"
-                    )
-            else:
-                constraints.append(expression >= b)
+    constraints.extend(
+        _get_upper_bound_formula_constraints(
+            comp_space, "eq", variables, variables_per_component, skip_cids
+        )
+    )
+    constraints.extend(
+        _get_upper_bound_formula_constraints(
+            comp_space, "leq", variables, variables_per_component
+        )
+    )
+    constraints.extend(
+        _get_upper_bound_formula_constraints(
+            comp_space, "geq", variables, variables_per_component
+        )
+    )
 
     return constraints
 

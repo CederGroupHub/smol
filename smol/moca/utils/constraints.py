@@ -12,6 +12,46 @@ from smol.moca.utils.occu import get_dim_ids_by_sublattice
 __author__ = "Fengyu Xie"
 
 
+def _extract_symbols_before_number(all_literals, number_literal_id):
+    """Extract operator symbols and count the number of symbols."""
+    num_symbols = 0
+    symbol = 1
+    if number_literal_id > 0:
+        for jj in range(1, number_literal_id + 1):
+            if all_literals[number_literal_id - jj] == "+":
+                num_symbols += 1
+            elif all_literals[number_literal_id - jj] == "-":
+                symbol = -1 * symbol
+                num_symbols += 1
+            else:
+                break
+
+    return symbol, num_symbols
+
+
+def _extract_number_before_species(all_literals, species_literal_id):
+    """Extract species string and the amount of species."""
+    num_numbers = 0
+    if species_literal_id > 0:
+        for jj in range(1, species_literal_id + 1):
+            if isinstance(all_literals[species_literal_id - jj], Number):
+                num_numbers += 1
+            else:
+                break
+    if num_numbers == 0:
+        number_literal = 1
+    elif num_numbers == 1:
+        number_literal = all_literals[species_literal_id - 1]
+    else:
+        raise ValueError(
+            f"Species {all_literals[species_literal_id]} preceded by"
+            f" {num_numbers} > 1"
+            f" literals, not allowed!"
+        )
+
+    return number_literal, num_numbers
+
+
 def handle_side_string(side: str):
     """Handle the strings separated by relation operators.
 
@@ -55,46 +95,10 @@ def handle_side_string(side: str):
                 sublattice_id = None
             processed_literals.append((species, sublattice_id))
 
-    def extract_symbols_before_number(all_literals, number_literal_id):
-        num_symbols = 0
-        symbol = 1
-        if number_literal_id > 0:
-            for jj in range(1, number_literal_id + 1):
-                if all_literals[number_literal_id - jj] == "+":
-                    num_symbols += 1
-                elif all_literals[number_literal_id - jj] == "-":
-                    symbol = -1 * symbol
-                    num_symbols += 1
-                else:
-                    break
-
-        return symbol, num_symbols
-
-    def extract_number_before_species(all_literals, species_literal_id):
-        num_numbers = 0
-        if species_literal_id > 0:
-            for jj in range(1, species_literal_id + 1):
-                if isinstance(all_literals[species_literal_id - jj], Number):
-                    num_numbers += 1
-                else:
-                    break
-        if num_numbers == 0:
-            number_literal = 1
-        elif num_numbers == 1:
-            number_literal = all_literals[species_literal_id - 1]
-        else:
-            raise ValueError(
-                f"Species {all_literals[species_literal_id]} preceded by"
-                f" {num_numbers} > 1"
-                f" literals, not allowed!"
-            )
-
-        return number_literal, num_numbers
-
     # Pack literals and intercept term.
     intercept = 0
     if isinstance(processed_literals[-1], Number):
-        sym, n_sym = extract_symbols_before_number(
+        sym, n_sym = _extract_symbols_before_number(
             processed_literals, len(processed_literals) - 1
         )
         intercept = sym * processed_literals[-1]
@@ -111,8 +115,8 @@ def handle_side_string(side: str):
     for i, lit in enumerate(processed_literals):
         if isinstance(lit, tuple):
             # Extract the number literal before a species literal.
-            num, n_nums = extract_number_before_species(processed_literals, i)
-            sym, n_syms = extract_symbols_before_number(processed_literals, i - n_nums)
+            num, n_nums = _extract_number_before_species(processed_literals, i)
+            sym, _ = _extract_symbols_before_number(processed_literals, i - n_nums)
 
             packed_literals.append((sym * num, *lit))
 

@@ -21,7 +21,7 @@ from smol.solver.upper_bound.variables import get_upper_bound_variables_from_sub
 
 
 def test_variable_indices_for_components(exotic_ensemble, exotic_initial_occupancy):
-    variables, variable_indices = get_upper_bound_variables_from_sublattices(
+    _, variable_indices = get_upper_bound_variables_from_sublattices(
         exotic_ensemble.sublattices,
         exotic_ensemble.processor.structure,
         exotic_initial_occupancy,
@@ -148,7 +148,7 @@ def test_ewald_indices(exotic_ensemble, exotic_initial_occupancy):
     for site_id, site_space in enumerate(site_spaces):
         sublattice_id = site_sublattice_ids[site_id]
         sublattice = exotic_ensemble.sublattices[sublattice_id]
-        for sp_id, spec in enumerate(site_space):
+        for spec in site_space:
             if isinstance(spec, Vacancy):
                 # In the Li/Vac sub-lattice.
                 if Species("Li", 1) in sublattice.species:

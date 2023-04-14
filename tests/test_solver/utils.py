@@ -1,5 +1,4 @@
 """Utilities to perform solver tests. Only valid for exotic ensemble."""
-import random
 from copy import deepcopy
 
 import numpy as np
@@ -90,7 +89,7 @@ def get_random_variable_values(sublattices):
         sublattice = sublattices[sl_id]
         if len(sublattice.species) > 1 and site_id in sublattice.active_sites:
             site_vals = [0 for _ in range(len(sublattice.species))]
-            site_vals[random.choice(range(len(sublattice.species)))] = 1
+            site_vals[np.random.choice(len(sublattice.species))] = 1
             values.extend(site_vals)
 
     return np.array(values, dtype=int)
@@ -119,12 +118,12 @@ def get_random_neutral_occupancy(
     else:
         threshold = -0.1
 
-    if random.random() > threshold:
+    if np.random.random() > threshold:
         # Ti-Mn flip that would not change charge.
-        if random.random() > 0.5:
-            flip = [(random.choice(ti_sites), mn4_code)]
+        if np.random.random() > 0.5:
+            flip = [(np.random.choice(ti_sites), mn4_code)]
         else:
-            flip = [(random.choice(mn4_sites), ti_code)]
+            flip = [(np.random.choice(mn4_sites), ti_code)]
     else:
         swapper = Swap(sublattices)
         flip = swapper.propose_step(initial_occupancy)
@@ -206,7 +205,7 @@ def evaluate_correlations_from_variable_values(grouped_terms, variable_values):
     corr = []
     for group in grouped_terms:
         f = 0
-        for var_inds, corr_factor, coef in group:
+        for var_inds, corr_factor, _ in group:
             if len(var_inds) == 0:
                 f += corr_factor
             else:

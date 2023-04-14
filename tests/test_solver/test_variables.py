@@ -69,7 +69,7 @@ def test_upper_variables_and_indices(exotic_ensemble, exotic_initial_occupancy):
 
 
 def test_occupancy_from_variables(exotic_ensemble, exotic_initial_occupancy):
-    variables, variable_indices = get_upper_bound_variables_from_sublattices(
+    _, variable_indices = get_upper_bound_variables_from_sublattices(
         exotic_ensemble.sublattices,
         exotic_ensemble.processor.structure,
         exotic_initial_occupancy,
