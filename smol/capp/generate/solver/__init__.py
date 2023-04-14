@@ -1,1 +1,0 @@
-"""Ground state solver functionalities."""

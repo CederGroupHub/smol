@@ -8,22 +8,22 @@ from cvxpy.constraints.constraint import Constraint
 from monty.json import MSONable, jsanitize
 from numpy.typing import ArrayLike
 
-from smol.capp.generate.solver.upper_bound.constraints import (
+from smol.capp.generate.groundstate.upper_bound.constraints import (
     get_upper_bound_composition_space_constraints,
     get_upper_bound_fixed_composition_constraints,
     get_upper_bound_normalization_constraints,
 )
-from smol.capp.generate.solver.upper_bound.objectives import (
+from smol.capp.generate.groundstate.upper_bound.objectives import (
     get_upper_bound_terms_from_chemical_potentials,
     get_upper_bound_terms_from_decomposition_processor,
     get_upper_bound_terms_from_ewald_processor,
     get_upper_bound_terms_from_expansion_processor,
 )
-from smol.capp.generate.solver.upper_bound.utils.terms import (
+from smol.capp.generate.groundstate.upper_bound.utils.terms import (
     get_auxiliary_variable_values,
     get_expression_and_auxiliary_from_terms,
 )
-from smol.capp.generate.solver.upper_bound.variables import (
+from smol.capp.generate.groundstate.upper_bound.variables import (
     get_occupancy_from_variables,
     get_upper_bound_variables_from_sublattices,
 )
@@ -50,7 +50,7 @@ class ProblemCanonicals(NamedTuple):
         variable_indices (cp.Variable):
             List of variable index corresponding to each active site index and species
             indices in its site space. Inactive or restricted sites will not have any
-            variable, but be marked as -1 or -2. See solver.upper_bound.variables.
+            variable, but be marked as -1 or -2. See groundstate.upper_bound.variables.
         auxiliary_variables (cp.Variable):
             Slack variables used to linearize polynomial pseudo-boolean objective
             terms.
@@ -78,7 +78,7 @@ class ProblemCanonicals(NamedTuple):
 
 
 class UpperboundSolver(MSONable):
-    """A solver for the upper-bound problem of cluster expansion."""
+    """A groundstate for the upper-bound problem of cluster expansion."""
 
     def __init__(
         self,
@@ -96,7 +96,7 @@ class UpperboundSolver(MSONable):
             ensemble(Ensemble):
                 An ensemble to initialize the problem with. If you want to modify
                 sub-lattices, please do that in ensemble before initializing the
-                solver. Sub-lattices can not be modified after giving the ensemble!
+                groundstate. Sub-lattices can not be modified after giving the ensemble!
             initial_occupancy(ArrayLike): optional
                 An initial occupancy used to set the occupancy of manually restricted
                 sites that may have more than one allowed species. Also used to set up
@@ -120,7 +120,7 @@ class UpperboundSolver(MSONable):
                 Note that constraints are now to be satisfied with the number of sites
                 in sub-lattices of the supercell instead of the primitive cell.
             solver(str): optional
-               Specify the solver used to solve the problem.
+               Specify the groundstate used to solve the problem.
                SCIP is default because it does not require
                to linearize the problem before solving a polynomial
                form pseudo-boolean optimization.
@@ -130,8 +130,8 @@ class UpperboundSolver(MSONable):
                Whether to use the previous solution as an initialization
                of the current problem solve. Default is False.
             solver_options(dict): optional
-               Options to be passed into the solver when calling Problem.solve().
-               See cvxpy and the specific solver documentations for detail.
+               Options to be passed into the groundstate when calling Problem.solve().
+               See cvxpy and the specific groundstate documentations for detail.
         """
         self._ensemble = ensemble
         self._structure = self._ensemble.processor.structure
@@ -479,7 +479,7 @@ class UpperboundSolver(MSONable):
             # Convert species object to string, if any.
             "other_constraints": jsanitize(self._other_constraints),
             "warm_start": self.warm_start,
-            "solver": self.solver,
+            "groundstate": self.solver,
             "solver_options": self.solver_options,
             "_ground_state_solution": (
                 self._ground_state_solution.tolist()
@@ -509,7 +509,7 @@ class UpperboundSolver(MSONable):
             fixed_composition=d.get("fixed_composition"),
             other_constraints=d.get("other_constraints"),
             warm_start=d.get("warm_start", False),
-            solver=d.get("solver", "SCIP"),
+            solver=d.get("groundstate", "SCIP"),
             solver_options=d.get("solver_options"),
         )
         solution = d.get("_ground_state_solution")

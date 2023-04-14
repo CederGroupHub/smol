@@ -6,7 +6,7 @@ from typing import List, Tuple, Union
 import numpy as np
 from numpy.typing import ArrayLike
 
-from smol.capp.generate.solver.upper_bound.utils.indices import (
+from smol.capp.generate.groundstate.upper_bound.utils.indices import (
     map_ewald_indices_to_variable_indices,
 )
 from smol.moca.processor import (
@@ -31,7 +31,7 @@ def get_upper_bound_terms_from_expansion_processor(
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
-            either -1 or -2. See documentation in solver.upper_bound.variables.
+            either -1 or -2. See documentation in groundstate.upper_bound.variables.
         expansion_processor(ClusterExpansionProcessor):
             A cluster expansion processor to generate objective function with.
         group_output_by_function(bool): optional
@@ -135,7 +135,7 @@ def get_upper_bound_terms_from_decomposition_processor(
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
-            either -1 or -2. See documentation in solver.upper_bound.variables.
+            either -1 or -2. See documentation in groundstate.upper_bound.variables.
         decomposition_processor(ClusterDecompositionProcessor):
             A cluster decomposition processor to generate objective function with.
         group_output_by_orbit(bool): optional
@@ -236,7 +236,7 @@ def get_upper_bound_terms_from_ewald_processor(
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
-            either -1 or -2. See documentation in solver.upper_bound.variables.
+            either -1 or -2. See documentation in groundstate.upper_bound.variables.
         ewald_processor(ClusterDecompositionProcessor):
             A cluster decomposition processor to generate objective function with.
             You are fully responsible for checking variables have the correct site
@@ -296,7 +296,7 @@ def get_upper_bound_terms_from_chemical_potentials(
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
-            either -1 or -2. See documentation in solver.upper_bound.variables.
+            either -1 or -2. See documentation in groundstate.upper_bound.variables.
         chemical_table(ArrayLike):
             Chemical potentials corresponding to each species (cols) on each site
             (rows). Simply use ensemble._chemical_potential["table"].

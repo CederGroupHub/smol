@@ -8,7 +8,7 @@ from cvxpy import Expression
 from cvxpy.constraints.constraint import Constraint
 from pymatgen.core import Structure
 
-from smol.capp.generate.solver.upper_bound.utils.indices import (
+from smol.capp.generate.groundstate.upper_bound.utils.indices import (
     get_variable_indices_for_each_composition_component,
 )
 from smol.moca.composition import CompositionSpace
@@ -131,7 +131,7 @@ def get_upper_bound_composition_space_constraints(
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
-            either -1 or -2. See documentation in solver.upper_bound.variables.
+            either -1 or -2. See documentation in groundstate.upper_bound.variables.
         processor_structure(Structure):
             The supercell structure stored in a processor's structure attribute.
             The sub-lattices must match the processor structure, or they must be the result
@@ -211,7 +211,7 @@ def get_upper_bound_fixed_composition_constraints(
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
-            either -1 or -2. See documentation in solver.upper_bound.variables.
+            either -1 or -2. See documentation in groundstate.upper_bound.variables.
         processor_structure(Structure):
             The supercell structure stored in a processor's structure attribute.
             The sub-lattices must match the processor structure, or they must be the result

@@ -1,14 +1,14 @@
-"""Test boolean variables' generation for upper-bound solver."""
+"""Test boolean variables' generation for upper-bound groundstate."""
 import numpy as np
 import numpy.testing as npt
 import pytest
 
-from smol.capp.generate.solver import (
+from smol.capp.generate.groundstate import (
     get_occupancy_from_variables,
     get_upper_bound_variables_from_sublattices,
     get_variable_values_from_occupancy,
 )
-from smol.capp.generate.solver.upper_bound.utils.indices import (
+from smol.capp.generate.groundstate.upper_bound.utils.indices import (
     get_sublattice_indices_by_site,
 )
 from smol.cofe.space.domain import get_allowed_species

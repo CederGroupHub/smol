@@ -1,4 +1,4 @@
-"""Test solver class construction and usage."""
+"""Test groundstate class construction and usage."""
 from itertools import permutations, product
 
 import numpy as np
@@ -7,8 +7,8 @@ import pytest
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core import Lattice, Structure
 
-from smol.capp.generate.solver import get_variable_values_from_occupancy
-from smol.capp.generate.solver.upper_bound.solver import UpperboundSolver
+from smol.capp.generate.groundstate import get_variable_values_from_occupancy
+from smol.capp.generate.groundstate.upper_bound.solver import UpperboundSolver
 from smol.cofe import ClusterExpansion, ClusterSubspace
 from smol.moca import Ensemble
 from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts

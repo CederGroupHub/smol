@@ -7,13 +7,13 @@ import numpy.testing as npt
 import pytest
 from pymatgen.core import Species
 
-from smol.capp.generate.solver import get_upper_bound_variables_from_sublattices
-from smol.capp.generate.solver.upper_bound.utils.indices import (
+from smol.capp.generate.groundstate import get_upper_bound_variables_from_sublattices
+from smol.capp.generate.groundstate.upper_bound.utils.indices import (
     get_sublattice_indices_by_site,
     get_variable_indices_for_each_composition_component,
     map_ewald_indices_to_variable_indices,
 )
-from smol.capp.generate.solver.upper_bound.utils.terms import (
+from smol.capp.generate.groundstate.upper_bound.utils.terms import (
     get_auxiliary_variable_values,
     get_expression_and_auxiliary_from_terms,
 )

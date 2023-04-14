@@ -1,12 +1,12 @@
-"""Utilities to perform solver tests. Only valid for exotic ensemble."""
+"""Utilities to perform groundstate tests. Only valid for exotic ensemble."""
 from copy import deepcopy
 
 import numpy as np
 import numpy.testing as npt
 from pymatgen.core import Species
 
-from smol.capp.generate.solver import get_variable_values_from_occupancy
-from smol.capp.generate.solver.upper_bound.utils.indices import (
+from smol.capp.generate.groundstate import get_variable_values_from_occupancy
+from smol.capp.generate.groundstate.upper_bound.utils.indices import (
     get_sublattice_indices_by_site,
 )
 from smol.cofe.space.domain import Vacancy

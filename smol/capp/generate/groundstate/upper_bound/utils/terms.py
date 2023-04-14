@@ -7,7 +7,7 @@ from cvxpy.constraints.constraint import Constraint
 from numpy.typing import ArrayLike
 
 
-# TODO: in the future, allow writing solver input files from terms,
+# TODO: in the future, allow writing groundstate input files from terms,
 #  which may support non-linear objectives and constraints.
 def get_auxiliary_variable_values(
     variable_values: ArrayLike, indices_in_auxiliary_products: List[List[int]]

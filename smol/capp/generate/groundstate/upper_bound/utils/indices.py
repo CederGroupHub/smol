@@ -26,7 +26,7 @@ def get_variable_indices_for_each_composition_component(
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
-            either -1 or -2. See documentation in solver.upper_bound.variables.
+            either -1 or -2. See documentation in groundstate.upper_bound.variables.
         processor_structure(Structure):
             The supercell structure stored in a processor's structure attribute.
             The sub-lattices must match the processor structure, or they must be the result
@@ -76,7 +76,7 @@ def map_ewald_indices_to_variable_indices(
         variable_indices(list[list[int]]):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
-            either -1 or -2. See documentation in solver.upper_bound.variables.
+            either -1 or -2. See documentation in groundstate.upper_bound.variables.
     Returns:
         list[int]:
             Index of cvxpy variable corresponding to each ewald matrix row. If a
