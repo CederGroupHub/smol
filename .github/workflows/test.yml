@@ -14,7 +14,8 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Only 20.04 is known to work with scip 8.0.0
+    runs-on: ubuntu-20.04
     strategy:
       max-parallel: 10
       matrix:
