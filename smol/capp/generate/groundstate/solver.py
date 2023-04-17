@@ -78,7 +78,18 @@ class ProblemCanonicals(NamedTuple):
 
 
 class GroundStateSolver(MSONable):
-    """A groundstate for the upper-bound problem of cluster expansion."""
+    """Class to solve for the ground state occupancy/structure of a given ensemble.
+
+    This implementation solves for the ground state for a fixed super-cell size stored
+    as the supercell matrix in the ensemble's processor. Meaning that the solution
+    corresponds only to an upper bound of the global ground state of the corresponding
+    infinitely sized system.
+
+    For more details on the nature of the global problem, finding upper and lower bounds
+    please see:
+
+    https://doi.org/10.1103/PhysRevB.94.134424
+    """
 
     def __init__(
         self,
@@ -90,20 +101,20 @@ class GroundStateSolver(MSONable):
         solver: str = "SCIP",
         solver_options: dict = None,
     ):
-        """Initialize UpperboundSolver.
+        """Initialize GroundStateSolver.
 
         Args:
-            ensemble(Ensemble):
+            ensemble (Ensemble):
                 An ensemble to initialize the problem with. If you want to modify
                 sub-lattices, please do that in ensemble before initializing the
                 groundstate. Sub-lattices can not be modified after giving the ensemble!
-            initial_occupancy(ArrayLike): optional
+            initial_occupancy (ArrayLike): optional
                 An initial occupancy used to set the occupancy of manually restricted
                 sites that may have more than one allowed species. Also used to set up
                 the initial composition when solving in a canonical ensemble.
                 Must be provided if any site has been manually restricted, or solving
                 canonical ensemble.
-            fixed_composition(ArrayLike): optional
+            fixed_composition (ArrayLike): optional
                 An array of floats corresponding to the "counts" format of composition
                 in CompositionSpace. See moca.composition. Unit is per super-cell.
                 If the ensemble is canonical (no chemical potential has been set), will
@@ -114,22 +125,22 @@ class GroundStateSolver(MSONable):
                 If any of initial_occupancy or fixed_composition is provided, you are
                 fully responsible to ensure that they satisfy charge balance and other
                 constraints.
-            other_constraints(list): optional
+            other_constraints (list): optional
                 Other constraints to set in composition space. See moca.composition
                 for detailed description.
                 Note that constraints are now to be satisfied with the number of sites
                 in sub-lattices of the supercell instead of the primitive cell.
-            solver(str): optional
+            solver (str): optional
                Specify the groundstate used to solve the problem.
                SCIP is default because it does not require
                to linearize the problem before solving a polynomial
                form pseudo-boolean optimization.
                See cvxpy and PySciOpt documentations on how to correctly
                configure SCIP for cvxpy.
-            warm_start(bool): optional
+            warm_start (bool): optional
                Whether to use the previous solution as an initialization
                of the current problem solve. Default is False.
-            solver_options(dict): optional
+            solver_options (dict): optional
                Options to be passed into the groundstate when calling Problem.solve().
                See cvxpy and the specific groundstate documentations for detail.
         """
@@ -501,7 +512,7 @@ class GroundStateSolver(MSONable):
             d(dict):
                 Serialized dictionary, may contain previous solutions.
         Returns:
-            UpperboundSolver.
+            GroundStateSolver
         """
         solver = cls(
             ensemble=Ensemble.from_dict(d["ensemble"]),
