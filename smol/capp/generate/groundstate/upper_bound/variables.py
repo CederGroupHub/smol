@@ -16,35 +16,37 @@ __author__ = "Fengyu Xie"
 
 def get_upper_bound_variables_from_sublattices(
     sublattices: List[Sublattice],
-    processor_structure: Structure,
+    structure: Structure,
     initial_occupancy: ArrayLike = None,
 ) -> Tuple[cp.Variable, List[List[int]]]:
-    """Get cvxpy boolean variables for the upper-bound problem from processor.
+    """Get cvxpy boolean variables for the upper-bound problem from a list sublattices.
 
     Inactive sites (sites will only 1 allowed species) will not be added into variables.
     Args:
-        sublattices(list[Sublattice]):
+        sublattices (list[Sublattice]):
             Sub-lattices to build the upper-bound problem on.
             Note:1, Must contain all sub-lattices in the ensemble! 2, Must either be
-            original sub-lattices computed from the processor_structure, or sub-lattices
+            original sub-lattices computed from the structure, or sub-lattices
             split from those original sub-lattices with the initial_occupancy, such that
             the encoding of species can correctly refer to the species index in the
-            processor_structure's site_space!
-        processor_structure(Structure):
-            The supercell structure stored in a processor's structure attribute.
-            The sub-lattices must match the processor structure, or they must be the result
-            of splitting with the initial_occupancy. See smol.moca.sublattice for the
-            explanation of splitting a sub-lattice.
-        initial_occupancy(ArrayLike):
+            structure's site_space!
+        structure (Structure):
+            The supercell structure stored in a processor's structure attribute that
+            was used to create the given sub-lattices.
+            The sub-lattices must match the processor structure, or they must be the
+            result of splitting with the initial_occupancy. See smol.moca.sublattice for
+            the explanation of splitting a sub-lattice.
+        initial_occupancy (ArrayLike):
             An encoded occupancy string used to determine which species should occupy a
-            manually restricted site in an active sub-lattice. If any site has been manually
-            restricted, this argument will be mandatory.
+            manually restricted site in an active sub-lattice. If any site has been
+            manually restricted, this argument will be mandatory.
+
     Returns:
         cp.Variable, list[list[int]]:
           Flatten variables for each species on active sites; list of variable
           index corresponding to each site and species indices in
           its site space. Each sub-list will have the same shape as the corresponding
-          original site space in processor_structure.
+          original site space in structure.
           There are two cases when marking an inactive site:
           If a species is not allowed in the current sub-lattice setting (possibly due
           to a split sub-lattice does not contain this species), it will be marked as
@@ -54,9 +56,9 @@ def get_upper_bound_variables_from_sublattices(
           created on this site.
     """
     n_variables = 0
-    num_sites = len(processor_structure)
+    num_sites = len(structure)
     # Original site spaces before any potential sub-lattice split and restriction.
-    orig_site_spaces = get_allowed_species(processor_structure)
+    orig_site_spaces = get_allowed_species(structure)
 
     variable_indices = []
     site_sublattice_ids = get_sublattice_indices_by_site(sublattices)
