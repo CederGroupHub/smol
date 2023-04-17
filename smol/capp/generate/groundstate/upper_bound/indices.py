@@ -14,7 +14,7 @@ __author__ = "Fengyu Xie"
 def get_variable_indices_for_each_composition_component(
     sublattices: List[Sublattice],
     variable_indices: List[List[int]],
-    processor_structure: Structure,
+    structure: Structure,
 ) -> List[Tuple[List[int], int]]:
     """Get variables and the number of restricted sites for each composition component.
 
@@ -27,7 +27,7 @@ def get_variable_indices_for_each_composition_component(
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
             either -1 or -2. See documentation in groundstate.upper_bound.variables.
-        processor_structure(Structure):
+        structure(Structure):
             The supercell structure stored in a processor's structure attribute.
             The sub-lattices must match the processor structure, or they must be the result
             of splitting with the initial_occupancy. See smol.moca.sublattice for the
@@ -39,7 +39,7 @@ def get_variable_indices_for_each_composition_component(
             or naturally inactive to always be occupied by the species corresponding
             to this component. Used to quickly generate composition constraints.
     """
-    orig_site_spaces = get_allowed_species(processor_structure)
+    orig_site_spaces = get_allowed_species(structure)
 
     var_ids_for_dims = []
     for sublattice in sublattices:
@@ -62,13 +62,13 @@ def get_variable_indices_for_each_composition_component(
 
 
 def map_ewald_indices_to_variable_indices(
-    processor_structure: Structure,
+    structure: Structure,
     variable_indices: List[List[int]],
 ) -> List[int]:
     """Map row indices in ewald matrix to indices of boolean variables.
 
     Args:
-        processor_structure(Structure):
+        structure(Structure):
             The structure attribute of ensemble Processor. This is required
             to correctly parse the rows in the ewald_structure of an
             EwaldTerm, as the given sub-lattices might come form a split
@@ -91,7 +91,7 @@ def map_ewald_indices_to_variable_indices(
     """
     num_sites = len(variable_indices)
 
-    orig_site_spaces = get_allowed_species(processor_structure)
+    orig_site_spaces = get_allowed_species(structure)
 
     ewald_ids_to_var_ids = []
     for site_id in range(num_sites):
