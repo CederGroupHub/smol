@@ -503,7 +503,7 @@ class UpperboundSolver(MSONable):
         Returns:
             UpperboundSolver.
         """
-        socket = cls(
+        solver = cls(
             ensemble=Ensemble.from_dict(d["ensemble"]),
             initial_occupancy=d.get("initial_occupancy"),
             fixed_composition=d.get("fixed_composition"),
@@ -515,8 +515,8 @@ class UpperboundSolver(MSONable):
         solution = d.get("_ground_state_solution")
         if solution is not None:
             solution = np.array(solution).astype(int)  # Save as 0 and 1.
-        socket._ground_state_solution = solution
-        socket._ground_state_energy = d.get("_ground_state_energy")
-        socket._set_canonical_values()
+        solver._ground_state_solution = solution
+        solver._ground_state_energy = d.get("_ground_state_energy")
+        solver._set_canonical_values()
 
-        return socket
+        return solver
