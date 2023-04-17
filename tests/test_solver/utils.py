@@ -6,7 +6,7 @@ import numpy.testing as npt
 from pymatgen.core import Species
 
 from smol.capp.generate.groundstate import get_variable_values_from_occupancy
-from smol.capp.generate.groundstate.upper_bound.utils.indices import (
+from smol.capp.generate.groundstate.upper_bound.indices import (
     get_sublattice_indices_by_site,
 )
 from smol.cofe.space.domain import Vacancy

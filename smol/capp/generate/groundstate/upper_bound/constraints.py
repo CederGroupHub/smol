@@ -8,7 +8,7 @@ from cvxpy import Expression
 from cvxpy.constraints.constraint import Constraint
 from pymatgen.core import Structure
 
-from smol.capp.generate.groundstate.upper_bound.utils.indices import (
+from smol.capp.generate.groundstate.upper_bound.indices import (
     get_variable_indices_for_each_composition_component,
 )
 from smol.moca.composition import CompositionSpace

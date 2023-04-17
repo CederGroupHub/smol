@@ -8,7 +8,7 @@ from smol.capp.generate.groundstate import (
     get_upper_bound_variables_from_sublattices,
     get_variable_values_from_occupancy,
 )
-from smol.capp.generate.groundstate.upper_bound.utils.indices import (
+from smol.capp.generate.groundstate.upper_bound.indices import (
     get_sublattice_indices_by_site,
 )
 from smol.cofe.space.domain import get_allowed_species

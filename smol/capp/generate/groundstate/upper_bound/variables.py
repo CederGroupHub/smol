@@ -6,10 +6,11 @@ import numpy as np
 from numpy.typing import ArrayLike
 from pymatgen.core import Structure
 
+from smol.capp.generate.groundstate.upper_bound.indices import (
+    get_sublattice_indices_by_site,
+)
 from smol.cofe.space.domain import get_allowed_species
 from smol.moca.ensemble import Sublattice
-
-from .utils.indices import get_sublattice_indices_by_site
 
 __author__ = "Fengyu Xie"
 

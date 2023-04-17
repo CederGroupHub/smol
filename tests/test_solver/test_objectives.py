@@ -12,7 +12,7 @@ from smol.capp.generate.groundstate.upper_bound.objectives import (
     get_upper_bound_terms_from_ewald_processor,
     get_upper_bound_terms_from_expansion_processor,
 )
-from smol.capp.generate.groundstate.upper_bound.utils.terms import (
+from smol.capp.generate.groundstate.upper_bound.terms import (
     get_auxiliary_variable_values,
     get_expression_and_auxiliary_from_terms,
 )

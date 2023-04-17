@@ -6,7 +6,7 @@ from typing import List, Tuple, Union
 import numpy as np
 from numpy.typing import ArrayLike
 
-from smol.capp.generate.groundstate.upper_bound.utils.indices import (
+from smol.capp.generate.groundstate.upper_bound.indices import (
     map_ewald_indices_to_variable_indices,
 )
 from smol.moca.processor import (
