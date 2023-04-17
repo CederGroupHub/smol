@@ -8,7 +8,7 @@ from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core import Lattice, Structure
 
 from smol.capp.generate.groundstate import get_variable_values_from_occupancy
-from smol.capp.generate.groundstate.solver import UpperboundSolver
+from smol.capp.generate.groundstate.solver import GroundStateSolver
 from smol.cofe import ClusterExpansion, ClusterSubspace
 from smol.moca import Ensemble
 from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
@@ -19,13 +19,13 @@ from ..utils import assert_msonable
 # Only SCIP tried on this instance.
 @pytest.fixture
 def exotic_solver(exotic_ensemble, exotic_initial_occupancy):
-    return UpperboundSolver(exotic_ensemble, exotic_initial_occupancy)
+    return GroundStateSolver(exotic_ensemble, exotic_initial_occupancy)
 
 
 def test_msonable(exotic_solver, exotic_initial_occupancy):
     assert_msonable(exotic_solver)
     solver_dict = exotic_solver.as_dict()
-    solver_reload = UpperboundSolver.from_dict(solver_dict)
+    solver_reload = GroundStateSolver.from_dict(solver_dict)
     with pytest.raises(RuntimeError):
         _ = solver_reload.ground_state_solution
     with pytest.raises(RuntimeError):
@@ -127,10 +127,10 @@ def simple_ensemble(simple_expansion, request):
 @pytest.fixture(params=["SCIP", "GUROBI"])
 def simple_solver(simple_ensemble, request):
     if simple_ensemble.chemical_potentials is not None:
-        return UpperboundSolver(simple_ensemble, solver=request.param)
+        return GroundStateSolver(simple_ensemble, solver=request.param)
     else:
         fixed_composition = np.array([4, 4])
-        return UpperboundSolver(
+        return GroundStateSolver(
             simple_ensemble, fixed_composition=fixed_composition, solver=request.param
         )
 

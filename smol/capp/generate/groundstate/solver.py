@@ -77,7 +77,7 @@ class ProblemCanonicals(NamedTuple):
     num_auxiliary_constraints: int
 
 
-class UpperboundSolver(MSONable):
+class GroundStateSolver(MSONable):
     """A groundstate for the upper-bound problem of cluster expansion."""
 
     def __init__(
