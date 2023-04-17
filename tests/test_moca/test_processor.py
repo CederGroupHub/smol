@@ -13,6 +13,7 @@ from smol.moca.processor import (
     EwaldProcessor,
 )
 from smol.moca.processor.base import Processor
+from smol.utils.cluster.numthreads import DEFAULT_NUM_THREADS
 from tests.utils import assert_msonable, gen_random_occupancy, gen_random_structure
 
 pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
@@ -55,11 +56,6 @@ def test_encode_decode_property(composite_processor, rng):
     for species, space in zip(decoccu, composite_processor.allowed_species):
         assert species in space
     npt.assert_equal(occu, composite_processor.encode_occupancy(decoccu))
-
-
-def test_set_threads():
-    # TODO implenent this
-    pass
 
 
 def test_site_spaces(ce_processor):
@@ -255,3 +251,49 @@ def test_bad_composite(cluster_subspace, rng):
         proc.add_processor(
             ClusterExpansionProcessor(new_cs, scmatrix, coefficients=coefs)
         )
+
+
+def test_set_threads(single_subspace):
+    coefs = 2 * np.random.random(single_subspace.num_corr_functions)
+    scmatrix = 3 * np.eye(3)
+    expansion = ClusterExpansion(single_subspace, coefs)
+
+    ceproc = ClusterExpansionProcessor(single_subspace, scmatrix, coefs)
+    cdproc = ClusterDecompositionProcessor(
+        single_subspace,
+        scmatrix,
+        expansion.cluster_interaction_tensors,
+    )
+
+    # assert defaults
+    assert ceproc.num_threads == DEFAULT_NUM_THREADS
+    assert ceproc._evaluator.num_threads == ceproc.num_threads
+    assert ceproc.num_threads_full == DEFAULT_NUM_THREADS
+
+    for eval_data in ceproc._eval_data_by_sites.values():
+        assert eval_data.evaluator.num_threads == ceproc.num_threads
+
+    assert cdproc.num_threads == DEFAULT_NUM_THREADS
+    assert ceproc.num_threads_full == DEFAULT_NUM_THREADS
+
+    for eval_data in cdproc._eval_data_by_sites.values():
+        assert eval_data.evaluator.num_threads == cdproc.num_threads
+
+    # assert setting thread values
+    ceproc.num_threads = 1
+    cdproc.num_threads = 1
+
+    ceproc.num_threads_full = 1
+    cdproc.num_threads_full = 1
+
+    assert ceproc.num_threads == 1
+    assert ceproc.num_threads_full == 1
+
+    for eval_data in ceproc._eval_data_by_sites.values():
+        assert eval_data.evaluator.num_threads == 1
+
+    assert cdproc.num_threads == 1
+    assert ceproc.num_threads_full == 1
+
+    for eval_data in ceproc._eval_data_by_sites.values():
+        assert eval_data.evaluator.num_threads == 1
