@@ -22,7 +22,7 @@ jobs:
         os: [ubuntu-latest, windows-2019, macos-latest]  # Note: windows-2019 is needed for older Python versions
     env:
       CIBW_SKIP: pp*  ${{ github.event.inputs.CIBW_SKIP }}  # skip pypy wheels
-      CIBW_BUILD: ["cp38-*", "cp39-*", "cp310-*", "cp311-*"]
+      CIBW_BUILD: "cp38-* cp39-* cp310-* cp311-*"
       CIBW_ARCHS: all
       CIBW_BUILD_VERBOSITY: 1
 
