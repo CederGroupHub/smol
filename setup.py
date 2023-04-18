@@ -22,10 +22,13 @@ import os
 import shutil
 import sys
 
-# get numpy to include headers
-import numpy
-from setuptools import Command, Extension, setup
+from setuptools import Command, Extension, dist, setup
 from setuptools.command.build_ext import build_ext
+
+# TODO move to new build framework using pyproject.toml and without setup.py
+# get numpy to include headers
+dist.Distribution().fetch_build_eggs(["numpy>=1.24"])
+import numpy
 
 from smol.utils._build import (
     check_openmp_support,

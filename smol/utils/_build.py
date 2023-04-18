@@ -9,6 +9,7 @@ import textwrap
 import traceback
 import warnings
 
+from setuptools import dist
 from setuptools.command.build_ext import customize_compiler, new_compiler
 
 OMP_FLAGS = {
@@ -20,8 +21,8 @@ OMP_FLAGS = {
 
 def compile_test_program(code, extra_preargs=None, extra_postargs=None):
     """Check that some C code can be compiled and run."""
-    ccompiler = new_compiler()
-    customize_compiler(ccompiler)
+    compiler = new_compiler()
+    customize_compiler(compiler)
 
     start_dir = os.path.abspath(".")
 
@@ -36,13 +37,13 @@ def compile_test_program(code, extra_preargs=None, extra_postargs=None):
             os.mkdir("objects")
 
             # Compile, test program
-            ccompiler.compile(
+            compiler.compile(
                 ["test_program.c"], output_dir="objects", extra_postargs=extra_postargs
             )
 
             # Link test program
-            objects = glob.glob(os.path.join("objects", "*" + ccompiler.obj_extension))
-            ccompiler.link_executable(
+            objects = glob.glob(os.path.join("objects", "*" + compiler.obj_extension))
+            compiler.link_executable(
                 objects,
                 "test_program",
                 extra_preargs=extra_preargs,
@@ -186,6 +187,9 @@ def check_openmp_support(compiler):
 
 def cythonize_extensions(extensions, **cythonize_kwargs):
     """Cythonize extensions."""
+    # TODO move to new build framework and remove this
+    # needed to import numpy and cython at build time
+    dist.Distribution().fetch_build_eggs(["Cython>=0.29.34", "numpy>=1.24"])
     import numpy
     from Cython.Build import cythonize
 

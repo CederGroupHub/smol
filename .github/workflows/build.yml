@@ -48,7 +48,7 @@ jobs:
           # Make sure to use a libomp version binary compatible with the oldest
           # supported version of the macos SDK as libomp will be vendored into the
           # smol wheels for macos.
-      
+
           if [[ "$CIBW_BUILD" == *-macosx_arm64 ]]; then
               # SciPy requires 12.0 on arm to prevent kernel panics
               # https://github.com/scipy/scipy/issues/14688
@@ -59,13 +59,13 @@ jobs:
               export MACOSX_DEPLOYMENT_TARGET=10.9
               OPENMP_URL="https://anaconda.org/conda-forge/llvm-openmp/11.1.0/download/osx-64/llvm-openmp-11.1.0-hda6cdc1_1.tar.bz2"
           fi
-      
+
           # use conda to install llvm-openmp
           # Note that we do NOT activate the conda environment, we just add the
           # library install path to CFLAGS/CXXFLAGS/LDFLAGS below.
           sudo conda create -n build $OPENMP_URL
           PREFIX="/usr/local/miniconda/envs/build"
-      
+
           export CC=/usr/bin/clang
           export CXX=/usr/bin/clang++
           export CPPFLAGS="$CPPFLAGS -Xpreprocessor -fopenmp"
