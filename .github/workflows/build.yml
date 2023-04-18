@@ -17,15 +17,61 @@ jobs:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-20.04, windows-2019, macos-10.15]
+        os: [ubuntu-latest, windows-2019, macos-latest]  # Note: windows-2019 is needed for older Python versions
     env:
       CIBW_SKIP: pp*  ${{ github.event.inputs.CIBW_SKIP }}  # skip pypy wheels
+      CIBW_BUILD: ["cp38-*", "cp39-*", "cp310-*", "cp311-*"]
+      CIBW_ARCHS: all
+      CIBW_BUILD_VERBOSITY: 1
 
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      # See:
+      # https://cibuildwheel.readthedocs.io/en/stable/faq/#macos-building-cpython-38-wheels-on-arm64
+      # https://github.com/pypa/cibuildwheel/issues/1414
+      - name: Install experimental MacOSX Py38
+        if: (matrix.os == 'macos-latest') && (env.CIBW_BUILD == 'cp38-macosx_arm64')
+        run: |
+          curl -o /tmp/Python38.pkg https://www.python.org/ftp/python/3.8.10/python-3.8.10-macos11.pkg
+          sudo installer -pkg /tmp/Python38.pkg -target /
+          sh "/Applications/Python 3.8/Install Certificates.command"
+
+      # Install openmp from conda since macOS compilers do not ship with it.
+      - name: Setup openmp for macOS
+        if: matrix.os == 'macos-latest'
+        run: |
+          # Make sure to use a libomp version binary compatible with the oldest
+          # supported version of the macos SDK as libomp will be vendored into the
+          # smol wheels for macos.
+      
+          if [[ "$CIBW_BUILD" == *-macosx_arm64 ]]; then
+              # SciPy requires 12.0 on arm to prevent kernel panics
+              # https://github.com/scipy/scipy/issues/14688
+              # We use the same deployment target to match SciPy.
+              export MACOSX_DEPLOYMENT_TARGET=12.0
+              OPENMP_URL="https://anaconda.org/conda-forge/llvm-openmp/11.1.0/download/osx-arm64/llvm-openmp-11.1.0-hf3c4609_1.tar.bz2"
+          else
+              export MACOSX_DEPLOYMENT_TARGET=10.9
+              OPENMP_URL="https://anaconda.org/conda-forge/llvm-openmp/11.1.0/download/osx-64/llvm-openmp-11.1.0-hda6cdc1_1.tar.bz2"
+          fi
+      
+          # use conda to install llvm-openmp
+          # Note that we do NOT activate the conda environment, we just add the
+          # library install path to CFLAGS/CXXFLAGS/LDFLAGS below.
+          sudo conda create -n build $OPENMP_URL
+          PREFIX="/usr/local/miniconda/envs/build"
+      
+          export CC=/usr/bin/clang
+          export CXX=/usr/bin/clang++
+          export CPPFLAGS="$CPPFLAGS -Xpreprocessor -fopenmp"
+          export CFLAGS="$CFLAGS -I$PREFIX/include"
+          export CXXFLAGS="$CXXFLAGS -I$PREFIX/include"
+          export LDFLAGS="$LDFLAGS -Wl,-rpath,$PREFIX/lib -L$PREFIX/lib -lomp"
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.12.1
