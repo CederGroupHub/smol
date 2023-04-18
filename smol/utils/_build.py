@@ -197,7 +197,6 @@ def cythonize_extensions(extensions, **cythonize_kwargs):
     # code even without OpenMP
     basic_check_build()
 
-    n_jobs = os.cpu_count()
 
     compiler_directives = {
         "language_level": 3,
@@ -211,7 +210,6 @@ def cythonize_extensions(extensions, **cythonize_kwargs):
 
     return cythonize(
         extensions,
-        nthreads=n_jobs,
         include_path=[numpy.get_include()],
         compiler_directives=compiler_directives,
     )
