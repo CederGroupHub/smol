@@ -1,8 +1,9 @@
 """Simple mixin class that has an attributed/method that runs in parallel."""
 
-from os import cpu_count
 
-DEFAULT_NUM_THREADS = 2 if cpu_count() >= 2 else cpu_count()
+from .._openmp_helpers import _openmp_effective_numthreads
+
+DEFAULT_NUM_THREADS = _openmp_effective_numthreads(n_threads=2)
 
 
 class SetNumThreads:
@@ -33,8 +34,10 @@ class SetNumThreads:
         if not isinstance(value, int):
             raise TypeError("num_threads must be an integer")
 
-        if value > cpu_count():
-            raise ValueError("num_threads cannot be greater than the number of CPUs")
+        max_threads = _openmp_effective_numthreads()
+        if value > max_threads:
+            raise ValueError(f"num_threads cannot be greater than {max_threads}.")
 
         obj = getattr(instance, self._obj_name)
-        setattr(obj, self._attr_name, value)
+        num_threads = _openmp_effective_numthreads(value)
+        setattr(obj, self._attr_name, num_threads)

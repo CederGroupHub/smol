@@ -151,12 +151,19 @@ extensions = [
         ["smol/utils/cluster/correlations.pyx"],
         language="c",
     ),
+    Extension(
+        "smol.utils._openmp_helpers",
+        ["smol/utils/_openmp_helpers.pyx"],
+        language="c",
+    ),
 ]
+
 
 cmdclass = {
     "clean": CleanCommand,
     "build_ext": build_ext_subclass,
 }
+
 
 setup(
     use_scm_version={"version_scheme": "python-simplified-semver"},

@@ -13,6 +13,7 @@ from smol.moca.processor import (
     EwaldProcessor,
 )
 from smol.moca.processor.base import Processor
+from smol.utils._openmp_helpers import _openmp_effective_numthreads
 from smol.utils.cluster.numthreads import DEFAULT_NUM_THREADS
 from tests.utils import assert_msonable, gen_random_occupancy, gen_random_structure
 
@@ -297,3 +298,11 @@ def test_set_threads(single_subspace):
 
     for eval_data in ceproc._eval_data_by_sites.values():
         assert eval_data.evaluator.num_threads == 1
+
+    # assert -1 gives max number of threads
+    ceproc.num_threads = -1
+    assert ceproc.num_threads == _openmp_effective_numthreads(n_threads=-1)
+
+    # assert setting more complains
+    with pytest.raises(ValueError):
+        ceproc.num_threads = _openmp_effective_numthreads() + 1
