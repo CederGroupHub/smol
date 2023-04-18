@@ -58,6 +58,15 @@ COMPILER_DIRECTIVES = {
 if sys.platform.startswith("darwin"):
     COMPILE_OPTIONS["other"] += ["-mcpu=native", "-stdlib=libc++"]
 
+# Compile option for cython extensions
+cython_kwargs = {}
+if "--force-cython" in sys.argv:
+    cython_kwargs["force"] = True
+    sys.argv.remove("--force-cython")
+if "--annotate-cython" in sys.argv:
+    cython_kwargs["annotate"] = True
+    sys.argv.remove("--annotate-cython")
+
 
 # custom clean command to remove .c files
 # taken from sklearn setup.py
@@ -123,16 +132,6 @@ class build_ext_subclass(build_ext, build_ext_options):
         build_ext.build_extensions(self)
 
 
-# Compile option for cython extensions
-cython_kwargs = {}
-if "--force-cython" in sys.argv:
-    cython_kwargs["force"] = True
-    sys.argv.remove("--force-cython")
-if "--annotate-cython" in sys.argv:
-    cython_kwargs["annotate"] = True
-    sys.argv.remove("--annotate-cython")
-
-
 extensions = [
     Extension(
         "smol.utils.cluster.evaluator",
@@ -161,12 +160,10 @@ extensions = [
     ),
 ]
 
-
 cmdclass = {
     "clean": CleanCommand,
     "build_ext": build_ext_subclass,
 }
-
 
 setup(
     use_scm_version={"version_scheme": "python-simplified-semver"},

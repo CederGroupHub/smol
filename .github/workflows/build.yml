@@ -23,23 +23,13 @@ jobs:
     env:
       CIBW_SKIP: pp*  ${{ github.event.inputs.CIBW_SKIP }}  # skip pypy wheels
       CIBW_BUILD: "cp38-* cp39-* cp310-* cp311-*"
-      CIBW_ARCHS: all
+      CIBW_ARCHS: native
       CIBW_BUILD_VERBOSITY: 1
 
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      # See:
-      # https://cibuildwheel.readthedocs.io/en/stable/faq/#macos-building-cpython-38-wheels-on-arm64
-      # https://github.com/pypa/cibuildwheel/issues/1414
-      - name: Install experimental MacOSX Py38
-        if: (matrix.os == 'macos-latest') && (env.CIBW_BUILD == 'cp38-macosx_arm64')
-        run: |
-          curl -o /tmp/Python38.pkg https://www.python.org/ftp/python/3.8.10/python-3.8.10-macos11.pkg
-          sudo installer -pkg /tmp/Python38.pkg -target /
-          sh "/Applications/Python 3.8/Install Certificates.command"
 
       # Install openmp from conda since macOS compilers do not ship with it.
       - name: Setup openmp for macOS
@@ -48,6 +38,14 @@ jobs:
           # Make sure to use a libomp version binary compatible with the oldest
           # supported version of the macos SDK as libomp will be vendored into the
           # smol wheels for macos.
+          
+          # python 3.8 on macOS See:
+          # https://cibuildwheel.readthedocs.io/en/stable/faq/#macos-building-cpython-38-wheels-on-arm64
+          # https://github.com/pypa/cibuildwheel/issues/1414
+          if [[ $CIBW_BUILD == cp38-macosx_arm64 ]]; then
+              curl -o /tmp/Python38.pkg https://www.python.org/ftp/python/3.8.10/python-3.8.10-macos11.pkg
+              sudo installer -pkg /tmp/Python38.pkg -target /
+              sh "/Applications/Python 3.8/Install Certificates.command"
 
           if [[ "$CIBW_BUILD" == *-macosx_arm64 ]]; then
               # SciPy requires 12.0 on arm to prevent kernel panics
