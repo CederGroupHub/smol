@@ -41,9 +41,7 @@ cpdef _openmp_effective_numthreads(n_threads=None):
     - For ``n_threads = None``,
       - if the ``OMP_NUM_THREADS`` environment variable is set, return
         ``openmp.omp_get_max_threads()``
-      - otherwise, return the minimum between ``openmp.omp_get_max_threads()``
-        and the number of cpus, taking cgroups quotas into account. Cgroups
-        quotas can typically be set by tools such as Docker.
+      - otherwise, default to 2 threads
       The result of ``omp_get_max_threads`` can be influenced by environment
       variable ``OMP_NUM_THREADS`` or at runtime by ``omp_set_num_threads``.
 

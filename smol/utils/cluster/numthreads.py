@@ -3,7 +3,7 @@
 
 from .._openmp_helpers import _openmp_effective_numthreads
 
-DEFAULT_NUM_THREADS = _openmp_effective_numthreads(n_threads=2)
+DEFAULT_NUM_THREADS = _openmp_effective_numthreads(n_threads=None)
 
 
 class SetNumThreads:
