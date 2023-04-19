@@ -54,15 +54,16 @@ repos:
         - --expand-star-imports
         - --ignore-init-module-imports
 
-- repo: https://github.com/PyCQA/flake8
-  rev: 6.0.0
-  hooks:
-  - id: flake8
-    files: ^smol/
-    language_version: python3
-    additional_dependencies:
-    - flake8-typing-imports==1.14.0
-    - flake8-rst==0.8.0
+# removing for now since it cant be configured with a pyproject.toml
+#- repo: https://github.com/PyCQA/flake8
+#  rev: 6.0.0
+#  hooks:
+#  - id: flake8
+#    files: ^smol/
+#    language_version: python3
+#    additional_dependencies:
+#    - flake8-typing-imports==1.14.0
+#    - flake8-rst==0.8.0
     # - flake8-docstrings==1.6.0  # fix these
     # - flake8-rst-docstrings==0.2.3
 

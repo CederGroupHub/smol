@@ -83,3 +83,23 @@ build-backend = "setuptools.build_meta:__legacy__"
 
 [tool.setuptools.packages]
 find = {}  # Scanning implicit namespaces is active by default
+
+[tool.pytest.ini_options]
+addopts  =  "-x --durations = 30 --quiet -rxXs --color = yes"
+filterwarnings  = [
+    "ignore::UserWarning",
+    "ignore::FutureWarning",
+    "ignore::RuntimeWarning"
+]
+
+[tool.pylint.'BASIC']
+good-names  =  "id, kB, i, j, k, f"
+
+[tool.pylint.'MESSAGES CONTROL']
+disable  =  "W0511, R0904, R0903, R0913, R0902, R0914, C0415"
+
+[tool.codespell]
+skip = "*.c, ./.*"
+count = ""
+quiet-level = 3
+ignore-words-list = "nd,tread"
