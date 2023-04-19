@@ -197,7 +197,6 @@ def cythonize_extensions(extensions, **cythonize_kwargs):
     # code even without OpenMP
     basic_check_build()
 
-
     compiler_directives = {
         "language_level": 3,
         "boundscheck": False,  # set to True for debugging
