@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Union
+from typing import Dict, List, Union
 
 from smol.utils.descriptor import SetMany
 
@@ -12,7 +12,7 @@ class A:
 
 @dataclass
 class Container:
-    many: Union[list[A], dict[int, A]]
+    many: Union[List[A], Dict[int, A]]
     num_threads: int = field(default=SetMany("num_threads", "many"))
 
 
