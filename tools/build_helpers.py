@@ -9,7 +9,6 @@ import textwrap
 import traceback
 import warnings
 
-from setuptools import dist
 from setuptools.command.build_ext import customize_compiler, new_compiler
 
 OMP_FLAGS = {
@@ -187,9 +186,6 @@ def check_openmp_support(compiler):
 
 def cythonize_extensions(extensions, **cythonize_kwargs):
     """Cythonize extensions."""
-    # TODO move to new build framework and remove this
-    # needed to import numpy and cython at build time
-    dist.Distribution().fetch_build_eggs(["Cython>=0.29.34", "numpy>=1.24"])
     import numpy
     from Cython.Build import cythonize
 

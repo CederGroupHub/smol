@@ -1,36 +1,13 @@
-# Copyright (c)
-
-"""
-smol -- Statistical Mechanics On Lattices
-
-Lighthweight but caffeinated Python implementations of computational methods
-for statistical mechanical calculations of configurational states in
-crystalline material systems.
-
-
-smol is a minimal implementation of computational methods to calculate statistical
-mechanical and thermodynamic properties of crystalline material systems based on
-the cluster expansion method from alloy theory and related methods. Although smol
-is intentionally lightweight---in terms of dependencies and built-in functionality
----it has a modular design that closely follows underlying mathematical formalism
-and provides useful abstractions to easily extend existing methods or implement and
-test new ones. Finally, although conceived mainly for method development, smol can
-(and is being) used in production for materials science research applications.
-"""
-
+"""smol -- Statistical Mechanics On Lattices"""
 import os
 import shutil
 import sys
 
-from setuptools import Command, Extension, dist, setup
-from setuptools.command.build_ext import build_ext
-
-# TODO move to new build framework using pyproject.toml and without setup.py
-# get numpy to include headers
-dist.Distribution().fetch_build_eggs(["numpy>=1.24"])
 import numpy
+from setuptools import Command, Extension, setup
+from setuptools.command.build_ext import build_ext as build_ext_
 
-from smol.utils._build import (
+from tools.build_helpers import (
     check_openmp_support,
     cythonize_extensions,
     get_openmp_flag,
@@ -58,19 +35,10 @@ COMPILER_DIRECTIVES = {
 if sys.platform.startswith("darwin"):
     COMPILE_OPTIONS["other"] += ["-mcpu=native", "-stdlib=libc++"]
 
-# Compile option for cython extensions
-cython_kwargs = {}
-if "--force-cython" in sys.argv:
-    cython_kwargs["force"] = True
-    sys.argv.remove("--force-cython")
-if "--annotate-cython" in sys.argv:
-    cython_kwargs["annotate"] = True
-    sys.argv.remove("--annotate-cython")
-
 
 # custom clean command to remove .c files
 # taken from sklearn setup.py
-class CleanCommand(Command):
+class clean(Command):
     description = "Remove build artifacts from the source tree"
 
     user_options = []
@@ -106,9 +74,6 @@ class CleanCommand(Command):
                     shutil.rmtree(os.path.join(dirpath, dirname))
 
 
-# By subclassing build_extensions we have the actual compiler that will be used which is
-# really known only after finalize_options
-# http://stackoverflow.com/questions/724664/python-distutils-how-to-get-a-compiler-that-is-going-to-be-used  # noqa
 class build_ext_options:
     def build_options(self):
         OMP_SUPPORTED = check_openmp_support(self.compiler)
@@ -126,11 +91,20 @@ class build_ext_options:
                 e.extra_link_args += omp_flag
 
 
-class build_ext_subclass(build_ext, build_ext_options):
+class build_ext(build_ext_, build_ext_options):
     def build_extensions(self):
         build_ext_options.build_options(self)
-        build_ext.build_extensions(self)
+        build_ext_.build_extensions(self)
 
+
+# Compile option for cython extensions
+cython_kwargs = {}
+if "--force-cython" in sys.argv:
+    cython_kwargs["force"] = True
+    sys.argv.remove("--force-cython")
+if "--annotate-cython" in sys.argv:
+    cython_kwargs["annotate"] = True
+    sys.argv.remove("--annotate-cython")
 
 extensions = [
     Extension(
@@ -161,12 +135,11 @@ extensions = [
 ]
 
 cmdclass = {
-    "clean": CleanCommand,
-    "build_ext": build_ext_subclass,
+    "clean": clean,
+    "build_ext": build_ext,
 }
 
 setup(
-    use_scm_version={"version_scheme": "python-simplified-semver"},
     ext_modules=cythonize_extensions(extensions, **cython_kwargs),
     cmdclass=cmdclass,
     include_dirs=numpy.get_include(),
