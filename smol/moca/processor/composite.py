@@ -123,9 +123,10 @@ class CompositeProcessor(Processor):
         Returns:
             array: correlation vector
         """
-        return np.concatenate(
-            [pr.compute_feature_vector(occupancy) for pr in self._processors]
-        )
+        features = [
+            np.array(pr.compute_feature_vector(occupancy)) for pr in self._processors
+        ]
+        return np.append(features[0], features[1:])
 
     def compute_feature_vector_change(self, occupancy, flips):
         """
@@ -143,12 +144,12 @@ class CompositeProcessor(Processor):
         Returns:
             array: change in feature vector
         """
-        return np.concatenate(
-            [
-                pr.compute_feature_vector_change(occupancy, flips)
-                for pr in self._processors
-            ]
-        )
+        updates = [
+            np.array(pr.compute_feature_vector_change(occupancy, flips))
+            for pr in self._processors
+        ]
+        # TODO you may be able to cut some speed by pre-allocating this
+        return np.append(updates[0], updates[1:])
 
     def as_dict(self) -> dict:
         """

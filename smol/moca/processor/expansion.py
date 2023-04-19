@@ -206,7 +206,7 @@ class ClusterExpansionProcessor(Processor):
             occu_f[f[0]] = f[1]
             eval_data = self._eval_data_by_sites[f[0]]
             delta_corr += eval_data.evaluator.delta_correlations_from_occupancies(
-                occu_f, occu_i, eval_data.ratio, eval_data.indices.container
+                occu_f, occu_i, eval_data.cluster_ratio, eval_data.indices.container
             )
             occu_i = occu_f
 
@@ -406,7 +406,7 @@ class ClusterDecompositionProcessor(Processor):
             eval_data = self._eval_data_by_sites[f[0]]
             delta_interactions += (
                 eval_data.evaluator.delta_interactions_from_occupancies(
-                    occu_f, occu_i, eval_data.ratio, eval_data.indices.container
+                    occu_f, occu_i, eval_data.cluster_ratio, eval_data.indices.container
                 )
             )
             occu_i = occu_f
