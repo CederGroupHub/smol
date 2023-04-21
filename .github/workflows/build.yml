@@ -19,104 +19,88 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          # Window 64 bit
-          # Note: windows-2019 is needed for older Python versions:
-          # https://github.com/scikit-learn/scikit-learn/issues/22530
-          - os: windows-2019
-            python: 38
-            platform_id: win_amd64
-          - os: windows-latest
-            python: 39
-            platform_id: win_amd64
-          - os: windows-latest
-            python: 310
-            platform_id: win_amd64
-          - os: windows-latest
-            python: 311
-            platform_id: win_amd64
-
-          # Linux 64 bit manylinux2014
-          - os: ubuntu-latest
-            python: 38
-            platform_id: manylinux_x86_64
-          - os: ubuntu-latest
-            python: 39
-            platform_id: manylinux_x86_64
-
-          # NumPy on Python 3.10 only supports 64bit and is only available with manylinux2014
-          - os: ubuntu-latest
-            python: 310
-            platform_id: manylinux_x86_64
-
-          - os: ubuntu-latest
-            python: 311
-            platform_id: manylinux_x86_64
-
-          # MacOS x86_64
-          - os: macos-latest
-            python: 38
-            platform_id: macosx_x86_64
-          - os: macos-latest
-            python: 39
-            platform_id: macosx_x86_64
-          - os: macos-latest
-            python: 310
-            platform_id: macosx_x86_64
-          - os: macos-latest
-            python: 311
-            platform_id: macosx_x86_64
+        os: [ubuntu-20.04, windows-2019]
     env:
       CIBW_SKIP: pp*  ${{ github.event.inputs.CIBW_SKIP }}  # skip pypy wheels
-      CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform_id }}
-      CIBW_ARCHS: all
-      CIBW_BUILD_VERBOSITY: 1
 
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      # Install openmp from conda since macOS compilers do not ship with it.
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.12.1
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: wheelhouse/*.whl
+
+  build_wheels_macos:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest]
+        cibw_arch: ["x86_64", "arm64"]
+    env:
+      CIBW_BUILD: ${{ matrix.cibw_python }}
+      CIBW_ARCHS_MACOS: ${{ matrix.cibw_arch }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # See:
+      # https://cibuildwheel.readthedocs.io/en/stable/faq/#macos-building-cpython-38-wheels-on-arm64
+      # https://github.com/pypa/cibuildwheel/issues/1414
+      - name: Install experimental MacOSX Py38
+        if: startsWith(matrix.cibw_python, 'cp38') && (matrix.cibw_arch == 'arm64')
+        run: |
+          curl -o /tmp/Python38.pkg https://www.python.org/ftp/python/3.8.10/python-3.8.10-macos11.pkg
+          sudo installer -pkg /tmp/Python38.pkg -target /
+          sh "/Applications/Python 3.8/Install Certificates.command"
+
       - name: Setup openmp for macOS
-        if: matrix.os == 'macos-latest'
         run: |
           # Make sure to use a libomp version binary compatible with the oldest
-          # supported version of the macos SDK as libomp will be vendored into the
-          # smol wheels for macos.
-
-          if [[ "$CIBW_BUILD" == *-macosx_arm64 ]]; then
+          # supported version of the macos SDK as libomp will be vendored into
+          # the scikit-image wheels for macos. The list of binaries are in
+          # https://packages.macports.org/libomp/.  Currently, the oldest
+          # supported macos version is: High Sierra / 10.13. When upgrading
+          # this, be sure to update the MACOSX_DEPLOYMENT_TARGET environment
+          # variable accordingly. Note that Darwin_17 == High Sierra / 10.13.
+          #
+          # We need to set both MACOS_DEPLOYMENT_TARGET and MACOSX_DEPLOYMENT_TARGET
+          # until there is a new release with this commit:
+          # https://github.com/mesonbuild/meson-python/pull/309
+          if [[ "$CIBW_ARCHS_MACOS" == arm64 ]]; then
               # SciPy requires 12.0 on arm to prevent kernel panics
               # https://github.com/scipy/scipy/issues/14688
-              # We use the same deployment target to match SciPy.
+              # so being conservative, we just do the same here
               export MACOSX_DEPLOYMENT_TARGET=12.0
+              export MACOS_DEPLOYMENT_TARGET=12.0
               OPENMP_URL="https://anaconda.org/conda-forge/llvm-openmp/11.1.0/download/osx-arm64/llvm-openmp-11.1.0-hf3c4609_1.tar.bz2"
           else
               export MACOSX_DEPLOYMENT_TARGET=10.9
+              export MACOS_DEPLOYMENT_TARGET=10.9
               OPENMP_URL="https://anaconda.org/conda-forge/llvm-openmp/11.1.0/download/osx-64/llvm-openmp-11.1.0-hda6cdc1_1.tar.bz2"
           fi
+          echo MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}
+          echo MACOS_DEPLOYMENT_TARGET=${MACOS_DEPLOYMENT_TARGET}
 
           # use conda to install llvm-openmp
           # Note that we do NOT activate the conda environment, we just add the
           # library install path to CFLAGS/CXXFLAGS/LDFLAGS below.
           sudo conda create -n build $OPENMP_URL
           PREFIX="/usr/local/miniconda/envs/build"
-
           export CC=/usr/bin/clang
           export CXX=/usr/bin/clang++
           export CPPFLAGS="$CPPFLAGS -Xpreprocessor -fopenmp"
-          export CFLAGS="$CFLAGS -I$PREFIX/include"
+          export CFLAGS="$CFLAGS -Wno-implicit-function-declaration -I$PREFIX/include"
           export CXXFLAGS="$CXXFLAGS -I$PREFIX/include"
-          export LDFLAGS="$LDFLAGS -Wl,-rpath,$PREFIX/lib -L$PREFIX/lib -lomp"
-
-          # python 3.8 on macOS See:
-          # https://cibuildwheel.readthedocs.io/en/stable/faq/#macos-building-cpython-38-wheels-on-arm64
-          # https://github.com/pypa/cibuildwheel/issues/1414
-          if [[ $CIBW_BUILD == cp38-macosx_arm64 ]]; then
-              curl -o /tmp/Python38.pkg https://www.python.org/ftp/python/3.8.10/python-3.8.10-macos11.pkg
-              sudo installer -pkg /tmp/Python38.pkg -target /
-              sh "/Applications/Python 3.8/Install Certificates.command"
-          fi
+          export LDFLAGS="$LDFLAGS -Wl,-S -Wl,-rpath,$PREFIX/lib -L$PREFIX/lib -lomp"
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.12.1
