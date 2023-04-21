@@ -50,6 +50,7 @@ def compile_test_program(code, extra_preargs=None, extra_postargs=None):
             )
 
             if "PYTHON_CROSSENV" not in os.environ:
+                print(os.environ)
                 # Run test program if not cross compiling
                 # will raise a CalledProcessError if return code was non-zero
                 output = subprocess.check_output("./test_program")
