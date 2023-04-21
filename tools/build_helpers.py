@@ -34,6 +34,7 @@ def compile_test_program(code, extra_preargs=None, extra_postargs=None):
                 f.write(code)
 
             os.mkdir("objects")
+            print(os.environ)
 
             # Compile, test program
             compiler.compile(
