@@ -95,6 +95,7 @@ jobs:
           fi
           echo MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET}
           echo MACOS_DEPLOYMENT_TARGET=${MACOS_DEPLOYMENT_TARGET}
+          echo PYTHON_CROSSENV=${PYTHON_CROSSENV}
 
           # use conda to install llvm-openmp
           # Note that we do NOT activate the conda environment, we just add the
