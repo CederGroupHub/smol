@@ -1,5 +1,6 @@
 """smol -- Statistical Mechanics On Lattices"""
 import os
+import platform
 import shutil
 import sys
 
@@ -33,7 +34,11 @@ COMPILER_DIRECTIVES = {
 }
 
 if sys.platform.startswith("darwin"):
-    COMPILE_OPTIONS["other"] += ["-mcpu=native", "-stdlib=libc++"]
+    if "PYTHON_CROSSENV" not in os.environ:
+        COMPILE_OPTIONS["other"] += ["-mcpu=native"]
+    elif platform.machine() == "x86_64":  # cross compiling for macos arm64
+        COMPILE_OPTIONS["other"] += ["-mcpu=apple-m1"]
+    # otherwise we don't specific -mcpu
 
 
 # custom clean command to remove .c files
