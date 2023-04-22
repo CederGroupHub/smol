@@ -34,7 +34,12 @@ def compile_test_program(code, extra_preargs=None, extra_postargs=None):
                 f.write(code)
 
             os.mkdir("objects")
-            print(os.environ)
+            print(
+                os.environ.get("CC"),
+                os.environ.get("CPPFLAGS"),
+                os.environ.get("CFLAGS"),
+                os.environ.get("LDFLAGS"),
+            )
 
             # Compile, test program
             compiler.compile(
