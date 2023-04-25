@@ -2,10 +2,6 @@
 import numpy as np
 import numpy.testing as npt
 
-from smol.capp.generate.groundstate import (
-    get_occupancy_from_variables,
-    get_upper_bound_variables_from_sublattices,
-)
 from smol.capp.generate.groundstate.upper_bound.objectives import (
     get_upper_bound_terms_from_chemical_potentials,
     get_upper_bound_terms_from_decomposition_processor,
@@ -15,6 +11,10 @@ from smol.capp.generate.groundstate.upper_bound.objectives import (
 from smol.capp.generate.groundstate.upper_bound.terms import (
     get_auxiliary_variable_values,
     get_expression_and_auxiliary_from_terms,
+)
+from smol.capp.generate.groundstate.upper_bound.variables import (
+    get_occupancy_from_variables,
+    get_upper_bound_variables_from_sublattices,
 )
 from smol.moca.processor import ClusterExpansionProcessor
 

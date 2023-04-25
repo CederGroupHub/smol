@@ -3,13 +3,13 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
-from smol.capp.generate.groundstate import (
+from smol.capp.generate.groundstate.upper_bound.indices import (
+    get_sublattice_indices_by_site,
+)
+from smol.capp.generate.groundstate.upper_bound.variables import (
     get_occupancy_from_variables,
     get_upper_bound_variables_from_sublattices,
     get_variable_values_from_occupancy,
-)
-from smol.capp.generate.groundstate.upper_bound.indices import (
-    get_sublattice_indices_by_site,
 )
 from smol.cofe.space.domain import get_allowed_species
 

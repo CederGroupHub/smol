@@ -7,7 +7,7 @@ from cvxpy.constraints.constraint import Constraint
 from numpy.typing import ArrayLike
 
 
-# TODO: in the future, allow writing groundstate input files from terms,
+# TODO: in the future, allow writing ground-state input files from terms,
 #  which may support non-linear objectives and constraints.
 def get_auxiliary_variable_values(
     variable_values: ArrayLike, indices_in_auxiliary_products: List[List[int]]
@@ -36,6 +36,7 @@ def get_auxiliary_variable_values(
 def get_expression_and_auxiliary_from_terms(
     cluster_terms: List[Tuple[List[int], float, float]],
     variables: cp.Variable,
+    coefficients_cutoff: float = 0.0,
 ) -> Tuple[cp.Expression, cp.Variable, List[List[int]], List[Constraint]]:
     """Convert the cluster terms into linear function and auxiliary variables.
 
@@ -49,6 +50,10 @@ def get_expression_and_auxiliary_from_terms(
             Energy is taken per super-cell.
         variables(cp.Variable):
             cvxpy variables storing the ground-state result.
+        coefficients_cutoff(float): optional
+            Minimum cutoff to the coefficient of terms. If the absolute value of a
+            term coefficient is less than cutoff, it will not be included in the
+            objective function. If no cutoff is given, will include every term.
     Returns:
         cp.Expression, cp.Variable, list[list[int]], list[Constraint]:
             The linearized energy expression, auxiliary slack variables for each
@@ -66,6 +71,11 @@ def get_expression_and_auxiliary_from_terms(
             simplified_terms[inds] = fac1 * fac2
         else:
             simplified_terms[inds] += fac1 * fac2
+    simplified_terms = {
+        inds: coef
+        for inds, coef in simplified_terms.items()
+        if abs(coef) >= coefficients_cutoff
+    }
 
     expression = 0
     n_slack = len([inds for inds in simplified_terms.keys() if len(inds) > 1])
