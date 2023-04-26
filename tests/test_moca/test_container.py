@@ -347,7 +347,7 @@ def test_flush_to_hdf5(container, fake_traces, mode, tmpdir):
     backend = flushed_container.get_backend(file_path, len(fake_traces), swmr_mode=mode)
 
     start = 0
-    for j in range(4):
+    for _ in range(4):
         for i in range(start, start + chunk):
             flushed_container.save_sampled_trace(fake_traces[i], thinned_by=1)
         assert flushed_container._trace.occupancy.shape[0] == chunk

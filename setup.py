@@ -64,7 +64,7 @@ class clean(Command):
             shutil.rmtree("build")
         for dirpath, dirnames, filenames in os.walk("smol"):
             for filename in filenames:
-                root, extension = os.path.splitext(filename)
+                _, extension = os.path.splitext(filename)
 
                 if extension in [".so", ".pyd", ".dll", ".pyc"]:
                     os.unlink(os.path.join(dirpath, filename))
