@@ -14,6 +14,7 @@ from smol.cofe import ClusterSubspace, PottsSubspace
 from smol.cofe.space.clusterspace import get_complete_mapping, invert_mapping
 from smol.cofe.space.constants import SITE_TOL
 from smol.cofe.space.domain import Vacancy, get_allowed_species
+from smol.utils.cluster import get_orbit_data
 from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
 from smol.utils.exceptions import StructureMatchError
 from tests.utils import assert_msonable, gen_random_structure
@@ -288,7 +289,7 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
     )
 
     evaluator = ClusterSpaceEvaluator(
-        cluster_subspace._get_orbit_data(cluster_subspace.orbits),
+        get_orbit_data(cluster_subspace.orbits),
         cluster_subspace.num_orbits,
         cluster_subspace.num_corr_functions,
     )
@@ -812,7 +813,7 @@ def test_vs_CASM_pairs(single_structure):
     structure = Structure(single_structure.lattice, species, coords)
     cs = ClusterSubspace.from_cutoffs(structure, {2: 6}, basis="indicator")
     evaluator = ClusterSpaceEvaluator(
-        cs._get_orbit_data(cs.orbits), cs.num_orbits, cs.num_corr_functions
+        get_orbit_data(cs.orbits), cs.num_orbits, cs.num_corr_functions
     )
     spaces = get_allowed_species(structure)
     m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
@@ -855,7 +856,7 @@ def test_vs_CASM_triplets(single_structure):
     structure = Structure(single_structure.lattice, species, coords)
     cs = ClusterSubspace.from_cutoffs(structure, {2: 6, 3: 4.5}, basis="indicator")
     evaluator = ClusterSpaceEvaluator(
-        cs._get_orbit_data(cs.orbits), cs.num_orbits, cs.num_corr_functions
+        get_orbit_data(cs.orbits), cs.num_orbits, cs.num_corr_functions
     )
     spaces = get_allowed_species(structure)
     m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
@@ -897,7 +898,7 @@ def test_vs_CASM_triplets(single_structure):
 def test_vs_CASM_multicomp(single_structure):
     cs = ClusterSubspace.from_cutoffs(single_structure, {2: 5}, basis="indicator")
     evaluator = ClusterSpaceEvaluator(
-        cs._get_orbit_data(cs.orbits), cs.num_orbits, cs.num_corr_functions
+        get_orbit_data(cs.orbits), cs.num_orbits, cs.num_corr_functions
     )
     m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     spaces = get_allowed_species(single_structure)
