@@ -18,7 +18,7 @@ from smol.utils.cluster import get_orbit_data
 from smol.utils.cluster.container import IntArray2DContainer
 from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
 from smol.utils.cluster.numthreads import SetNumThreads
-from smol.utils.descriptor import SetMany
+from smol.utils.setmany import SetMany
 
 
 @dataclass

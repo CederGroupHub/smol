@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Dict, List, Union
 
-from smol.utils.descriptor import SetMany
+from smol.utils.setmany import SetMany
 
 
 @dataclass
