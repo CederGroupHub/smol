@@ -17,9 +17,9 @@ cdef extern from *:
     """
     #ifdef _OPENMP
         #include <omp.h>
-        #define SMOL_OPENMP_ENABLED 1
+        #define OPENMP_ENABLED 1
     #else
-        #define SMOL_OPENMP_ENABLED 0
+        #define OPENMP_ENABLED 0
         #define omp_lock_t int
         #define omp_init_lock(l) (void)0
         #define omp_destroy_lock(l) (void)0
@@ -29,7 +29,7 @@ cdef extern from *:
         #define omp_get_max_threads() 1
     #endif
     """
-    bint SMOL_OPENMP_ENABLED
+    bint OPENMP_ENABLED
 
     int omp_get_thread_num() noexcept nogil
     int omp_get_max_threads() noexcept nogil
@@ -59,7 +59,7 @@ cpdef _openmp_effective_numthreads(n_threads=None):
     if n_threads == 0:
         raise ValueError("n_threads = 0 is invalid")
 
-    if not SMOL_OPENMP_ENABLED:
+    if not OPENMP_ENABLED:
         # OpenMP disabled at build-time => sequential mode
         return 1
 
