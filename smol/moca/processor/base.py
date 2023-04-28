@@ -20,7 +20,7 @@ from pymatgen.core import PeriodicSite, Structure
 
 from smol.cofe.space import Vacancy, get_allowed_species, get_site_spaces
 from smol.moca.sublattice import Sublattice
-from smol.utils import get_subclasses
+from smol.utils.class_utils import get_subclasses
 
 
 class Processor(MSONable, metaclass=ABCMeta):
@@ -191,7 +191,6 @@ class Processor(MSONable, metaclass=ABCMeta):
 
     def encode_occupancy(self, occupancy):
         """Encode occupancy string of Species object to ints."""
-        # TODO check if setting to intc improves speed
         return np.array(
             [
                 species.index(spec)

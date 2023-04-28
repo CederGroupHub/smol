@@ -15,7 +15,7 @@ from smol.moca.processor import (
     CompositeProcessor,
     EwaldProcessor,
 )
-from smol.utils import get_subclasses
+from smol.utils.class_utils import get_subclasses
 from tests.utils import gen_fake_training_data
 
 # uncomment below to show HDF5 C traceback

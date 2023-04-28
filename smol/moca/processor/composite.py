@@ -126,7 +126,6 @@ class CompositeProcessor(Processor):
         features = [
             np.array(pr.compute_feature_vector(occupancy)) for pr in self._processors
         ]
-        # TODO you may be able to cut some speed by pre-allocating this
         return np.append(features[0], features[1:])
 
     def compute_feature_vector_change(self, occupancy, flips):

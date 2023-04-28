@@ -20,6 +20,7 @@ import numpy as np
 from monty.json import MSONable, jsanitize
 
 from smol.cofe.space.clusterspace import ClusterSubspace
+from smol.utils.cluster import get_orbit_data
 
 
 @dataclass
@@ -157,7 +158,9 @@ class ClusterExpansion(MSONable):
 
         self.coefs = coefficients
         self.regression_data = regression_data
-        self._subspace = cluster_subspace
+        self._subspace = cluster_subspace.copy()
+        self._set_evaluator_data()
+
         # make copy for possible changes/pruning
         self._feat_matrix = (
             regression_data.feature_matrix.copy()
@@ -253,26 +256,40 @@ class ClusterExpansion(MSONable):
         """
         return self._feat_matrix
 
-    def predict(self, structure, normalize=False, scmatrix=None):
+    def predict(self, structure, normalized=False, scmatrix=None, site_mapping=None):
         """Predict the fitted property for a given set of structures.
 
         Args:
             structure (Structure):
                 Structures to predict from
-            normalize (bool): optional
+            normalized (bool): optional
                 Whether to return the predicted property normalized
                 by the prim cell size.
-            scmatrix (Arraylike): optional
-                3 x 3 Supercell matrix of structure.
+            scmatrix (ndarray): optional
+                supercell matrix relating the prim structure to the given
+                structure. Passing this if it has already been matched will
+                make things much quicker. You are responsible that the
+                supercell matrix is correct.
+            site_mapping (list): optional
+                Site mapping as obtained by
+                :code:`StructureMatcher.get_mapping` such that the elements of
+                site_mapping represent the indices of the matching sites to the prim
+                structure. If you pass this option, you are fully responsible that the
+                mappings are correct!
         Returns:
             float
         """
         corrs = self.cluster_subspace.corr_from_structure(
-            structure, scmatrix=scmatrix, normalized=normalize
+            structure,
+            scmatrix=scmatrix,
+            normalized=normalized,
+            site_mapping=site_mapping,
         )
         return np.dot(self.coefs, corrs)
 
-    def compute_cluster_interactions(self, structure, normalize=True):
+    def cluster_interactions_from_structure(
+        self, structure, normalized=True, scmatrix=None, site_mapping=None
+    ):
         """Compute the vector of cluster interaction values for given structure.
 
         A cluster interaction is simply a vector made up of the sum of all cluster
@@ -281,28 +298,38 @@ class ClusterExpansion(MSONable):
         Args:
             structure (Structure):
                 Structures to predict from
-            normalize (bool):
+            normalized (bool):
                 Whether to return the predicted property normalized by
                 the prim cell size.
+            scmatrix (ndarray): optional
+                supercell matrix relating the prim structure to the given
+                structure. Passing this if it has already been matched will
+                make things much quicker. You are responsible that the
+                supercell matrix is correct.
+            site_mapping (list): optional
+                Site mapping as obtained by
+                :code:`StructureMatcher.get_mapping` such that the elements of
+                site_mapping represent the indices of the matching sites to the prim
+                structure. If you pass this option, you are fully responsible that the
+                mappings are correct!
 
         Returns: ndarray
             vector of cluster interaction values
         """
-        corrs = self.cluster_subspace.corr_from_structure(
-            structure, normalized=normalize
+        if scmatrix is None:
+            scmatrix = self._subspace.scmatrix_from_structure(structure)
+
+        occu = self.cluster_subspace.occupancy_from_structure(
+            structure, scmatrix=scmatrix, site_mapping=site_mapping, encode=True
         )
-        vals = self.eci * corrs
-        interactions = np.array(
-            [
-                np.sum(
-                    vals[self.eci_orbit_ids == i]
-                    * self._subspace.function_ordering_multiplicities[
-                        self.eci_orbit_ids == i
-                    ]
-                )  # noqa
-                for i in range(len(self._subspace.orbits) + 1)
-            ]
+        indices = self._subspace.get_orbit_indices(scmatrix)
+        interactions = self._subspace.evaluator.interactions_from_occupancy(
+            occu, indices.container
         )
+
+        if not normalized:
+            interactions *= self._subspace.num_prims_from_matrix(scmatrix)
+
         return interactions
 
     def prune(self, threshold=0, with_multiplicity=False):
@@ -344,9 +371,29 @@ class ClusterExpansion(MSONable):
         if hasattr(self, "cluster_interaction_tensors"):  # reset cache
             del self.cluster_interaction_tensors
 
+        # reset the evaluator
+        self._set_evaluator_data(set_orbits=True)
+
     def copy(self):
         """Return a copy of self."""
         return ClusterExpansion.from_dict(self.as_dict())
+
+    def _set_evaluator_data(self, set_orbits=False):
+        """Set the orbit and cluster interaction data in evaluator."""
+        if set_orbits:
+            self._subspace.evaluator.reset_data(
+                get_orbit_data(self._subspace.orbits),
+                self._subspace.num_orbits,
+                self._subspace.num_corr_functions,
+            )
+
+        flat_interaction_tensors = tuple(
+            np.ravel(tensor, order="C")
+            for tensor in self.cluster_interaction_tensors[1:]
+        )
+        self._subspace.evaluator.set_cluster_interactions(
+            flat_interaction_tensors, offset=self.cluster_interaction_tensors[0]
+        )
 
     def __str__(self):
         """Pretty string for printing."""
