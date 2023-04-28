@@ -13,6 +13,8 @@ from smol.moca.processor import (
     EwaldProcessor,
 )
 from smol.moca.processor.base import Processor
+from smol.utils._openmp_helpers import _openmp_effective_numthreads
+from smol.utils.cluster.numthreads import DEFAULT_NUM_THREADS
 from tests.utils import assert_msonable, gen_random_occupancy, gen_random_structure
 
 pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
@@ -215,9 +217,9 @@ def test_compute_cluster_interactions(cluster_subspace, rng):
     struct = processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
     proc_interactions = processor.compute_feature_vector(occu) / processor.size
-    exp_interactions = expansion.compute_cluster_interactions(struct)
+    exp_interactions = expansion.cluster_interactions_from_structure(struct)
     npt.assert_allclose(proc_interactions, exp_interactions)
-    pred_energy = expansion.predict(struct, normalize=True)
+    pred_energy = expansion.predict(struct, normalized=True)
     assert sum(
         cluster_subspace.orbit_multiplicities * proc_interactions
     ) == pytest.approx(pred_energy, abs=ATOL)
@@ -250,3 +252,57 @@ def test_bad_composite(cluster_subspace, rng):
         proc.add_processor(
             ClusterExpansionProcessor(new_cs, scmatrix, coefficients=coefs)
         )
+
+
+def test_set_threads(single_subspace):
+    coefs = 2 * np.random.random(single_subspace.num_corr_functions)
+    scmatrix = 3 * np.eye(3)
+    expansion = ClusterExpansion(single_subspace, coefs)
+
+    ceproc = ClusterExpansionProcessor(single_subspace, scmatrix, coefs)
+    cdproc = ClusterDecompositionProcessor(
+        single_subspace,
+        scmatrix,
+        expansion.cluster_interaction_tensors,
+    )
+
+    # assert defaults
+    assert ceproc.num_threads == DEFAULT_NUM_THREADS
+    assert ceproc._evaluator.num_threads == ceproc.num_threads
+    assert ceproc.num_threads_full == DEFAULT_NUM_THREADS
+
+    for eval_data in ceproc._eval_data_by_sites.values():
+        assert eval_data.evaluator.num_threads == ceproc.num_threads
+
+    assert cdproc.num_threads == DEFAULT_NUM_THREADS
+    assert ceproc.num_threads_full == DEFAULT_NUM_THREADS
+
+    for eval_data in cdproc._eval_data_by_sites.values():
+        assert eval_data.evaluator.num_threads == cdproc.num_threads
+
+    # assert setting thread values
+    ceproc.num_threads = 1
+    cdproc.num_threads = 1
+
+    ceproc.num_threads_full = 1
+    cdproc.num_threads_full = 1
+
+    assert ceproc.num_threads == 1
+    assert ceproc.num_threads_full == 1
+
+    for eval_data in ceproc._eval_data_by_sites.values():
+        assert eval_data.evaluator.num_threads == 1
+
+    assert cdproc.num_threads == 1
+    assert ceproc.num_threads_full == 1
+
+    for eval_data in ceproc._eval_data_by_sites.values():
+        assert eval_data.evaluator.num_threads == 1
+
+    # assert -1 gives max number of threads
+    ceproc.num_threads = -1
+    assert ceproc.num_threads == _openmp_effective_numthreads(n_threads=-1)
+
+    # assert setting more complains
+    with pytest.raises(ValueError):
+        ceproc.num_threads = _openmp_effective_numthreads() + 1

@@ -11,10 +11,12 @@ diverges from the CE mathematic formalism.
 
 import itertools
 import warnings
+from collections import namedtuple
 from copy import deepcopy
 from importlib import import_module
 
 import numpy as np
+from monty.dev import deprecated
 from monty.json import MSONable, jsanitize
 from pymatgen.analysis.structure_matcher import (
     OrderDisorderElementComparator,
@@ -39,10 +41,20 @@ from smol.cofe.space import (
 )
 from smol.cofe.space.basis import IndicatorBasis
 from smol.cofe.space.constants import SITE_TOL
-from smol.correlations import corr_from_occupancy
-from smol.exceptions import SYMMETRY_ERROR_MESSAGE, StructureMatchError, SymmetryError
+from smol.utils.cluster import get_orbit_data
+from smol.utils.cluster.container import IntArray2DContainer
+from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
+from smol.utils.cluster.numthreads import SetNumThreads
+from smol.utils.exceptions import (
+    SYMMETRY_ERROR_MESSAGE,
+    StructureMatchError,
+    SymmetryError,
+)
 
 __author__ = "Luis Barroso-Luque, William Davidson Richards"
+
+# a named tuple to hold ndarray orbit indices and their corresponding cython containers
+OrbitIndices = namedtuple("OrbitIndices", ["arrays", "container"])
 
 
 class ClusterSubspace(MSONable):
@@ -80,6 +92,8 @@ class ClusterSubspace(MSONable):
             in the subspace.
     """
 
+    num_threads = SetNumThreads("_evaluator")
+
     def __init__(
         self,
         structure,
@@ -88,6 +102,7 @@ class ClusterSubspace(MSONable):
         orbits,
         supercell_matcher=None,
         site_matcher=None,
+        num_threads=None,
         **matcher_kwargs,
     ):
         """Initialize a ClusterSubspace.
@@ -120,6 +135,11 @@ class ClusterSubspace(MSONable):
                 supercell of the prim structure . If you pass this directly you
                 should know how to set the matcher up, otherwise matching your
                 relaxed structures can fail, a lot.
+            num_threads (int): optional
+                Number of threads to use to compute a correlation vector. Note that
+                this is not saved when serializing the ClusterSubspace with the
+                as_dict method, so if you are loading a ClusterSubspace from a
+                file then make sure to set the number of threads as desired.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
                 through to the StructureMatchers. Structures that don't match
@@ -182,13 +202,20 @@ class ClusterSubspace(MSONable):
         self._orbits = orbits
         self._external_terms = []  # List will hold external terms (i.e. Ewald)
 
-        # Dict to cache orbit index mappings, this prevents doing another
-        # structure match with the _site_matcher for structures that have
-        # already been matched
-        self._supercell_orb_inds = {}
-
         # assign the cluster ids
         self._assign_orbit_ids()
+
+        # create evaluator
+        self._evaluator = ClusterSpaceEvaluator(
+            get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+        )
+        # set the number of threads to use
+        self.num_threads = num_threads
+
+        # Dict to cache orbit index mappings, as OrbitIndices named tuples
+        # this prevents doing another structure match with the _site_matcher for
+        # structures that have already been matched
+        self._supercell_orbit_inds = {}
 
     @classmethod
     def from_cutoffs(
@@ -200,6 +227,7 @@ class ClusterSubspace(MSONable):
         use_concentration=False,
         supercell_matcher=None,
         site_matcher=None,
+        num_threads=None,
         **matcher_kwargs,
     ):
         """Create a ClusterSubspace from diameter cutoffs.
@@ -246,6 +274,11 @@ class ClusterSubspace(MSONable):
                 supercell of the prim structure . If you pass this directly you
                 should know how to set the matcher up, otherwise matching your
                 relaxed structures will fail, a lot.
+            num_threads (int): optional
+                Number of threads to use to compute a correlation vector. Note that
+                this is not saved when serializing the ClusterSubspace with the
+                as_dict method, so if you are loading a ClusterSubspace from a
+                file then make sure to set the number of threads as desired.
             matcher_kwargs:
                 ltol, stol, angle_tol, supercell_size: parameters to pass
                 through to the StructureMatchers. Structures that don't match
@@ -276,8 +309,20 @@ class ClusterSubspace(MSONable):
             orbits=orbits,
             supercell_matcher=supercell_matcher,
             site_matcher=site_matcher,
+            num_threads=num_threads,
             **matcher_kwargs,
         )
+
+    @property
+    def evaluator(self):
+        """Get the instance of cluster space evaluator extension type.
+
+        The evaluator is used to compute correlations quickly. You should not use this
+        directly, instead use the :meth:`corr_from_structure` method. If you do attempt
+        to use directly make sure you understand the code, otherwise you will crash
+        your python interpreter. You have been warned...
+        """
+        return self._evaluator
 
     @property
     def basis_type(self):
@@ -623,11 +668,8 @@ class ClusterSubspace(MSONable):
         occu = self.occupancy_from_structure(
             structure, scmatrix=scmatrix, site_mapping=site_mapping, encode=True
         )
-        occu = np.array(occu, dtype=int)
-
-        corr = corr_from_occupancy(
-            occu, self.num_corr_functions, self.gen_orbit_list(scmatrix)
-        )
+        indices = self.get_orbit_indices(scmatrix)
+        corr = self._evaluator.correlations_from_occupancy(occu, indices.container)
         size = self.num_prims_from_matrix(scmatrix)
 
         if self.external_terms:
@@ -788,21 +830,14 @@ class ClusterSubspace(MSONable):
                 array relating a supercell with the primitive matrix
 
         Returns:
-            list of tuples:
-                (orbit, indices) list of tuples with orbits and the
-                site indices for all equivalent orbits in a supercell obtained
-                from the given matrix.
+            tuple of ndarray:
+                tuple of 2D ndarrays where each array has the site indices for all
+                equivalent orbits in a supercell obtained from the given matrix.
+                First dimension are clusters and 2nd dimensiuon are site indices for
+                that cluster
         """
-        # np.arrays are not hashable and can't be used as dict keys.
-        scmatrix = np.array(scmatrix)
-        scm = tuple(sorted(tuple(s.tolist()) for s in scmatrix))
-        indices = self._supercell_orb_inds.get(scm)
-
-        if indices is None:
-            indices = self._gen_orbit_indices(scmatrix)
-            self._supercell_orb_inds[scm] = indices
-
-        return indices
+        orbit_indices = self.get_orbit_indices(scmatrix)
+        return orbit_indices.arrays
 
     def get_aliased_orbits(self, sc_matrix):
         """Get the aliased orbits for a given supercell shape.
@@ -868,6 +903,10 @@ class ClusterSubspace(MSONable):
         """
         for orbit in self.orbits:
             orbit.transform_site_bases(new_basis, orthonormal)
+        # rest the evaluator
+        self._evaluator.reset_data(
+            get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+        )
 
     def rotate_site_basis(self, singlet_id, angle, index1=0, index2=1):
         """Apply a rotation to a site basis.
@@ -906,6 +945,10 @@ class ClusterSubspace(MSONable):
                     site_basis.rotate(angle, index1, index2)
                     rotated.append(site_basis)
             orbit.reset_bases()
+        # rest the evaluator
+        self._evaluator.reset_data(
+            get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+        )
 
     def remove_orbits(self, orbit_ids):
         """Remove whole orbits by their ids.
@@ -955,7 +998,12 @@ class ClusterSubspace(MSONable):
 
         self._assign_orbit_ids()  # Re-assign ids
         # Clear the cached supercell orbit mappings
-        self._supercell_orb_inds = {}
+        # TODO instead of resetting this, just remove the orbit ids
+        self._supercell_orbit_inds = {}
+        # reset the evaluator
+        self._evaluator.reset_data(
+            get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+        )
 
     def remove_corr_functions(self, corr_ids):
         """Remove correlation functions by their ID's.
@@ -997,9 +1045,13 @@ class ClusterSubspace(MSONable):
                     )
 
         if empty_orbit_ids:
+            # ids are reassigned and evaluator reset in remove_orbits
             self.remove_orbits(empty_orbit_ids)
         else:
             self._assign_orbit_ids()  # Re-assign ids
+            self._evaluator.reset_data(
+                get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
+            )
 
     def copy(self):
         """Deep copy of instance."""
@@ -1095,6 +1147,12 @@ class ClusterSubspace(MSONable):
 
         return sub_fun_ids
 
+    @deprecated(
+        message=(
+            "This function is deprecated and will be removed in version 0.4.0.\n"
+            "You should not have really been using this function anyway..."
+        )
+    )
     def gen_orbit_list(self, scmatrix):
         """
         Generate list of data to compute correlation vectors.
@@ -1141,6 +1199,61 @@ class ClusterSubspace(MSONable):
         self.num_orbits = counts[0]
         self.num_corr_functions = counts[1]
         self.num_clusters = counts[2]
+
+    def get_orbit_indices(self, scmatrix):
+        """Get the OrbitIndices named tuple for a given supercell matrix.
+
+        If the indices have not been cached then they are generated by generating
+        the site mappings for the given supercell.e
+        """
+        # np.arrays are not hashable and can't be used as dict keys.
+        scmatrix = np.array(scmatrix)
+        scm = tuple(sorted(tuple(s.tolist()) for s in scmatrix))
+        orbit_indices = self._supercell_orbit_inds.get(scm)
+
+        if orbit_indices is None:
+            orbit_indices = self._gen_orbit_indices(scmatrix)
+            self._supercell_orbit_inds[scm] = orbit_indices
+
+        return orbit_indices
+
+    def _gen_orbit_indices(self, scmatrix):
+        """Find all the cluster site indices associated with each orbit in structure.
+
+        The structure corresponding to the given supercell matrix w.r.t prim.
+        """
+        supercell = self.structure.copy()
+        supercell.make_supercell(scmatrix)
+        prim_to_supercell = np.linalg.inv(scmatrix)
+        supercell_fcoords = np.array(supercell.frac_coords)
+
+        pts = lattice_points_in_supercell(scmatrix)
+        orbit_indices = []
+        for orbit in self.orbits:
+            prim_fcoords = np.array([c.frac_coords for c in orbit.clusters])
+            fcoords = np.dot(prim_fcoords, prim_to_supercell)
+            # tcoords contains all the coordinates of the symmetrically
+            # equivalent clusters the indices are: [equivalent cluster
+            # (primitive cell), translational image, index of site in cluster,
+            # coordinate index]
+            tcoords = fcoords[:, None, :, :] + pts[None, :, None, :]
+            tcs = tcoords.shape
+            inds = coord_list_mapping_pbc(
+                tcoords.reshape((-1, 3)), supercell_fcoords, atol=SITE_TOL
+            ).reshape((tcs[0] * tcs[1], tcs[2]))
+            # orbit_ids holds orbit, and 2d array of index groups that
+            # correspond to the orbit
+            # the 2d array may have some duplicates. This is due to
+            # symmetrically equivalent groups being matched to the same sites
+            # (eg in simply cubic all 6 nn interactions will all be [0, 0]
+            # indices. This multiplicity disappears as supercell_structure size
+            # increases, so I haven't implemented a more efficient method
+
+            # assure contiguous C order
+            orbit_indices.append(np.ascontiguousarray(inds, dtype=int))
+
+        orbit_indices = tuple(orbit_indices)
+        return OrbitIndices(orbit_indices, IntArray2DContainer(orbit_indices))
 
     @staticmethod
     def _gen_orbits_from_cutoffs(
@@ -1341,41 +1454,6 @@ class ClusterSubspace(MSONable):
                 )
         return orbits
 
-    def _gen_orbit_indices(self, scmatrix):
-        """Find all the site indices associated with each orbit in structure.
-
-        The structure corresponding to the given supercell matrix w.r.t prim.
-        """
-        supercell = self.structure.copy()
-        supercell.make_supercell(scmatrix)
-        prim_to_supercell = np.linalg.inv(scmatrix)
-        supercell_fcoords = np.array(supercell.frac_coords)
-
-        pts = lattice_points_in_supercell(scmatrix)
-        orbit_indices = []
-        for orbit in self.orbits:
-            prim_fcoords = np.array([c.frac_coords for c in orbit.clusters])
-            fcoords = np.dot(prim_fcoords, prim_to_supercell)
-            # tcoords contains all the coordinates of the symmetrically
-            # equivalent clusters the indices are: [equivalent cluster
-            # (primitive cell), translational image, index of site in cluster,
-            # coordinate index]
-            tcoords = fcoords[:, None, :, :] + pts[None, :, None, :]
-            tcs = tcoords.shape
-            inds = coord_list_mapping_pbc(
-                tcoords.reshape((-1, 3)), supercell_fcoords, atol=SITE_TOL
-            ).reshape((tcs[0] * tcs[1], tcs[2]))
-            # orbit_ids holds orbit, and 2d array of index groups that
-            # correspond to the orbit
-            # the 2d array may have some duplicates. This is due to
-            # symmetrically equivalent groups being matched to the same sites
-            # (eg in simply cubic all 6 nn interactions will all be [0, 0]
-            # indices. This multiplicity disappears as supercell_structure size
-            # increases, so I haven't implemented a more efficient method
-            orbit_indices.append(inds)
-
-        return orbit_indices
-
     def __eq__(self, other):
         """Check equality between cluster subspaces."""
         if not isinstance(other, ClusterSubspace):
@@ -1483,7 +1561,7 @@ class ClusterSubspace(MSONable):
                     ImportWarning,
                 )
         # re-create supercell orb inds cache
-        _supercell_orb_inds = {}
+        _supercell_orbit_inds = {}
         for scm, indices in d["_supercell_orb_inds"]:
             scm = tuple(tuple(s) for s in scm)
             if isinstance(indices[0][0], int) and isinstance(indices[0][1], list):
@@ -1492,10 +1570,17 @@ class ClusterSubspace(MSONable):
                     "of smol. Please resave it to avoid this warning.",
                     FutureWarning,
                 )
-                _supercell_orb_inds[scm] = [np.array(ind) for o_id, ind in indices]
+                _supercell_orbit_inds[scm] = tuple(
+                    np.array(ind) for o_id, ind in indices
+                )
             else:
-                _supercell_orb_inds[scm] = [np.array(ind) for ind in indices]
-        cluster_subspace._supercell_orb_inds = _supercell_orb_inds
+                _supercell_orbit_inds[scm] = tuple(np.array(ind) for ind in indices)
+        # now generate the containers
+        _supercell_orbit_inds = {
+            scm: OrbitIndices(indices, IntArray2DContainer(indices))
+            for scm, indices in _supercell_orbit_inds.items()
+        }
+        cluster_subspace._supercell_orbit_inds = _supercell_orbit_inds
         return cluster_subspace
 
     def as_dict(self):
@@ -1505,10 +1590,10 @@ class ClusterSubspace(MSONable):
         Returns:
             MSONable dict
         """
-        # modify cached sc orb inds so it can be serialized
+        # modify cached sc orbit indices so it can be serialized
         _supercell_orb_inds = [
-            (scm, [ind.tolist() for ind in orb_inds])
-            for scm, orb_inds in self._supercell_orb_inds.items()
+            (scm, [indices.tolist() for indices in orbit_inds.arrays])
+            for scm, orbit_inds in self._supercell_orbit_inds.items()
         ]
 
         cs_dict = {

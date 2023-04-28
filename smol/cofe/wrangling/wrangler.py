@@ -24,7 +24,7 @@ from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core.structure import Structure
 from pymatgen.entries.computed_entries import ComputedStructureEntry
 
-from smol.exceptions import StructureMatchError
+from smol.utils.exceptions import StructureMatchError
 
 
 class StructureWrangler(MSONable):
