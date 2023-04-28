@@ -14,8 +14,7 @@ from smol.capp.generate.groundstate.upper_bound.variables import (
 from smol.cofe import ClusterExpansion, ClusterSubspace
 from smol.moca import Ensemble
 from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
-
-from ..utils import assert_msonable
+from tests.utils import assert_msonable
 
 
 # Only SCIP tried on this instance.
