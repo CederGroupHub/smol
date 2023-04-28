@@ -67,14 +67,14 @@ jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-
     needs:
       - release-github
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-20.04, windows-2019, macos-10.15]
+        os: [ubuntu-latest, windows-latest]
     env:
-      CIBW_SKIP: pp*  # skip pypy wheels
+      CIBW_SKIP: pp* ${{ github.event.inputs.CIBW_SKIP }}
 
     steps:
       - uses: actions/checkout@v3
@@ -83,6 +83,78 @@ jobs:
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.12.3
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: wheelhouse/*.whl
+
+  build_wheels_macos:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs:
+      - release-github
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest]
+        cibw_python: ["cp38-*", "cp39-*", "cp310-*", "cp311-*"]
+        cibw_arch: ["x86_64", "arm64"]
+    env:
+      CIBW_BUILD: ${{ matrix.cibw_python }}
+      CIBW_ARCHS_MACOS: ${{ matrix.cibw_arch }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # See:
+      # https://cibuildwheel.readthedocs.io/en/stable/faq/#macos-building-cpython-38-wheels-on-arm64
+      # https://github.com/pypa/cibuildwheel/issues/1414
+      - name: Install experimental MacOSX Py38
+        if: startsWith(matrix.cibw_python, 'cp38') && (matrix.cibw_arch == 'arm64')
+        run: |
+          curl -o /tmp/Python38.pkg https://www.python.org/ftp/python/3.8.10/python-3.8.10-macos11.pkg
+          sudo installer -pkg /tmp/Python38.pkg -target /
+          sh "/Applications/Python 3.8/Install Certificates.command"
+
+      - name: Setup openmp for macOS
+        run: |
+          # Make sure to use a libomp version binary compatible with the oldest
+          # supported version of the macos SDK as libomp will be vendored into
+          # the smol wheels for macos. The list of binaries are in
+          # https://packages.macports.org/libomp/.  Currently, the oldest
+          # supported macos version is: High Sierra / 10.13. When upgrading
+          # this, be sure to update the MACOSX_DEPLOYMENT_TARGET environment
+          # variable accordingly. Note that Darwin_17 == High Sierra / 10.13.
+          if [[ "$CIBW_ARCHS_MACOS" == arm64 ]]; then
+              # arm64 builds must cross compile because the CI instance is x86
+              # This turns off the computation of the test program in
+              # tools/build_helpers.py
+              echo "PYTHON_CROSSENV=1" >> "$GITHUB_ENV"
+
+              # SciPy requires 12.0 on arm to prevent kernel panics
+              # https://github.com/scipy/scipy/issues/14688
+              # so being conservative, we just do the same here
+              echo "MACOSX_DEPLOYMENT_TARGET=12.0" >> "$GITHUB_ENV"
+              OPENMP_URL="https://anaconda.org/conda-forge/llvm-openmp/11.1.0/download/osx-arm64/llvm-openmp-11.1.0-hf3c4609_1.tar.bz2"
+          else
+              echo "MACOSX_DEPLOYMENT_TARGET=10.9" >> "$GITHUB_ENV"
+              OPENMP_URL="https://anaconda.org/conda-forge/llvm-openmp/11.1.0/download/osx-64/llvm-openmp-11.1.0-hda6cdc1_1.tar.bz2"
+          fi
+
+          # use conda to install llvm-openmp
+          # Note that we do NOT activate the conda environment, we just add the
+          # library install path to CFLAGS/CXXFLAGS/LDFLAGS below.
+          sudo conda create -n build $OPENMP_URL
+          PREFIX="/usr/local/miniconda/envs/build"
+          echo "CC=/usr/bin/clang" >> "$GITHUB_ENV"
+          echo "CPPFLAGS="$CPPFLAGS -Xpreprocessor -fopenmp"" >> "$GITHUB_ENV"
+          echo "CFLAGS="$CFLAGS -Wno-implicit-function-declaration -I$PREFIX/include"" >> "$GITHUB_ENV"
+          echo "LDFLAGS="$LDFLAGS -Wl,-S -Wl,-rpath,$PREFIX/lib -L$PREFIX/lib -lomp"" >> "$GITHUB_ENV"
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.12.1
 
       - uses: actions/upload-artifact@v3
         with:

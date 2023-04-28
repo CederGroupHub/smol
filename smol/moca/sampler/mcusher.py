@@ -31,7 +31,7 @@ from smol.moca.utils.occu import (
     occu_to_counts,
     occu_to_species_list,
 )
-from smol.utils import class_name_from_str, derived_class_factory
+from smol.utils.class_utils import class_name_from_str, derived_class_factory
 
 
 class MCUsher(ABC):

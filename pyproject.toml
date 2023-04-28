@@ -1,0 +1,105 @@
+[project]
+name  =  "smol"
+dynamic = ["version"]
+description = "Lighthweight but caffeinated Python implementation of computational methods for statistical mechanical calculations of configurational states in crystalline material systems."
+license = {file = "LICENSE"}
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+dependencies = [
+    "numpy >=1.24",
+    "pymatgen >=2023.1.9",
+    "monty >=v2022.9.8"
+]
+authors = [
+    {name = "Luis Barroso-Luque", email = "lbluque@berkeley.edu"},
+    {name = "Fengyu Xie", email = "lbluque@berkeley.edu"}
+]
+maintainers = [
+    {name = "Luis Barroso-Luque", email = "lbluque@berkeley.edu"}
+]
+
+[project.optional-dependencies]
+optional = [
+    "scikit-learn >=1.1.2",
+    "h5py >=3.6.0",
+    "polytope",
+    "cvxpy",
+    "cvxopt",
+    "gurobipy"
+]
+docs = [
+    "sphinx >= 5.3",
+    "pydata-sphinx-theme >=0.12.0",
+    "ipython >=8.2.0",
+    "nbsphinx >=0.8.10",
+    "nbsphinx-link >=1.3.0",
+    "nb2plots >=0.6.1"
+]
+test = [
+    "pytest >=7.2.0",
+    "pytest-cov >=4.0.0",
+    "scikit-learn >=1.1.2",
+    "h5py >=3.6.0",
+    "coverage",
+    "polytope",
+    "cvxpy"
+]
+dev = [
+    "pre-commit >=2.12.1",
+    "cython >=0.29.32",
+    "flake8",
+    "pycodestyle",
+    "pydocstyle",
+    "pylint",
+    "black",
+    "isort"
+]
+
+[project.urls]
+documentation = "https://cedergrouphub.github.io/smol"
+repository = "https://github.com/CederGroupHub/smol"
+changelog = "https://cedergrouphub.github.io/smol/CHANGES.md"
+tracker = "https://github.com/CederGroupHub/smol/issues"
+
+[build-system]
+requires = ["setuptools", "setuptools-scm[toml]>=6.2", "cython>= 0.29.34", "numpy>=1.24"]
+# Use legacy backend to import local packages in setup.py
+build-backend = "setuptools.build_meta:__legacy__"
+
+[tool.setuptools_scm]
+
+[tool.setuptools.packages]
+find = {}  # Scanning implicit namespaces is active by default
+
+[tool.pytest.ini_options]
+addopts  =  "-x --durations = 30 --quiet -rxXs --color = yes"
+filterwarnings  = [
+    "ignore::UserWarning",
+    "ignore::FutureWarning",
+    "ignore::RuntimeWarning"
+]
+
+[tool.pylint.'BASIC']
+good-names  =  "id, kB, i, j, k, f"
+
+[tool.pylint.'MESSAGES CONTROL']
+disable  =  "W0511, R0904, R0903, R0913, R0902, R0914, C0415"
+
+[tool.codespell]
+skip = "*.c, ./.*"
+count = ""
+quiet-level = 3
+ignore-words-list = "nd,tread"
