@@ -1,5 +1,4 @@
 """Exotic cases where sub-lattices contains split and manually fixed sites."""
-from copy import deepcopy
 from itertools import product
 
 import numpy as np
@@ -119,7 +118,7 @@ def exotic_ensemble(orig_ensemble, exotic_initial_occupancy):
             anion_id = sl_id
 
     # Split the cation sublattice.
-    new_ensemble = deepcopy(orig_ensemble)
+    new_ensemble = Ensemble.from_dict(orig_ensemble.as_dict())
 
     # Manually restrict 3 random li sites, 1 Vacancy site.
     cation_sites = new_ensemble.sublattices[cation_id].sites

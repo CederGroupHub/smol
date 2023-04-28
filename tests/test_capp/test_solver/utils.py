@@ -1,5 +1,4 @@
 """Utilities to perform groundstate tests. Only valid for exotic ensemble."""
-from copy import deepcopy
 
 import numpy as np
 import numpy.testing as npt
@@ -160,7 +159,7 @@ def validate_correlations_from_occupancy(expansion_processor, occupancy):
     corr[0] = 1
     for orbit, mapping in zip(space.orbits, mappings):
         # Use un-flatten version now for easier access.
-        n = deepcopy(orbit.bit_id)
+        n = orbit.bit_id
         corr_tensors = orbit.correlation_tensors
         n_bit_combos = corr_tensors.shape[0]  # index of bit combos
         mapping = np.array(mapping, dtype=int)
