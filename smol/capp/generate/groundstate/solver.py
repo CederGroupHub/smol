@@ -97,6 +97,7 @@ class GroundStateSolver(MSONable):
         initial_occupancy: ArrayLike = None,
         fixed_composition: ArrayLike = None,
         other_constraints: list = None,
+        term_coefficients_cutoff: float = 0.0,
         warm_start: bool = False,
         solver: str = "SCIP",
         solver_options: dict = None,
@@ -130,6 +131,11 @@ class GroundStateSolver(MSONable):
                 for detailed description.
                 Note that constraints are now to be satisfied with the number of sites
                 in sub-lattices of the supercell instead of the primitive cell.
+            term_coefficients_cutoff (float): optional
+                Minimum cutoff to the coefficient of terms. If the absolute value of a
+                term coefficient is less than cutoff, it will not be included in the
+                objective function. If no cutoff is given, will include every term in the
+                energy objective function.
             solver (str): optional
                Specify the groundstate used to solve the problem.
                SCIP is default because it does not require
@@ -166,6 +172,7 @@ class GroundStateSolver(MSONable):
         else:
             self._fixed_composition = None
 
+        self.cutoff = term_coefficients_cutoff
         self.warm_start = warm_start
         self.solver = solver
         self.solver_options = solver_options or {}
@@ -489,6 +496,7 @@ class GroundStateSolver(MSONable):
             ),
             # Convert species object to string, if any.
             "other_constraints": jsanitize(self._other_constraints),
+            "cutoff": self.cutoff,
             "warm_start": self.warm_start,
             "groundstate": self.solver,
             "solver_options": self.solver_options,
@@ -519,6 +527,7 @@ class GroundStateSolver(MSONable):
             initial_occupancy=d.get("initial_occupancy"),
             fixed_composition=d.get("fixed_composition"),
             other_constraints=d.get("other_constraints"),
+            term_coefficients_cutoff=d.get("cutoff", 0.0),
             warm_start=d.get("warm_start", False),
             solver=d.get("groundstate", "SCIP"),
             solver_options=d.get("solver_options"),

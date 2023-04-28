@@ -4,11 +4,13 @@ import itertools
 import pytest
 from pymatgen.core import Species
 
-from smol.capp.generate.groundstate import get_upper_bound_variables_from_sublattices
 from smol.capp.generate.groundstate.upper_bound.constraints import (
     get_upper_bound_composition_space_constraints,
     get_upper_bound_fixed_composition_constraints,
     get_upper_bound_normalization_constraints,
+)
+from smol.capp.generate.groundstate.upper_bound.variables import (
+    get_upper_bound_variables_from_sublattices,
 )
 from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
 
