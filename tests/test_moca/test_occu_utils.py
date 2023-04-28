@@ -1,4 +1,4 @@
-"""Test smol.moca._utils.occu_utils."""
+"""Test smol.moca.utils.occu_utils."""
 import itertools
 
 import numpy as np
@@ -6,7 +6,7 @@ import numpy.testing as npt
 import pytest
 
 from smol.capp.generate.random import _gen_unconstrained_ordered_occu
-from smol.moca._utils.occu import (
+from smol.moca.utils.occu import (
     delta_counts_from_step,
     get_dim_ids_by_sublattice,
     get_dim_ids_table,

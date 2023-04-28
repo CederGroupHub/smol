@@ -24,7 +24,7 @@ from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core.structure import Structure
 from pymatgen.entries.computed_entries import ComputedStructureEntry
 
-from smol._exceptions import StructureMatchError
+from smol.utils.exceptions import StructureMatchError
 
 
 class StructureWrangler(MSONable):
@@ -878,8 +878,8 @@ class StructureWrangler(MSONable):
             "@module": self.__class__.__module__,
             "@class": self.__class__.__name__,
             "_subspace": self._subspace.as_dict(),
-            "_entries": [entry.as_dict() for entry in self._entries],
-            "_ind_sets": jsanitize(self._ind_sets),  # jic for int's
+            "_entries": jsanitize(self._entries, strict=True),
+            "_ind_sets": jsanitize(self._ind_sets, strict=True),  # jic for int's
             "metadata": self.metadata,
         }
         return wrangler_dict

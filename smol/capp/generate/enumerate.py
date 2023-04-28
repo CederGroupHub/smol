@@ -5,7 +5,7 @@ __author__ = "Luis Barroso-Luque"
 
 import numpy as np
 
-from smol._math import yield_hermite_normal_forms
+from smol.utils.math import yield_hermite_normal_forms
 
 
 def enumerate_supercell_matrices(size, symmops, tol=1e-5):

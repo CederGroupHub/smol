@@ -77,3 +77,23 @@ def gen_random_ordered_structure(prim, size=3, rng=None):
     for site in structure:
         site.species = Composition({rng.choice(list(site.species.keys())): 1})
     return structure
+
+
+def compute_cluster_interactions(expansion, structure, normalized=True, scmatrix=None):
+    # compute cluster interactions from definitionas in pure python
+    corrs = expansion.cluster_subspace.corr_from_structure(
+        structure, normalized=normalized, scmatrix=scmatrix
+    )
+    vals = expansion.eci * corrs
+    interactions = np.array(
+        [
+            np.sum(
+                vals[expansion.eci_orbit_ids == i]
+                * expansion.cluster_subspace.function_ordering_multiplicities[
+                    expansion.eci_orbit_ids == i
+                ]
+            )
+            for i in range(len(expansion.cluster_subspace.orbits) + 1)
+        ]
+    )
+    return interactions

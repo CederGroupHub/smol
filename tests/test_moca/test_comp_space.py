@@ -8,9 +8,9 @@ import pytest
 from pymatgen.core import Composition, Species
 
 from smol.cofe.space.domain import Vacancy
-from smol.moca._utils.math import NUM_TOL, compute_snf, integerize_vector
-from smol.moca._utils.occu import get_dim_ids_by_sublattice
 from smol.moca.composition import CompositionSpace
+from smol.moca.utils.math import NUM_TOL, compute_snf, integerize_vector
+from smol.moca.utils.occu import get_dim_ids_by_sublattice
 from tests.utils import assert_msonable, assert_table_set_equal
 
 

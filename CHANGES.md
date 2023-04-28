@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* openmp parallelization when computing correlation and cluster interaction vectors. #338 @lbluque
 ### Changed
 ### Fixed
+* Fix #353 appending in `Sublattice.restricted_sites` property. #355 @qchempku2017
+* Fix #334 getting subclasses of non-abstract classes. #335 @lbluque
 ### Removed
 ### Deprecated
 

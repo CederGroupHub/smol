@@ -10,12 +10,13 @@ from pymatgen.analysis.structure_matcher import (
 from pymatgen.core import Species, Structure
 from pymatgen.util.coord import is_coord_subset_pbc
 
-from smol._exceptions import StructureMatchError
 from smol.cofe import ClusterSubspace, PottsSubspace
 from smol.cofe.space.clusterspace import get_complete_mapping, invert_mapping
 from smol.cofe.space.constants import SITE_TOL
 from smol.cofe.space.domain import Vacancy, get_allowed_species
-from smol.correlations import corr_from_occupancy
+from smol.utils.cluster import get_orbit_data
+from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
+from smol.utils.exceptions import StructureMatchError
 from tests.utils import assert_msonable, gen_random_ordered_structure
 
 pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
@@ -281,10 +282,19 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
 
     # check that the matrix was cached
     m_hash = tuple(sorted(tuple(s.tolist()) for s in supercell_matrix))
-    assert cluster_subspace._supercell_orb_inds[
-        m_hash
-    ] is cluster_subspace.supercell_orbit_mappings(supercell_matrix)
+    orbit_indices = cluster_subspace._supercell_orbit_inds[m_hash]
+    assert orbit_indices.arrays is cluster_subspace.supercell_orbit_mappings(
+        supercell_matrix
+    )
+    assert orbit_indices.container.size == len(
+        cluster_subspace.supercell_orbit_mappings(supercell_matrix)
+    )
 
+    evaluator = ClusterSpaceEvaluator(
+        get_orbit_data(cluster_subspace.orbits),
+        cluster_subspace.num_orbits,
+        cluster_subspace.num_corr_functions,
+    )
     # Test that symmetrically equivalent matrices really produce the
     # same correlation vector for the same occupancy.
     structures = [
@@ -324,10 +334,8 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
 
     corrs = np.array(
         [
-            corr_from_occupancy(
-                occu,
-                cluster_subspace.num_corr_functions,
-                cluster_subspace.generate_orbit_list(supercell_matrix),
+            evaluator.correlations_from_occupancy(
+                occu, cluster_subspace.get_orbit_indices(supercell_matrix).container
             )
             for occu in occus
         ]
@@ -335,10 +343,8 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
 
     corrs2 = np.array(
         [
-            corr_from_occupancy(
-                occu,
-                cluster_subspace.num_corr_functions,
-                cluster_subspace.generate_orbit_list(matrix2),
+            evaluator.correlations_from_occupancy(
+                occu, cluster_subspace.get_orbit_indices(matrix2).container
             )
             for occu in occus2
         ]
@@ -346,10 +352,8 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
 
     corrs3 = np.array(
         [
-            corr_from_occupancy(
-                occu,
-                cluster_subspace.num_corr_functions,
-                cluster_subspace.generate_orbit_list(matrix3),
+            evaluator.correlations_from_occupancy(
+                occu, cluster_subspace.get_orbit_indices(matrix3).container
             )
             for occu in occus3
         ]
@@ -363,7 +367,7 @@ def test_orbit_mappings(cluster_subspace, supercell_matrix, rng):
 
     # Symmetrically equivalent matrices should give the same correlation
     # vectors on the same structure, when using the default orbit mapping.
-    cluster_subspace._supercell_orb_inds = {}
+    cluster_subspace._supercell_orbit_inds = {}
     for structure, expected in zip(structures, corrs):
         predicted = cluster_subspace.corr_from_structure(
             structure, scmatrix=supercell_matrix
@@ -507,10 +511,10 @@ def test_msonable(cluster_subspace_ewald, rng):
     assert_msonable(cluster_subspace_ewald)
 
     subspace = ClusterSubspace.from_dict(cluster_subspace_ewald.as_dict())
-    for key in cluster_subspace_ewald._supercell_orb_inds.keys():
+    for key in cluster_subspace_ewald._supercell_orbit_inds.keys():
         for arr1, arr2 in zip(
-            subspace._supercell_orb_inds[key],
-            cluster_subspace_ewald._supercell_orb_inds[key],
+            subspace._supercell_orbit_inds[key].arrays,
+            cluster_subspace_ewald._supercell_orbit_inds[key].arrays,
         ):
             npt.assert_array_equal(arr1, arr2)
 
@@ -816,44 +820,38 @@ def test_vs_CASM_pairs(single_structure):
     coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75), (0.5, 0.5, 0.5), (0, 0, 0))
     structure = Structure(single_structure.lattice, species, coords)
     cs = ClusterSubspace.from_cutoffs(structure, {2: 6}, basis="indicator")
-
+    evaluator = ClusterSpaceEvaluator(
+        get_orbit_data(cs.orbits), cs.num_orbits, cs.num_corr_functions
+    )
     spaces = get_allowed_species(structure)
     m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-    orbit_list = [
-        (
-            orbit.bit_id,
-            orbit.flat_tensor_indices,
-            orbit.flat_correlation_tensors,
-            cluster_indices,
-        )
-        for orbit, cluster_indices in zip(cs.orbits, cs.supercell_orbit_mappings(m))
-    ]
+    indices = cs.get_orbit_indices(m)
 
     # last two clusters are switched from CASM output (occupancy basis)
     # all_li (ignore casm point term)
     occu = _encode_occu([Species("Li", 1), Species("Li", 1), Species("Li", 1)], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(corr, np.array([1] * 12))
 
     # all_vacancy
     occu = _encode_occu([Vacancy(), Vacancy(), Vacancy()], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(corr, np.array([1] + [0] * 11))
     # octahedral
     occu = _encode_occu([Vacancy(), Vacancy(), Species("Li", 1)], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(corr, [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1])
     # tetrahedral
     occu = _encode_occu([Species("Li", 1), Species("Li", 1), Vacancy()], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(corr, [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0])
     # mixed
     occu = _encode_occu([Species("Li", 1), Vacancy(), Species("Li", 1)], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(corr, [1, 0.5, 1, 0.5, 0, 0.5, 1, 0.5, 0, 0, 0.5, 1])
     # single_tet
     occu = _encode_occu([Species("Li", 1), Vacancy(), Vacancy()], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(corr, [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0])
 
 
@@ -865,46 +863,41 @@ def test_vs_CASM_triplets(single_structure):
     coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75), (0.5, 0.5, 0.5), (0, 0, 0))
     structure = Structure(single_structure.lattice, species, coords)
     cs = ClusterSubspace.from_cutoffs(structure, {2: 6, 3: 4.5}, basis="indicator")
+    evaluator = ClusterSpaceEvaluator(
+        get_orbit_data(cs.orbits), cs.num_orbits, cs.num_corr_functions
+    )
     spaces = get_allowed_species(structure)
     m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    indices = cs.get_orbit_indices(m)
 
-    orbit_list = [
-        (
-            orbit.bit_id,
-            orbit.flat_tensor_indices,
-            orbit.flat_correlation_tensors,
-            cluster_indices,
-        )
-        for orbit, cluster_indices in zip(cs.orbits, cs.supercell_orbit_mappings(m))
-    ]
     # last two pair terms are switched from CASM output (occupancy basis)
     # all_vacancy (ignore casm point term)
     occu = _encode_occu([Vacancy(), Vacancy(), Vacancy()], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(corr, np.array([1] + [0] * 18))
     # all Li
     occu = _encode_occu([Species("Li", 1), Species("Li", 1), Species("Li", 1)], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(corr, np.array([1] * 19))
     # octahedral
     occu = _encode_occu([Vacancy(), Vacancy(), Species("Li", 1)], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(corr, [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1])
 
     # tetrahedral
     occu = _encode_occu([Species("Li", 1), Species("Li", 1), Vacancy()], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(corr, [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0])
     # mixed
     occu = _encode_occu([Species("Li", 1), Vacancy(), Species("Li", 1)], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(
         corr,
         [1, 0.5, 1, 0.5, 0, 0.5, 1, 0.5, 0, 0, 0.5, 1, 0, 0, 0.5, 0.5, 0.5, 0.5, 1],
     )
     # single_tet
     occu = _encode_occu([Species("Li", 1), Vacancy(), Vacancy()], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(
         corr, [1, 0.5, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0.5, 0]
     )
@@ -912,27 +905,23 @@ def test_vs_CASM_triplets(single_structure):
 
 def test_vs_CASM_multicomp(single_structure):
     cs = ClusterSubspace.from_cutoffs(single_structure, {2: 5}, basis="indicator")
+    evaluator = ClusterSpaceEvaluator(
+        get_orbit_data(cs.orbits), cs.num_orbits, cs.num_corr_functions
+    )
     m = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
     spaces = get_allowed_species(single_structure)
-    orbit_list = [
-        (
-            orbit.bit_id,
-            orbit.flat_tensor_indices,
-            orbit.flat_correlation_tensors,
-            cluster_indices,
-        )
-        for orbit, cluster_indices in zip(cs.orbits, cs.supercell_orbit_mappings(m))
-    ]
+    indices = cs.get_orbit_indices(m)
+
     # mixed
     occu = _encode_occu([Vacancy(), Species("Li", 1), Species("Li", 1)], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(
         corr, [1, 0.5, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0, 0.5, 0, 0, 1, 0, 0, 0.5, 0, 0, 0]
     )
 
     # Li-tet Ca-oct
     occu = _encode_occu([Vacancy(), Species("Li", 1), Species("Ca", 1)], spaces)
-    corr = corr_from_occupancy(occu, cs.num_corr_functions, orbit_list)
+    corr = evaluator.correlations_from_occupancy(occu, indices.container)
     npt.assert_allclose(
         corr, [1, 0.5, 0, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0.5, 0, 0]
     )

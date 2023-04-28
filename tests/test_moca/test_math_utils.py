@@ -1,4 +1,4 @@
-"""Test smol.moca._utils.math_utils."""
+"""Test smol.moca.utils.math_utils."""
 from collections import Counter
 from fractions import Fraction
 
@@ -7,7 +7,7 @@ import numpy.testing as npt
 import polytope as pc
 import pytest
 
-from smol.moca._utils.math import (
+from smol.moca.utils.math import (
     NUM_TOL,
     choose_section_from_partition,
     compute_snf,

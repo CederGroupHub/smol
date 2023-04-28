@@ -5,10 +5,9 @@ import pytest
 from monty.serialization import loadfn
 from pymatgen.core import Structure
 
-from smol._utils import get_subclasses
 from smol.cofe import ClusterExpansion, ClusterSubspace, StructureWrangler
 from smol.cofe.extern import EwaldTerm
-from smol.cofe.space._basis import BasisIterator
+from smol.cofe.space.basis import BasisIterator
 from smol.moca import Ensemble
 from smol.moca.processor import (
     ClusterDecompositionProcessor,
@@ -18,6 +17,7 @@ from smol.moca.processor import (
     EwaldProcessor,
     InteractionDistanceProcessor,
 )
+from smol.utils.class_utils import get_subclasses
 from tests.utils import gen_fake_training_data
 
 # uncomment below to show HDF5 C traceback

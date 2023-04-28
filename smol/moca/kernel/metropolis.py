@@ -11,7 +11,7 @@ from math import log
 import numpy as np
 
 from smol.constants import kB
-from smol.moca.kernel._base import (
+from smol.moca.kernel.base import (
     ALL_BIAS,
     ALL_MCUSHERS,
     MCKernel,
@@ -68,7 +68,7 @@ class Metropolis(MetropolisAcceptMixin, ThermalKernelMixin, MCKernel):
         seed=None,
         bias_type=None,
         bias_kwargs=None,
-        **kwargs
+        **kwargs,
     ):
         """Initialize Metropolis Kernel.
 
@@ -96,7 +96,7 @@ class Metropolis(MetropolisAcceptMixin, ThermalKernelMixin, MCKernel):
             seed=seed,
             bias_type=bias_type,
             bias_kwargs=bias_kwargs,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -127,7 +127,7 @@ class MulticellMetropolis(MetropolisAcceptMixin, ThermalKernelMixin, MulticellKe
         kernel_hop_periods=1,
         kernel_hop_probabilities=None,
         seed=None,
-        **kwargs
+        **kwargs,
     ):
         """Initialize MCKernel.
 
@@ -154,7 +154,7 @@ class MulticellMetropolis(MetropolisAcceptMixin, ThermalKernelMixin, MulticellKe
             kernel_hop_periods=kernel_hop_periods,
             kernel_hop_probabilities=kernel_hop_probabilities,
             seed=seed,
-            **kwargs
+            **kwargs,
         )
 
     @ThermalKernelMixin.temperature.setter

@@ -10,7 +10,7 @@ from pymatgen.core import Composition
 from smol.capp.generate.random import _gen_neutral_occu, _gen_unconstrained_ordered_occu
 from smol.cofe.space.domain import SiteSpace
 from smol.moca.kernel import mcusher
-from smol.moca.kernel._base import ALL_MCUSHERS
+from smol.moca.kernel.base import ALL_MCUSHERS
 from smol.moca.kernel.bias import SquareChargeBias
 from smol.moca.sublattice import Sublattice
 

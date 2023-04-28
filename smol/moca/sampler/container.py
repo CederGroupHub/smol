@@ -17,9 +17,9 @@ from monty.dev import requires
 from monty.json import MontyDecoder, MontyEncoder, MSONable, jsanitize
 
 from smol.moca import Ensemble
-from smol.moca._metadata import Metadata
-from smol.moca._trace import Trace
+from smol.moca.metadata import Metadata
 from smol.moca.sublattice import Sublattice
+from smol.moca.trace import Trace
 
 try:
     import h5py

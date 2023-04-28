@@ -12,12 +12,12 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 
 from smol.cofe.space.clusterspace import ClusterSubspace
-from smol.correlations import (
-    corr_distance_single_flip,
-    interaction_distance_single_flip,
-)
 from smol.moca.processor import ClusterDecompositionProcessor, ClusterExpansionProcessor
-from smol.moca.processor._base import Processor
+from smol.moca.processor.base import Processor
+
+# TODO implement this with evaluator
+corr_distance_single_flip = None
+interaction_distance_single_flip = None
 
 
 class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
@@ -46,7 +46,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         match_weight=1.0,
         match_tol=1e-5,
         target_weights=None,
-        **processor_kwargs
+        **processor_kwargs,
     ):
         """Initialize a TargetfeatureProcessor.
 
@@ -81,7 +81,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
             cluster_subspace,
             supercell_matrix,
             coefficients=np.concatenate([[-match_weight], target_weights]),
-            **processor_kwargs
+            **processor_kwargs,
         )
 
     @abstractmethod
@@ -194,7 +194,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
             supercell_matrix=supercell_matrix,
             target_vector=target_vector,
             match_weight=match_weight,
-            **d
+            **d,
         )
 
 
