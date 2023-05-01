@@ -12,7 +12,7 @@ __author__ = "Luis Barroso-Luque"
 import numpy as np
 
 from smol.cofe.space.clusterspace import ClusterSubspace
-from smol.moca.processor._base import Processor
+from smol.moca.processor.base import Processor
 
 
 class CompositeProcessor(Processor):
@@ -126,7 +126,6 @@ class CompositeProcessor(Processor):
         features = [
             np.array(pr.compute_feature_vector(occupancy)) for pr in self._processors
         ]
-        # TODO you may be able to cut some speed by pre-allocating this
         return np.append(features[0], features[1:])
 
     def compute_feature_vector_change(self, occupancy, flips):

@@ -25,7 +25,6 @@ identify what type of processor is needed.
 .. toctree::
    :maxdepth: 2
 
-   processors.base
-   processors.composite
-   processors.ewald
    processors.expansion
+   processors.ewald
+   processors.composite

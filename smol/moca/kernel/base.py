@@ -6,12 +6,12 @@ from abc import ABC, ABCMeta, abstractmethod
 
 import numpy as np
 
-from smol._utils import class_name_from_str, get_subclasses
 from smol.constants import kB
-from smol.moca._metadata import Metadata
-from smol.moca._trace import StepTrace, Trace
 from smol.moca.kernel.bias import MCBias, mcbias_factory
 from smol.moca.kernel.mcusher import MCUsher, mcusher_factory
+from smol.moca.metadata import Metadata
+from smol.moca.trace import StepTrace, Trace
+from smol.utils.class_utils import class_name_from_str, get_subclasses
 
 ALL_MCUSHERS = list(get_subclasses(MCUsher).keys())
 ALL_BIAS = list(get_subclasses(MCBias).keys())

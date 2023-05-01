@@ -10,7 +10,7 @@ from math import log
 
 import numpy as np
 
-from smol.moca.kernel._base import ALL_BIAS, ALL_MCUSHERS, MCKernel
+from smol.moca.kernel.base import ALL_BIAS, ALL_MCUSHERS, MCKernel
 
 
 class UniformlyRandom(MCKernel):

@@ -2,8 +2,7 @@ from abc import ABC, abstractmethod
 
 import pytest
 
-from smol._utils import class_name_from_str, derived_class_factory, get_subclasses
-from smol.cofe.space._basis import (
+from smol.cofe.space.basis import (
     BasisIterator,
     ChebyshevIterator,
     IndicatorIterator,
@@ -13,7 +12,7 @@ from smol.cofe.space._basis import (
     SinusoidIterator,
 )
 from smol.moca.kernel import Metropolis, UniformlyRandom, WangLandau
-from smol.moca.kernel._base import MCKernelInterface, ThermalKernelMixin
+from smol.moca.kernel.base import MCKernelInterface, ThermalKernelMixin
 from smol.moca.kernel.bias import (
     FugacityBias,
     MCBias,
@@ -27,6 +26,11 @@ from smol.moca.kernel.mcusher import (
     MultiStep,
     Swap,
     TableFlip,
+)
+from smol.utils.class_utils import (
+    class_name_from_str,
+    derived_class_factory,
+    get_subclasses,
 )
 
 

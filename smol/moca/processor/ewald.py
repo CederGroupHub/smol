@@ -19,8 +19,8 @@ from pymatgen.analysis.ewald import EwaldSummation
 
 from smol.cofe.extern.ewald import EwaldTerm
 from smol.cofe.space.clusterspace import ClusterSubspace
-from smol.correlations import delta_ewald_single_flip
-from smol.moca.processor._base import Processor
+from smol.moca.processor.base import Processor
+from smol.utils.cluster.ewald import delta_ewald_single_flip
 
 
 class EwaldProcessor(Processor):

@@ -28,10 +28,10 @@ jobs:
           pip install -e .[dev]
       - name: flake8
         run: |
-            flake8 --version
-            flake8 --count --show-source --statistics smol
-            # exit-zero treats all errors as warnings.
-            flake8 --count --exit-zero --max-complexity=20 --statistics smol
+          flake8 --version
+          flake8 --count --show-source --statistics --extend-ignore E203,E501 --max-line-length 88 smol
+          # exit-zero treats all errors as warnings.
+          flake8 --count --exit-zero --max-complexity=20 --statistics --extend-ignore E203,E501 --max-line-length 88 smol
       - name: black
         run: |
           black --version

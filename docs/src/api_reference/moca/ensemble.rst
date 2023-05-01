@@ -14,6 +14,6 @@ Systems at constant temperature and constant applied chemical potential
 property.
 
 .. automodule:: smol.moca.ensemble
-   :members:
+   :members: Ensemble
    :undoc-members:
    :show-inheritance:

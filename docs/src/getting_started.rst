@@ -175,6 +175,8 @@ Basic Examples
 - `Running charge neutral semigrand canonical Monte Carlo`_
 - `Wang-Landau sampling of an FCC Ising model`_
 - `Preparing cluster expansion training data`_
+- `Setting number of threads for OpenMP parallelization`_
+
 
 .. _Creating a basic cluster expansion: notebooks/creating-a-ce.ipynb
 
@@ -191,6 +193,9 @@ Basic Examples
 .. _Wang-Landau sampling of an FCC Ising model: notebooks/wang-landau-ising.ipynb
 
 .. _Preparing cluster expansion training data: notebooks/training-data-preparation.ipynb
+
+.. _Setting number of threads for OpenMP parallelization: notebooks/openmp-parallelism.ipynb
+
 
 Advanced Examples
 -----------------

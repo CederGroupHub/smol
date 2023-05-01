@@ -12,11 +12,11 @@ from math import log
 
 import numpy as np
 
-from smol._utils import class_name_from_str, derived_class_factory
 from smol.cofe.space.domain import get_species
-from smol.moca._metadata import Metadata
-from smol.moca._utils.occu import get_dim_ids_table, occu_to_counts
 from smol.moca.composition import get_oxi_state
+from smol.moca.metadata import Metadata
+from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
+from smol.utils.class_utils import class_name_from_str, derived_class_factory
 
 
 class MCBias(ABC):

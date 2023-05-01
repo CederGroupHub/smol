@@ -13,9 +13,9 @@ from smol._utils import derived_class_factory
 from smol.capp import enumerate_supercell_matrices, generate_random_ordered_occupancy
 from smol.cofe import ClusterSubspace
 from smol.moca import Ensemble, SampleContainer, Sampler
-from smol.moca._trace import Trace
 from smol.moca.kernel import MulticellMetropolis, mckernel_factory
 from smol.moca.processor.feature import DistanceProcessor
+from smol.moca.trace import Trace
 
 SQS = namedtuple("SQS", ["score", "features", "supercell_matrix", "structure"])
 
@@ -88,7 +88,7 @@ class SQSGenerator(ABC):
             for scm in supercell_matrices:
                 if scm.shape != (3, 3):
                     raise ValueError("supercell matrices must be 3x3")
-                if np.linalg.det(scm) != supercell_size:
+                if not np.isclose(np.linalg.det(scm), supercell_size):
                     raise ValueError(
                         "supercell matrices must have determinant equal to "
                         "supercell_size"

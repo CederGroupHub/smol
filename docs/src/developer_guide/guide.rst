@@ -44,13 +44,51 @@ Guidelines
   than adding them to the source code.
 * Implementing new features should be more fun than tedious.
 
+Installing a development version
+--------------------------------
+
+#. *Clone* the main repository or *fork* it and *clone* clone your fork using git.
+   If you plan to contribute back to the project, then you should create a fork and
+   clone that::
+
+        git clone https://github.com/<USER>/smol.git
+
+   Where ``<USER>`` is your github username, or if you are cloning the main repository
+   directly then ``<USER> = CederGroupHub``.
+
+#. Install Python 3.8 or higher. We recommend using
+   `conda <https://docs.conda.io/en/latest/>`_.
+
+#. We recommend developing using a virtual environment. You can do so using
+   `conda <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
+   or using `virtualenv <https://docs.python.org/3/tutorial/venv.html>`_.
+
+#. Install a C compiler with `OpenMP <https://en.wikipedia.org/wiki/OpenMP>`_ support.
+   You can find helpful instructions to do so for
+   `Linux <https://scikit-learn.org/dev/developers/advanced_installation.html#compiler-linux>`_,
+   `MacOS <https://scikit-learn.org/dev/developers/advanced_installation.html#compiler-macos>`_,
+   `Windows <https://scikit-learn.org/dev/developers/advanced_installation.html#compiler-windows>`_,
+   and `FreeBSD <https://scikit-learn.org/dev/developers/advanced_installation.html#compiler-freebsd>`_.
+   system in the
+   `scikit-learn's <https://scikit-learn.org/dev/index.html>`_ package documentation.
+   You can still install *smol* without OpenMP support for development, but you will
+   not benefit from parallelization when computing correlations and cluster
+   interactions.
+
+#. Install the development version of *smol* in *editable* mode::
+
+    pip install --verbose --editable .[dev,test]
+
+   This will install the package in *editable* mode, meaning that any changes
+   you make to the source code will be reflected in the installed package.
+
 Adding code contributions
 -------------------------
 
 #.  If you are contributing for the first time:
 
-    * *Fork* the repository and then *clone* your fork to your local workspace.
-    * Make sure to add the *upstream* repository as a remote::
+    * Install a development version of *smol* in *editable* mode as described above.
+    * Make sure to also add the *upstream* repository as a remote::
 
         git remote add upstream https://github.com/CederGroupHub/smol.git
 

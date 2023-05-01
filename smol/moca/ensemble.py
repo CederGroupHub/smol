@@ -15,7 +15,7 @@ from smol.moca.processor import (
     CompositeProcessor,
     EwaldProcessor,
 )
-from smol.moca.processor._base import Processor
+from smol.moca.processor.base import Processor
 from smol.moca.sublattice import Sublattice
 
 
@@ -240,10 +240,9 @@ class Ensemble(MSONable):
     @property
     def restricted_sites(self):
         """Get indices of all restricted sites."""
-        sites = []
-        for sublattice in self.sublattices:
-            sites += sublattice.restricted_sites
-        return sites
+        return np.concatenate(
+            [sublattice.restricted_sites for sublattice in self.sublattices]
+        )
 
     @property
     def species(self):

@@ -1,3 +1,5 @@
+"""Sample Trace objects as simple namespaces."""
+
 from types import SimpleNamespace
 
 import numpy as np

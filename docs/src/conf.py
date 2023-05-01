@@ -115,7 +115,7 @@ html_theme_options = {
         # "json_url": "/_static/switcher.json",
         "json_url": "https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/"
         "switcher.json",
-        "url_template": "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/",
+        # "url_template": "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/",
         "version_match": version,
     },
     "external_links": [

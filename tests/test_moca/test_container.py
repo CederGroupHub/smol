@@ -1,5 +1,4 @@
 import os
-from copy import deepcopy
 from itertools import product
 
 import numpy as np
@@ -9,8 +8,8 @@ from pymatgen.core.composition import Composition
 
 from smol.cofe.space.domain import SiteSpace
 from smol.moca import SampleContainer
-from smol.moca._trace import Trace
 from smol.moca.sublattice import Sublattice
+from smol.moca.trace import Trace
 from tests.utils import assert_msonable
 
 NSAMPLES = 100
@@ -335,15 +334,20 @@ def test_hdf5(container, fake_traces, tmpdir):
 
 @pytest.mark.parametrize("mode", [False, True])
 def test_flush_to_hdf5(container, fake_traces, mode, tmpdir):
-    flushed_container = deepcopy(container)
+    # deepcopy does not work with Cython extensions with nontrivial __cinit__
+    # and creating a new container from dict of an empty one loses shape information
+    # so we add samples first and then create the flushed container, and clear it
     add_samples(container, fake_traces)
+    flushed_container = SampleContainer.from_dict(container.as_dict())
+    flushed_container.clear()
+
     file_path = os.path.join(tmpdir, "test.h5")
     chunk = len(fake_traces) // 4
     flushed_container.allocate(chunk)
     backend = flushed_container.get_backend(file_path, len(fake_traces), swmr_mode=mode)
 
     start = 0
-    for j in range(4):
+    for _ in range(4):
         for i in range(start, start + chunk):
             flushed_container.save_sampled_trace(fake_traces[i], thinned_by=1)
         assert flushed_container._trace.occupancy.shape[0] == chunk
