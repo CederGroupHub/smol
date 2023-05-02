@@ -51,7 +51,9 @@ def get_upper_bound_terms_from_expansion_processor(
     """
     coefs = expansion_processor.coefs
     # Store variable indices and the constant product in the cluster term.
-    cluster_terms = [[] for _ in range(expansion_processor.num_corr_functions)]
+    cluster_terms = [
+        [] for _ in range(expansion_processor.cluster_subspace.num_corr_functions)
+    ]
     cluster_terms[0] = [([], 1.0)]
 
     space = expansion_processor.cluster_subspace
@@ -154,9 +156,11 @@ def get_upper_bound_terms_from_decomposition_processor(
             with each sub-list corresponding to an orbit.
     """
     coefs = decomposition_processor.coefs  # Actually multiplicities.
-    orbit_terms = [[] for _ in range(decomposition_processor.n_orbits)]
+    orbit_terms = [
+        [] for _ in range(decomposition_processor.cluster_subspace.num_orbits)
+    ]
     # TODO: Change this to _interaction_tensors after merging luis/optimize4 branch.
-    orbit_tensors = decomposition_processor._fac_tensors
+    orbit_tensors = decomposition_processor._interaction_tensors
     # Use list in inner-layer as tuple does not support value assignment.
     orbit_terms[0] = [([], orbit_tensors[0])]
 

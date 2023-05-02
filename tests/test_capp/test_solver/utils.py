@@ -178,13 +178,13 @@ def validate_correlations_from_occupancy(expansion_processor, occupancy):
 
 def validate_interactions_from_occupancy(decomposition_processor, occupancy):
     # Check whether our interpretation of corr function is correct.
-    orbit_tensors = decomposition_processor._fac_tensors
+    orbit_tensors = decomposition_processor._interaction_tensors
     occupancy = np.array(occupancy, dtype=int)
     space = decomposition_processor.cluster_subspace
     sc_matrix = decomposition_processor.supercell_matrix
     mappings = space.supercell_orbit_mappings(sc_matrix)
 
-    corr = np.zeros(decomposition_processor.n_orbits)
+    corr = np.zeros(decomposition_processor.cluster_subspace.num_orbits)
     corr[0] = orbit_tensors[0]
     n = 1
     for mapping in mappings:
