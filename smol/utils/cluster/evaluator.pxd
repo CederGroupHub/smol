@@ -58,3 +58,19 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             const double[::1] cluster_ratio,
             IntArray2DContainer cluster_indices
     )
+
+    cpdef np.ndarray[np.float64_t, ndim=1] delta_corr_distance_from_occupancies(
+            self,
+            const long[::1] occu_f,
+            const long[::1] occu_i,
+            const double[::1] ref_corr_vector,
+            IntArray2DContainer cluster_indices
+    )
+
+    cpdef np.ndarray[np.float64_t, ndim=1] delta_interaction_distance_from_occupancies(
+            self,
+            const long[::1] occu_f,
+            const long[::1] occu_i,
+            const double[::1] ref_interaction_vector,
+            IntArray2DContainer cluster_indices
+    )

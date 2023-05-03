@@ -10,10 +10,10 @@ from smol.cofe.space.domain import Vacancy, get_allowed_species
 from smol.moca.processor import (
     ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
+    ClusterInteractionDistanceProcessor,
     CompositeProcessor,
     CorrelationDistanceProcessor,
     EwaldProcessor,
-    ClusterInteractionDistanceProcessor,
 )
 from smol.moca.processor.base import Processor
 from smol.utils._openmp_helpers import _openmp_effective_numthreads
