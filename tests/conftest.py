@@ -12,10 +12,12 @@ from smol.moca import Ensemble
 from smol.moca.processor import (
     ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
-    ClusterInteractionDistanceProcessor,
     CompositeProcessor,
-    CorrelationDistanceProcessor,
     EwaldProcessor,
+)
+from smol.moca.processor.distance import (
+    ClusterInteractionDistanceProcessor,
+    CorrelationDistanceProcessor,
 )
 from smol.utils.class_utils import get_subclasses
 from tests.utils import gen_fake_training_data
