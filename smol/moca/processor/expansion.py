@@ -91,12 +91,11 @@ class ClusterExpansionProcessor(Processor):
         """
         super().__init__(cluster_subspace, supercell_matrix, coefficients)
 
-        self.num_corr_functions = self.cluster_subspace.num_corr_functions
-        if len(coefficients) != self.num_corr_functions:
+        if len(coefficients) != self.cluster_subspace.num_corr_functions:
             raise ValueError(
                 f"The provided coefficients are not the right length. "
                 f"Got {len(coefficients)} coefficients, the length must be "
-                f"{self.num_corr_functions} based on the provided cluster "
+                f"{self.cluster_subspace.num_corr_functions} based on the provided cluster "
                 f"subspace."
             )
 
@@ -200,7 +199,7 @@ class ClusterExpansionProcessor(Processor):
             array: change in correlation vector
         """
         occu_i = occupancy
-        delta_corr = np.zeros(self.num_corr_functions)
+        delta_corr = np.zeros(self.cluster_subspace.num_corr_functions)
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]

@@ -296,14 +296,13 @@ def test_distance_processor(processor_distance_processor, rng):
     # test distance processor results vs compute directly from the corresponding
     # processor
     processor, distance_processor = processor_distance_processor
-
     for _ in range(5):
         occu = _gen_unconstrained_ordered_occu(processor.get_sublattices(), rng=rng)
 
         # remove first entry since it is the "exact match diameter" in the distance metric
         expected = abs(
             processor.compute_feature_vector(occu)[1:] / processor.size
-            - distance_processor.target_vector
+            - distance_processor.target_vector[1:]
         )
         actual = distance_processor.compute_feature_vector(occu)
         npt.assert_allclose(actual[1:], expected)
@@ -326,17 +325,17 @@ def test_distance_processor(processor_distance_processor, rng):
             new_occu[site] = new_sp
             flips = [(site, new_sp)]
 
+            # remove first element since it is the "exact match diameter" in the distance metric
             dist_f = abs(
                 processor.compute_feature_vector(new_occu)[1:] / processor.size
-                - distance_processor.target_vector
+                - distance_processor.target_vector[1:]
             )
             dist_i = abs(
                 processor.compute_feature_vector(occu)[1:] / processor.size
-                - distance_processor.target_vector
+                - distance_processor.target_vector[1:]
             )
 
             distances = distance_processor.compute_feature_vector_distances(occu, flips)
-
             npt.assert_allclose(distances[0][1:], dist_i, rtol=RTOL, atol=ATOL)
             npt.assert_allclose(distances[1][1:], dist_f, rtol=RTOL, atol=ATOL)
 

@@ -48,7 +48,7 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
         target_weights=None,
         **processor_kwargs,
     ):
-        """Initialize a TargetfeatureProcessor.
+        """Initialize a DistanceProcessor.
 
         Args:
             cluster_subspace (ClusterSubspace):
@@ -73,9 +73,17 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
                 being inherited from.
         """
         self.target_vector = target_vector
+
         if match_weight < 0:
             raise ValueError("The match weight must be a positive number.")
         self.match_tol = match_tol
+
+        if len(target_weights) != len(target_vector) - 1:
+            raise ValueError(
+                f"The length of target_weights must be equal to the length of"
+                f"the target vector minus one {len(target_vector) - 1}. \n"
+                f"Got {len(target_weights)} instead."
+            )
 
         super().__init__(
             cluster_subspace,
@@ -135,7 +143,7 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
         feature_vector = (
             super().compute_feature_vector(occupancy) / self.size
         )  # remove scaling
-        feature_vector[1:] = np.abs(feature_vector[1:] - self.target_vector)
+        feature_vector[1:] = np.abs(feature_vector[1:] - self.target_vector[1:])
 
         if self.coefs[0] > 0:
             feature_vector[0] = self.exact_match_max_diameter(feature_vector)
@@ -188,7 +196,6 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
 
         # remove @ and coefficient values:
         d = {k: v for k, v in d.items() if "@" not in k and k != "coefficients"}
-        print(d.keys())
         return cls(
             cluster_subspace,
             supercell_matrix=supercell_matrix,
@@ -248,7 +255,8 @@ class CorrelationDistanceProcessor(DistanceProcessor, ClusterExpansionProcessor)
         """
         # TODO do not accept external terms here....
         if target_vector is None:
-            target_vector = np.zeros(len(cluster_subspace) - 1)
+            target_vector = np.zeros(len(cluster_subspace))
+        # TODO check length and raise error if incorrect
 
         if target_weights is None:
             target_weights = np.ones(len(cluster_subspace) - 1)
@@ -283,16 +291,12 @@ class CorrelationDistanceProcessor(DistanceProcessor, ClusterExpansionProcessor)
             before flips
         """
         occu_i = occupancy
-        corr_distances = np.zeros((2, self.num_corr_functions))
+        corr_distances = np.zeros((2, self.cluster_subspace.num_corr_functions))
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            corr_distances += corr_distance_single_flip(
-                occu_f,
-                occu_i,
-                self.target_vector,
-                self.num_corr_functions,
-                self._orbit_list,
+            corr_distances += self._evaluator.delta_corr_distance_from_occupancies(
+                occu_f, occu_i, self.target_vector, self._indices.container
             )
             occu_i = occu_f
 
@@ -383,7 +387,7 @@ class ClusterInteractionDistanceProcessor(
                 the total distance. If None, then all correlations are weighted equally.
         """
         if target_vector is None:
-            target_vector = np.zeros(cluster_subspace.num_orbits - 1)
+            target_vector = np.zeros(cluster_subspace.num_orbits)
 
         if target_weights is None:
             target_weights = np.ones(cluster_subspace.num_orbits - 1)
@@ -419,16 +423,14 @@ class ClusterInteractionDistanceProcessor(
             before flips
         """
         occu_i = occupancy
-        interaction_distances = np.zeros((2, self.num_orbits))
+        interaction_distances = np.zeros((2, self._subspace.num_orbits))
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            interaction_distances += interaction_distance_single_flip(
-                occu_f,
-                occu_i,
-                self.target_vector,
-                self.num_orbits,
-                self._orbit_list,
+            interaction_distances += (
+                self._evaluator.delta_interaction_distance_from_occupancies(
+                    occu_f, occu_i, self.target_vector, self._indices.container
+                )
             )
             occu_i = occu_f
 
