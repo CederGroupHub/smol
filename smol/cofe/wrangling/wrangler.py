@@ -762,14 +762,14 @@ class StructureWrangler(MSONable):
                 entry.structure, scmatrix=supercell_matrix, site_mapping=site_mapping
             )
             refined_struct = self._subspace.refine_structure(
-                entry.structure, supercell_matrix
+                entry.structure, scmatrix=supercell_matrix, site_mapping=site_mapping
             )
 
         except StructureMatchError as s_match_error:
             if verbose:
                 warnings.warn(
                     f"Unable to match {entry.composition} with "
-                    f"properties {properties} to supercell_structure. "
+                    f"energy {entry.energy} to supercell_structure. "
                     f"Throwing out.\n Error Message: {str(s_match_error)}",
                     UserWarning,
                 )
