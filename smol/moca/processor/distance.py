@@ -8,6 +8,7 @@ to obtain special structures, such as SQS, SSOS, etc.
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABCMeta, abstractmethod
+from itertools import chain
 
 import numpy as np
 
@@ -313,19 +314,20 @@ class CorrelationDistanceProcessor(DistanceProcessor, ClusterExpansionProcessor)
         Returns:
             float: largest diameter
         """
-        max_matched_diameters = {}
-        for size, orbits in self.cluster_subspace.orbits_by_size.items():
-            max_matched_diameters[size] = 0
-            for orbit in orbits:
-                if np.all(
-                    distance_vector[range(orbit.bit_id, orbit.bit_id + len(orbit))]
-                    <= self.match_tol
-                ):
-                    max_matched_diameters[size] = orbit.base_cluster.diameter
-                else:
-                    break
+        max_matched_diameter = 0.0
 
-        return min(max_matched_diameters.values())
+        for diameter, orbits in self.cluster_subspace.orbits_by_diameter.items():
+            indices = list(
+                chain.from_iterable(
+                    range(orb.bit_id, orb.bit_id + len(orb)) for orb in orbits
+                )
+            )
+            if np.all(distance_vector[indices] <= self.match_tol):
+                max_matched_diameter = diameter
+            else:
+                break
+
+        return max_matched_diameter
 
 
 class ClusterInteractionDistanceProcessor(
@@ -447,13 +449,13 @@ class ClusterInteractionDistanceProcessor(
         Returns:
             float: largest diameter
         """
-        max_matched_diameters = {}
-        for size, orbits in self.cluster_subspace.orbits_by_size.items():
-            max_matched_diameters[size] = 0
-            for i, orbit in enumerate(orbits):
-                if distance_vector[i] <= self.match_tol:
-                    max_matched_diameters[size] = orbit.base_cluster.diameter
-                else:
-                    break
+        max_matched_diameter = 0.0
 
-        return min(max_matched_diameters.values())
+        for diameter, orbits in self.cluster_subspace.orbits_by_diameter.items():
+            indices = [orb.id for orb in orbits]
+            if np.all(distance_vector[indices] <= self.match_tol):
+                max_matched_diameter = diameter
+            else:
+                break
+
+        return max_matched_diameter
