@@ -5,8 +5,11 @@ from pymatgen.core import DummySpecies, Element, Species
 
 # To test manager.
 from smol.cofe.space.domain import Vacancy
-from smol.moca.composition import CompositionSpace
-from smol.moca.utils.constraints import convert_constraint_string, handle_side_string
+from smol.moca.composition.constraints import (
+    convert_constraint_string,
+    handle_side_string,
+)
+from smol.moca.composition.space import CompositionSpace
 
 
 def test_handle_side_string():

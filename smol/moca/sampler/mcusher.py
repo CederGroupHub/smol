@@ -17,7 +17,7 @@ import numpy as np
 from monty.json import jsanitize
 from scipy.special import gammaln
 
-from smol.moca.composition import CompositionSpace
+from smol.moca.composition.space import CompositionSpace
 from smol.moca.sampler.namespace import Metadata
 from smol.moca.utils.math import (
     NUM_TOL,

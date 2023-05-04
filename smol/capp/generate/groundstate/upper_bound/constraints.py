@@ -11,7 +11,7 @@ from pymatgen.core import Structure
 from smol.capp.generate.groundstate.upper_bound.indices import (
     get_variable_indices_for_each_composition_component,
 )
-from smol.moca.composition import CompositionSpace
+from smol.moca.composition.space import CompositionSpace
 from smol.moca.ensemble import Sublattice
 
 __author__ = "Fengyu Xie"
