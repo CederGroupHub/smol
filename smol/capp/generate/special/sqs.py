@@ -9,7 +9,7 @@ from collections import namedtuple
 
 import numpy as np
 
-from smol._utils import derived_class_factory
+from smol.utils.class_utils import derived_class_factory
 from smol.capp import enumerate_supercell_matrices, generate_random_ordered_occupancy
 from smol.cofe import ClusterSubspace
 from smol.moca import Ensemble, SampleContainer, Sampler
