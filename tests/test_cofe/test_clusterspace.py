@@ -51,6 +51,14 @@ def test_cutoffs(cluster_subspace, cluster_cutoffs):
         assert cluster_cutoffs[s] >= c
 
 
+def test_orbits_by_diameter(cluster_subspace):
+    previous_diameter = -1
+    for diameter, orbits in cluster_subspace.orbits_by_diameter.items():
+        assert all(np.isclose(o.base_cluster.diameter, diameter) for o in orbits)
+        assert diameter > previous_diameter
+        previous_diameter = diameter
+
+
 def test_orbits_from_cutoffs(cluster_subspace, cluster_cutoffs):
     # Get all of them
     max_cutoff = max(cluster_cutoffs.values())
@@ -197,6 +205,11 @@ def test_remove_orbits(cluster_subspace, rng):
 
     assert len(subspace.orbits) == len(cluster_subspace.orbits) - remove_num
     assert subspace.num_orbits == cluster_subspace.num_orbits - remove_num
+    # check that cached_property is reset
+    assert (
+        len([o for _, os in subspace.orbits_by_diameter.items() for o in os])
+        == len(cluster_subspace.orbits) - remove_num
+    )
 
     for i, orbit in enumerate(cluster_subspace.orbits):
         if i + 1 in ids_to_remove:

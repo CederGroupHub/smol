@@ -9,11 +9,12 @@ diverges from the CE mathematic formalism.
 # pylint: disable=too-many-lines
 
 
-import itertools
 import warnings
 from collections import namedtuple
 from copy import deepcopy
+from functools import cached_property
 from importlib import import_module
+from itertools import chain, groupby
 
 import numpy as np
 from monty.dev import deprecated
@@ -361,6 +362,22 @@ class ClusterSubspace(MSONable):
     def orbits_by_size(self):
         """Get dictionary of orbits with key being the orbit size."""
         return self._orbits
+
+    @cached_property
+    def orbits_by_diameter(self):
+        """Get dictionary of orbits with key being the orbit diameter.
+
+        Diameters are rounded to 6 decimal places.
+        """
+        return {
+            size: tuple(orbits)
+            for size, orbits in groupby(
+                sorted(
+                    self.orbits, key=lambda orb: np.round(orb.base_cluster.diameter, 6)
+                ),
+                key=lambda orb: np.round(orb.base_cluster.diameter, 6),
+            )
+        }
 
     @property
     def orbit_multiplicities(self):
@@ -868,7 +885,7 @@ class ClusterSubspace(MSONable):
         aliased_orbits = []
         for orb_i, orb_map_i in enumerate(sc_orb_map):
             # +1 because ECI index takes the null cluster as index 0.
-            if orb_i + 1 in itertools.chain(*aliased_orbits):
+            if orb_i + 1 in chain(*aliased_orbits):
                 continue
             orb_i_id = orb_i + 1
             aliased = False
@@ -876,7 +893,7 @@ class ClusterSubspace(MSONable):
             sorted_orb_map_i = {tuple(sorted(c_map)) for c_map in orb_map_i}
 
             for orb_j, orb_map_j in enumerate(sc_orb_map):
-                if orb_i >= orb_j or (orb_j + 1 in itertools.chain(*aliased_orbits)):
+                if orb_i >= orb_j or (orb_j + 1 in chain(*aliased_orbits)):
                     continue
                 orb_j_id = orb_j + 1
                 sorted_orb_map_j = {tuple(sorted(c_map)) for c_map in orb_map_j}
@@ -953,18 +970,18 @@ class ClusterSubspace(MSONable):
     def remove_orbits(self, orbit_ids):
         """Remove whole orbits by their ids.
 
-        Removes orbits from cluster spaces. It is helpful to print a
-        ClusterSubspace or ClusterExpansion to obtain orbit ids. After removing
-        orbits, orbit ID's and orbit bit ID's are re-assigned.
+        Remove orbits from cluster spaces. It is helpful to print a ClusterSubspace or
+        ClusterExpansion to obtain orbit ids. After removing orbits, orbit ID's and
+        orbit bit ID's are re-assigned.
 
-        This is useful to prune a ClusterExpansion by removing orbits with
-        small associated coefficients or ECI. Note that this will remove a full
-        orbit, which for the case of sites with only two species is the same as
-        removing a single correlation vector element (only one ECI). For cases
-        with sites having more than 2 species allowed per site there is more
-        than one orbit functions (for all the possible bit orderings or function-
-        labeled orbit configurations) and removing an orbit will remove more than
-        one element in the correlation vector.
+        This is useful to prune a ClusterExpansion by removing orbits with small
+        associated coefficients or ECI. Note that this will remove a full orbit,
+        which for the case of sites with only two species is the same as removing a
+        single correlation vector element (only one ECI). For cases with sites having
+        more than 2 species allowed per site there is more than one orbit functions
+        (for all the possible bit orderings or function- labeled orbit configurations)
+        and removing an orbit will remove more than one element in the correlation
+        vector.
 
         Args:
             orbit_ids (list):
@@ -1004,6 +1021,9 @@ class ClusterSubspace(MSONable):
         self._evaluator.reset_data(
             get_orbit_data(self.orbits), self.num_orbits, self.num_corr_functions
         )
+        # clear the cached orbits_by_diameter
+        if hasattr(self, "orbits_by_diameter"):
+            delattr(self, "orbits_by_diameter")
 
     def remove_corr_functions(self, corr_ids):
         """Remove correlation functions by their ID's.
