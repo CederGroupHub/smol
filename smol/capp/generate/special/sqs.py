@@ -64,16 +64,16 @@ class SQSGenerator(ABC):
         self.supercell_size = supercell_size
 
         if feature_type == "correlation":
-            num_features = len(cluster_subspace) - 1  # remove constant
+            num_features = len(cluster_subspace)
         else:
             raise ValueError(f"feature_type {feature_type} not supported")
 
         if target_weights is None:
-            target_weights = np.ones(num_features)
+            target_weights = np.ones(num_features  - 1)  # remove constant
         else:
-            if len(target_weights) != num_features:
+            if len(target_weights) != num_features - 1:
                 raise ValueError(
-                    "target_feature_weights must be of length {num_features}"
+                    f"target_feature_weights must be of length {num_features - 1}"
                 )
 
         if target_vector is None:
