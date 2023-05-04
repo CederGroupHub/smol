@@ -49,7 +49,9 @@ def test_corr_from_occu(cluster_subspace, supercell_matrix, rng):
     indices = cluster_subspace.get_orbit_indices(supercell_matrix)
 
     for _ in range(10):
-        structure = gen_random_ordered_structure(cluster_subspace.structure, supercell_matrix)
+        structure = gen_random_ordered_structure(
+            cluster_subspace.structure, supercell_matrix
+        )
 
         # test correlations
         occu = cluster_subspace.occupancy_from_structure(
@@ -140,7 +142,9 @@ def test_interactions_from_occu(cluster_subspace, supercell_matrix, rng):
     indices = cluster_subspace.get_orbit_indices(supercell_matrix)
 
     for _ in range(10):
-        structure = gen_random_ordered_structure(cluster_subspace.structure, supercell_matrix)
+        structure = gen_random_ordered_structure(
+            cluster_subspace.structure, supercell_matrix
+        )
 
         # test correlations
         occu = cluster_subspace.occupancy_from_structure(
