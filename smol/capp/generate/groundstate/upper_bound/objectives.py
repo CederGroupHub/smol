@@ -159,7 +159,6 @@ def get_upper_bound_terms_from_decomposition_processor(
     orbit_terms = [
         [] for _ in range(decomposition_processor.cluster_subspace.num_orbits)
     ]
-    # TODO: Change this to _interaction_tensors after merging luis/optimize4 branch.
     orbit_tensors = decomposition_processor._interaction_tensors
     # Use list in inner-layer as tuple does not support value assignment.
     orbit_terms[0] = [([], orbit_tensors[0])]

@@ -76,33 +76,51 @@ def get_expression_and_auxiliary_from_terms(
         for inds, coef in simplified_terms.items()
         if abs(coef) >= coefficients_cutoff
     }
+    simplified_terms = sorted(simplified_terms.items(), key=lambda t: (len(t[0]), t[1]))
 
-    expression = 0
-    n_slack = len([inds for inds in simplified_terms.keys() if len(inds) > 1])
+    n_const = len([inds for inds, _ in simplified_terms if len(inds) == 0])
+    n_single = len([inds for inds, _ in simplified_terms if len(inds) == 1])
+    n_slack = len([inds for inds, _ in simplified_terms if len(inds) > 1])
     if n_slack == 0:
         aux_variables = None
     else:
         aux_variables = cp.Variable(n_slack, boolean=True)
-    indices_in_aux_products = []
     aux_constraints = []
-    aux_id = 0
-    for inds, fac in simplified_terms.items():
-        # A constant addition term.
-        if len(inds) == 0:
-            expression += fac
-        # A point term, no aux needed.
-        elif len(inds) == 1:
-            expression += variables[inds[0]] * fac
-        # A product term, need an aux and constraints.
-        else:
-            expression += aux_variables[aux_id] * fac
-            indices_in_aux_products.append(list(inds))
-            for var_id in inds:
-                aux_constraints.append(aux_variables[aux_id] <= variables[var_id])
-            aux_constraints.append(
-                aux_variables[aux_id] >= 1 - len(inds) + cp.sum(variables[list(inds)])
-            )
-            aux_id += 1
+    # Vectorized objective functions to speed up compilation.
+    # Only one constant term is possible at most.
+    expression = simplified_terms[0][1] if n_const == 1 else 0
+    # Summing point terms.
+    point_inds = [
+        inds[0] for inds, _ in sorted(simplified_terms[n_const : n_const + n_single])
+    ]
+    point_coefs = np.array(
+        [c for _, c in sorted(simplified_terms[n_const : n_const + n_single])]
+    )
+    if n_single > 0:
+        expression += variables[point_inds] @ point_coefs
+    # Summing many-body terms.
+    many_inds = [
+        list(inds)
+        for inds, _ in simplified_terms[
+            n_const + n_single : n_const + n_single + n_slack
+        ]
+    ]
+    many_coefs = np.array(
+        [
+            coef
+            for _, coef in simplified_terms[
+                n_const + n_single : n_const + n_single + n_slack
+            ]
+        ]
+    )
+    if n_slack > 0:
+        expression += aux_variables @ many_coefs
+    for aux_id, inds in enumerate(many_inds):
+        for var_id in inds:
+            aux_constraints.append(aux_variables[aux_id] <= variables[var_id])
+        aux_constraints.append(
+            aux_variables[aux_id] >= cp.sum(variables[inds]) + 1 - len(inds)
+        )
 
     if not isinstance(expression, cp.Expression):
         raise RuntimeError(
@@ -110,4 +128,4 @@ def get_expression_and_auxiliary_from_terms(
             f" degree of freedom. Cannot be optimized!"
         )
 
-    return expression, aux_variables, indices_in_aux_products, aux_constraints
+    return expression, aux_variables, many_inds, aux_constraints

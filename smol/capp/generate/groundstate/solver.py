@@ -406,8 +406,19 @@ class GroundStateSolver(MSONable):
         self.problem.solve(
             solver=self.solver, warm_start=self.warm_start, **self.solver_options
         )
-        self._ground_state_solution = self.variables.value.astype(int)
-        self._ground_state_energy = self.objective_function.value
+        if (
+            self.variables.value is not None
+            and self.objective_function.value is not None
+        ):
+            self._ground_state_solution = self.variables.value.astype(int)
+            self._ground_state_energy = self.objective_function.value
+        else:
+            warn(
+                "Ground state could not be solved! Try using another solver, or"
+                " fine tune solver options!"
+            )
+            self._ground_state_solution = None
+            self._ground_state_energy = None
         return self._ground_state_solution, self._ground_state_energy
 
     def reset(self):
