@@ -362,7 +362,9 @@ def test_exact_match_max_diameter(processor_distance_processor, rng):
 
     # check a random orbit in between
     # exclude zero diameter, and smallest diameter orbit
-    diameter = rng.choice(list(processor.cluster_subspace.orbits_by_diameter.keys())[2:])
+    diameter = rng.choice(
+        list(processor.cluster_subspace.orbits_by_diameter.keys())[2:]
+    )
     orbit = rng.choice(processor.cluster_subspace.orbits_by_diameter[diameter])
 
     if isinstance(distance_processor, CorrelationDistanceProcessor):
@@ -377,7 +379,6 @@ def test_exact_match_max_diameter(processor_distance_processor, rng):
     # check a vector exceeding match_tol for first point orbit
     distance_vector[1] = 2 * distance_processor.match_tol
     assert distance_processor.exact_match_max_diameter(distance_vector) == 0.0
-
 
 
 def test_set_threads(single_subspace):
