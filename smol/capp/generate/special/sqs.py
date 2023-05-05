@@ -142,8 +142,8 @@ class SQSGenerator(ABC):
                 a string specifying the site basis functions
             orthonormal (bool):
                 whether to enforce an orthonormal basis. From the current
-                available bases only the indicator basis is not orthogonal out
-                of the box
+                available bases only the indicator basis is not orthogonal
+                out-of-the-box
             use_concentration (bool):
                 if True, the concentrations in the prim structure sites will be
                 used to orthormalize site bases. This gives a cluster
@@ -358,7 +358,7 @@ class StochasticSQSGenerator(SQSGenerator):
 
         Args:
             mcmc_steps (int):
-                number of mcmc steps per temperature to perfurm simulated annealing
+                number of mcmc steps per temperature to perform simulated annealing
             initial_occupancies (ndarray): optional
                 initial occupancies to use in the simulated anneal search, an occupancy
                 must be given for each of the supercell shapes, and these occupancies

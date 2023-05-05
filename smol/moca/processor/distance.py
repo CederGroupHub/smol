@@ -110,6 +110,7 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
             ndarray: 2D distance vector where the first row corresponds to correlations
             before flips
         """
+        return
 
     @abstractmethod
     def exact_match_max_diameter(self, distance_vector):
@@ -146,7 +147,7 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
         )  # remove scaling
         feature_vector[1:] = np.abs(feature_vector[1:] - self.target_vector[1:])
 
-        if self.coefs[0] > 0:
+        if self.coefs[0] < 0:
             feature_vector[0] = self.exact_match_max_diameter(feature_vector)
         else:
             feature_vector[0] = 0.0
