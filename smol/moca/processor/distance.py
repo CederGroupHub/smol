@@ -8,6 +8,7 @@ to obtain special structures, such as SQS, SSOS, etc.
 __author__ = "Luis Barroso-Luque"
 
 from abc import ABCMeta, abstractmethod
+from itertools import chain
 
 import numpy as np
 
@@ -20,7 +21,7 @@ corr_distance_single_flip = None
 interaction_distance_single_flip = None
 
 
-class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
+class DistanceProcessor(Processor, metaclass=ABCMeta):
     """Abstract class to compute distance from a fixed feature vector.
 
     The distance used to measure distance is,
@@ -48,7 +49,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         target_weights=None,
         **processor_kwargs,
     ):
-        """Initialize a TargetfeatureProcessor.
+        """Initialize a DistanceProcessor.
 
         Args:
             cluster_subspace (ClusterSubspace):
@@ -73,9 +74,17 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
                 being inherited from.
         """
         self.target_vector = target_vector
+
         if match_weight < 0:
             raise ValueError("The match weight must be a positive number.")
         self.match_tol = match_tol
+
+        if len(target_weights) != len(target_vector) - 1:
+            raise ValueError(
+                f"The length of target_weights must be equal to the length of"
+                f"the target vector minus one {len(target_vector) - 1}. \n"
+                f"Got {len(target_weights)} instead."
+            )
 
         super().__init__(
             cluster_subspace,
@@ -135,7 +144,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         feature_vector = (
             super().compute_feature_vector(occupancy) / self.size
         )  # remove scaling
-        feature_vector[1:] = np.abs(feature_vector[1:] - self.target_vector)
+        feature_vector[1:] = np.abs(feature_vector[1:] - self.target_vector[1:])
 
         if self.coefs[0] > 0:
             feature_vector[0] = self.exact_match_max_diameter(feature_vector)
@@ -188,7 +197,6 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
 
         # remove @ and coefficient values:
         d = {k: v for k, v in d.items() if "@" not in k and k != "coefficients"}
-        print(d.keys())
         return cls(
             cluster_subspace,
             supercell_matrix=supercell_matrix,
@@ -198,7 +206,7 @@ class FeatureDistanceProcessor(Processor, metaclass=ABCMeta):
         )
 
 
-class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionProcessor):
+class CorrelationDistanceProcessor(DistanceProcessor, ClusterExpansionProcessor):
     """CorrelationDistanceProcessor to compute distance from a fixed correlation vector.
 
     The distance used to measure distance is,
@@ -248,7 +256,8 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
         """
         # TODO do not accept external terms here....
         if target_vector is None:
-            target_vector = np.zeros(len(cluster_subspace) - 1)
+            target_vector = np.zeros(len(cluster_subspace))
+        # TODO check length and raise error if incorrect
 
         if target_weights is None:
             target_weights = np.ones(len(cluster_subspace) - 1)
@@ -283,16 +292,12 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
             before flips
         """
         occu_i = occupancy
-        corr_distances = np.zeros((2, self.num_corr_functions))
+        corr_distances = np.zeros((2, self.cluster_subspace.num_corr_functions))
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            corr_distances += corr_distance_single_flip(
-                occu_f,
-                occu_i,
-                self.target_vector,
-                self.num_corr_functions,
-                self._orbit_list,
+            corr_distances += self._evaluator.delta_corr_distance_from_occupancies(
+                occu_f, occu_i, self.target_vector, self._indices.container
             )
             occu_i = occu_f
 
@@ -309,23 +314,24 @@ class CorrelationDistanceProcessor(FeatureDistanceProcessor, ClusterExpansionPro
         Returns:
             float: largest diameter
         """
-        max_matched_diameters = {}
-        for size, orbits in self.cluster_subspace.orbits_by_size.items():
-            max_matched_diameters[size] = 0
-            for orbit in orbits:
-                if np.all(
-                    distance_vector[range(orbit.bit_id, orbit.bit_id + len(orbit))]
-                    <= self.match_tol
-                ):
-                    max_matched_diameters[size] = orbit.base_cluster.diameter
-                else:
-                    break
+        max_matched_diameter = 0.0
 
-        return min(max_matched_diameters.values())
+        for diameter, orbits in self.cluster_subspace.orbits_by_diameter.items():
+            indices = list(
+                chain.from_iterable(
+                    range(orb.bit_id, orb.bit_id + len(orb)) for orb in orbits
+                )
+            )
+            if np.all(distance_vector[indices] <= self.match_tol):
+                max_matched_diameter = diameter
+            else:
+                break
+
+        return max_matched_diameter
 
 
-class InteractionDistanceProcessor(
-    FeatureDistanceProcessor, ClusterDecompositionProcessor
+class ClusterInteractionDistanceProcessor(
+    DistanceProcessor, ClusterDecompositionProcessor
 ):
     """Compute distances from a fixed cluster interaction vector.
 
@@ -383,7 +389,7 @@ class InteractionDistanceProcessor(
                 the total distance. If None, then all correlations are weighted equally.
         """
         if target_vector is None:
-            target_vector = np.zeros(cluster_subspace.num_orbits - 1)
+            target_vector = np.zeros(cluster_subspace.num_orbits)
 
         if target_weights is None:
             target_weights = np.ones(cluster_subspace.num_orbits - 1)
@@ -419,16 +425,14 @@ class InteractionDistanceProcessor(
             before flips
         """
         occu_i = occupancy
-        interaction_distances = np.zeros((2, self.num_orbits))
+        interaction_distances = np.zeros((2, self._subspace.num_orbits))
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            interaction_distances += interaction_distance_single_flip(
-                occu_f,
-                occu_i,
-                self.target_vector,
-                self.num_orbits,
-                self._orbit_list,
+            interaction_distances += (
+                self._evaluator.delta_interaction_distance_from_occupancies(
+                    occu_f, occu_i, self.target_vector, self._indices.container
+                )
             )
             occu_i = occu_f
 
@@ -445,13 +449,13 @@ class InteractionDistanceProcessor(
         Returns:
             float: largest diameter
         """
-        max_matched_diameters = {}
-        for size, orbits in self.cluster_subspace.orbits_by_size.items():
-            max_matched_diameters[size] = 0
-            for i, orbit in enumerate(orbits):
-                if distance_vector[i] <= self.match_tol:
-                    max_matched_diameters[size] = orbit.base_cluster.diameter
-                else:
-                    break
+        max_matched_diameter = 0.0
 
-        return min(max_matched_diameters.values())
+        for diameter, orbits in self.cluster_subspace.orbits_by_diameter.items():
+            indices = [orb.id for orb in orbits]
+            if np.all(distance_vector[indices] <= self.match_tol):
+                max_matched_diameter = diameter
+            else:
+                break
+
+        return max_matched_diameter

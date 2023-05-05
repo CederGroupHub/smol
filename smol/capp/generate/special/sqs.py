@@ -9,13 +9,13 @@ from collections import namedtuple
 
 import numpy as np
 
-from smol._utils import derived_class_factory
 from smol.capp import enumerate_supercell_matrices, generate_random_ordered_occupancy
 from smol.cofe import ClusterSubspace
 from smol.moca import Ensemble, SampleContainer, Sampler
 from smol.moca.kernel import MulticellMetropolis, mckernel_factory
-from smol.moca.processor.feature import FeatureDistanceProcessor
+from smol.moca.processor.distance import DistanceProcessor
 from smol.moca.trace import Trace
+from smol.utils.class_utils import derived_class_factory
 
 SQS = namedtuple("SQS", ["score", "features", "supercell_matrix", "structure"])
 
@@ -64,16 +64,16 @@ class SQSGenerator(ABC):
         self.supercell_size = supercell_size
 
         if feature_type == "correlation":
-            num_features = len(cluster_subspace) - 1  # remove constant
+            num_features = len(cluster_subspace)
         else:
             raise ValueError(f"feature_type {feature_type} not supported")
 
         if target_weights is None:
-            target_weights = np.ones(num_features)
+            target_weights = np.ones(num_features - 1)  # remove constant
         else:
-            if len(target_weights) != num_features:
+            if len(target_weights) != num_features - 1:
                 raise ValueError(
-                    "target_feature_weights must be of length {num_features}"
+                    f"target_feature_weights must be of length {num_features - 1}"
                 )
 
         if target_vector is None:
@@ -101,7 +101,7 @@ class SQSGenerator(ABC):
         self._processors = [
             derived_class_factory(
                 feature_type.capitalize() + "DistanceProcessor",
-                FeatureDistanceProcessor,
+                DistanceProcessor,
                 cluster_subspace,
                 scm,
                 target_vector=target_vector,

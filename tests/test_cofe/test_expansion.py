@@ -18,7 +18,7 @@ def cluster_expansion(cluster_subspace, rng):
         scmatrix[0, 1] = 2  # Intentionally made less symmetric
         scmatrix[1, 2] = 1
         structure = gen_random_ordered_structure(
-            cluster_subspace.structure, size=rng.integers(2, 5), rng=rng
+            cluster_subspace.structure, size=scmatrix, rng=rng
         )
         structures.append(structure)
         scmatrices.append(scmatrix)

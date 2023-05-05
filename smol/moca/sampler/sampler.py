@@ -13,6 +13,7 @@ from warnings import warn
 import numpy as np
 
 from smol.moca.kernel import mckernel_factory
+from smol.moca.kernel.base import MulticellKernel
 from smol.moca.sampler.container import SampleContainer
 from smol.moca.trace import Trace
 from smol.utils.progressbar import progress_bar

@@ -11,11 +11,13 @@ from smol.moca.processor import (
     ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
     CompositeProcessor,
-    CorrelationDistanceProcessor,
     EwaldProcessor,
-    InteractionDistanceProcessor,
 )
 from smol.moca.processor.base import Processor
+from smol.moca.processor.distance import (
+    ClusterInteractionDistanceProcessor,
+    CorrelationDistanceProcessor,
+)
 from smol.utils._openmp_helpers import _openmp_effective_numthreads
 from smol.utils.cluster.numthreads import DEFAULT_NUM_THREADS
 from tests.utils import assert_msonable, gen_random_ordered_structure
@@ -70,7 +72,7 @@ def processor_distance_processor(cluster_subspace, rng, request):
             ClusterDecompositionProcessor(
                 cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
             ),
-            InteractionDistanceProcessor(
+            ClusterInteractionDistanceProcessor(
                 cluster_subspace,
                 scmatrix,
                 expansion.cluster_interaction_tensors,
@@ -296,14 +298,13 @@ def test_distance_processor(processor_distance_processor, rng):
     # test distance processor results vs compute directly from the corresponding
     # processor
     processor, distance_processor = processor_distance_processor
-
     for _ in range(5):
         occu = _gen_unconstrained_ordered_occu(processor.get_sublattices(), rng=rng)
 
         # remove first entry since it is the "exact match diameter" in the distance metric
         expected = abs(
             processor.compute_feature_vector(occu)[1:] / processor.size
-            - distance_processor.target_vector
+            - distance_processor.target_vector[1:]
         )
         actual = distance_processor.compute_feature_vector(occu)
         npt.assert_allclose(actual[1:], expected)
@@ -326,17 +327,17 @@ def test_distance_processor(processor_distance_processor, rng):
             new_occu[site] = new_sp
             flips = [(site, new_sp)]
 
+            # remove first element since it is the "exact match diameter" in the distance metric
             dist_f = abs(
                 processor.compute_feature_vector(new_occu)[1:] / processor.size
-                - distance_processor.target_vector
+                - distance_processor.target_vector[1:]
             )
             dist_i = abs(
                 processor.compute_feature_vector(occu)[1:] / processor.size
-                - distance_processor.target_vector
+                - distance_processor.target_vector[1:]
             )
 
             distances = distance_processor.compute_feature_vector_distances(occu, flips)
-
             npt.assert_allclose(distances[0][1:], dist_i, rtol=RTOL, atol=ATOL)
             npt.assert_allclose(distances[1][1:], dist_f, rtol=RTOL, atol=ATOL)
 
@@ -351,9 +352,33 @@ def test_distance_processor(processor_distance_processor, rng):
             assert actual == pytest.approx(expected)
 
 
-# TODO write this...
-def test_exact_match_max_diameter(processor):
-    pass
+def test_exact_match_max_diameter(processor_distance_processor, rng):
+    processor, distance_processor = processor_distance_processor
+
+    # check a vector with all zeros returns the max diameter
+    distance_vector = np.zeros(len(processor.coefs))
+    max_diameter = max(processor.cluster_subspace.orbits_by_diameter.keys())
+    assert distance_processor.exact_match_max_diameter(distance_vector) == max_diameter
+
+    # check a random orbit in between
+    # exclude zero diameter, and smallest diameter orbit
+    diameter = rng.choice(
+        list(processor.cluster_subspace.orbits_by_diameter.keys())[2:]
+    )
+    orbit = rng.choice(processor.cluster_subspace.orbits_by_diameter[diameter])
+
+    if isinstance(distance_processor, CorrelationDistanceProcessor):
+        # this is correlation based
+        index = rng.choice(range(orbit.bit_id, orbit.bit_id + len(orbit)))
+    else:
+        index = orbit.id
+
+    distance_vector[index] = 2 * distance_processor.match_tol
+    assert 0 < distance_processor.exact_match_max_diameter(distance_vector) < diameter
+
+    # check a vector exceeding match_tol for first point orbit
+    distance_vector[1] = 2 * distance_processor.match_tol
+    assert distance_processor.exact_match_max_diameter(distance_vector) == 0.0
 
 
 def test_set_threads(single_subspace):
