@@ -146,6 +146,9 @@ class MulticellMetropolis(MetropolisAcceptMixin, ThermalKernelMixin, MulticellKe
             kernel_hop_probabilities (Sequence of floats): optional
                 probabilities for choosing each of the specified hop periods.
         """
+        if not all(isinstance(kernel, Metropolis) for kernel in mckernels):
+            raise ValueError("All kernels must be of type Metropolis")
+
         # order of arguments here matters based on the MRO, temperature must be first
         super().__init__(
             temperature,
@@ -157,6 +160,7 @@ class MulticellMetropolis(MetropolisAcceptMixin, ThermalKernelMixin, MulticellKe
             **kwargs,
         )
 
+    # TODO use SetMany to set all temperatures?
     @ThermalKernelMixin.temperature.setter
     def temperature(self, temperature):
         """Set temperature and update all kernels."""

@@ -7,14 +7,19 @@ import pytest
 
 from smol.capp.generate.random import _gen_unconstrained_ordered_occu
 from smol.constants import kB
-from smol.moca.kernel import Metropolis, UniformlyRandom, WangLandau
+from smol.moca.kernel import (
+    Metropolis,
+    MulticellMetropolis,
+    UniformlyRandom,
+    WangLandau,
+)
 from smol.moca.kernel.base import ALL_MCUSHERS, ThermalKernelMixin
 from smol.moca.kernel.bias import FugacityBias
 from smol.moca.kernel.mcusher import Flip, Swap, TableFlip
 from smol.moca.trace import StepTrace, Trace
 
 kernels_with_bias = [UniformlyRandom, Metropolis]
-kernels_no_bias = [WangLandau]
+kernels_no_bias = [MulticellMetropolis, WangLandau]
 kernels = kernels_with_bias + kernels_no_bias
 ushers = ALL_MCUSHERS
 
@@ -40,8 +45,14 @@ def mckernel(ensemble, request):
         kwargs["mcushers"] = choices(
             [c for c in ushers if c not in ("MultiStep", "Composite")], k=2
         )
+    if kernel_class == MulticellMetropolis:
+        kernels = [
+            Metropolis(ensemble, step_type=step_type, **kwargs) for _ in range(5)
+        ]
+        kernel = kernel_class(kernels, kwargs["temperature"])
+    else:
+        kernel = kernel_class(ensemble, step_type=step_type, **kwargs)
 
-    kernel = kernel_class(ensemble, step_type=step_type, **kwargs)
     return kernel
 
 
@@ -72,7 +83,7 @@ def mckernel_bias(ensemble, request):
 )
 def test_constructor(ensemble, step_type, mcusher):
     kernel = Metropolis(ensemble, step_type=step_type, temperature=500)
-    assert isinstance(kernel._usher, mcusher)
+    assert isinstance(kernel.mcusher, mcusher)
     assert isinstance(kernel.trace, StepTrace)
     assert "temperature" in kernel.trace.names
     kernel.bias = FugacityBias(kernel.mcusher.sublattices)
@@ -81,10 +92,10 @@ def test_constructor(ensemble, step_type, mcusher):
 
 def test_single_step(mckernel, rng):
     mckernel.set_aux_state(
-        _gen_unconstrained_ordered_occu(mckernel._usher.sublattices, rng=rng)
+        _gen_unconstrained_ordered_occu(mckernel.mcusher.sublattices, rng=rng)
     )
     for _ in range(100):
-        occu_ = _gen_unconstrained_ordered_occu(mckernel._usher.sublattices, rng=rng)
+        occu_ = _gen_unconstrained_ordered_occu(mckernel.mcusher.sublattices, rng=rng)
         trace = mckernel.single_step(occu_.copy())
 
         if trace.accepted:
@@ -106,11 +117,11 @@ def test_single_step(mckernel, rng):
 
 def test_single_step_bias(mckernel_bias, rng):
     mckernel_bias.set_aux_state(
-        _gen_unconstrained_ordered_occu(mckernel_bias._usher.sublattices)
+        _gen_unconstrained_ordered_occu(mckernel_bias.mcusher.sublattices)
     )
     for _ in range(100):
         occu = _gen_unconstrained_ordered_occu(
-            mckernel_bias._usher.sublattices, rng=rng
+            mckernel_bias.mcusher.sublattices, rng=rng
         )
         trace = mckernel_bias.single_step(occu.copy())
         # assert delta bias is there and recorded
@@ -159,3 +170,7 @@ def test_trace(rng):
     steptrace_d = steptrace.__dict__.copy()
     steptrace_d["delta_trace"] = steptrace_d["delta_trace"].__dict__.copy()
     assert steptrace.as_dict() == steptrace_d
+
+
+# TODO add direct multicell tests, especially to check proper updates of traces
+#  before/after cell jumps
