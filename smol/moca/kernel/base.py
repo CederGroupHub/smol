@@ -484,7 +484,8 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
                 raise ValueError("The kernel_probabilities do not sum to 1.")
             if len(kernel_probabilities) != len(mckernels):
                 raise ValueError(
-                    "The length of kernel_probabilities must be equal to the number of mckernels."
+                    "The length of kernel_probabilities must be equal to the number of"
+                    " mckernels."
                 )
             self.kernel_p = np.array(kernel_probabilities)
         else:
@@ -502,7 +503,8 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
                 raise ValueError("The kernel_hop_probabilities do not sum to 1.")
             if len(kernel_hop_probabilities) != len(kernel_hop_periods):
                 raise ValueError(
-                    "The length of kernel_hop_periods and kernel_hop_probabilities does not match."
+                    "The length of kernel_hop_periods and kernel_hop_probabilities does"
+                    "not match."
                 )
             self._hop_p = np.array(kernel_hop_probabilities)
         else:
@@ -517,8 +519,7 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         self._kernel_hop_counter = 1
 
         # keep values of enthalpy and features
-        self._new_enthalpy, self._new_features = None, None
-        self._enthalpies = np.full(len(mckernels), 0)
+        self._new_features = None
         self._features = np.zeros(
             (len(mckernels), len(self._kernels[0].natural_params))
         )
@@ -610,11 +611,10 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         prev_features = self._features[self._current_kernel_index]
         self.trace.delta_trace.features = self._new_features - prev_features
 
-        self._new_enthalpy = np.dot(
-            self._new_features, self.current_kernel.natural_params
+        delta_enthalpy = np.dot(
+            self.trace.delta_trace.features, self.current_kernel.natural_params
         )
-        prev_enthalpy = self._enthalpies[self._current_kernel_index]
-        self.trace.delta_trace.enthalpy = self._new_enthalpy - prev_enthalpy
+        self.trace.delta_trace.enthalpy = delta_enthalpy
 
     def _do_accept_step(self, occupancy, step):
         """Populate trace and aux states for an accepted step.
@@ -633,7 +633,6 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
             self.current_kernel.trace.occupancy[site] = species
 
         # update the features
-        self._enthalpies[self.trace.kernel_index] = self._new_enthalpy
         self._features[self.trace.kernel_index] = self._new_features
 
         self.mcusher.update_aux_state(step)
@@ -678,7 +677,6 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
             # We need to save the latest property...
             if self.trace.accepted:
                 self._features[kernel_index] += self.trace.delta_trace.features
-                self._enthalpies[kernel_index] += self.trace.delta_trace.enthalpy
 
             self._kernel_hop_counter += 1
 
@@ -700,10 +698,7 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
                 kernel.trace.occupancy = occupancy
                 kernel.set_aux_state(occupancy, *args, **kwargs)
                 new_features.append(kernel.ensemble.compute_feature_vector(occupancy))
-                self._features = np.vstack(new_features)
-                self._enthalpies = np.dot(
-                    self._features, self.current_kernel.natural_params
-                )
+            self._features = np.vstack(new_features)
         else:  # if only one assume it is continuing from a run...
             self.current_kernel.set_aux_state(occupancies, *args, **kwargs)
 
