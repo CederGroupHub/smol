@@ -19,7 +19,7 @@ from smol.moca.kernel.mcusher import Flip, Swap, TableFlip
 from smol.moca.trace import StepTrace, Trace
 
 kernels_with_bias = [UniformlyRandom, Metropolis]
-kernels_no_bias = [MulticellMetropolis, WangLandau]
+kernels_no_bias = [WangLandau, MulticellMetropolis]
 kernels = kernels_with_bias + kernels_no_bias
 ushers = ALL_MCUSHERS
 
@@ -100,8 +100,14 @@ def test_single_step(mckernel, rng):
 
         if trace.accepted:
             assert not np.array_equal(trace.occupancy, occu_)
+            direct = mckernel.ensemble.compute_feature_vector(trace.occupancy)
+            direct -= mckernel.ensemble.compute_feature_vector(occu_)
+            npt.assert_allclose(
+                direct, trace.delta_trace.features, rtol=1e-5, atol=1e-8
+            )
         else:
             npt.assert_array_equal(trace.occupancy, occu_)
+
         if isinstance(mckernel, WangLandau):
             assert mckernel.bin_size > 0
             assert isinstance(mckernel.levels, np.ndarray)
