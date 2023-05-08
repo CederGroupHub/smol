@@ -105,11 +105,9 @@ def test_constructor(ensemble, step_type, mcusher):
 
 def test_single_step(mckernel, rng):
     prev_kernel = 0  # for multicell metropolis
-    occu_ = _gen_unconstrained_ordered_occu(mckernel.mcusher.sublattices, rng=rng)
-    mckernel.set_aux_state(occu_)
-
     for _ in range(100):
-        print(_)
+        occu_ = _gen_unconstrained_ordered_occu(mckernel.mcusher.sublattices, rng=rng)
+        mckernel.set_aux_state(occu_)
         trace = mckernel.single_step(occu_.copy())
         if trace.accepted:
             curr_features = mckernel.ensemble.compute_feature_vector(trace.occupancy)
@@ -146,7 +144,7 @@ def test_single_step(mckernel, rng):
             assert "mod_factor" in trace.names
 
         # set occu_ to the new occupancy
-        occu_ = trace.occupancy
+        # occu_ = trace.occupancy
 
 
 def test_single_step_bias(mckernel_bias, rng):
