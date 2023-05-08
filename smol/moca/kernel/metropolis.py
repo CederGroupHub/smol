@@ -124,7 +124,7 @@ class MulticellMetropolis(MetropolisAcceptMixin, ThermalKernelMixin, MulticellKe
         mckernels,
         temperature,
         kernel_probabilities=None,
-        kernel_hop_periods=1,
+        kernel_hop_periods=5,
         kernel_hop_probabilities=None,
         seed=None,
         **kwargs,

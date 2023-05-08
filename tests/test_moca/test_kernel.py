@@ -19,17 +19,19 @@ from smol.moca.kernel.mcusher import Flip, Swap, TableFlip
 from smol.moca.trace import StepTrace, Trace
 
 kernels_with_bias = [UniformlyRandom, Metropolis]
-kernels_no_bias = [WangLandau, MulticellMetropolis]
+kernels_no_bias = [MulticellMetropolis, WangLandau]
 kernels = kernels_with_bias + kernels_no_bias
 ushers = ALL_MCUSHERS
 
 
 @pytest.fixture(params=product(kernels, ushers), scope="module")
-def mckernel(ensemble, request):
+def mckernel(ensemble, rng, request):
     kwargs = {}
     kernel_class, step_type = request.param
+
     if issubclass(kernel_class, ThermalKernelMixin):
         kwargs["temperature"] = 5000
+
     if kernel_class == WangLandau:
         kwargs["min_enthalpy"] = -5000
         kwargs["max_enthalpy"] = 5000
@@ -45,14 +47,25 @@ def mckernel(ensemble, request):
         kwargs["mcushers"] = choices(
             [c for c in ushers if c not in ("MultiStep", "Composite")], k=2
         )
+    # TODO create ensemble with different cell shapes
     if kernel_class == MulticellMetropolis:
         kernels = [
-            Metropolis(ensemble, step_type=step_type, **kwargs) for _ in range(5)
+            Metropolis(ensemble, step_type=step_type, **kwargs) for _ in range(10)
         ]
         kernel = kernel_class(kernels, kwargs["temperature"])
+        kernel.set_aux_state(
+            np.vstack(
+                [
+                    _gen_unconstrained_ordered_occu(kernel.mcusher.sublattices, rng=rng)
+                    for _ in range(len(kernel.mckernels))
+                ]
+            )
+        )
     else:
         kernel = kernel_class(ensemble, step_type=step_type, **kwargs)
-
+        kernel.set_aux_state(
+            _gen_unconstrained_ordered_occu(kernel.mcusher.sublattices, rng=rng)
+        )
     return kernel
 
 
@@ -91,19 +104,31 @@ def test_constructor(ensemble, step_type, mcusher):
 
 
 def test_single_step(mckernel, rng):
-    mckernel.set_aux_state(
-        _gen_unconstrained_ordered_occu(mckernel.mcusher.sublattices, rng=rng)
-    )
-    for _ in range(100):
-        occu_ = _gen_unconstrained_ordered_occu(mckernel.mcusher.sublattices, rng=rng)
-        trace = mckernel.single_step(occu_.copy())
+    prev_kernel = 0  # for multicell metropolis
+    occu_ = _gen_unconstrained_ordered_occu(mckernel.mcusher.sublattices, rng=rng)
+    mckernel.set_aux_state(occu_)
 
+    for _ in range(100):
+        print(_)
+        trace = mckernel.single_step(occu_.copy())
         if trace.accepted:
+            curr_features = mckernel.ensemble.compute_feature_vector(trace.occupancy)
+            # for multicell check if the step was a kernel hop
+            if (
+                isinstance(mckernel, MulticellMetropolis)
+                and prev_kernel != trace.kernel_index
+            ):
+                prev_features = mckernel._kernels[prev_kernel].trace.features
+                prev_kernel = trace.kernel_index
+            else:
+                prev_features = mckernel.ensemble.compute_feature_vector(occu_)
             assert not np.array_equal(trace.occupancy, occu_)
-            direct = mckernel.ensemble.compute_feature_vector(trace.occupancy)
-            direct -= mckernel.ensemble.compute_feature_vector(occu_)
+
             npt.assert_allclose(
-                direct, trace.delta_trace.features, rtol=1e-5, atol=1e-8
+                curr_features - prev_features,
+                trace.delta_trace.features,
+                rtol=1e-5,
+                atol=1e-8,
             )
         else:
             npt.assert_array_equal(trace.occupancy, occu_)
@@ -119,6 +144,9 @@ def test_single_step(mckernel, rng):
             assert "entropy" in trace.names
             assert "cumulative_mean_features" in trace.names
             assert "mod_factor" in trace.names
+
+        # set occu_ to the new occupancy
+        occu_ = trace.occupancy
 
 
 def test_single_step_bias(mckernel_bias, rng):
