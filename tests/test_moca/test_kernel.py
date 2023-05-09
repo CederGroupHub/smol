@@ -116,7 +116,7 @@ def test_single_step(mckernel, rng):
                 isinstance(mckernel, MulticellMetropolis)
                 and prev_kernel != trace.kernel_index
             ):
-                prev_features = mckernel._kernels[prev_kernel].trace.features
+                prev_features = mckernel._features[prev_kernel]
                 prev_kernel = trace.kernel_index
             else:
                 prev_features = mckernel.ensemble.compute_feature_vector(occu_)

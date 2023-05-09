@@ -518,11 +518,12 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         self._kernel_ids = np.arange(len(mckernels))
         self._current_hop_period = self._rng.choice(self._hop_periods, p=self._hop_p)
         self._kernel_hop_counter = 1
-
+        self._current_kernel_index = np.array(0, dtype=int)
         # keep values of proposed features and occupancy for cell hops
         self._new_features = None
-        self._current_kernel_index = np.array(0, dtype=int)
-
+        self._features = np.zeros(
+            (len(mckernels), len(self._kernels[0].natural_params))
+        )
         self._spec = Metadata(
             self.__class__.__name__,
             seed=self._seed,
@@ -535,9 +536,7 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
             accepted=np.array(True),
             kernel_index=self._current_kernel_index,
         )
-        # add a feature attribute to kernel traces, to store the current features
-        for kernel in self._kernels:
-            kernel.trace.features = np.zeros(len(kernel.ensemble.natural_parameters))
+
         # run a initial step to populate trace values
         _ = self.single_step(
             np.zeros(self.current_kernel.ensemble.num_sites, dtype=int)
@@ -607,7 +606,7 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
 
         self._new_features = self.ensemble.compute_feature_vector(occupancy)
         # from kernel currently at
-        prev_features = self._kernels[self._current_kernel_index].trace.features
+        prev_features = self._features[self._current_kernel_index]
         self.trace.delta_trace.features = self._new_features - prev_features
         delta_enthalpy = np.dot(
             self.trace.delta_trace.features, self.ensemble.natural_parameters
@@ -628,8 +627,8 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         """
         # update occupancy and features from kernel hopped to
         self.current_kernel.trace.occupancy = occupancy
-        self.current_kernel.trace.features = self._new_features
-        self._current_kernel_index = self.trace.kernel_index
+        # update the features
+        self._features[self.trace.kernel_index] = self._new_features
         return occupancy
 
     def single_step(self, occupancy):
@@ -657,41 +656,45 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
             # attempting to hop to
             occu_f = self.trace.occupancy.copy()  # make a copy bc it will be changed
             self._trace = super().single_step(occu_f)
-            if not self.trace.accepted:
+            if self.trace.accepted:
+                kernel_index = self.trace.kernel_index
+            else:
                 # reset the occupancy to the original one of the kernel we were at
                 self.trace.occupancy = occupancy
-                self.trace.kernel_index = self._current_kernel_index
+                kernel_index = self._current_kernel_index
+
             self._current_hop_period = self._rng.choice(
                 self._hop_periods, p=self._hop_p
             )
             self._kernel_hop_counter = 1
         else:  # if not do a single step with current kernel
-            self.current_kernel._trace = self.current_kernel.single_step(occupancy)
-            self._trace = self.current_kernel.trace
-            # this needs to be set bc single_Step in the underlying kernel is unaware
-            self.trace.kernel_index = self._current_kernel_index
+            kernel_index = self.trace.kernel_index
+            self._trace = self.current_kernel.single_step(occupancy)
             self._kernel_hop_counter += 1
             # We need to save the latest property...
             if self.trace.accepted:
-                self.current_kernel.trace.features += self.trace.delta_trace.features
+                self._features[kernel_index] += self.trace.delta_trace.features
+
+        self.trace.kernel_index = kernel_index
+        self._current_kernel_index = kernel_index
 
         return self.trace
 
     def set_aux_state(self, occupancies, *args, **kwargs):
         """Set the occupancies, features and enthalpy for each supercell kernel."""
         # set the current and previous values based on given occupancy
+        new_features = []
         if occupancies.shape[0] == len(self._kernels):
             for kernel, occupancy in zip(self._kernels, occupancies):
                 occupancy = np.ascontiguousarray(occupancy, dtype=int)
                 kernel.trace.occupancy = occupancy
-                kernel.trace.features = kernel.ensemble.compute_feature_vector(
-                    occupancy
-                )
                 kernel.set_aux_state(occupancy, *args, **kwargs)
+                new_features.append(kernel.ensemble.compute_feature_vector(occupancy))
+            self._features = np.vstack(new_features)
         else:  # if only one assume it is continuing from a run...
-            self.current_kernel.trace.features = self.ensemble.compute_feature_vector(
-                occupancies
-            )
+            self._features[
+                self._current_kernel_index, :
+            ] = self.current_kernel.ensemble.compute_feature_vector(occupancies)
             self.current_kernel.set_aux_state(occupancies, *args, **kwargs)
 
     def compute_initial_trace(self, occupancy):
