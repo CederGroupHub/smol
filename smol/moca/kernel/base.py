@@ -649,17 +649,16 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         if self._kernel_hop_counter % self._current_hop_period == 0:
             # this is the new kernel index (the one attempting to hop to)
             # in some cases it may hop to the same kernel, but that is ok
-            self.trace.kernel_index = np.array(
+            kernel_index = np.array(
                 self._rng.choice(self._kernel_ids, p=self._kernel_p)
             )
+            self.trace.kernel_index = kernel_index
             # set the occupancy to the one currently in the trace of the kernel
-            # attempting to hop to
-            occu_f = self.trace.occupancy.copy()  # make a copy bc it will be changed
+            # attempting to hop to, and make a copy bc it will be changed
+            occu_f = self._kernels[kernel_index].trace.occupancy.copy()
             self._trace = super().single_step(occu_f)
-            if self.trace.accepted:
-                kernel_index = self.trace.kernel_index
-            else:
-                # reset the occupancy to the original one of the kernel we were at
+            # reset the occupancy to the original one of the kernel we were at
+            if not self.trace.accepted:
                 self.trace.occupancy = occupancy
                 kernel_index = self._current_kernel_index
 
@@ -668,13 +667,14 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
             )
             self._kernel_hop_counter = 1
         else:  # if not do a single step with current kernel
-            kernel_index = self.trace.kernel_index
+            kernel_index = self._current_kernel_index
             self._trace = self.current_kernel.single_step(occupancy)
             self._kernel_hop_counter += 1
             # We need to save the latest property...
             if self.trace.accepted:
                 self._features[kernel_index] += self.trace.delta_trace.features
 
+        # set the current kernel index
         self.trace.kernel_index = kernel_index
         self._current_kernel_index = kernel_index
 
