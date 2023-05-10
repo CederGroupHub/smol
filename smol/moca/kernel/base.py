@@ -372,7 +372,7 @@ class ThermalKernelMixin:
     ...oh well, here's one...
     """
 
-    kB: float = kB  # Boltzmann constant in eV/K
+    _kB: float = kB  # Boltzmann constant in eV/K
 
     def __init__(self, temperature, *args, **kwargs):
         """Initialize ThermalKernel.
@@ -392,9 +392,20 @@ class ThermalKernelMixin:
                 keyword arguments to instantiate the MCUsher for the
                 corresponding step size.
         """
-        self.beta = 1.0 / (kB * temperature)
+        self.beta = 1.0 / (self.kB * temperature)
         super().__init__(*args, **kwargs)
         self.temperature = temperature
+
+    @property
+    def kB(self):
+        """Get the temperature scale factor."""
+        return self._kB
+
+    @kB.setter
+    def kB(self, kB):
+        """Set the temperature scale factor."""
+        self._kB = kB
+        self.beta = 1.0 / (self.kB * self.temperature)
 
     @property
     def temperature(self):
