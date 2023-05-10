@@ -52,7 +52,9 @@ def mckernel(ensemble, rng, request):
         kernels = [
             Metropolis(ensemble, step_type=step_type, **kwargs) for _ in range(10)
         ]
-        kernel = kernel_class(kernels, kwargs["temperature"])
+        kernel = kernel_class(
+            kernels, kwargs["temperature"]
+        )  # , kernel_hop_periods=101)
         kernel.set_aux_state(
             np.vstack(
                 [
@@ -104,23 +106,31 @@ def test_constructor(ensemble, step_type, mcusher):
 
 
 def test_single_step(mckernel, rng):
-    prev_kernel = 0  # for multicell metropolis
+    occu = _gen_unconstrained_ordered_occu(mckernel.mcusher.sublattices, rng=rng)
+    mckernel.set_aux_state(occu)
+    prev_kernel_index = 0  # for multicell metropolis
+    prev_occu = occu.copy()
+
     for _ in range(100):
-        occu_ = _gen_unconstrained_ordered_occu(mckernel.mcusher.sublattices, rng=rng)
-        mckernel.set_aux_state(occu_)
-        trace = mckernel.single_step(occu_.copy())
+        trace = mckernel.single_step(occu)
+        curr_features = mckernel.ensemble.compute_feature_vector(occu)
+
         if trace.accepted:
-            curr_features = mckernel.ensemble.compute_feature_vector(trace.occupancy)
-            # for multicell check if the step was a kernel hop
+            npt.assert_array_equal(trace.occupancy, occu)
             if (
                 isinstance(mckernel, MulticellMetropolis)
-                and prev_kernel != trace.kernel_index
+                and prev_kernel_index != trace.kernel_index
             ):
-                prev_features = mckernel._features[prev_kernel]
-                prev_kernel = trace.kernel_index
+                prev_features = mckernel._features[prev_kernel_index]
+                assert np.allclose(
+                    mckernel.mckernels[
+                        prev_kernel_index
+                    ].ensemble.compute_feature_vector(prev_occu),
+                    prev_features,
+                )
+                prev_kernel_index = trace.kernel_index
             else:
-                prev_features = mckernel.ensemble.compute_feature_vector(occu_)
-            assert not np.array_equal(trace.occupancy, occu_)
+                prev_features = mckernel.ensemble.compute_feature_vector(prev_occu)
 
             npt.assert_allclose(
                 curr_features - prev_features,
@@ -129,9 +139,21 @@ def test_single_step(mckernel, rng):
                 atol=1e-8,
             )
         else:
-            npt.assert_array_equal(trace.occupancy, occu_)
+            npt.assert_array_equal(trace.occupancy, prev_occu)
 
-        if isinstance(mckernel, WangLandau):
+        if isinstance(mckernel, MulticellMetropolis):
+            npt.assert_allclose(
+                mckernel._features[trace.kernel_index],
+                curr_features,
+                rtol=1e-5,
+                atol=1e-8,
+            )
+            assert mckernel.trace.kernel_index == mckernel._current_kernel_index
+            assert (
+                mckernel.trace
+                is mckernel.mckernels[mckernel._current_kernel_index].trace
+            )
+        elif isinstance(mckernel, WangLandau):
             assert mckernel.bin_size > 0
             assert isinstance(mckernel.levels, np.ndarray)
             assert isinstance(mckernel.entropy, np.ndarray)
@@ -143,8 +165,8 @@ def test_single_step(mckernel, rng):
             assert "cumulative_mean_features" in trace.names
             assert "mod_factor" in trace.names
 
-        # set occu_ to the new occupancy
-        # occu_ = trace.occupancy
+        # save previous occu
+        prev_occu[:] = occu
 
 
 def test_single_step_bias(mckernel_bias, rng):

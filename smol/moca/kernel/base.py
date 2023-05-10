@@ -56,7 +56,9 @@ class MCKernelInterface(metaclass=ABCMeta):
         3) _do_post_step()
 
         The above is not a hard requirement, as long as the StepTrace recording
-        necessary values is returned.
+        necessary values is returned, and the occupancy is modified in place
+        according to the step. (not sure if that is the best design decision, if
+        we decide it is not then we need to adjust the run method in Sampler)
         """
 
     @abstractmethod
@@ -631,9 +633,11 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         Returns:
             ndarray: new occupancy
         """
+        for site, species in step:
+            occupancy[site] = species
+
         # update the features
-        self._current_kernel_index = self.trace.kernel_index
-        self._features[self.trace.kernel_index] = self._new_features
+        self._features[self.trace.kernel_index, :] = self._new_features
         return occupancy
 
     def single_step(self, occupancy):
@@ -647,8 +651,7 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
                 encoded occupancy.
 
         Returns:
-            StepTrace: a step trace for states and traced values for a single
-                       step
+            StepTrace: a step trace for states and traced values for a single step
         """
         # check if we should attempt to hop kernels
         if self._kernel_hop_counter % self._current_hop_period == 0:
@@ -658,10 +661,17 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
             # set the occupancy to the one currently in the trace of the kernel
             # attempting to hop to, not the one passed from the previous step
             self._trace = super().single_step(self.trace.occupancy)
-            # reset the trace to the one of the previous kernel if step not accepted
-            if not self.trace.accepted:
+            if self.trace.accepted:
+                # update the current kernel index
+                self._current_kernel_index = self.trace.kernel_index
+                # modify the occupancy in place, to follow MCKernelInterface
+                occupancy[:] = self.trace.occupancy
+            else:
+                # reset the trace to the one of the previous kernel if step not accepted
                 self._trace = self._kernels[self._current_kernel_index].trace
+                self._trace.occupancy = occupancy
                 self._trace.accepted = np.array(False)
+
             # reset the hop period and counter
             self._current_hop_period = self._rng.choice(
                 self._hop_periods, p=self._hop_p
@@ -675,6 +685,7 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
                 self._features[
                     self._current_kernel_index
                 ] += self.trace.delta_trace.features
+            assert self.trace.kernel_index == self._current_kernel_index
 
         return self.trace
 

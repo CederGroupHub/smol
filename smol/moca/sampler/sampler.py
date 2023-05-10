@@ -219,6 +219,7 @@ class Sampler:
         with progress_bar(progress, total=nsteps, description=desc) as p_bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
+                    # the occupancies are modified in place at each step
                     for i, strace in enumerate(self._single_step(occupancies)):
                         for name, value in strace.items():
                             val = getattr(trace, name)
