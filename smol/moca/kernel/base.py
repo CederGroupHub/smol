@@ -526,7 +526,6 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         self._seed = seed if seed is not None else np.random.SeedSequence().entropy
         self._rng = np.random.default_rng(self._seed)
         self._kernels = mckernels
-        self._kernel_ids = np.arange(len(mckernels))
         self._current_hop_period = self._rng.choice(self._hop_periods, p=self._hop_p)
         self._kernel_hop_counter = 1
         self._current_kernel_index = np.array(0, dtype=int)
@@ -543,15 +542,10 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
             kernel_hop_probabilities=self._hop_p,
             mckernels=[kernel.spec for kernel in mckernels],
         )
-        self._trace = StepTrace(
-            accepted=np.array(True),
-            kernel_index=self._current_kernel_index,
-        )
-
-        # run a initial step to populate trace values
-        _ = self.single_step(
-            np.zeros(self.current_kernel.ensemble.num_sites, dtype=int)
-        )
+        # set kernel indices
+        for i, kernel in enumerate(self._kernels):
+            kernel.trace.kernel_index = np.array(i, dtype=int)
+        self._trace = self._kernels[self._current_kernel_index].trace
         self._kernel_hop_counter = 1  # reset the counter
 
     @property
@@ -612,6 +606,7 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         Returns:
             StepTrace: the step trace
         """
+        occupancy = occupancy.copy()  # make a copy to avoid modifying the original
         for site, species in step:
             occupancy[site] = species
 
@@ -636,9 +631,8 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         Returns:
             ndarray: new occupancy
         """
-        # update occupancy and features from kernel hopped to
-        self.current_kernel.trace.occupancy = occupancy
         # update the features
+        self._current_kernel_index = self.trace.kernel_index
         self._features[self.trace.kernel_index] = self._new_features
         return occupancy
 
@@ -658,36 +652,29 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         """
         # check if we should attempt to hop kernels
         if self._kernel_hop_counter % self._current_hop_period == 0:
-            # this is the new kernel index (the one attempting to hop to)
+            # this is the trace for the new kernel (the one attempting to hop to)
             # in some cases it may hop to the same kernel, but that is ok
-            kernel_index = np.array(
-                self._rng.choice(self._kernel_ids, p=self._kernel_p)
-            )
-            self.trace.kernel_index = kernel_index
+            self._trace = self._rng.choice(self._kernels, p=self._kernel_p).trace
             # set the occupancy to the one currently in the trace of the kernel
-            # attempting to hop to, and make a copy bc it will be changed
-            occu_f = self._kernels[kernel_index].trace.occupancy.copy()
-            self._trace = super().single_step(occu_f)
-            # reset the occupancy to the original one of the kernel we were at
+            # attempting to hop to, not the one passed from the previous step
+            self._trace = super().single_step(self.trace.occupancy)
+            # reset the trace to the one of the previous kernel if step not accepted
             if not self.trace.accepted:
-                self.trace.occupancy = occupancy
-                kernel_index = self._current_kernel_index
-
+                self._trace = self._kernels[self._current_kernel_index].trace
+                self._trace.accepted = np.array(False)
+            # reset the hop period and counter
             self._current_hop_period = self._rng.choice(
                 self._hop_periods, p=self._hop_p
             )
             self._kernel_hop_counter = 1
         else:  # if not do a single step with current kernel
-            kernel_index = self._current_kernel_index
             self._trace = self.current_kernel.single_step(occupancy)
             self._kernel_hop_counter += 1
             # We need to save the latest property...
             if self.trace.accepted:
-                self._features[kernel_index] += self.trace.delta_trace.features
-
-        # set the current kernel index
-        self.trace.kernel_index = kernel_index
-        self._current_kernel_index = kernel_index
+                self._features[
+                    self._current_kernel_index
+                ] += self.trace.delta_trace.features
 
         return self.trace
 

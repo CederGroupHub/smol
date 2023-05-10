@@ -383,6 +383,7 @@ class StochasticSQSGenerator(SQSGenerator):
         if temperatures is None:
             temperatures = np.linspace(5.0, 0.01, 20)  # TODO benchmark this
 
+        # TODO dont anneal directly call sample and keep top structures
         self._sampler.anneal(
             temperatures, mcmc_steps, initial_occupancies=initial_occupancies, **kwargs
         )
