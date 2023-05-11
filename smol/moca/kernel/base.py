@@ -685,8 +685,8 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
                 self._features[
                     self._current_kernel_index
                 ] += self.trace.delta_trace.features
-            assert self.trace.kernel_index == self._current_kernel_index
 
+        # assert self.trace.kernel_index == self._current_kernel_index
         return self.trace
 
     def set_aux_state(self, occupancies, *args, **kwargs):

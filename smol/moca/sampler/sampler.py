@@ -215,7 +215,7 @@ class Sampler:
 
         # Initialise progress bar
         chains, nsites = self.samples.shape
-        desc = f"Sampling {chains} chain(s) from a cell with {nsites} sites..."
+        desc = f"Sampling {chains} chain(s) from a cell with {nsites} sites"
         with progress_bar(progress, total=nsteps, description=desc) as p_bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
