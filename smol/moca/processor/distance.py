@@ -176,8 +176,8 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
         distance_vectors = self.compute_feature_vector_distances(occupancy, flips)
 
         if self.coefs[0] > 0:
-            distance_vectors[0] = self.exact_match_max_diameter(distance_vectors[0])
-            distance_vectors[1] = self.exact_match_max_diameter(distance_vectors[1])
+            distance_vectors[0, 0] = self.exact_match_max_diameter(distance_vectors[0])
+            distance_vectors[1, 0] = self.exact_match_max_diameter(distance_vectors[1])
 
         return distance_vectors[1] - distance_vectors[0]
 
