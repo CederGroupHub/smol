@@ -75,7 +75,7 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
         """
         self.target_vector = target_vector
 
-        if match_weight < 0:
+        if match_weight < 0:  # maybe we can just allow this, at the users peril?
             raise ValueError("The match weight must be a positive number.")
         self.match_tol = match_tol
 
@@ -133,11 +133,6 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
         Args:
             occupancy (ndarray):
                 encoded occupancy array
-            flips (list of tuple):
-                list of tuples with two elements. Each tuple represents a
-                single flip where the first element is the index of the site
-                in the occupancy array and the second element is the index
-                for the new species to place at that site.
 
         Returns:
             array: change in feature vector
@@ -147,7 +142,7 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
         )  # remove scaling
         feature_vector[1:] = np.abs(feature_vector[1:] - self.target_vector[1:])
 
-        if self.coefs[0] < 0:
+        if self.coefs[0] != 0:
             feature_vector[0] = self.exact_match_max_diameter(feature_vector)
         else:
             feature_vector[0] = 0.0
@@ -175,7 +170,7 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
         """
         distance_vectors = self.compute_feature_vector_distances(occupancy, flips)
 
-        if self.coefs[0] > 0:
+        if self.coefs[0] != 0:
             distance_vectors[0, 0] = self.exact_match_max_diameter(distance_vectors[0])
             distance_vectors[1, 0] = self.exact_match_max_diameter(distance_vectors[1])
 
