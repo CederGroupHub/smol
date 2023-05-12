@@ -16,10 +16,6 @@ from smol.cofe.space.clusterspace import ClusterSubspace
 from smol.moca.processor import ClusterDecompositionProcessor, ClusterExpansionProcessor
 from smol.moca.processor.base import Processor
 
-# TODO implement this with evaluator
-corr_distance_single_flip = None
-interaction_distance_single_flip = None
-
 
 class DistanceProcessor(Processor, metaclass=ABCMeta):
     """Abstract class to compute distance from a fixed feature vector.
@@ -140,7 +136,7 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
         feature_vector = (
             super().compute_feature_vector(occupancy) / self.size
         )  # remove scaling
-        feature_vector[1:] = np.abs(feature_vector[1:] - self.target_vector[1:])
+        feature_vector[:] = np.abs(feature_vector - self.target_vector)
 
         feature_vector[0] = (
             self.exact_match_max_diameter(feature_vector) if self.coefs[0] != 0 else 0.0
@@ -286,16 +282,13 @@ class CorrelationDistanceProcessor(DistanceProcessor, ClusterExpansionProcessor)
             ndarray: 2D distance vector where the first row corresponds to correlations
             before flips
         """
-        occu_i = occupancy
-        corr_distances = np.zeros((2, self.cluster_subspace.num_corr_functions))
+        occu_f = occupancy.copy()
         for f in flips:
-            occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            corr_distances += self._evaluator.delta_corr_distance_from_occupancies(
-                occu_f, occu_i, self.target_vector, self._indices.container
-            )
-            occu_i = occu_f
 
+        corr_distances = self._evaluator.corr_distances_from_occupancies(
+            occu_f, occupancy, self.target_vector, self._indices.container
+        )
         return corr_distances
 
     def exact_match_max_diameter(self, distance_vector):
@@ -419,18 +412,12 @@ class ClusterInteractionDistanceProcessor(
             ndarray: 2D distance vector where the first row corresponds to correlations
             before flips
         """
-        occu_i = occupancy
-        interaction_distances = np.zeros((2, self._subspace.num_orbits))
+        occu_f = occupancy.copy()
         for f in flips:
-            occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            interaction_distances += (
-                self._evaluator.delta_interaction_distance_from_occupancies(
-                    occu_f, occu_i, self.target_vector, self._indices.container
-                )
-            )
-            occu_i = occu_f
-
+        interaction_distances = self._evaluator.interaction_distances_from_occupancies(
+            occu_f, occupancy, self.target_vector, self._indices.container
+        )
         return interaction_distances
 
     def exact_match_max_diameter(self, distance_vector):
