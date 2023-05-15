@@ -283,9 +283,9 @@ class MCKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
             self.trace.delta_trace.bias = np.zeros(1)
         self._bias = bias
 
-    def set_aux_state(self, occupancies, *args, **kwargs):
+    def set_aux_state(self, occupancy, *args, **kwargs):
         """Set the auxiliary occupancies from initial or checkpoint values."""
-        self.mcusher.set_aux_state(occupancies, *args, **kwargs)
+        self.mcusher.set_aux_state(occupancy, *args, **kwargs)
 
     def _compute_step_trace(self, occupancy, step):
         """Compute the trace for a single step.
@@ -689,12 +689,16 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         # assert self.trace.kernel_index == self._current_kernel_index
         return self.trace
 
-    def set_aux_state(self, occupancies, *args, **kwargs):
-        """Set the occupancies, features and enthalpy for each supercell kernel."""
+    def set_aux_state(self, occupancy, *args, **kwargs):
+        """Set the occupancies, features and enthalpy for each supercell kernel.
+
+        Since multiple underlying kernels exist, occupancy can be a 2D array
+        of occupancies for each kernel, ie dim = (n_kernels, n_sites).
+        """
         # set the current and previous values based on given occupancy
         new_features = []
-        if occupancies.shape[0] == len(self._kernels):
-            for kernel, occupancy in zip(self._kernels, occupancies):
+        if occupancy.shape[0] == len(self._kernels):
+            for kernel, occupancy in zip(self._kernels, occupancy):
                 occupancy = np.ascontiguousarray(occupancy, dtype=int)
                 kernel.trace.occupancy = occupancy
                 kernel.set_aux_state(occupancy, *args, **kwargs)
@@ -703,8 +707,8 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         else:  # if only one assume it is continuing from a run...
             self._features[
                 self._current_kernel_index, :
-            ] = self.current_kernel.ensemble.compute_feature_vector(occupancies)
-            self.current_kernel.set_aux_state(occupancies, *args, **kwargs)
+            ] = self.current_kernel.ensemble.compute_feature_vector(occupancy)
+            self.current_kernel.set_aux_state(occupancy, *args, **kwargs)
 
     def compute_initial_trace(self, occupancy):
         """Compute the initial trace for a given occupancy."""

@@ -139,7 +139,7 @@ class MCUsher(ABC):
         """Update any auxiliary state information based on an accepted step."""
         return
 
-    def set_aux_state(self, occupancies, *args, **kwargs):
+    def set_aux_state(self, occupancy, *args, **kwargs):
         """Set the auxiliary occupancies from a checkpoint values."""
         return
 
