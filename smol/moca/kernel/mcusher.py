@@ -19,7 +19,7 @@ from scipy.special import gammaln
 
 from smol.moca.composition import CompositionSpace
 from smol.moca.metadata import Metadata
-from smol.moca.utils.occu import (
+from smol.moca.occu_utils import (
     delta_counts_from_step,
     get_dim_ids_by_sublattice,
     get_dim_ids_table,

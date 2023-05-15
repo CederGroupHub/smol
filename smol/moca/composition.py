@@ -10,7 +10,7 @@ from monty.json import MontyDecoder, MSONable
 from pymatgen.core import Composition, Element
 
 from smol.cofe.space.domain import Vacancy
-from smol.moca.utils.occu import get_dim_ids_by_sublattice
+from smol.moca.occu_utils import get_dim_ids_by_sublattice
 from smol.utils.math import (
     NUM_TOL,
     get_ergodic_vectors,
