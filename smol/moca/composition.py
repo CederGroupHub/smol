@@ -10,7 +10,8 @@ from monty.json import MontyDecoder, MSONable
 from pymatgen.core import Composition, Element
 
 from smol.cofe.space.domain import Vacancy
-from smol.moca.utils.math import (
+from smol.moca.utils.occu import get_dim_ids_by_sublattice
+from smol.utils.math import (
     NUM_TOL,
     get_ergodic_vectors,
     get_natural_centroid,
@@ -21,7 +22,6 @@ from smol.moca.utils.math import (
     integerize_vector,
     solve_diophantines,
 )
-from smol.moca.utils.occu import get_dim_ids_by_sublattice
 
 
 def get_oxi_state(sp):

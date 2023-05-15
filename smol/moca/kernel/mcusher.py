@@ -19,11 +19,6 @@ from scipy.special import gammaln
 
 from smol.moca.composition import CompositionSpace
 from smol.moca.metadata import Metadata
-from smol.moca.utils.math import (
-    NUM_TOL,
-    choose_section_from_partition,
-    flip_weights_mask,
-)
 from smol.moca.utils.occu import (
     delta_counts_from_step,
     get_dim_ids_by_sublattice,
@@ -32,6 +27,7 @@ from smol.moca.utils.occu import (
     occu_to_species_list,
 )
 from smol.utils.class_utils import class_name_from_str, derived_class_factory
+from smol.utils.math import NUM_TOL, choose_section_from_partition, flip_weights_mask
 
 
 class MCUsher(ABC):

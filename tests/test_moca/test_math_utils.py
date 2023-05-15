@@ -7,7 +7,7 @@ import numpy.testing as npt
 import polytope as pc
 import pytest
 
-from smol.moca.utils.math import (
+from smol.utils.math import (
     NUM_TOL,
     choose_section_from_partition,
     compute_snf,
