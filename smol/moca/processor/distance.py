@@ -69,11 +69,11 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
                 additional keyword arguments to instantiate the underlying processor
                 being inherited from.
         """
-        self.target_vector = target_vector
+        if len(cluster_subspace.external_terms) > 0:
+            raise ValueError("The given cluster subspace cannot have external terms.")
 
         if match_weight < 0:  # maybe we can just allow this, at the users peril?
             raise ValueError("The match weight must be a positive number.")
-        self.match_tol = match_tol
 
         if len(target_weights) != len(target_vector) - 1:
             raise ValueError(
@@ -81,6 +81,9 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
                 f"the target vector minus one {len(target_vector) - 1}. \n"
                 f"Got {len(target_weights)} instead."
             )
+
+        self.target_vector = target_vector
+        self.match_tol = match_tol
 
         super().__init__(
             cluster_subspace,
@@ -245,11 +248,8 @@ class CorrelationDistanceProcessor(DistanceProcessor, ClusterExpansionProcessor)
                 Weights for the absolute differences each correlation when calculating
                 the total distance. If None, then all correlations are weighted equally.
         """
-        # TODO do not accept external terms here....
         if target_vector is None:
             target_vector = np.zeros(len(cluster_subspace))
-        # TODO check length and raise error if incorrect
-
         if target_weights is None:
             target_weights = np.ones(len(cluster_subspace) - 1)
 

@@ -381,6 +381,24 @@ def test_exact_match_max_diameter(processor_distance_processor, rng):
     assert distance_processor.exact_match_max_diameter(distance_vector) == 0.0
 
 
+def test_bad_distance_processor(single_subspace, rng):
+    scm = 3 * np.eye(3)
+    subspace = single_subspace.copy()
+
+    with pytest.raises(ValueError):
+        subspace.add_external_term(EwaldTerm())
+        proc = CorrelationDistanceProcessor(subspace, scm)
+
+    with pytest.raises(ValueError):
+        proc = CorrelationDistanceProcessor(single_subspace, scm, match_weight=-1)
+
+    with pytest.raises(ValueError):
+        target_weights = np.ones(len(single_subspace) - 4)
+        proc = CorrelationDistanceProcessor(
+            single_subspace, scm, target_weights=target_weights
+        )
+
+
 def test_set_threads(single_subspace):
     coefs = 2 * np.random.random(single_subspace.num_corr_functions)
     scmatrix = 3 * np.eye(3)
