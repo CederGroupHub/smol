@@ -159,11 +159,6 @@ class Sampler:
         """Clear samples from sampler container."""
         self.samples.clear()
 
-    def _single_step(self, occupancies):
-        """Do a single step for all kernels."""
-        for kernel, occupancy in zip(self._kernels, occupancies):
-            yield kernel.single_step(occupancy)
-
     def sample(self, nsteps, initial_occupancies, thin_by=1, progress=False):
         """Generate MCMC samples.
 
@@ -190,7 +185,7 @@ class Sampler:
                 category=RuntimeWarning,
             )
 
-        occupancies, trace = self._setup_sample(initial_occupancies)
+        occupancies, trace = self.setup_sample(initial_occupancies)
         # Initialise progress bar
         chains, nsites = self.samples.shape
         desc = f"Sampling {chains} chain(s) from a cell with {nsites} sites"
@@ -351,9 +346,9 @@ class Sampler:
         if temperatures[0] < temperatures[-1]:
             raise ValueError(
                 "End temperature is greater than start "
-                f"temperature {temperatures[-1]:.2f} > "
-                f"{temperatures[0]:.2f}."
+                f"temperature {temperatures[-1]:.2f} > {temperatures[0]:.2f}."
             )
+
         # initialize for first temperature.
         for kernel in self._kernels:
             kernel.temperature = temperatures[0]
@@ -384,7 +379,7 @@ class Sampler:
         if stream_chunk > 0:
             self.clear_samples()
 
-    def _setup_sample(self, initial_occupancies):
+    def setup_sample(self, initial_occupancies):
         """Copy and reshape occupancies and compute initial trace for sampling.
 
         Args:
@@ -422,6 +417,11 @@ class Sampler:
             setattr(trace, name, stack)
 
         return occupancies, trace
+
+    def _single_step(self, occupancies):
+        """Do a single step for all kernels."""
+        for kernel, occupancy in zip(self._kernels, occupancies):
+            yield kernel.single_step(occupancy)
 
     def _reshape_occu(self, occupancies):
         """Reshape occupancies for the single walker case."""

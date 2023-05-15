@@ -5,7 +5,8 @@ __author__ = "Luis Barroso-Luque"
 
 import warnings
 from abc import ABC, abstractmethod
-from collections import namedtuple
+from collections import deque, namedtuple
+from copy import deepcopy
 
 import numpy as np
 
@@ -17,6 +18,7 @@ from smol.moca.kernel import MulticellMetropolis, mckernel_factory
 from smol.moca.processor.distance import DistanceProcessor
 from smol.moca.trace import Trace
 from smol.utils.class_utils import class_name_from_str, derived_class_factory
+from smol.utils.progressbar import progress_bar
 
 SQS = namedtuple("SQS", ["score", "features", "supercell_matrix", "structure"])
 
@@ -63,6 +65,7 @@ class SQSGenerator(ABC):
         """
         self.cluster_subspace = cluster_subspace
         self.supercell_size = supercell_size
+        self._sqs_deque = None
 
         if feature_type == "correlation":
             num_features = len(cluster_subspace)
@@ -197,9 +200,9 @@ class SQSGenerator(ABC):
         )
 
     @property
-    @abstractmethod
     def num_structures(self):
         """Get number of structures generated."""
+        return 0 if self._sqs_deque is None else len(self._sqs_deque)
 
     def calculate_score(self, structure):
         """Calculate the SQS score for a structure.
@@ -346,35 +349,48 @@ class StochasticSQSGenerator(SQSGenerator):
             }
         )
 
+        # TODO add specification as SQSContainer...
         container = SampleContainer(kernels[0].ensemble, sample_trace)
         self._sampler = Sampler([self._kernel], container)
 
-    @property
-    def num_structures(self):
-        """Get number of structures generated."""
-        return self._sampler.samples.num_samples
-
+    # TODO crashes if generate called twice
+    # TODO this is also saving structures with higher scores than previous
     def generate(
-        self, mcmc_steps, initial_occupancies=None, temperatures=None, **kwargs
+        self,
+        mcmc_steps,
+        temperatures=None,
+        initial_occupancies=None,
+        clear_previous=True,
+        save_best_num=None,
+        progress=False,
     ):
         """Generate a SQS structures.
 
         Args:
             mcmc_steps (int):
                 number of mcmc steps per temperature to perform simulated annealing
+            temperatures (list of float): optional
+                temperatures to use for the mcmc steps, temperatures are unit-less
+                the recommended range should be only single digits.
             initial_occupancies (ndarray): optional
                 initial occupancies to use in the simulated anneal search, an occupancy
                 must be given for each of the supercell shapes, and these occupancies
                 must have the correct compositions.
-            temperatures (list of float): optional
-                temperatures to use for the mcmc steps, temperatures are unitless
-                the recommended range should be only single digits.
-            **kwargs:
-                additional keyword arguments for the simulated annealing. See the anneal
-                method in the :class:`Sampler`.
+            clear_previous (bool): optional
+                whether to clear previous samples.
+            save_best_num (int): optional
+                number of best structures to save, if None a best 1% of structures
+                are saved.
+            progress (bool):
+                if true will show a progress bar.
         """
-        if initial_occupancies is None and self._sampler.samples.num_samples == 0:
-            initial_occupancies = self._get_initial_occupancies()
+        if initial_occupancies is None:
+            if self._sampler.samples.num_samples == 0:
+                initial_occupancies = self._get_initial_occupancies()
+            else:
+                initial_occupancies = self._sampler.samples.get_occupancies(flat=False)[
+                    -1
+                ]
         elif initial_occupancies is not None:
             shape = (len(self._processors), self._kernel.ensemble.num_sites)
             if initial_occupancies.shape != shape:
@@ -384,13 +400,45 @@ class StochasticSQSGenerator(SQSGenerator):
                 )
             initial_occupancies = initial_occupancies.copy()
 
+        save_best_num = save_best_num or max(int(0.01 * mcmc_steps), 1)
+        if clear_previous:
+            self._sampler.clear_samples()
+            self._sqs_deque = deque(maxlen=save_best_num)
+        else:
+            self._sqs_deque = deque(
+                self._sqs_deque, maxlen=len(self._sqs_deque) + save_best_num
+            )
+
         if temperatures is None:
             temperatures = np.linspace(5.0, 0.01, 20)  # TODO benchmark this
 
-        # TODO dont anneal directly call sample and keep top structures
-        self._sampler.anneal(
-            temperatures, mcmc_steps, initial_occupancies=initial_occupancies, **kwargs
-        )
+        self._kernel.temperature = temperatures[0]
+        for kernel in self._kernel.mckernels:
+            kernel.temperature = temperatures[0]
+
+        best_score = np.inf
+        for trace in self._sample_sqs(
+            mcmc_steps, initial_occupancies, progress=progress
+        ):
+            if np.any(trace.enthalpy < best_score):
+                best_score = trace.enthalpy.min()
+                self._sqs_deque.append(deepcopy(trace))
+
+        for temperature in temperatures[1:]:
+            self._kernel.temperature = temperature
+            for kernel in self._kernel.mckernels:
+                kernel.temperature = temperature
+            initial_occupancies = trace.occupancy
+            for trace in self._sample_sqs(
+                mcmc_steps, initial_occupancies, progress=progress
+            ):
+                if np.any(trace.enthalpy < best_score):
+                    best_score = trace.enthalpy.min()
+                    self._sqs_deque.append(deepcopy(trace))
+
+        self._sampler.samples.allocate(save_best_num)
+        for trace in self._sqs_deque:
+            self._sampler.samples.save_sampled_trace(trace, 1)
 
     def get_best_sqs(
         self, num_structures=1, remove_duplicates=True, reduction_algorithm=None
@@ -417,6 +465,46 @@ class StochasticSQSGenerator(SQSGenerator):
                 f"structures generated {self.num_structures}."
             )
         return
+
+    def _sample_sqs(self, nsteps, initial_occupancies, progress=False):
+        """Sample SQS structures.
+
+        Very similar to sampler.sample but without thinning and only yielding better
+        SQS structures.
+
+        Args:
+            nsteps (int):
+                number of steps to sample
+            progress (bool):
+                whether to show a progress bar
+
+        Yields:
+            tuple: accepted, occupancies, features change, enthalpies change
+        """
+        occupancies, trace = self._sampler.setup_sample(initial_occupancies)
+        chains, nsites = self._sampler.samples.shape
+        desc = f"Generating SQS using {chains} chain(s) from cells with {nsites} sites"
+        with progress_bar(progress, total=nsteps, description=desc) as p_bar:
+            for _ in range(nsteps):
+                # the occupancies are modified in place at each step
+                for i, strace in enumerate(
+                    map(
+                        lambda kernel, occu: kernel.single_step(occu),
+                        self._sampler.mckernels,
+                        occupancies,
+                    )
+                ):
+                    for name, value in strace.items():
+                        val = getattr(trace, name)
+                        val[i] = value
+                        # this will mess up recording values for > 1 walkers
+                        # setattr(trace, name, value)
+                    if strace.accepted:
+                        for name, delta_val in strace.delta_trace.items():
+                            val = getattr(trace, name)
+                            val[i] += delta_val
+                p_bar.update()
+                yield trace
 
     def _get_initial_occupancies(self):
         """Get initial occupancies for the simulated annealing.
