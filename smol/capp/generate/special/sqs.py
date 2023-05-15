@@ -354,9 +354,6 @@ class StochasticSQSGenerator(SQSGenerator):
         """Get number of structures generated."""
         return self._sampler.samples.num_samples
 
-    # TODO sampler.run with initial occus leads to overflow, corrs grow like crazy
-    # running from last trace leads to crash (sigkill)
-
     def generate(
         self, mcmc_steps, initial_occupancies=None, temperatures=None, **kwargs
     ):
@@ -382,9 +379,10 @@ class StochasticSQSGenerator(SQSGenerator):
             shape = (len(self._processors), self._kernel.ensemble.num_sites)
             if initial_occupancies.shape != shape:
                 raise ValueError(
-                    f"initial occupancies must be of shape {shape},"
+                    f"initial occupancies must be of shape {shape}, "
                     f"got {initial_occupancies.shape}"
                 )
+            initial_occupancies = initial_occupancies.copy()
 
         if temperatures is None:
             temperatures = np.linspace(5.0, 0.01, 20)  # TODO benchmark this

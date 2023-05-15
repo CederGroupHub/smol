@@ -189,30 +189,8 @@ class Sampler:
                 f" {thin_by}. The last {nsteps % thin_by} will be ignored.",
                 category=RuntimeWarning,
             )
-        # TODO check that initial states are independent if num_walkers > 1
-        # TODO make samplers with single chain, multiple and multiprocess
-        occupancies = initial_occupancies.copy()
-        if occupancies.shape != self.samples.shape:
-            occupancies = self._reshape_occu(occupancies)
 
-        # set up any auxiliary states from initial occupancies
-        selected_occus = []
-        for kernel, occupancy in zip(self._kernels, occupancies):
-            kernel.set_aux_state(occupancy)
-            # select the current kernel occu
-            if isinstance(kernel, MulticellKernel):
-                if occupancies.shape[1] == len(kernel.mckernels):
-                    selected_occus.append(occupancy[kernel.trace.kernel_index])
-        if len(selected_occus) > 0:
-            occupancies = np.vstack(selected_occus)
-
-        # get initial traces and stack them
-        trace = Trace()
-        traces = list(map(self._kernels[0].compute_initial_trace, occupancies))
-        for name in traces[0].names:
-            stack = np.stack([getattr(tr, name) for tr in traces], axis=0)
-            setattr(trace, name, stack)
-
+        occupancies, trace = self._setup_sample(initial_occupancies)
         # Initialise progress bar
         chains, nsites = self.samples.shape
         desc = f"Sampling {chains} chain(s) from a cell with {nsites} sites"
@@ -280,11 +258,11 @@ class Sampler:
             try:
                 initial_occupancies = self.samples.get_occupancies(flat=False)[-1]
                 # auxiliary states from kernels should be set here
-            except IndexError as ind_error:
+            except IndexError as index_error:
                 raise RuntimeError(
                     "There are no saved samples to obtain the initial occupancies."
                     "These must be provided."
-                ) from ind_error
+                ) from index_error
         elif self.samples.num_samples > 0:
             warn(
                 "Initial occupancies where provided with a pre-existing set of samples."
@@ -405,6 +383,45 @@ class Sampler:
         # If streaming to file was done then clear samplers now.
         if stream_chunk > 0:
             self.clear_samples()
+
+    def _setup_sample(self, initial_occupancies):
+        """Copy and reshape occupancies and compute initial trace for sampling.
+
+        Args:
+            initial_occupancies (ndarray):
+                initial occupancies for sampling.
+
+        Returns: (occupancies, trace)
+            occupancies (ndarray):
+                initial occupancies for sampling.
+            trace (Trace):
+                initial trace for sampling.
+        """
+        # TODO check that initial states are independent if num_walkers > 1
+        # TODO make samplers with single chain, multiple and multiprocess
+        occupancies = initial_occupancies.copy()
+        if occupancies.shape != self.samples.shape:
+            occupancies = self._reshape_occu(occupancies)
+
+        # set up any auxiliary states from initial occupancies
+        selected_occus = []
+        for kernel, occupancy in zip(self._kernels, occupancies):
+            kernel.set_aux_state(occupancy)
+            # select the current kernel occu
+            if isinstance(kernel, MulticellKernel):
+                if occupancies.shape[1] == len(kernel.mckernels):
+                    selected_occus.append(occupancy[kernel.trace.kernel_index])
+        if len(selected_occus) > 0:
+            occupancies = np.vstack(selected_occus)
+
+        # get initial traces and stack them
+        trace = Trace()
+        traces = list(map(self._kernels[0].compute_initial_trace, occupancies))
+        for name in traces[0].names:
+            stack = np.stack([getattr(tr, name) for tr in traces], axis=0)
+            setattr(trace, name, stack)
+
+        return occupancies, trace
 
     def _reshape_occu(self, occupancies):
         """Reshape occupancies for the single walker case."""
