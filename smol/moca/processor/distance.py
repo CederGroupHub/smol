@@ -343,7 +343,7 @@ class ClusterInteractionDistanceProcessor(
         self,
         cluster_subspace,
         supercell_matrix,
-        interaction_tensors,
+        interaction_tensors=None,
         target_vector=None,
         match_weight=1.0,
         target_weights=None,
@@ -357,13 +357,12 @@ class ClusterInteractionDistanceProcessor(
             supercell_matrix (ndarray):
                 an array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
-            interaction_tensors (sequence of ndarray):
+            interaction_tensors (sequence of ndarray): optional
                 Sequence of ndarray where each array corresponds to the
                 cluster interaction tensor. These should be in the same order as their
                 corresponding orbits in the given cluster_subspace
             target_vector (ndarray): optional
                 target cluster interaction vector, if None given as vector of zeros is
-
                 used.
             match_weight (float): optional
                 weight for the in the wL term above. That is how much to weight the
@@ -382,8 +381,19 @@ class ClusterInteractionDistanceProcessor(
         if target_weights is None:
             target_weights = np.ones(cluster_subspace.num_orbits - 1)
 
+        # if none given, compute cluster interactions with all coefficients set to 1
+        if interaction_tensors is None:
+            interaction_tensors = (0.0,) + tuple(
+                sum(
+                    m * tensor
+                    for i, (m, tensor) in enumerate(
+                        zip(orbit.bit_combo_multiplicities, orbit.correlation_tensors)
+                    )
+                )
+                for orbit in cluster_subspace.orbits
+            )
         interaction_tensors = tuple(
-            np.array(interaction) for interaction in interaction_tensors
+            np.ascontiguousarray(interaction) for interaction in interaction_tensors
         )
 
         super().__init__(

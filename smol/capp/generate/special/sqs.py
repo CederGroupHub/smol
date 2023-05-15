@@ -16,7 +16,7 @@ from smol.moca import Ensemble, SampleContainer, Sampler
 from smol.moca.kernel import MulticellMetropolis, mckernel_factory
 from smol.moca.processor.distance import DistanceProcessor
 from smol.moca.trace import Trace
-from smol.utils.class_utils import derived_class_factory
+from smol.utils.class_utils import class_name_from_str, derived_class_factory
 
 SQS = namedtuple("SQS", ["score", "features", "supercell_matrix", "structure"])
 
@@ -45,7 +45,7 @@ class SQSGenerator(ABC):
                 size of the supercell in multiples of the primitive cell
             feature_type (str): optional
                 type of features to be used to determine SQS.
-                options are: "correlation"
+                options are "correlation" and "cluster-interaction".
             target_vector (ndarray): optional
                 target feature vector to use for distance calculations
             target_weights (ndarray): optional
@@ -66,8 +66,13 @@ class SQSGenerator(ABC):
 
         if feature_type == "correlation":
             num_features = len(cluster_subspace)
+        elif feature_type == "cluster-interaction":
+            num_features = cluster_subspace.num_orbits
         else:
-            raise ValueError(f"feature_type {feature_type} not supported")
+            raise ValueError(
+                f"feature_type {feature_type} not supported.\n "
+                f"Valid options are: 'correlation', 'cluster-interaction'"
+            )
 
         if target_weights is None:
             target_weights = np.ones(num_features - 1)  # remove constant
@@ -82,7 +87,7 @@ class SQSGenerator(ABC):
         else:
             if len(target_vector) != num_features:
                 raise ValueError(
-                    "target_feature_vector must be of length {num_features}"
+                    f"target feature vector must be of length {num_features}"
                 )
 
         if supercell_matrices is not None:
@@ -101,7 +106,7 @@ class SQSGenerator(ABC):
 
         self._processors = [
             derived_class_factory(
-                feature_type.capitalize() + "DistanceProcessor",
+                class_name_from_str(feature_type + "DistanceProcessor"),
                 DistanceProcessor,
                 cluster_subspace,
                 scm,
