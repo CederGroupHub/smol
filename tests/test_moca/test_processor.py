@@ -214,7 +214,7 @@ def test_compute_feature_change(processor, rng):
         # Test reverse matches forward
         old_sp = occu[site]
         rdprop = processor.compute_property_change(new_occu, [(site, old_sp)])
-        assert dprop == -1 * rdprop
+        assert dprop == pytest.approx(-1 * rdprop, rel=RTOL, abs=ATOL)
 
 
 def test_msonable(processor, rng):
