@@ -9,6 +9,7 @@ from collections import deque, namedtuple
 from copy import deepcopy
 
 import numpy as np
+from pymatgen.analysis.structure_matcher import StructureMatcher
 
 from smol.capp.generate.enumerate import enumerate_supercell_matrices
 from smol.capp.generate.random import generate_random_ordered_occupancy
@@ -20,7 +21,7 @@ from smol.moca.trace import Trace
 from smol.utils.class_utils import class_name_from_str, derived_class_factory
 from smol.utils.progressbar import progress_bar
 
-SQS = namedtuple("SQS", ["score", "features", "supercell_matrix", "structure"])
+SQS = namedtuple("SQS", ["structure", "score", "features", "supercell_matrix"])
 
 
 class SQSGenerator(ABC):
@@ -204,24 +205,11 @@ class SQSGenerator(ABC):
         """Get number of structures generated."""
         return 0 if self._sqs_deque is None else len(self._sqs_deque)
 
-    def calculate_score(self, structure):
-        """Calculate the SQS score for a structure.
-
-        Args:
-            structure (Structure):
-                a pymatgen ordered structure
-
-        Returns:
-            float: the SQS score
-        """
-        raise NotImplementedError("calculate_score not implemented")
-
     @abstractmethod
     def generate(self, *args, **kwargs):
         """Generate a SQS structures."""
         return
 
-    @abstractmethod
     def get_best_sqs(
         self, num_structures=1, remove_duplicates=True, reduction_algorithm=None
     ):
@@ -242,11 +230,52 @@ class SQSGenerator(ABC):
             list of SQS : list ranked by SQS score
         """
         if num_structures > self.num_structures:
-            raise ValueError(
-                f"num_structures must be less than or equal to the total number of "
-                f"structures generated {self.num_structures}."
+            warnings.warn(
+                f"num_structures is greater than the total number of "
+                f"structures generated {self.num_structures}. \n Will return at most "
+                f"{self.num_structures} structures."
             )
-        return
+
+        best_traces = sorted(self._sqs_deque, key=lambda x: x.enthalpy)
+        # package traces into SQS objects
+        best_sqs = []
+        for trace in best_traces:
+            i = np.argmin(trace.enthalpy)  # in case anyone runs multiple walkers
+            processor = self._processors[trace.kernel_index[i]]
+            structure = processor.structure_from_occupancy(trace.occupancy[i])
+            sqs = SQS(
+                structure=structure,
+                score=trace.enthalpy[i][0],
+                features=trace.features[i],
+                supercell_matrix=processor.supercell_matrix,
+            )
+            best_sqs.append(sqs)
+
+        if remove_duplicates:
+            matcher = StructureMatcher()
+            grouped_structures = matcher.group_structures(
+                [sqs.structure for sqs in best_sqs]
+            )
+            unique_structures = [group[0] for group in grouped_structures]
+            best_sqs = list(
+                filter(lambda x: x.structure in unique_structures, best_sqs)
+            )
+
+        if len(best_sqs) < num_structures:
+            warnings.warn(
+                f"Fewer SQS structures than requested were obtained after removing "
+                f"duplicates. Only {len(best_sqs)} distinct SQS will be returned."
+            )
+        else:
+            best_sqs = best_sqs[:num_structures]
+
+        if reduction_algorithm is not None:
+            for sqs in best_sqs:
+                sqs.structure = sqs.structure.get_reduced_structure(
+                    reduction_algo=reduction_algorithm
+                )
+
+        return best_sqs
 
 
 class StochasticSQSGenerator(SQSGenerator):
@@ -349,12 +378,10 @@ class StochasticSQSGenerator(SQSGenerator):
             }
         )
 
-        # TODO add specification as SQSContainer...
         container = SampleContainer(kernels[0].ensemble, sample_trace)
+        container.metadata.type = "SQS-SampleContainer"
         self._sampler = Sampler([self._kernel], container)
 
-    # TODO crashes if generate called twice
-    # TODO this is also saving structures with higher scores than previous
     def generate(
         self,
         mcmc_steps,
@@ -411,7 +438,7 @@ class StochasticSQSGenerator(SQSGenerator):
             )
 
         if temperatures is None:
-            temperatures = np.linspace(5.0, 0.01, 20)  # TODO benchmark this
+            temperatures = np.linspace(5.0, 0.01, 20)
 
         self._kernel.temperature = temperatures[0]
         for kernel in self._kernel.mckernels:
@@ -441,32 +468,6 @@ class StochasticSQSGenerator(SQSGenerator):
         for trace in self._sqs_deque:
             self._sampler.samples.save_sampled_trace(trace, 1)
         self._sampler.samples.vacuum()  # vacuum since not all space may have been used
-
-    def get_best_sqs(
-        self, num_structures=1, remove_duplicates=True, reduction_algorithm=None
-    ):
-        """Get the best SQS structures.
-
-        generate method must be called, otherwise no SQS will be returned.
-
-        Args:
-            num_structures (int): optional
-                number of structures to return
-            remove_duplicates (bool): optional
-                whether to remove duplicate structures
-            reduction_algorithm (callable): optional
-                function to reduce the number of structures returned
-                should take a list of SQS structures and return a list of SQS structures
-
-        Returns:
-            list of SQS : list ranked by SQS score
-        """
-        if num_structures > self.num_structures:
-            raise ValueError(
-                f"num_structures must be less than or equal to the total number of "
-                f"structures generated {self.num_structures}."
-            )
-        return
 
     def _sample_sqs(self, nsteps, initial_occupancies, progress=False):
         """Sample SQS structures.
@@ -511,8 +512,8 @@ class StochasticSQSGenerator(SQSGenerator):
     def _get_initial_occupancies(self):
         """Get initial occupancies for the simulated annealing.
 
-        Gets initial occupances for each supercell shape at the composition of the
-        distordered structure in the given cluster subspace.
+        Gets initial occupancies for each supercell shape at the composition of the
+        disordered structure in the given cluster subspace.
 
         Returns:
             ndarray of occupancies
