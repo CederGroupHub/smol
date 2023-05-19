@@ -412,3 +412,16 @@ def test_get_sampled_structures(container, fake_traces, rng):
         occus = container.get_occupancies(flat=False)[i]
         for occu, struct in zip(occus, structures):
             assert container.ensemble.processor.structure_from_occupancy(occu) == struct
+
+
+def test_allocate_vacuum(container, fake_traces):
+    add_samples(container, fake_traces)
+    n_samples = len(container)
+
+    container.allocate(100)
+    assert len(container) == n_samples
+    assert container._trace.occupancy.shape[0] == n_samples + 100
+
+    container.vacuum()
+    assert len(container) == n_samples
+    assert container._trace.occupancy.shape[0] == n_samples

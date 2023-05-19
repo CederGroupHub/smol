@@ -361,7 +361,7 @@ class StochasticSQSGenerator(SQSGenerator):
         temperatures=None,
         initial_occupancies=None,
         clear_previous=True,
-        save_best_num=None,
+        max_save_num=None,
         progress=False,
     ):
         """Generate a SQS structures.
@@ -378,9 +378,10 @@ class StochasticSQSGenerator(SQSGenerator):
                 must have the correct compositions.
             clear_previous (bool): optional
                 whether to clear previous samples.
-            save_best_num (int): optional
-                number of best structures to save, if None a best 1% of structures
-                are saved.
+            max_save_num (int): optional
+                max number of best structures to save, if None a maximum 1% of
+                structures are saved. A structure is only saved if the SQS score is
+                better than the previous best.
             progress (bool):
                 if true will show a progress bar.
         """
@@ -400,13 +401,13 @@ class StochasticSQSGenerator(SQSGenerator):
                 )
             initial_occupancies = initial_occupancies.copy()
 
-        save_best_num = save_best_num or max(int(0.01 * mcmc_steps), 1)
+        max_save_num = max_save_num or max(int(0.01 * mcmc_steps), 1)
         if clear_previous:
             self._sampler.clear_samples()
-            self._sqs_deque = deque(maxlen=save_best_num)
+            self._sqs_deque = deque(maxlen=max_save_num)
         else:
             self._sqs_deque = deque(
-                self._sqs_deque, maxlen=len(self._sqs_deque) + save_best_num
+                self._sqs_deque, maxlen=len(self._sqs_deque) + max_save_num
             )
 
         if temperatures is None:
@@ -436,9 +437,10 @@ class StochasticSQSGenerator(SQSGenerator):
                     best_score = trace.enthalpy.min()
                     self._sqs_deque.append(deepcopy(trace))
 
-        self._sampler.samples.allocate(save_best_num)
+        self._sampler.samples.allocate(max_save_num)
         for trace in self._sqs_deque:
             self._sampler.samples.save_sampled_trace(trace, 1)
+        self._sampler.samples.vacuum()  # vacuum since not all space may have been used
 
     def get_best_sqs(
         self, num_structures=1, remove_duplicates=True, reduction_algorithm=None
