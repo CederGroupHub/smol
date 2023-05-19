@@ -225,6 +225,9 @@ class SQSGenerator(ABC):
             reduction_algorithm (callable): optional
                 function to reduce the number of structures returned
                 should take a list of SQS structures and return a list of SQS structures
+                options are "niggli" and "LLL".
+                See documentation for Structure.get_reduced_structure in pymatgen
+                https://pymatgen.org/pymatgen.core.structure.html
 
         Returns:
             list of SQS : list ranked by SQS score
