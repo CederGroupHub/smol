@@ -240,6 +240,7 @@ class SQSGenerator(ABC):
             )
 
         best_traces = sorted(self._sqs_deque, key=lambda x: x.enthalpy)
+
         # package traces into SQS objects
         best_sqs = []
         for trace in best_traces:
@@ -253,6 +254,9 @@ class SQSGenerator(ABC):
                 supercell_matrix=processor.supercell_matrix,
             )
             best_sqs.append(sqs)
+
+            if num_structures == 1:  # just do one
+                break
 
         if remove_duplicates:
             matcher = StructureMatcher()
