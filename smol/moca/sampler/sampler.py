@@ -404,14 +404,22 @@ class Sampler:
             kernel.set_aux_state(occupancy)
             # select the current kernel occu
             if isinstance(kernel, MulticellKernel):
-                if occupancies.shape[1] == len(kernel.mckernels):
+                if occupancies.ndim == 3 and occupancies.shape[1] == len(
+                    kernel.mckernels
+                ):
                     selected_occus.append(occupancy[kernel.trace.kernel_index])
         if len(selected_occus) > 0:
             occupancies = np.vstack(selected_occus)
 
         # get initial traces and stack them
         trace = Trace()
-        traces = list(map(self._kernels[0].compute_initial_trace, occupancies))
+        traces = list(
+            map(
+                lambda kernel, occu: kernel.compute_initial_trace(occu),
+                self._kernels,
+                occupancies,
+            )
+        )
         for name in traces[0].names:
             stack = np.stack([getattr(tr, name) for tr in traces], axis=0)
             setattr(trace, name, stack)

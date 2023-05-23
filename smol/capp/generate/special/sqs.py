@@ -82,9 +82,7 @@ class SQSGenerator(ABC):
             target_weights = np.ones(num_features - 1)  # remove constant
         else:
             if len(target_weights) != num_features - 1:
-                raise ValueError(
-                    f"target_feature_weights must be of length {num_features - 1}"
-                )
+                raise ValueError(f"target_weights must be of length {num_features - 1}")
 
         if target_vector is None:
             target_vector = np.zeros(num_features)
@@ -132,8 +130,8 @@ class SQSGenerator(ABC):
         orthonormal=True,
         use_concentration=True,
         feature_type="correlation",
-        target_feature_vector=None,
-        target_feature_weights=None,
+        target_vector=None,
+        target_weights=None,
         match_weight=1.0,
         match_tol=1e-5,
         supercell_matrices=None,
@@ -161,9 +159,9 @@ class SQSGenerator(ABC):
             feature_type (str): optional
                 type of features to be used to determine SQS.
                 options are: "correlation"
-            target_feature_vector (ndarray): optional
+            target_vector (ndarray): optional
                 target feature vector to use for distance calculations
-            target_feature_weights (ndarray): optional
+            target_weights (ndarray): optional
                 weights for each target feature
             match_weight (float): optional
                 weight for the in the wL term above. That is how much to weight the
@@ -192,8 +190,8 @@ class SQSGenerator(ABC):
             subspace,
             supercell_size,
             feature_type=feature_type,
-            target_feature_vector=target_feature_vector,
-            target_feature_weights=target_feature_weights,
+            target_vector=target_vector,
+            target_weights=target_weights,
             match_weight=match_weight,
             match_tol=match_tol,
             supercell_matrices=supercell_matrices,
@@ -277,10 +275,17 @@ class SQSGenerator(ABC):
             best_sqs = best_sqs[:num_structures]
 
         if reduction_algorithm is not None:
-            for sqs in best_sqs:
-                sqs.structure = sqs.structure.get_reduced_structure(
+            for i, sqs in enumerate(best_sqs):
+                structure = sqs.structure.get_reduced_structure(
                     reduction_algo=reduction_algorithm
                 )
+                reduced_sqs = SQS(
+                    structure=structure,
+                    score=sqs.score,
+                    features=sqs.features,
+                    supercell_matrix=sqs.supercell_matrix,
+                )
+                best_sqs[i] = reduced_sqs
 
         return best_sqs
 
@@ -299,8 +304,8 @@ class StochasticSQSGenerator(SQSGenerator):
         cluster_subspace,
         supercell_size,
         feature_type="correlation",
-        target_feature_vector=None,
-        target_feature_weights=None,
+        target_vector=None,
+        target_weights=None,
         match_weight=1.0,
         match_tol=1e-5,
         supercell_matrices=None,
@@ -317,9 +322,9 @@ class StochasticSQSGenerator(SQSGenerator):
             feature_type (str): optional
                 type of features to be used to determine SQS.
                 options are: "correlation"
-            target_feature_vector (ndarray): optional
+            target_vector (ndarray): optional
                 target feature vector to use for distance calculations
-            target_feature_weights (ndarray): optional
+            target_weights (ndarray): optional
                 weights for each target feature
             match_weight (float): optional
                 weight for the in the wL term above. That is how much to weight the
@@ -342,8 +347,8 @@ class StochasticSQSGenerator(SQSGenerator):
             cluster_subspace,
             supercell_size,
             feature_type,
-            target_feature_vector,
-            target_feature_weights,
+            target_vector,
+            target_weights,
             match_weight,
             match_tol,
             supercell_matrices,

@@ -62,7 +62,7 @@ class Processor(MSONable, metaclass=ABCMeta):
             self.coefs = self.coefs[np.newaxis]
 
         # this can be used (maybe should) to check if a flip is valid
-        site_spaces = set(get_site_spaces(self.structure))
+        site_spaces = set(get_site_spaces(self.structure, include_measure=True))
         self.unique_site_spaces = tuple(sorted(site_spaces))
         # Sort to ensure a fixed ordering between sub-lattices.
         self.active_site_spaces = tuple(

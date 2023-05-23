@@ -76,7 +76,7 @@ def _gen_unconstrained_ordered_occu(sublattices, rng=None):
         rand_occu[sublatt.sites] = rng.choice(
             sublatt.encoding, size=len(sublatt.sites), replace=True
         )
-    return rand_occu
+    return np.ascontiguousarray(rand_occu, dtype=int)
 
 
 def _gen_neutral_occu(sublattices, lam=10, num_attempts=10000, rng=None):
@@ -130,7 +130,7 @@ def _gen_neutral_occu(sublattices, lam=10, num_attempts=10000, rng=None):
     for _ in range(num_attempts):
         occu, C = flip(occu, sublattices, lam=lam)
         if C == 0:
-            return occu.copy()
+            return np.ascontiguousarray(occu, dtype=int)
 
     raise TimeoutError(
         f"Can not generate a neutral occupancy in {num_attempts} attempts!"
@@ -165,7 +165,7 @@ def _gen_composition_ordered_occu(sublattices, composition, tol, rng=None):
             occu[sites] = code
             all_sites = [i for i in all_sites if i not in sites]
 
-    return occu
+    return np.ascontiguousarray(occu, dtype=int)
 
 
 def _composition_compatiblity(sublattices, composition, tol, rng=None):
@@ -189,32 +189,26 @@ def _composition_compatiblity(sublattices, composition, tol, rng=None):
     Returns:
         list of Composition: A list of compositions that are compatible
     """
-    if isinstance(composition, Composition):
-        composition = [composition]
-
-    compositions = []
-    for comp in composition:
-        if comp.num_atoms > 1.0:  # turn into a fractional composition
-            comp = comp.fractional_composition
-        compositions.append(comp)
-
     # check that all species in composition appear in sublattices
-    if len(compositions) == 1:
+    if isinstance(composition, Composition):
         # this validation could be moved into the _split_composition function
         species = {sp for sl in sublattices for sp in sl.species}
-        if any(sp not in species for sp in compositions[0]):
+        if any(sp not in species for sp in composition):
             raise ValueError(
                 "species are present in composition that are not in sublattices."
             )
         compositions = _split_composition_into_sublattices(
-            compositions[0], sublattices, rng=rng
+            composition, sublattices, rng=rng
         )
     else:
-        for comp, sl in zip(compositions, sublattices):
+        compositions = composition
+        for i, (comp, sl) in enumerate(zip(compositions, sublattices)):
             if any(sp not in sl.site_space for sp in comp):
                 raise ValueError(
                     "species are present in composition that are not in sublattices."
                 )
+            if comp.num_atoms > 1:
+                compositions[i] = comp.fractional_composition
 
     # check if the compositions are compatible with the size of the sublattices
     for composition, sublattice in zip(compositions, sublattices):
@@ -222,17 +216,17 @@ def _composition_compatiblity(sublattices, composition, tol, rng=None):
         for concentration in composition.values():
             num_sites = len(sublattice.sites) * concentration
             if abs(round(num_sites) - num_sites) > tol:
-                return ValueError("composition is not compatible with supercell size.")
+                raise ValueError("composition is not compatible with supercell size.")
             total += round(num_sites)
 
-        if abs(total - len(sublattice.sites)) > tol:
-            return ValueError("composition is not compatible with supercell size.")
+        if total > len(sublattice.sites) + tol:
+            raise ValueError("composition is not compatible with supercell size.")
 
     return compositions
 
 
 def _split_composition_into_sublattices(composition, sublattices, rng=None):
-    """Split a given composition into several compositions according to a list of sublattices.
+    """Split a composition into several compositions according to a list of sublattices.
 
     The split is done randomly for all overlapping species.
 
@@ -244,8 +238,8 @@ def _split_composition_into_sublattices(composition, sublattices, rng=None):
             given sublattices.
         sublattices (Sequence of Sublattice):
             A sequence of sublattices
-        rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}
-            A RNG, seed or otherwise to initialize defauly_rng
+        rng (optional): {None, int, ArrayLike[ints], SeedSequence, BitGenerator, Generator}
+            A RNG, seed or otherwise to initialize default_rng
 
     Returns:
         list: list of split compositions
@@ -262,19 +256,18 @@ def _split_composition_into_sublattices(composition, sublattices, rng=None):
     # split the composition into sublattices and record in a dictionary with
     # species as keys and then a dictionary of the sublattices and the composition
     # of that species in that sublattice
-    total_size = sum(len(sl.sites) for sl in sublattices)
     compositions_in_sublattices = {}
     for sp, sublatts in species_in_sublattices.items():
         sl_sizes = np.array([len(sl.sites) for sl in sublatts])
         sp_compositions = np.zeros(len(sublatts))
 
-        max_allowed = composition[sp] * total_size
+        max_allowed = composition[sp] * sl_sizes.sum()
         for i in range(len(sublatts) - 1):
             sp_compositions[i] = rng.random() * max_allowed / sl_sizes[i]
             max_allowed -= sp_compositions[i] * sl_sizes[i]
 
         sp_compositions[-1] = (
-            total_size * composition[sp] - sum(sl_sizes * sp_compositions)
+            max_allowed - sum(sl_sizes * sp_compositions)
         ) / sl_sizes[-1]
 
         compositions_in_sublattices[sp] = {

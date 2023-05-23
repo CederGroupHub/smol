@@ -697,7 +697,7 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         """
         # set the current and previous values based on given occupancy
         new_features = []
-        if occupancy.shape[0] == len(self._kernels):
+        if occupancy.ndim == 2 and occupancy.shape[0] == len(self._kernels):
             for kernel, occupancy in zip(self._kernels, occupancy):
                 occupancy = np.ascontiguousarray(occupancy, dtype=int)
                 kernel.trace.occupancy = occupancy
