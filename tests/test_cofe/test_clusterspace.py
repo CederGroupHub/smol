@@ -774,9 +774,9 @@ def test_site_basis_rotation(cluster_subspace, rng):
         cs.rotate_site_basis(len(cs.orbits_by_size[1]) + 2, np.pi)
 
     cs1 = cs.copy()
-    print(cs.site_rotation_matrix)
+    # print(cs.site_rotation_matrix)
     cs1.rotate_site_basis(1, np.pi / 4)
-    print(cs1.site_rotation_matrix)
+    # print(cs1.site_rotation_matrix)
     for i in range(5):
         structure = gen_random_ordered_structure(cs.structure, rng=rng)
         for j in range(5):
