@@ -18,6 +18,7 @@ def generate_random_ordered_occupancy(
     tol=1e-6,
     encoded=True,
     rng=None,
+    **kwargs,
 ):
     """Generate a random encoded occupancy according to a list of sublattices.
 
@@ -45,11 +46,13 @@ def generate_random_ordered_occupancy(
 
     if composition is None:
         if charge_neutral:
-            occu = _gen_neutral_occu(sublattices, rng=rng)
+            occu = _gen_neutral_occu(sublattices, rng=rng, **kwargs)
         else:
-            occu = _gen_unconstrained_ordered_occu(sublattices, rng=rng)
+            occu = _gen_unconstrained_ordered_occu(sublattices, rng=rng, **kwargs)
     else:
-        occu = _gen_composition_ordered_occu(sublattices, composition, tol, rng=rng)
+        occu = _gen_composition_ordered_occu(
+            sublattices, composition, tol, rng=rng, **kwargs
+        )
 
     if not encoded:
         occu = processor.decode_occupancy(occu)
