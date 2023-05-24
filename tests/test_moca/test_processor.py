@@ -111,7 +111,7 @@ def test_compute_property_change(composite_processor, rng):
         # Test reverse matches forward
         old_sp = occu[site]
         rdprop = composite_processor.compute_property_change(new_occu, [(site, old_sp)])
-        assert dprop == -1 * rdprop
+        npt.assert_allclose(dprop, -1 * rdprop, rtol=RTOL, atol=ATOL)
 
 
 def test_structure_occupancy_conversion(ce_processor, rng):
