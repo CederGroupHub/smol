@@ -341,7 +341,6 @@ def test_compute_feature_vector_sgc(semigrand_ensemble, rng):
 def test_bad_chemical_potentials(semigrand_ensemble):
     proc = semigrand_ensemble.processor
     chem_pots = semigrand_ensemble.chemical_potentials
-    print(chem_pots)
     with pytest.raises(ValueError):
         items = list(chem_pots.items())
         semigrand_ensemble.chemical_potentials = {items[0][0]: items[0][1]}

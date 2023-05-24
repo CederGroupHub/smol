@@ -495,9 +495,9 @@ def test_convert_formats(comp_space):
             atol=NUM_TOL,
         ):
             if np.all(n_bad >= 0):
-                print("bad composition:", n_bad)
-                print("A:", comp_space._A)
-                print("b:", comp_space._b * supercell_size)
+                # print("bad composition:", n_bad)
+                # print("A:", comp_space._A)
+                # print("b:", comp_space._b * supercell_size)
                 with pytest.raises(ValueError):
                     _ = comp_space.translate_format(
                         n_bad, supercell_size, from_format="counts", to_format="counts"

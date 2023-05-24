@@ -44,11 +44,7 @@ def test_compute_bias_change(mcbias, rng):
         i = rng.choice(mcbias.active_sublattices[s].sites)
         sp = rng.choice(list(range(len(mcbias.active_sublattices[s].species))))
         step.append((i, sp))
-        if i == 81:
-            raise (ValueError, "81!!!!")
         new_occu[i] = sp
-    print(mcbias.sublattices)
-    print(step)
     assert mcbias.compute_bias_change(occu, step) == pytest.approx(
         mcbias.compute_bias(new_occu) - mcbias.compute_bias(occu)
     )
