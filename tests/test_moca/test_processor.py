@@ -191,7 +191,7 @@ def test_compute_property_change(processor, rng):
         # Test reverse matches forward
         old_sp = occu[site]
         rdprop = processor.compute_property_change(new_occu, [(site, old_sp)])
-        assert dprop == -1 * rdprop
+        npt.assert_allclose(dprop, -1 * rdprop, rtol=RTOL, atol=ATOL)
 
 
 def test_compute_feature_change(processor, rng):
@@ -206,15 +206,19 @@ def test_compute_feature_change(processor, rng):
         new_sp = rng.choice(sublatt.encoding)
         new_occu = occu.copy()
         new_occu[site] = new_sp
-        prop_f = processor.compute_property(new_occu)
-        prop_i = processor.compute_property(occu)
-        dprop = processor.compute_property_change(occu, [(site, new_sp)])
+        feat_f = processor.compute_feature_vector(new_occu)
+        feat_i = processor.compute_feature_vector(occu)
+        dfeat = processor.compute_feature_vector_change(
+            occu, [(site, new_sp)]
+        )
         # Check with some tight tolerances.
-        npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
+        npt.assert_allclose(dfeat, feat_f - feat_i, rtol=RTOL, atol=ATOL)
         # Test reverse matches forward
         old_sp = occu[site]
-        rdprop = processor.compute_property_change(new_occu, [(site, old_sp)])
-        npt.assert_allclose(dprop, -1 * rdprop, rtol=RTOL, atol=ATOL)
+        rdfeat = processor.compute_feature_vector_change(
+            new_occu, [(site, old_sp)]
+        )
+        npt.assert_allclose(dfeat, -1 * rdfeat, rtol=RTOL, atol=ATOL)
 
 
 def test_msonable(processor, rng):
