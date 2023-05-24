@@ -208,16 +208,12 @@ def test_compute_feature_change(processor, rng):
         new_occu[site] = new_sp
         feat_f = processor.compute_feature_vector(new_occu)
         feat_i = processor.compute_feature_vector(occu)
-        dfeat = processor.compute_feature_vector_change(
-            occu, [(site, new_sp)]
-        )
+        dfeat = processor.compute_feature_vector_change(occu, [(site, new_sp)])
         # Check with some tight tolerances.
         npt.assert_allclose(dfeat, feat_f - feat_i, rtol=RTOL, atol=ATOL)
         # Test reverse matches forward
         old_sp = occu[site]
-        rdfeat = processor.compute_feature_vector_change(
-            new_occu, [(site, old_sp)]
-        )
+        rdfeat = processor.compute_feature_vector_change(new_occu, [(site, old_sp)])
         npt.assert_allclose(dfeat, -1 * rdfeat, rtol=RTOL, atol=ATOL)
 
 
