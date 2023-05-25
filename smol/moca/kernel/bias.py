@@ -71,7 +71,6 @@ class MCBias(ABC):
         """
         return
 
-    @abstractmethod
     def compute_bias_change(self, occupancy, step):
         """Compute bias change from step.
 
@@ -87,7 +86,10 @@ class MCBias(ABC):
         Return:
             Float, change of bias value after step.
         """
-        return
+        occu_next = occupancy.copy()
+        for site, code in step:
+            occu_next[site] = code
+        return self.compute_bias(occu_next) - self.compute_bias(occupancy)
 
 
 class FugacityBias(MCBias):
@@ -203,7 +205,7 @@ class FugacityBias(MCBias):
             float, change of bias value after step.
         """
         delta_log_fu = sum(
-            log(self._fu_table[f[0]][f[1]] / self._fu_table[f[0]][occupancy[f[0]]])
+            log(self._fu_table[f[0]][f[1]]) - log(self._fu_table[f[0]][occupancy[f[0]]])
             for f in step
         )  # Can be wrong if step has two same sites.
         return delta_log_fu
@@ -281,22 +283,6 @@ class SquareChargeBias(MCBias):
         # Returns a negative value because of the implementation in mckernels.
         return -self.penalty * c**2
 
-    def compute_bias_change(self, occupancy, step):
-        """Compute bias change from step.
-
-        Args:
-            occupancy: (ndarray):
-                Encoded occupancy array.
-            step: (List[tuple(int,int)]):
-                Step returned by MCUsher.
-        Return:
-            Float, change of bias value after step.
-        """
-        occu_next = occupancy.copy()
-        for site, code in step:
-            occu_next[site] = code
-        return self.compute_bias(occu_next) - self.compute_bias(occupancy)
-
 
 class SquareHyperplaneBias(MCBias):
     """Square hyperplane bias.
@@ -361,22 +347,6 @@ class SquareHyperplaneBias(MCBias):
         """
         n = occu_to_counts(occupancy, self.d, self._dim_ids_table)
         return -self.penalty * np.sum((self._A @ n - self._b) ** 2)
-
-    def compute_bias_change(self, occupancy, step):
-        """Compute bias change from step.
-
-        Args:
-            occupancy: (ndarray):
-                Encoded occupancy array.
-            step: (List[tuple(int,int)]):
-                Step returned by MCUsher.
-        Return:
-            Float, change of bias value after step.
-        """
-        occu_next = occupancy.copy()
-        for site, code in step:
-            occu_next[site] = code
-        return self.compute_bias(occu_next) - self.compute_bias(occupancy)
 
 
 def mcbias_factory(bias_type, sublattices, *args, **kwargs):
