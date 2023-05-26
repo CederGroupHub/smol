@@ -74,10 +74,6 @@ class MCBias(ABC):
     def compute_bias_change(self, occupancy, step):
         """Compute bias change from step.
 
-        The returned value needs to be the difference of bias logs,
-        log(bias_f) - log(bias_i), when the bias terms would directly multiply
-        the ensemble probability (i.e. exp(-beta * E) * bias).
-
         Args:
             occupancy: (ndarray):
                 encoded occupancy array.
@@ -186,7 +182,7 @@ class FugacityBias(MCBias):
             Float, bias value.
         """
         return sum(
-            log(self._fu_table[site][species]) for site, species in enumerate(occupancy)
+            log(self._fu_table[site, species]) for site, species in enumerate(occupancy)
         )
 
     def compute_bias_change(self, occupancy, step):
@@ -204,10 +200,12 @@ class FugacityBias(MCBias):
         Return:
             float, change of bias value after step.
         """
+        # if a site is flipped twice in a step only use the last flip
+        steps = {site: code for site, code in step}
         delta_log_fu = sum(
-            log(self._fu_table[f[0]][f[1]]) - log(self._fu_table[f[0]][occupancy[f[0]]])
-            for f in step
-        )  # Can be wrong if step has two same sites.
+            log(self._fu_table[site, code] / self._fu_table[site, occupancy[site]])
+            for site, code in steps.items()
+        )
         return delta_log_fu
 
     def _build_fu_table(self, fugacity_fractions):
