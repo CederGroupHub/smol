@@ -530,11 +530,11 @@ class StochasticSQSGenerator(SQSGenerator):
         Returns:
             ndarray of occupancies
         """
+        # all processors should have the same compositions so just use one processor
+        compositions = [sl.composition for sl in self._processors[0].get_sublattices()]
         occupancies = np.vstack(
             [
-                generate_random_ordered_occupancy(
-                    proc, composition=self.cluster_subspace.structure.composition
-                )
+                generate_random_ordered_occupancy(proc, composition=compositions)
                 for proc in self._processors
             ]
         )
