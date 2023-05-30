@@ -78,6 +78,11 @@ class Sublattice(MSONable):
         return tuple(self.site_space.keys())
 
     @property
+    def composition(self):
+        """Get composition of sublattice."""
+        return self.site_space.composition
+
+    @property
     def restricted_sites(self):
         """Get restricted sites for species."""
         return np.setdiff1d(self.sites, self.active_sites)

@@ -2,12 +2,12 @@
 
 __author__ = "Luis Barroso-Luque, Fengyu Xie"
 
-from collections import defaultdict
+import warnings
 
 import numpy as np
 from pymatgen.core import Composition, Element
 
-from smol.cofe.space.domain import Vacancy
+from smol.cofe.space.domain import SiteSpace, Vacancy
 
 
 # TODO alloy encoding/decoding and also allow it for initial occus in smapler, etc
@@ -25,8 +25,9 @@ def generate_random_ordered_occupancy(
     Args:
         processor (Processor):
             A processor object that represents the supercell space.
-        composition (Composition): optional
-            A pymatgen Compositions that the generated occupancy should be.
+        composition (Sequence of Composition): optional
+            A sequence of pymatgen Compositions for each sublattice that the generated
+            occupancy should be. Must be in the same order as the sublattices.
         charge_neutral (bool): optional
             If True, the generated occupancy will be charge neutral. Oxidation states
             must be present in sublattices, if a composition is given this option is
@@ -146,8 +147,9 @@ def _gen_composition_ordered_occu(sublattices, composition, tol, rng=None):
     Args:
         sublattices (Sequence of Sublattice):
             A sequence of sublattices
-        composition (Composition): optional
-            A pymatgen Compositions that the generated occupancy should be.
+        composition (Sequence of Composition): optional
+            A sequence of pymatgen Compositions for each sublattice that the generated
+            occupancy should be.
         tol (float):
             Tolerance for the composition check.
         rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}
@@ -161,6 +163,8 @@ def _gen_composition_ordered_occu(sublattices, composition, tol, rng=None):
     occu = np.zeros(sum(len(sl.sites) for sl in sublattices), dtype=int)
 
     for composition, sublattice in zip(compositions, sublattices):
+        # create a dummy site space to account for vacancies
+        composition = SiteSpace(composition)
         all_sites = list(sublattice.sites.copy())
         for sp, code in zip(sublattice.species, sublattice.encoding):
             num_sp = round(composition[sp] * len(sublattice.sites))
@@ -194,24 +198,21 @@ def _composition_compatiblity(sublattices, composition, tol, rng=None):
     """
     # check that all species in composition appear in sublattices
     if isinstance(composition, Composition):
-        # this validation could be moved into the _split_composition function
-        species = {sp for sl in sublattices for sp in sl.species}
-        if any(sp not in species for sp in composition):
+        compositions = [composition]
+    else:
+        compositions = composition
+
+    for i, (comp, sl) in enumerate(zip(compositions, sublattices)):
+        if any(sp not in sl.site_space for sp in comp):
             raise ValueError(
                 "species are present in composition that are not in sublattices."
             )
-        compositions = _split_composition_into_sublattices(
-            composition, sublattices, rng=rng
-        )
-    else:
-        compositions = composition
-        for i, (comp, sl) in enumerate(zip(compositions, sublattices)):
-            if any(sp not in sl.site_space for sp in comp):
-                raise ValueError(
-                    "species are present in composition that are not in sublattices."
-                )
-            if comp.num_atoms > 1:
-                compositions[i] = comp.fractional_composition
+        if comp.num_atoms > 1:
+            warnings.warn(
+                "A given sublattice composition is not normalized. \n"
+                "Will be turned to a fractional composition."
+            )
+            compositions[i] = comp.fractional_composition
 
     # check if the compositions are compatible with the size of the sublattices
     for composition, sublattice in zip(compositions, sublattices):
@@ -224,68 +225,5 @@ def _composition_compatiblity(sublattices, composition, tol, rng=None):
 
         if total > len(sublattice.sites) + tol:
             raise ValueError("composition is not compatible with supercell size.")
-
-    return compositions
-
-
-def _split_composition_into_sublattices(composition, sublattices, rng=None):
-    """Split a composition into several compositions according to a list of sublattices.
-
-    The split is done randomly for all overlapping species.
-
-    No check is made on the compatibility of the composition with the sublattices.
-
-    Args:
-        composition (Composition):
-            A pymatgen Compositions to be split into Compositions commensurate with
-            given sublattices.
-        sublattices (Sequence of Sublattice):
-            A sequence of sublattices
-        rng (optional): {None, int, ArrayLike[ints], SeedSequence, BitGenerator, Generator}
-            A RNG, seed or otherwise to initialize default_rng
-
-    Returns:
-        list: list of split compositions
-    """
-    rng = np.random.default_rng(rng)
-
-    # dictionary of species and the sublattices in which they appear
-    # TODO this can be a util function because I'm pretty sure its used in TableSwap
-    species_in_sublattices = defaultdict(list)
-    for sl in sublattices:
-        for sp in sl.site_space.composition:
-            species_in_sublattices[sp].append(sl)
-
-    # split the composition into sublattices and record in a dictionary with
-    # species as keys and then a dictionary of the sublattices and the composition
-    # of that species in that sublattice
-    compositions_in_sublattices = {}
-    for sp, sublatts in species_in_sublattices.items():
-        sl_sizes = np.array([len(sl.sites) for sl in sublatts])
-        sp_compositions = np.zeros(len(sublatts))
-
-        max_allowed = composition[sp] * sl_sizes.sum()
-        for i in range(len(sublatts) - 1):
-            sp_compositions[i] = rng.random() * max_allowed / sl_sizes[i]
-            max_allowed -= sp_compositions[i] * sl_sizes[i]
-
-        sp_compositions[-1] = (
-            max_allowed - sum(sl_sizes * sp_compositions)
-        ) / sl_sizes[-1]
-
-        compositions_in_sublattices[sp] = {
-            sl.site_space: comp for sl, comp in zip(sublatts, sp_compositions)
-        }
-
-    # now unwrap the into Composition objects for each sublattice
-    compositions = [
-        Composition(
-            {
-                sp: compositions_in_sublattices[sp][sl.site_space]
-                for sp in sl.site_space.composition
-            }
-        )
-        for sl in sublattices
-    ]
 
     return compositions
