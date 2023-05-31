@@ -1,4 +1,4 @@
-"""Tools for exhaustive enumeration."""
+"""Tools for exhaustive enumeration of symmetrically distinct supercell matrices."""
 
 __author__ = "Luis Barroso-Luque"
 

@@ -26,8 +26,9 @@ def generate_random_ordered_occupancy(
         processor (Processor):
             A processor object that represents the supercell space.
         composition (Sequence of Composition): optional
-            A sequence of pymatgen Compositions for each sublattice that the generated
-            occupancy should be. Must be in the same order as the sublattices.
+            A sequence of pymatgen Compositions for each sublattice specifying the
+            composition for the generated occupancy. Must be in the same order as the
+            sublattices.
         charge_neutral (bool): optional
             If True, the generated occupancy will be charge neutral. Oxidation states
             must be present in sublattices, if a composition is given this option is
@@ -148,8 +149,9 @@ def _gen_composition_ordered_occu(sublattices, composition, tol, rng=None):
         sublattices (Sequence of Sublattice):
             A sequence of sublattices
         composition (Sequence of Composition): optional
-            A sequence of pymatgen Compositions for each sublattice that the generated
-            occupancy should be.
+            A sequence of pymatgen Compositions for each sublattice specifying the
+            composition for the generated occupancy. Must be in the same order as the
+            sublattices.
         tol (float):
             Tolerance for the composition check.
         rng (optional): {None, int, array_like[ints], SeedSequence, BitGenerator, Generator}
