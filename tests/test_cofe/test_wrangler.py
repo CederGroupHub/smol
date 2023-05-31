@@ -367,7 +367,6 @@ def test_get_matching_corr_duplicate_inds(structure_wrangler, rng):
     )
     structure_wrangler.append_entries([dup_entry, dup_entry2])
     expected_matches = [ind, structure_wrangler.num_structures - 2]
-    print(structure_wrangler.get_matching_corr_duplicate_indices(), expected_matches)
     assert any(
         expected_matches == sorted(matches)
         for matches in structure_wrangler.get_matching_corr_duplicate_indices()

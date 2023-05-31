@@ -111,7 +111,7 @@ def test_compute_property_change(composite_processor, rng):
         # Test reverse matches forward
         old_sp = occu[site]
         rdprop = composite_processor.compute_property_change(new_occu, [(site, old_sp)])
-        assert dprop == -1 * rdprop
+        npt.assert_allclose(dprop, -1 * rdprop, rtol=RTOL, atol=ATOL)
 
 
 def test_structure_occupancy_conversion(ce_processor, rng):
@@ -156,15 +156,19 @@ def test_compute_feature_change(composite_processor, rng):
         new_sp = rng.choice(sublatt.encoding)
         new_occu = occu.copy()
         new_occu[site] = new_sp
-        prop_f = composite_processor.compute_property(new_occu)
-        prop_i = composite_processor.compute_property(occu)
-        dprop = composite_processor.compute_property_change(occu, [(site, new_sp)])
+        feat_f = composite_processor.compute_feature_vector(new_occu)
+        feat_i = composite_processor.compute_feature_vector(occu)
+        dfeat = composite_processor.compute_feature_vector_change(
+            occu, [(site, new_sp)]
+        )
         # Check with some tight tolerances.
-        npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
+        npt.assert_allclose(dfeat, feat_f - feat_i, rtol=RTOL, atol=ATOL)
         # Test reverse matches forward
         old_sp = occu[site]
-        rdprop = composite_processor.compute_property_change(new_occu, [(site, old_sp)])
-        assert dprop == -1 * rdprop
+        rdfeat = composite_processor.compute_feature_vector_change(
+            new_occu, [(site, old_sp)]
+        )
+        npt.assert_allclose(dfeat, -1 * rdfeat, rtol=RTOL, atol=ATOL)
 
 
 def test_compute_property(composite_processor, rng):
