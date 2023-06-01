@@ -331,7 +331,7 @@ class SQSGenerator(ABC):
                 reduced_sqs = SQS(
                     structure=structure,
                     score=sqs.score,
-                    features_distance=sqs.features,
+                    feature_distance=sqs.feature_distance,
                     supercell_matrix=sqs.supercell_matrix,
                 )
                 best_sqs[i] = reduced_sqs
