@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.testing as npt
 import pytest
 
 from smol.capp.generate import StochasticSQSGenerator
@@ -42,6 +43,27 @@ def test_generate_get_sqs(generator):
         len(generator.get_best_sqs(generator.num_structures, reduction_algorithm="LLL"))
         <= generator.num_structures
     )
+
+
+def test_compute_score_distances(generator):
+    generator.generate(1000, max_save_num=100)
+    for sqs in generator.get_best_sqs(
+        generator.num_structures, remove_duplicates=False
+    ):
+        assert generator.compute_score(
+            sqs.structure, sqs.supercell_matrix
+        ) == pytest.approx(sqs.score)
+
+        npt.assert_allclose(
+            generator.compute_feature_distance(sqs.structure, sqs.supercell_matrix),
+            sqs.feature_distance,
+            rtol=1e-05,
+            atol=1e-08,  # np.allclose defaults
+        )
+
+    with pytest.raises(ValueError):
+        size = generator.supercell_size + 1
+        generator.compute_score(sqs.structure, size * np.eye(3))
 
 
 def test_bad_generator(cluster_subspace):

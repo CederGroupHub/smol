@@ -21,7 +21,7 @@ from smol.moca.trace import Trace
 from smol.utils.class_utils import class_name_from_str, derived_class_factory
 from smol.utils.progressbar import progress_bar
 
-SQS = namedtuple("SQS", ["structure", "score", "features", "supercell_matrix"])
+SQS = namedtuple("SQS", ["structure", "score", "feature_distance", "supercell_matrix"])
 
 
 class SQSGenerator(ABC):
@@ -43,7 +43,7 @@ class SQSGenerator(ABC):
 
         Args:
             cluster_subspace (ClusterSubspace):
-                cluster subspace used to determine features
+                cluster subspace used to determine feature distance
             supercell_size (int):
                 size of the supercell in multiples of the primitive cell
             feature_type (str): optional
@@ -106,8 +106,8 @@ class SQSGenerator(ABC):
                 supercell_size, cluster_subspace.symops
             )
 
-        self._processors = [
-            derived_class_factory(
+        self._processors_by_scm = {
+            tuple(sorted(tuple(s.tolist()) for s in scm)): derived_class_factory(
                 class_name_from_str(feature_type + "DistanceProcessor"),
                 DistanceProcessor,
                 cluster_subspace,
@@ -118,7 +118,8 @@ class SQSGenerator(ABC):
                 match_tol=match_tol,
             )
             for scm in supercell_matrices
-        ]
+        }
+        self._processors = list(self._processors_by_scm.values())
 
     @classmethod
     def from_structure(
@@ -169,7 +170,7 @@ class SQSGenerator(ABC):
                 Set to any number >0 to use this term. Default is 1.0. to ignore it
                 set it to zero.
             match_tol (float): optional
-                tolerance for matching features. Default is 1e-5.
+                tolerance for exact matching features. Default is 1e-5.
             supercell_matrices (list of ndarray): optional
                 list of supercell matrices to use. If None, all symmetrically distinct
                 supercell matrices are generated.
@@ -207,6 +208,52 @@ class SQSGenerator(ABC):
     def generate(self, *args, **kwargs):
         """Generate a SQS structures."""
         return
+
+    def compute_score(self, structure, supercell_matrix=None):
+        """Compute the SQS score for a structure.
+
+        Args:
+            structure (Structure):
+                ordered structure to compute SQS score for
+            supercell_matrix (ndarray): optional
+                supercell matrix relating given ordered structure to the disordered
+                structure.
+
+        Returns:
+            float : SQS score
+        """
+        processor = self._get_structure_processor(structure, supercell_matrix)
+        occu = processor.occupancy_from_structure(structure)
+        return processor.compute_property(occu)
+
+    def compute_feature_distance(self, structure, supercell_matrix=None):
+        """Compute feature distance to target vector for a given structure.
+
+        Args:
+            structure (Structure):
+                ordered structure to compute SQS score for
+            supercell_matrix (ndarray): optional
+                supercell matrix relating given ordered structure to the disordered
+                structure.
+
+        Returns:
+            float : feature distance
+        """
+        processor = self._get_structure_processor(structure, supercell_matrix)
+        occu = processor.occupancy_from_structure(structure)
+        return processor.compute_feature_vector(occu)
+
+    def _get_structure_processor(self, structure, supercell_matrix):
+        """Check if an ordered structure and supercell matrix are valid."""
+        if supercell_matrix is None:
+            supercell_matrix = self.cluster_subspace.scmatrix_from_structure(structure)
+
+        if not np.isclose(np.linalg.det(supercell_matrix), self.supercell_size):
+            raise ValueError(
+                "Invalid supercell matrix, must have determinant equal to supercell_size"
+            )
+        scm = tuple(sorted(tuple(s.tolist()) for s in supercell_matrix))
+        return self._processors_by_scm[scm]
 
     def get_best_sqs(
         self, num_structures=1, remove_duplicates=True, reduction_algorithm=None
@@ -248,7 +295,7 @@ class SQSGenerator(ABC):
             sqs = SQS(
                 structure=structure,
                 score=trace.enthalpy[i][0],
-                features=trace.features[i],
+                feature_distance=trace.features[i],
                 supercell_matrix=processor.supercell_matrix,
             )
             best_sqs.append(sqs)
@@ -282,7 +329,7 @@ class SQSGenerator(ABC):
                 reduced_sqs = SQS(
                     structure=structure,
                     score=sqs.score,
-                    features=sqs.features,
+                    features_distance=sqs.features,
                     supercell_matrix=sqs.supercell_matrix,
                 )
                 best_sqs[i] = reduced_sqs
@@ -290,6 +337,8 @@ class SQSGenerator(ABC):
         return best_sqs
 
 
+# TODO add a compute feature_distance for SQS given a structure and scmatrix
+# TODO will need a dictionary mapping scmatrix to index of processor.
 class StochasticSQSGenerator(SQSGenerator):
     """StochasticSQSGenertor class.
 
@@ -316,11 +365,11 @@ class StochasticSQSGenerator(SQSGenerator):
 
         Args:
             cluster_subspace (ClusterSubspace):
-                cluster subspace used to determine features
+                cluster subspace used to determine feature_distance
             supercell_size (int):
                 size of the supercell in multiples of the primitive cell
             feature_type (str): optional
-                type of features to be used to determine SQS.
+                type of feature_distance to be used to determine SQS.
                 options are: "correlation"
             target_vector (ndarray): optional
                 target feature vector to use for distance calculations
@@ -393,6 +442,11 @@ class StochasticSQSGenerator(SQSGenerator):
         container = SampleContainer(kernels[0].ensemble, sample_trace)
         container.metadata.type = "SQS-SampleContainer"
         self._sampler = Sampler([self._kernel], container)
+
+    @property
+    def sampler(self):
+        """Sampler: sampler used to generate SQS."""
+        return self._sampler
 
     def generate(
         self,
