@@ -104,7 +104,7 @@ class SQSGenerator(ABC):
         else:
             supercell_matrices = enumerate_supercell_matrices(
                 supercell_size, cluster_subspace.symops
-            )
+            ).reverse()  # reverse since most skewed cells are enumerated first
 
         self._processors_by_scm = {
             tuple(sorted(tuple(s.tolist()) for s in scm)): derived_class_factory(
@@ -337,8 +337,6 @@ class SQSGenerator(ABC):
         return best_sqs
 
 
-# TODO add a compute feature_distance for SQS given a structure and scmatrix
-# TODO will need a dictionary mapping scmatrix to index of processor.
 class StochasticSQSGenerator(SQSGenerator):
     """StochasticSQSGenertor class.
 
