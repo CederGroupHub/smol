@@ -104,7 +104,9 @@ class SQSGenerator(ABC):
         else:
             supercell_matrices = enumerate_supercell_matrices(
                 supercell_size, cluster_subspace.symops
-            ).reverse()  # reverse since most skewed cells are enumerated first
+            )
+            # reverse since most skewed cells are enumerated first
+            supercell_matrices.reverse()
 
         self._processors_by_scm = {
             tuple(sorted(tuple(s.tolist()) for s in scm)): derived_class_factory(
