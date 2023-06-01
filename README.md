@@ -32,17 +32,21 @@ Functionality
 -  Defining cluster expansion functions for a given disordered structure using a
    variety of available site basis functions with and without explicit
    redundancy.
--  Option to include explicit electrostatics in expansions using the Ewald
-   summation method.
+
+-  Option to include explicit electrostatics in expansions using the Ewald summation
+   method.
 -  Computing correlation vectors for a set of training structures with a variety
    of functionality to inspect the resulting feature matrix.
+
 -  Defining fitted cluster expansions for subsequent property prediction.
 -  Fast evaluation of correlation vectors and differences in correlation vectors
    from local updates in order to quickly compute properties and changes in
    properties for specified supercell sizes.
+
 -  Flexible toolset to sample cluster expansions using Monte Carlo with
    canonical, semigrand canonical, and charge neutral semigrand canonical ensembles
    using a Metropolis or a Wang-Landau sampler.
+
 -  Special quasi-random structure generation based on either correlation vectors or
    cluster interaction vectors.
 
