@@ -21,8 +21,8 @@ def test_enumerate_supercell_matrices(structure, size):
     # check that no two matrices are related by symmetry
     for scm in scms:
         for symop in symops:
-            rot = np.linalg.inv(scm) @ symop.rotation_matrix
-            equiv = [(abs(rot @ m - np.round(rot @ m)) < 1e-5).all() for m in scms]
+            rot = np.linalg.inv(scm.T) @ symop.rotation_matrix
+            equiv = [(abs(rot @ m.T - np.round(rot @ m.T)) < 1e-5).all() for m in scms]
             assert sum(equiv) <= 1  # at most one matrix is equivalent (ie itself)
             if sum(equiv) == 1:  # make sure the equivalent is actually the same
                 equiv_scm = scms[equiv.index(True)]

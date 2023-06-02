@@ -258,7 +258,7 @@ class SQSGenerator(ABC):
         return self._processors_by_scm[scm]
 
     def get_best_sqs(
-        self, num_structures=1, remove_duplicates=True, reduction_algorithm=None
+        self, num_structures=1, remove_duplicates=True, reduction_algorithm="niggli"
     ):
         """Get the best SQS structures.
 

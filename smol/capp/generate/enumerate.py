@@ -31,13 +31,13 @@ def enumerate_supercell_matrices(size, symmops, tol=1e-5):
         for symop in symmops:
             hnf_rot = np.linalg.inv(hnf) @ symop.rotation_matrix
             for scm in supercell_matrices:
-                unimod = hnf_rot @ scm
+                unimod = hnf_rot @ scm.T
                 if (abs(unimod - np.round(unimod)) < tol).all():
                     break
             else:
                 continue
             break
         else:
-            supercell_matrices.append(hnf)
+            supercell_matrices.append(hnf.T)  # supercells in pmg are transpose of hnf
 
     return supercell_matrices
