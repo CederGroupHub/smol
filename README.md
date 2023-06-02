@@ -29,26 +29,26 @@ Functionality
 -------------
 **smol** currently includes the following functionality:
 
--  Defining cluster expansion functions for a given disordered structure using a
-   variety of available site basis functions with and without explicit
-   redundancy.
+-   Defining cluster expansion functions for a given disordered structure using a
+    variety of available site basis functions with and without explicit
+    redundancy.
 
--  Option to include explicit electrostatics in expansions using the Ewald summation
-   method.
--  Computing correlation vectors for a set of training structures with a variety
-   of functionality to inspect the resulting feature matrix.
+-   Option to include explicit electrostatics in expansions using the Ewald summation
+    method.
+-   Computing correlation vectors for a set of training structures with a variety
+    of functionality to inspect the resulting feature matrix.
 
--  Defining fitted cluster expansions for subsequent property prediction.
--  Fast evaluation of correlation vectors and differences in correlation vectors
-   from local updates in order to quickly compute properties and changes in
-   properties for specified supercell sizes.
+-   Defining fitted cluster expansions for subsequent property prediction.
+-   Fast evaluation of correlation vectors and differences in correlation vectors
+    from local updates in order to quickly compute properties and changes in
+    properties for specified supercell sizes.
 
--  Flexible toolset to sample cluster expansions using Monte Carlo with
-   canonical, semigrand canonical, and charge neutral semigrand canonical ensembles
-   using a Metropolis or a Wang-Landau sampler.
+-   Flexible toolset to sample cluster expansions using Monte Carlo with
+    canonical, semigrand canonical, and charge neutral semigrand canonical ensembles
+    using a Metropolis or a Wang-Landau sampler.
 
--  Special quasi-random structure generation based on either correlation vectors or
-   cluster interaction vectors.
+-   Special quasi-random structure generation based on either correlation vectors or
+    cluster interaction vectors.
 
 **smol** is built on top of [pymatgen](https://pymatgen.org) so any pre/post
 structure analysis can be done seamlessly using the various functionality
