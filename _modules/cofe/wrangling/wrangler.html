@@ -1,0 +1,1421 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cofe.wrangling.wrangler &#8212; smol 0.1.dev1+ga34f4c0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/smol.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/cofe/wrangling/wrangler';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1.dev1+ga34f4c0';
+        </script>
+    <script src="../../../_static/require.js"></script>
+    <script src="../../../_static/custom.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="auto">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1.dev1+ga34f4c0  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1.dev1+ga34f4c0  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumbs">
+  <ul class="bd-breadcrumbs" role="navigation" aria-label="Breadcrumb">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">cofe.wrangling.wrangler</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for cofe.wrangling.wrangler</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Implementation of a StructureWrangler.</span>
+
+<span class="sd">A StructureWrangler is used to generate and organize training data to fit a</span>
+<span class="sd">cluster expansion using the terms defined in a ClusterSubspace. It takes care</span>
+<span class="sd">of computing the training features (correlations) to construct a feature matrix</span>
+<span class="sd">to be used along with a target property vector to obtain the coefficients for</span>
+<span class="sd">a cluster expansion using some linear regression model.</span>
+
+<span class="sd">Includes functions used to preprocess and check (wrangling) fitting data of</span>
+<span class="sd">structures and properties.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Luis Barroso-Luque&quot;</span>
+<span class="n">__credits__</span> <span class="o">=</span> <span class="s2">&quot;William Davidson Richard&quot;</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">import_module</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">monty.json</span> <span class="kn">import</span> <span class="n">MSONable</span><span class="p">,</span> <span class="n">jsanitize</span>
+<span class="kn">from</span> <span class="nn">pymatgen.analysis.structure_matcher</span> <span class="kn">import</span> <span class="n">StructureMatcher</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core.structure</span> <span class="kn">import</span> <span class="n">Structure</span>
+<span class="kn">from</span> <span class="nn">pymatgen.entries.computed_entries</span> <span class="kn">import</span> <span class="n">ComputedStructureEntry</span>
+
+<span class="kn">from</span> <span class="nn">smol.utils.exceptions</span> <span class="kn">import</span> <span class="n">StructureMatchError</span>
+
+
+<div class="viewcode-block" id="StructureWrangler"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler">[docs]</a><span class="k">class</span> <span class="nc">StructureWrangler</span><span class="p">(</span><span class="n">MSONable</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to create fitting data to fit a cluster expansion.</span>
+
+<span class="sd">    A StructureWrangler handles (wrangles) input data structures and properties</span>
+<span class="sd">    to fit in a cluster expansion. This class holds a ClusterSubspace used to</span>
+<span class="sd">    compute correlation vectors and produce feature/design matrices used to fit</span>
+<span class="sd">    the final ClusterExpansion.</span>
+
+<span class="sd">    This class is meant to take all input training data in the form of</span>
+<span class="sd">    (structure, properties) where the properties represent the target</span>
+<span class="sd">    material property for the given structure that will be used to train</span>
+<span class="sd">    the cluster expansion, and returns the fitting data as a cluster</span>
+<span class="sd">    correlation feature matrix (orbit basis function values).</span>
+
+<span class="sd">    This class also has methods to check/prepare/filter the data. A metadata</span>
+<span class="sd">    dictionary is used to keep track of applied filters, but users can also use</span>
+<span class="sd">    it to save any other pertinent information that will be saved with using</span>
+<span class="sd">    :code:`StructureWrangler.as_dict` for future reference. Other preprocessing</span>
+<span class="sd">    and filtering methods are available in tools.py and select.py.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster_subspace</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a StructureWrangler.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cluster_subspace (ClusterSubspace):</span>
+<span class="sd">                a ClusterSubspace object that will be used to fit a</span>
+<span class="sd">                ClusterExpansion with the provided data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span> <span class="o">=</span> <span class="n">cluster_subspace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ind_sets</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># data indices for test/training splits etc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;applied_filters&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cluster_subspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the underlying ClusterSubspace used to compute features.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_structures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get number of structures added (correctly matched to prim).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_features</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get number of features for each added structure.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">available_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get list of properties that have been added.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="p">{</span><span class="n">p</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">available_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get list of available data index sets.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ind_sets</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">available_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get list of weights that have been added.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="p">{</span><span class="n">p</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+        <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">structures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get list of included structures.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">entry</span><span class="o">.</span><span class="n">structure</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">refined_structures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get list of refined structures.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;refined_structure&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">feature_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get feature matrix.</span>
+
+<span class="sd">        Rows are structures, and columns are correlation vectors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;correlations&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get sizes of each structure in terms of number of prims.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">occupancy_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get occupancy strings for each structure in the StructureWrangler.&quot;&quot;&quot;</span>
+        <span class="n">occupancies</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">occupancy_from_structure</span><span class="p">(</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;supercell_matrix&quot;</span><span class="p">],</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;site_mapping&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">occupancies</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">supercell_matrices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get list of supercell matrices relating each structure to prim.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;supercell_matrix&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">structure_site_mappings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get list of site mappings for each structure to prim.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;site_mapping&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">entries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of the entry dictionaries.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span>
+
+<div class="viewcode-block" id="StructureWrangler.data_indices"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.data_indices">[docs]</a>    <span class="k">def</span> <span class="nf">data_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a specific data index set.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ind_sets</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get dictionary to save applied filters, etc.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
+
+<div class="viewcode-block" id="StructureWrangler.get_feature_matrix_rank"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_feature_matrix_rank">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_matrix_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the rank of the feature matrix or a submatrix of it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rows (list):</span>
+<span class="sd">                indices of structures to include in feature matrix.</span>
+<span class="sd">            cols (list):</span>
+<span class="sd">                indices of features (correlations) to include in feature matrix</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: the rank of the matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span> <span class="k">if</span> <span class="n">rows</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_structures</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">cols</span> <span class="k">if</span> <span class="n">cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_features</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_rank</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">[</span><span class="n">rows</span><span class="p">][:,</span> <span class="n">cols</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.get_feature_matrix_orbit_rank"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_feature_matrix_orbit_rank">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_matrix_orbit_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit_id</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the rank of an orbit submatrix of the feature matrix.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            orbit_id (int):</span>
+<span class="sd">                Orbit id to obtain sub feature matrix rank of.</span>
+<span class="sd">            rows (list): optional</span>
+<span class="sd">                list of row indices corresponding to structures to include.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: rank of orbit sub feature matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">i</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">oid</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">function_orbit_ids</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">oid</span> <span class="o">==</span> <span class="n">orbit_id</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_feature_matrix_rank</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.get_condition_number"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_condition_number">[docs]</a>    <span class="k">def</span> <span class="nf">get_condition_number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">norm_p</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the condition number for the feature matrix or submatrix.</span>
+
+<span class="sd">        The condition number is a measure of how sensitive the solution to</span>
+<span class="sd">        the linear system is to perturbations in the sampled data. The larger</span>
+<span class="sd">        the condition number the more ill-conditioned the linear problem is.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rows (list):</span>
+<span class="sd">                indices of structures to include in feature matrix.</span>
+<span class="sd">            cols (list):</span>
+<span class="sd">                indices of features (correlations) to include in feature matrix</span>
+<span class="sd">            norm_p : (optional)</span>
+<span class="sd">                the type of norm to use when computing condition number.</span>
+<span class="sd">                See the numpy docs for np.linalg.cond for options.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: matrix condition number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span> <span class="k">if</span> <span class="n">rows</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_structures</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">cols</span> <span class="k">if</span> <span class="n">cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_features</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cond</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">[</span><span class="n">rows</span><span class="p">][:,</span> <span class="n">cols</span><span class="p">],</span> <span class="n">p</span><span class="o">=</span><span class="n">norm_p</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.get_gram_matrix"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_gram_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_gram_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the Gram matrix for the feature matrix or a submatrix.</span>
+
+<span class="sd">        The Gram matrix, :math:`G = X^TX`, where each entry is</span>
+<span class="sd">        :math:`G_{ij} = X_i \cdot X_j`. By default, G will have each column</span>
+<span class="sd">        (feature vector) normalized. This makes it possible to compare Gram</span>
+<span class="sd">        matrices for different feature matrix size or using different basis</span>
+<span class="sd">        sets. This ensures every entry satisfies :math:`-1 \le G_{ij} \le 1`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rows (list):</span>
+<span class="sd">                indices of structures to include in feature matrix.</span>
+<span class="sd">            cols (list):</span>
+<span class="sd">                indices of features (correlations) to include in feature matrix</span>
+<span class="sd">            normalize:</span>
+<span class="sd">                if True (default), will normalize each feature vector in the</span>
+<span class="sd">                feature matrix.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            ndarray: Gram matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span> <span class="k">if</span> <span class="n">rows</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_structures</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">cols</span> <span class="k">if</span> <span class="n">cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_features</span><span class="p">)</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">[</span><span class="n">rows</span><span class="p">][:,</span> <span class="n">cols</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+            <span class="n">matrix</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span><span class="o">.</span><span class="n">diagonal</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">matrix</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.get_duplicate_corr_indices"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_duplicate_corr_indices">[docs]</a>    <span class="k">def</span> <span class="nf">get_duplicate_corr_indices</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">cutoffs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">rm_external_terms</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find indices of rows with duplicate corr vectors in feature matrix.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cutoffs (dict): optional</span>
+<span class="sd">                dictionary with cluster diameter cutoffs for correlation</span>
+<span class="sd">                functions to consider in correlation vectors.</span>
+<span class="sd">            decimals (int): optional</span>
+<span class="sd">                number of decimals to round correlations in order to allow</span>
+<span class="sd">                some numerical tolerance for finding duplicates. If None,</span>
+<span class="sd">                no rounding will be done. Beware that using a ClusterSubspace</span>
+<span class="sd">                with an orthogonal site basis will likely be off by some</span>
+<span class="sd">                numerical tolerance so rounding is recommended.</span>
+<span class="sd">            rm_external_terms (bool) : optional</span>
+<span class="sd">                if True, will not consider external terms and only consider</span>
+<span class="sd">                correlations proper when looking for duplicates.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            list: list containing lists of indices of rows in feature_matrix</span>
+<span class="sd">            where duplicates occur</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">duplicate_inds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">num_ext</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">external_terms</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cutoffs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">function_inds_from_cutoffs</span><span class="p">(</span><span class="n">cutoffs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">inds</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_features</span> <span class="o">-</span> <span class="n">num_ext</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rm_external_terms</span><span class="p">:</span>
+                <span class="n">inds</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">num_ext</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+            <span class="n">feature_matrix</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feature_matrix</span>
+                <span class="k">if</span> <span class="n">decimals</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">decimals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_matrix</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">inverse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">feature_matrix</span><span class="p">[:,</span> <span class="n">inds</span><span class="p">],</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">duplicate_inds</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">inverse</span> <span class="o">==</span> <span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">inverse</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">inverse</span> <span class="o">==</span> <span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span>
+            <span class="p">]</span>
+        <span class="k">return</span> <span class="n">duplicate_inds</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.get_matching_corr_duplicate_indices"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_matching_corr_duplicate_indices">[docs]</a>    <span class="k">def</span> <span class="nf">get_matching_corr_duplicate_indices</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">structure_matcher</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_kwargs</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find indices of equivalent structures.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            decimals (int): optional</span>
+<span class="sd">                number of decimals to round correlations in order to allow</span>
+<span class="sd">                some numerical tolerance for finding duplicates.</span>
+<span class="sd">            structure_matcher (StructureMatcher): optional</span>
+<span class="sd">                StructureMatcher object to use for matching structures.</span>
+<span class="sd">            **matcher_kwargs:</span>
+<span class="sd">                keyword arguments to use when initializing a StructureMatcher</span>
+<span class="sd">                if not given</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: list of lists of equivalent structures (that match) and have</span>
+<span class="sd">            duplicate correlation vectors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">matcher</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">structure_matcher</span>
+            <span class="k">if</span> <span class="n">structure_matcher</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">StructureMatcher</span><span class="p">(</span><span class="o">**</span><span class="n">matcher_kwargs</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">duplicate_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_duplicate_corr_indices</span><span class="p">(</span><span class="n">decimals</span><span class="p">)</span>
+
+        <span class="n">matching_inds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">inds</span> <span class="ow">in</span> <span class="n">duplicate_indices</span><span class="p">:</span>
+            <span class="c1"># match all combinations of duplicates</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">set</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">inds</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">matcher</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">structures</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">structures</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">symmetric</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+
+            <span class="k">while</span> <span class="n">overlaps</span> <span class="o">:=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">combinations</span><span class="p">(</span><span class="n">matches</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="p">):</span>
+                <span class="n">all_overlaps</span> <span class="o">=</span> <span class="p">[</span><span class="n">o</span> <span class="k">for</span> <span class="n">overlap</span> <span class="ow">in</span> <span class="n">overlaps</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">overlap</span><span class="p">]</span>
+                <span class="c1"># keep only disjoint sets</span>
+                <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">matches</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_overlaps</span><span class="p">]</span>
+                <span class="c1"># add union of overlapping sets</span>
+                <span class="k">for</span> <span class="n">set1</span><span class="p">,</span> <span class="n">set2</span> <span class="ow">in</span> <span class="n">overlaps</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">set1</span> <span class="o">|</span> <span class="n">set2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+                        <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">set1</span> <span class="o">|</span> <span class="n">set2</span><span class="p">)</span>
+                <span class="n">overlaps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">combinations</span><span class="p">(</span><span class="n">matches</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+            <span class="n">matching_inds</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">matching_inds</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.get_constant_features"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_constant_features">[docs]</a>    <span class="k">def</span> <span class="nf">get_constant_features</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find indices of constant feature vectors (columns).</span>
+
+<span class="sd">        A constant feature vector means the corresponding correlation function</span>
+<span class="sd">        evaluates to the exact same value for all included structures, meaning</span>
+<span class="sd">        it does not really help much when fitting. Many constant feature</span>
+<span class="sd">        vectors may be a sign of insufficient sampling of configuration space.</span>
+
+<span class="sd">        Excludes the empty cluster, which is by definition constant.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ndarray: array of column indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_matrix</span>
+        <span class="n">col_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">col_mask</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.get_similarity_matrix"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_similarity_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_similarity_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get similarity matrix of correlation vectors.</span>
+
+<span class="sd">        Generate a matrix to compare the similarity of correlation feature</span>
+<span class="sd">        vectors (columns) in the feature matrix. Matrix element a(i,j)</span>
+<span class="sd">        represents the fraction of equivalent corresponding values in feature</span>
+<span class="sd">        vectors i and j.</span>
+<span class="sd">        This construction is analogous to the Gram matrix, but instead of an</span>
+<span class="sd">        inner product, it counts the number of identical corresponding elements</span>
+<span class="sd">        in feature vectors i and j.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rows (list):</span>
+<span class="sd">                indices of structures to include in feature matrix.</span>
+<span class="sd">            cols (list):</span>
+<span class="sd">                indices of features (correlations) to include in feature matrix</span>
+<span class="sd">            rtol (float):</span>
+<span class="sd">                relative tolerance for comparing feature matrix column values</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ndarray:</span>
+<span class="sd">                (n x n) similarity matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span> <span class="k">if</span> <span class="n">rows</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_structures</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">cols</span> <span class="k">if</span> <span class="n">cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_features</span><span class="p">)</span>
+
+        <span class="n">matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">[</span><span class="n">rows</span><span class="p">][:,</span> <span class="n">cols</span><span class="p">]</span>
+        <span class="n">num_structs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+        <span class="n">num_corrs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">sim_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">num_corrs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_corrs</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_corrs</span><span class="p">):</span>
+                <span class="n">num_identical</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">matrix</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">matrix</span><span class="p">[:,</span> <span class="n">j</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">sim_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_identical</span> <span class="o">/</span> <span class="n">num_structs</span>
+                <span class="n">sim_matrix</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_identical</span> <span class="o">/</span> <span class="n">num_structs</span>
+
+        <span class="k">return</span> <span class="n">sim_matrix</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.get_property_vector"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_property_vector">[docs]</a>    <span class="k">def</span> <span class="nf">get_property_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the property target vector.</span>
+
+<span class="sd">        The property target vector to be used to fit the corresponding</span>
+<span class="sd">        correlation feature matrix to obtain coefficients for a cluster</span>
+<span class="sd">        expansion. It should always be properly/consistently normalized when</span>
+<span class="sd">        used for a fit.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (str):</span>
+<span class="sd">                name of the property</span>
+<span class="sd">            normalize (bool): optional</span>
+<span class="sd">                if True, normalizes by prim size. If the property sought is not</span>
+<span class="sd">                already normalized, you need to normalize before fitting a CE.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">available_properties</span><span class="p">:</span>
+            <span class="n">properties</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">properties</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">getattr</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is not a valid property. The property must be a valid &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;ComputedStructureEntry property or one of &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">available_properties</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span> <span class="kn">from</span> <span class="nn">error</span>
+
+        <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+            <span class="n">properties</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sizes</span>
+
+        <span class="k">return</span> <span class="n">properties</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.add_data_indices"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.add_data_indices">[docs]</a>    <span class="k">def</span> <span class="nf">add_data_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a set of data indices.</span>
+
+<span class="sd">        For example, use this for saving test/training splits or separating</span>
+<span class="sd">        duplicates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="p">(</span><span class="n">Sequence</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;indices must be Sequence like or an ndarray.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_structures</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;One or more indices are out of range.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ind_sets</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.get_weights"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.get_weights">[docs]</a>    <span class="k">def</span> <span class="nf">get_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the weights specified by the given key.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (str):</span>
+<span class="sd">                name of corresponding weights</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.add_entry"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.add_entry">[docs]</a>    <span class="k">def</span> <span class="nf">add_entry</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">entry</span><span class="p">,</span>
+        <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">supercell_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">site_mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">raise_failed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a structure and measured property to the StructureWrangler.</span>
+
+<span class="sd">        The energy and properties need to be extensive (i.e. not normalized per atom</span>
+<span class="sd">        or unit cell, directly from DFT).</span>
+
+<span class="sd">        An attempt to compute the correlation vector is made and if successful the</span>
+<span class="sd">        structure is successfully added. Otherwise the structure is ignored.</span>
+<span class="sd">        Usually failures are caused by the StructureMatcher in the given</span>
+<span class="sd">        ClusterSubspace failing to map structures to the primitive structure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entry (ComputedStructureEntry):</span>
+<span class="sd">                A ComputedStructureEntry with a training structure, energy and</span>
+<span class="sd">                properties</span>
+<span class="sd">            properties (dict):</span>
+<span class="sd">                Dictionary with a key describing the property and the target</span>
+<span class="sd">                value for the corresponding structure. For example if only a</span>
+<span class="sd">                single property {&#39;energy&#39;: value} but can also add more than</span>
+<span class="sd">                one, i.e. {&#39;total_energy&#39;: value1, &#39;formation_energy&#39;: value2}.</span>
+<span class="sd">                You are free to make up the keys for each property but make</span>
+<span class="sd">                sure you are consistent for all structures that you add.</span>
+<span class="sd">            weights (dict):</span>
+<span class="sd">                the weight given to the structure when doing the fit. The key</span>
+<span class="sd">                must match at least one of the given properties.</span>
+<span class="sd">            supercell_matrix (ndarray): optional</span>
+<span class="sd">                if the corresponding structure has already been matched to the</span>
+<span class="sd">                ClusterSubspace prim structure, passing the supercell_matrix</span>
+<span class="sd">                will use that instead of trying to re-match. If using this,</span>
+<span class="sd">                the user is responsible for having the correct supercell_matrix.</span>
+<span class="sd">                Here you are the cause of your own bugs.</span>
+<span class="sd">            site_mapping (list): optional</span>
+<span class="sd">                site mapping as obtained by StructureMatcher.get_mapping</span>
+<span class="sd">                such that the elements of site_mapping represent the indices</span>
+<span class="sd">                of the matching sites to the prim structure. If you pass this</span>
+<span class="sd">                option, you are fully responsible that the mappings are correct!</span>
+<span class="sd">            verbose (bool): optional</span>
+<span class="sd">                if True, will raise warning regarding  structures that fail in</span>
+<span class="sd">                StructureMatcher, and structures that have duplicate corr vectors.</span>
+<span class="sd">            raise_failed (bool): optional</span>
+<span class="sd">                if True, will raise the thrown error when adding a structure</span>
+<span class="sd">                that  fails. This can be helpful to keep a list of structures that</span>
+<span class="sd">                fail for further inspection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">processed_entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_entry</span><span class="p">(</span>
+            <span class="n">entry</span><span class="p">,</span>
+            <span class="n">properties</span><span class="p">,</span>
+            <span class="n">weights</span><span class="p">,</span>
+            <span class="n">supercell_matrix</span><span class="p">,</span>
+            <span class="n">site_mapping</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">,</span>
+            <span class="n">raise_failed</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">processed_entry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">processed_entry</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_corr_duplicate_warning</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_structures</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.append_entries"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.append_entries">[docs]</a>    <span class="k">def</span> <span class="nf">append_entries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entries</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append a list of entries.</span>
+
+<span class="sd">        Each entry must have all necessary fields. A entry can be</span>
+<span class="sd">        obtained using the process_structure method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entries (list of ComputedStructureEntry):</span>
+<span class="sd">                list of entries with all necessary information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">required_keys</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;refined_structure&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;supercell_matrix&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;site_mapping&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;correlations&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;size&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">entries</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">required_keys</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;entry </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> is missing required keys. Make sure&quot;</span>
+                    <span class="s2">&quot; they were obtained with the process_structure method.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">available_properties</span>
+                <span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The properties in the entry being added do not match all &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;the properties that have already been added: &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">available_properties</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot; Additional entries must include &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;the same properties included.&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">available_weights</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The properties in the entry being added do not match all &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;the weights that have already been added: &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">available_weights</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot; Additional entries must include the&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot; same weights included.&quot;</span>
+                    <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_corr_duplicate_warning</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_structures</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.add_weights"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.add_weights">[docs]</a>    <span class="k">def</span> <span class="nf">add_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add weights to structures already in the StructureWrangler.</span>
+
+<span class="sd">        The length of the given weights must match the number of structures</span>
+<span class="sd">        contained, and should be in the same order.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (str):</span>
+<span class="sd">                name describing weights</span>
+<span class="sd">            weights (ndarray):</span>
+<span class="sd">                array with the weight for each structure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_structures</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Length of weights must match number of structures &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_structures</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">weight</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">):</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">weight</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.add_properties"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.add_properties">[docs]</a>    <span class="k">def</span> <span class="nf">add_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">property_vector</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add another property vector to structures already in the StructureWrangler.</span>
+
+<span class="sd">        The length of the property vector must match the number of structures</span>
+<span class="sd">        contained, and should be in the same order so that the property</span>
+<span class="sd">        corresponds to the correct structure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (str):</span>
+<span class="sd">                name of property</span>
+<span class="sd">            property_vector (ndarray):</span>
+<span class="sd">                array with the property for each structure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_structures</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">property_vector</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Length of property_vector must match number of structures&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">property_vector</span><span class="p">)</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_structures</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">property_vector</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">):</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">prop</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.remove_properties"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.remove_properties">[docs]</a>    <span class="k">def</span> <span class="nf">remove_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">property_keys</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove properties with given keys.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            *property_keys (str):</span>
+<span class="sd">                names of properties to remove</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">property_keys</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Property </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.remove_entry"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.remove_entry">[docs]</a>    <span class="k">def</span> <span class="nf">remove_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove a given structure and associated data.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Entry </span><span class="si">{</span><span class="n">entry</span><span class="si">}</span><span class="s2"> was not found. Nothing has been removed.&quot;</span><span class="p">,</span>
+                <span class="ne">RuntimeWarning</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.change_subspace"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.change_subspace">[docs]</a>    <span class="k">def</span> <span class="nf">change_subspace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster_subspace</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Change the underlying ClusterSubspace.</span>
+
+<span class="sd">        Will swap out the ClusterSubspace and update features accordingly.</span>
+<span class="sd">        This is a faster operation than creating a new one. Can also be useful</span>
+<span class="sd">        to create a copy and then change the subspace.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cluster_subspace:</span>
+<span class="sd">                New ClusterSubspace to be used for determining features.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span> <span class="o">=</span> <span class="n">cluster_subspace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_features</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.update_features"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.update_features">[docs]</a>    <span class="k">def</span> <span class="nf">update_features</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the features/feature matrix for the data held.</span>
+
+<span class="sd">        This is useful when something is changed in the ClusterSubspace after</span>
+<span class="sd">        creating the StructureWrangler, for example when adding an Ewald term</span>
+<span class="sd">        after the StructureWrangler has already been created. This will prevent</span>
+<span class="sd">        having to re-match structures and such.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">:</span>
+            <span class="n">structure</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">structure</span>
+            <span class="n">scmatrix</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;supercell_matrix&quot;</span><span class="p">]</span>
+            <span class="n">mapping</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;site_mapping&quot;</span><span class="p">]</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;correlations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">corr_from_structure</span><span class="p">(</span>
+                <span class="n">structure</span><span class="p">,</span> <span class="n">scmatrix</span><span class="o">=</span><span class="n">scmatrix</span><span class="p">,</span> <span class="n">site_mapping</span><span class="o">=</span><span class="n">mapping</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.remove_all_data"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.remove_all_data">[docs]</a>    <span class="k">def</span> <span class="nf">remove_all_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove all data from the StructureWrangler.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.process_entry"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.process_entry">[docs]</a>    <span class="k">def</span> <span class="nf">process_entry</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">entry</span><span class="p">,</span>
+        <span class="n">properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">supercell_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">site_mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">raise_failed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process a ComputedStructureEntry to be added to StructureWrangler.</span>
+
+<span class="sd">        Checks if the structure for this entry can be matched to the</span>
+<span class="sd">        ClusterSubspace prim structure to obtain its supercell matrix,</span>
+<span class="sd">        correlation, and refined structure. If so, the entry will be updated by adding</span>
+<span class="sd">        these to its data dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            entry (ComputedStructureEntry):</span>
+<span class="sd">                A ComputedStructureEntry corresponding to a training structure and</span>
+<span class="sd">                properties</span>
+<span class="sd">            properties (dict): optional</span>
+<span class="sd">                A dictionary with a keys describing the property and the target</span>
+<span class="sd">                value for the corresponding structure. Energy and corrected energy</span>
+<span class="sd">                should already be in the ComputedStructureEntry so there is no need</span>
+<span class="sd">                to pass it here.</span>
+<span class="sd">                You are free to make up the keys for each property but make</span>
+<span class="sd">                sure you are consistent for all structures that you add.</span>
+<span class="sd">            weights (dict): optional</span>
+<span class="sd">                The weight given to the structure when doing the fit. The key</span>
+<span class="sd">                must match at least one of the given properties.</span>
+<span class="sd">            supercell_matrix (ndarray): optional</span>
+<span class="sd">                if the corresponding structure has already been matched to the</span>
+<span class="sd">                ClusterSubspace prim structure, passing the supercell_matrix</span>
+<span class="sd">                will use that instead of trying to re-match. If using this</span>
+<span class="sd">                the user is responsible to have the correct supercell_matrix.</span>
+<span class="sd">                Here you are the cause of your own bugs.</span>
+<span class="sd">            site_mapping (list): optional</span>
+<span class="sd">                site mapping as obtained by</span>
+<span class="sd">                :code:`StructureMatcher.get_mapping`</span>
+<span class="sd">                such that the elements of site_mapping represent the indices</span>
+<span class="sd">                of the matching sites to the prim structure. If you pass this</span>
+<span class="sd">                option, you are fully responsible that the mappings are correct!</span>
+<span class="sd">            verbose (bool):</span>
+<span class="sd">                if True, will raise warning for structures that fail in</span>
+<span class="sd">                StructureMatcher, and structures that have duplicate corr vectors.</span>
+<span class="sd">            raise_failed (bool): optional</span>
+<span class="sd">                if True, will raise the thrown error when adding a structure</span>
+<span class="sd">                that fails. This can be helpful to keep a list of structures that</span>
+<span class="sd">                fail for further inspection.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ComputedStructureEntry: entry with CE pertinent properties</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">available_properties</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">properties</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">available_properties</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">properties</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The properties entry being added do not match all &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;the properties that have already been added: &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">available_properties</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2"> Additional entries must &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;include the same properties included.&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">available_properties</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">available_weights</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The properties in the entry being added do not match all the&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;weights that have already been added: &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">available_weights</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2"> Additional entries must include &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;the same weights included.&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="n">properties</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">properties</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">properties</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">weights</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">supercell_matrix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">supercell_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">scmatrix_from_structure</span><span class="p">(</span>
+                    <span class="n">entry</span><span class="o">.</span><span class="n">structure</span>
+                <span class="p">)</span>
+
+            <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">num_prims_from_matrix</span><span class="p">(</span><span class="n">supercell_matrix</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">site_mapping</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">supercell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">supercell</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">(</span><span class="n">supercell_matrix</span><span class="p">)</span>
+                <span class="n">site_mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">structure_site_mapping</span><span class="p">(</span>
+                    <span class="n">supercell</span><span class="p">,</span> <span class="n">entry</span><span class="o">.</span><span class="n">structure</span>
+                <span class="p">)</span>
+
+            <span class="n">fm_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">corr_from_structure</span><span class="p">(</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">scmatrix</span><span class="o">=</span><span class="n">supercell_matrix</span><span class="p">,</span> <span class="n">site_mapping</span><span class="o">=</span><span class="n">site_mapping</span>
+            <span class="p">)</span>
+            <span class="n">refined_struct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">refine_structure</span><span class="p">(</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">scmatrix</span><span class="o">=</span><span class="n">supercell_matrix</span><span class="p">,</span> <span class="n">site_mapping</span><span class="o">=</span><span class="n">site_mapping</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">StructureMatchError</span> <span class="k">as</span> <span class="n">s_match_error</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Unable to match </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">composition</span><span class="si">}</span><span class="s2"> with &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;energy </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">energy</span><span class="si">}</span><span class="s2"> to supercell_structure. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Throwing out.</span><span class="se">\n</span><span class="s2"> Error Message: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">s_match_error</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="ne">UserWarning</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">raise_failed</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">s_match_error</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;refined_structure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">refined_struct</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;supercell_matrix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">supercell_matrix</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;site_mapping&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site_mapping</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;correlations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fm_row</span>
+        <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="n">property_dict</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;properties&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">property_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">property_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">properties</span>
+
+        <span class="n">weight_dict</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weights&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">weight_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weight_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weights</span>
+
+        <span class="k">return</span> <span class="n">entry</span></div>
+
+    <span class="k">def</span> <span class="nf">_corr_duplicate_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Warn if corr vector of entry with given index is duplicated.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">duplicate_inds</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_duplicate_corr_indices</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">duplicate_inds</span><span class="p">:</span>
+                <span class="n">duplicates</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">composition</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;energy=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">energy</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">duplicate_inds</span>
+                <span class="p">)</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;The following structures have duplicated correlation &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;vectors:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">duplicates</span><span class="si">}</span><span class="s2"> Consider adding more terms to &quot;</span>
+                    <span class="s2">&quot;the clustersubspace or filtering duplicates.&quot;</span><span class="p">,</span>
+                    <span class="ne">UserWarning</span><span class="p">,</span>
+                <span class="p">)</span>
+
+<div class="viewcode-block" id="StructureWrangler.from_dict"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">energy_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create Structure Wrangler from an MSONable dict.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            d (dict):</span>
+<span class="sd">                MSON dict of StructureWrangler</span>
+<span class="sd">            energy_key (str): optional</span>
+<span class="sd">                energy property key, for legacy files</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            StructureWrangler</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;_subspace&quot;</span><span class="p">][</span><span class="s2">&quot;@module&quot;</span><span class="p">])</span>
+        <span class="n">subspace_cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;_subspace&quot;</span><span class="p">][</span><span class="s2">&quot;@class&quot;</span><span class="p">])</span>
+        <span class="n">wrangler</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">cluster_subspace</span><span class="o">=</span><span class="n">subspace_cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;_subspace&quot;</span><span class="p">]))</span>
+
+        <span class="c1"># check for legacy files</span>
+        <span class="k">if</span> <span class="s2">&quot;_items&quot;</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;This StructureWrangler was created with a previous version of smol.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;Please re-save it to prevent this warning.&quot;</span><span class="p">,</span>
+                <span class="ne">FutureWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">energy_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeWarning</span><span class="p">(</span>
+                    <span class="s2">&quot;Please load using from_dict method and provide the key used for &quot;</span>
+                    <span class="s2">&quot;the energy property to correctly load this StructureWrangler.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;_items&quot;</span><span class="p">]:</span>
+                <span class="n">energy</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">energy_key</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;weights&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;supercell_matrix&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;scmatrix&quot;</span><span class="p">]),</span>
+                    <span class="s2">&quot;correlations&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]),</span>
+                    <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;site_mapping&quot;</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="s2">&quot;mapping&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;refined_structure&quot;</span><span class="p">:</span> <span class="n">Structure</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;ref_structure&quot;</span><span class="p">]),</span>
+                <span class="p">}</span>
+                <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">ComputedStructureEntry</span><span class="p">(</span>
+                        <span class="n">Structure</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;structure&quot;</span><span class="p">]),</span> <span class="n">energy</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">entries</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">ComputedStructureEntry</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">entry_d</span><span class="p">)</span> <span class="k">for</span> <span class="n">entry_d</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;_entries&quot;</span><span class="p">]</span>
+            <span class="p">]</span>
+
+        <span class="n">wrangler</span><span class="o">.</span><span class="n">_entries</span> <span class="o">=</span> <span class="n">entries</span>
+        <span class="n">wrangler</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span>
+        <span class="n">wrangler</span><span class="o">.</span><span class="n">_ind_sets</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_ind_sets&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">wrangler</span></div>
+
+<div class="viewcode-block" id="StructureWrangler.as_dict"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.wrangling.html#cofe.wrangling.wrangler.StructureWrangler.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get Json-serialization dict representation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            MSONable dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wrangler_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;@module&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+            <span class="s2">&quot;@class&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s2">&quot;_subspace&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">as_dict</span><span class="p">(),</span>
+            <span class="s2">&quot;_entries&quot;</span><span class="p">:</span> <span class="n">jsanitize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="s2">&quot;_ind_sets&quot;</span><span class="p">:</span> <span class="n">jsanitize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ind_sets</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>  <span class="c1"># jic for int&#39;s</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">wrangler_dict</span></div></div>
+</pre></div>
+
+                </article>
+              
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2022-2023, Ceder Group.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.13.3.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

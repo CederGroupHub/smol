@@ -1,0 +1,753 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cofe.extern.ewald &#8212; smol 0.1.dev1+ga34f4c0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/smol.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/cofe/extern/ewald';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1.dev1+ga34f4c0';
+        </script>
+    <script src="../../../_static/require.js"></script>
+    <script src="../../../_static/custom.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="auto">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1.dev1+ga34f4c0  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1.dev1+ga34f4c0  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumbs">
+  <ul class="bd-breadcrumbs" role="navigation" aria-label="Breadcrumb">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">cofe.extern.ewald</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for cofe.extern.ewald</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Implementation of EwaldTerm.</span>
+
+<span class="sd">Provides the functionality to fit an Ewald term as an additional feature in a</span>
+<span class="sd">cluster expansion as proposed refs below to improve convergence of expansions</span>
+<span class="sd">of ionic materials.</span>
+<span class="sd">Chapter 4.6 of W.D. Richard&#39;s thesis.</span>
+<span class="sd">W. D. Richards, et al., Energy Environ. Sci., 2016, 9, 3272–3278</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;William Davidson Richard, Luis Barroso-Luque&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">monty.json</span> <span class="kn">import</span> <span class="n">MSONable</span>
+<span class="kn">from</span> <span class="nn">pymatgen.analysis.ewald</span> <span class="kn">import</span> <span class="n">EwaldSummation</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">PeriodicSite</span><span class="p">,</span> <span class="n">Structure</span>
+
+<span class="kn">from</span> <span class="nn">smol.cofe.space.domain</span> <span class="kn">import</span> <span class="n">Vacancy</span><span class="p">,</span> <span class="n">get_allowed_species</span>
+
+
+<div class="viewcode-block" id="EwaldTerm"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm">[docs]</a><span class="k">class</span> <span class="nc">EwaldTerm</span><span class="p">(</span><span class="n">MSONable</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;EwaldTerm class that can be added to a ClusterSubspace.</span>
+
+<span class="sd">    This class can be used as an external term added to a ClusterSubspace</span>
+<span class="sd">    using the add_external_term method. Doing so introduces Ewald</span>
+<span class="sd">    electrostatic interaction energies as an additional feature to include</span>
+<span class="sd">    when fitting a cluster expansion. This usually helps to increase accuracy</span>
+<span class="sd">    and reduce complexity (number of orbits) required to fit ionic materials.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ewald_term_options</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;total&quot;</span><span class="p">,</span> <span class="s2">&quot;real&quot;</span><span class="p">,</span> <span class="s2">&quot;reciprocal&quot;</span><span class="p">,</span> <span class="s2">&quot;point&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">real_space_cut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recip_space_cut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_term</span><span class="o">=</span><span class="s2">&quot;total&quot;</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize EwaldTerm.</span>
+
+<span class="sd">        Input parameters are standard input parameters to pymatgen</span>
+<span class="sd">        EwaldSummation. See class documentation for more information.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            eta (float):</span>
+<span class="sd">                parameter to override the EwaldSummation default screening</span>
+<span class="sd">                parameter eta. If not given it is determined automatically.</span>
+<span class="sd">            real_space_cut (float):</span>
+<span class="sd">                real space cutoff radius. Determined automatically if not</span>
+<span class="sd">                given.</span>
+<span class="sd">            recip_space_cut (float):</span>
+<span class="sd">                reciprocal space cutoff radius. Determined automatically if not</span>
+<span class="sd">                given.</span>
+<span class="sd">            use_term (str): optional</span>
+<span class="sd">                the Ewald expansion term to use as an additional term in the</span>
+<span class="sd">                expansion. Options are total, real, reciprocal, point.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eta</span> <span class="o">=</span> <span class="n">eta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">real_space_cut</span> <span class="o">=</span> <span class="n">real_space_cut</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recip_space_cut</span> <span class="o">=</span> <span class="n">recip_space_cut</span>
+        <span class="k">if</span> <span class="n">use_term</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ewald_term_options</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Provided use_term </span><span class="si">{</span><span class="n">use_term</span><span class="si">}</span><span class="s2"> is not a valid option. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Please use one of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ewald_term_options</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_term</span> <span class="o">=</span> <span class="n">use_term</span>
+
+<div class="viewcode-block" id="EwaldTerm.get_ewald_structure"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm.get_ewald_structure">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_ewald_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the structure and site indices contributing to Ewald summation.</span>
+
+<span class="sd">        Creates a structure with overlapping sites for each species in the</span>
+<span class="sd">        corresponding site space. This is used to construct single Ewald</span>
+<span class="sd">        matrices for all possible configurations. The ewald_inds array is a</span>
+<span class="sd">        2D array where the first element is the index of the site in a</span>
+<span class="sd">        supercell and the second is the encoded species occupancy</span>
+
+<span class="sd">        Removes vacancies and the corresponding indices to those sites from the</span>
+<span class="sd">        original structure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            structure:</span>
+<span class="sd">                Structure to compute Ewald interaction energy from</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: (Structure, array) structure and indices of sites</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">site_spaces</span> <span class="o">=</span> <span class="n">get_allowed_species</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+        <span class="n">nbits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">site_spaces</span><span class="p">])</span>
+        <span class="n">ewald_inds</span><span class="p">,</span> <span class="n">ewald_sites</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">space</span><span class="p">,</span> <span class="n">site</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">site_spaces</span><span class="p">,</span> <span class="n">structure</span><span class="p">):</span>
+            <span class="c1"># allocate array with all -1 for vacancies</span>
+            <span class="n">inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">nbits</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">space</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">Vacancy</span><span class="p">):</span>  <span class="c1"># skip vacancies</span>
+                    <span class="k">continue</span>
+                <span class="n">inds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ewald_sites</span><span class="p">)</span>
+                <span class="n">ewald_sites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PeriodicSite</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">site</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">,</span> <span class="n">site</span><span class="o">.</span><span class="n">lattice</span><span class="p">))</span>
+            <span class="n">ewald_inds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inds</span><span class="p">)</span>
+        <span class="n">ewald_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ewald_inds</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">ewald_structure</span> <span class="o">=</span> <span class="n">Structure</span><span class="o">.</span><span class="n">from_sites</span><span class="p">(</span><span class="n">ewald_sites</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ewald_structure</span><span class="p">,</span> <span class="n">ewald_inds</span></div>
+
+<div class="viewcode-block" id="EwaldTerm.get_ewald_occu"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm.get_ewald_occu">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_ewald_occu</span><span class="p">(</span><span class="n">occu</span><span class="p">,</span> <span class="n">num_ewald_sites</span><span class="p">,</span> <span class="n">ewald_inds</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the Ewald indices from a given encoded occupancy string.</span>
+
+<span class="sd">        The Ewald indices indicate matrix elements (i.e. species) corresponding</span>
+<span class="sd">        to the given occupancy.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            occu (ndarray):</span>
+<span class="sd">                encoded occupancy string</span>
+<span class="sd">            num_ewald_sites (int):</span>
+<span class="sd">                number of total Ewald sites. This is the size of the Ewald</span>
+<span class="sd">                matrix, the sum of the size of all site spaces for all sites</span>
+<span class="sd">                in the cell.</span>
+<span class="sd">            ewald_inds (ndarray):</span>
+<span class="sd">                Ewald indices for the corresponding species in the occupancy</span>
+<span class="sd">                array.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ndarray: indices of species in ewald matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i_inds</span> <span class="o">=</span> <span class="n">ewald_inds</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">occu</span><span class="p">)),</span> <span class="n">occu</span><span class="p">]</span>
+        <span class="c1"># instead of this line:</span>
+        <span class="c1">#   i_inds = i_inds[i_inds != -1]</span>
+        <span class="c1"># just make b_inds one longer than it needs to be and don&#39;t return</span>
+        <span class="c1"># the last value</span>
+        <span class="n">b_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_ewald_sites</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">b_inds</span><span class="p">[</span><span class="n">i_inds</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">b_inds</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="EwaldTerm.value_from_occupancy"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm.value_from_occupancy">[docs]</a>    <span class="k">def</span> <span class="nf">value_from_occupancy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occu</span><span class="p">,</span> <span class="n">structure</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtain the Ewald interaction energy.</span>
+
+<span class="sd">        The size of the given structure is in terms of prims.</span>
+<span class="sd">        The computed electrostatic interactions do not include the charged</span>
+<span class="sd">        cell energy (which is only important for charged structures). See</span>
+<span class="sd">        the pymatgen EwaldSummation class for further details.</span>
+<span class="sd">        For more details also look at</span>
+<span class="sd">        https://doi.org/10.1017/CBO9780511805769.034 (pp. 499–511).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            occu (array):</span>
+<span class="sd">                occupation vector for the given structure</span>
+<span class="sd">            structure (Structure):</span>
+<span class="sd">                pymatgen Structure for which to compute the electrostatic</span>
+<span class="sd">                interactions</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ewald_structure</span><span class="p">,</span> <span class="n">ewald_inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ewald_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+        <span class="n">ewald_summation</span> <span class="o">=</span> <span class="n">EwaldSummation</span><span class="p">(</span>
+            <span class="n">ewald_structure</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">real_space_cut</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">recip_space_cut</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">eta</span>
+        <span class="p">)</span>
+        <span class="n">ewald_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ewald_matrix</span><span class="p">(</span><span class="n">ewald_summation</span><span class="p">)</span>
+        <span class="n">ew_occu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ewald_occu</span><span class="p">(</span><span class="n">occu</span><span class="p">,</span> <span class="n">ewald_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ewald_inds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ewald_matrix</span><span class="p">[</span><span class="n">ew_occu</span><span class="p">,</span> <span class="p">:][:,</span> <span class="n">ew_occu</span><span class="p">])])</span></div>
+
+<div class="viewcode-block" id="EwaldTerm.get_ewald_matrix"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm.get_ewald_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">get_ewald_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ewald_summation</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the corresponding Ewald matrix for the given term to use.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ewald_summation (EwaldSummation):</span>
+<span class="sd">                pymatgen EwaldSummation instance</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            ndarray: ewald matrix for corresponding term</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_term</span> <span class="o">==</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span>
+            <span class="n">matrix</span> <span class="o">=</span> <span class="n">ewald_summation</span><span class="o">.</span><span class="n">total_energy_matrix</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_term</span> <span class="o">==</span> <span class="s2">&quot;reciprocal&quot;</span><span class="p">:</span>
+            <span class="n">matrix</span> <span class="o">=</span> <span class="n">ewald_summation</span><span class="o">.</span><span class="n">reciprocal_space_energy_matrix</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_term</span> <span class="o">==</span> <span class="s2">&quot;real&quot;</span><span class="p">:</span>
+            <span class="n">matrix</span> <span class="o">=</span> <span class="n">ewald_summation</span><span class="o">.</span><span class="n">real_space_energy_matrix</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">ewald_summation</span><span class="o">.</span><span class="n">point_energy_matrix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">matrix</span></div>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pretty print EwaldTerm.&quot;&quot;&quot;</span>
+        <span class="n">prop_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">prop_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prop</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;EwaldTerm(</span><span class="si">{</span><span class="n">prop_str</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get EwaldTerm summary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;EwaldTerm(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">use_term</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+<div class="viewcode-block" id="EwaldTerm.as_dict"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get Json-serialization dict representation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: MSONable dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ewald_d</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;@module&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+            <span class="s2">&quot;@class&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">,</span>
+            <span class="s2">&quot;real_space_cut&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">real_space_cut</span><span class="p">,</span>
+            <span class="s2">&quot;recip_space_cut&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">recip_space_cut</span><span class="p">,</span>
+            <span class="s2">&quot;use_term&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_term</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">ewald_d</span></div>
+
+<div class="viewcode-block" id="EwaldTerm.from_dict"><a class="viewcode-back" href="../../../api_reference/autogen/cofe.extern.html#cofe.extern.ewald.EwaldTerm.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create EwaldTerm from MSONable dict.</span>
+
+<span class="sd">        (Over-kill here since only EwaldSummation params are saved).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">eta</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">],</span>
+            <span class="n">real_space_cut</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;real_space_cut&quot;</span><span class="p">],</span>
+            <span class="n">recip_space_cut</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;recip_space_cut&quot;</span><span class="p">],</span>
+            <span class="n">use_term</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;use_term&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+                </article>
+              
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2022-2023, Ceder Group.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.13.3.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

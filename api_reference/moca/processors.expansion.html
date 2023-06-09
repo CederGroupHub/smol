@@ -1,12 +1,14 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+
+<html lang="en" data-theme="auto">
+
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Cluster Expansion &amp; Decomposition Processors &#8212; smol 0.3.1 documentation</title>
+    <title>Cluster Expansion &amp; Decomposition Processors &#8212; smol 0.1.dev1+ga34f4c0 documentation</title>
   
   
   
@@ -16,111 +18,128 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
-<link href="../../_static/styles/bootstrap.css?digest=796348d33e8b1d947c94" rel="stylesheet">
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+  <link href="../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=796348d33e8b1d947c94" rel="stylesheet">
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/smol.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94">
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/moca/processors.expansion';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.3.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1.dev1+ga34f4c0';
         </script>
     <script src="../../_static/require.js"></script>
     <script src="../../_static/custom.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Ensemble" href="ensemble.html" />
-    <link rel="prev" title="Ewald Processor" href="processors.ewald.html" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="docsearch:language" content="en">
+    <link rel="next" title="Ewald Processor" href="processors.ewald.html" />
+    <link rel="prev" title="Processors" href="processors.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
   
   
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="auto">
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="auto">
 
   
   
   <a class="skip-link" href="#main-content">Skip to main content</a>
-
   
-  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
   <label class="overlay overlay-primary" for="__primary"></label>
-
   
-  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
   <label class="overlay overlay-secondary" for="__secondary"></label>
-
   
   <div class="search-button__wrapper">
     <div class="search-button__overlay"></div>
     <div class="search-button__search-container">
-      
-<form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
   <i class="fa-solid fa-magnifying-glass"></i>
-  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-    </div>
+</form></div>
   </div>
-
   
-  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
   <label class="sidebar-toggle primary-toggle" for="__primary">
-      <span class="fa-solid fa-bars"></span>
+    <span class="fa-solid fa-bars"></span>
   </label>
-  <div id="navbar-start">
-    
-    
   
-
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
 
 <a class="navbar-brand logo" href="../../index.html">
-
   
   
   
   
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
   
   
-  
-
-  
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Logo image">
-    <img src="../../_static/logo.png" class="logo__image only-dark" alt="Logo image">
-  
-  
-</a>
+</a></div>
     
   </div>
-
+  
   
   <div class="col-lg-9 navbar-header-items">
-    <div id="navbar-center" class="mr-auto">
+    
+    <div class="me-auto navbar-header-items__center">
       
-      <div class="navbar-center-item">
-        <nav class="navbar-nav">
-    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
-        Site Navigation
-    </p>
-    <ul id="navbar-main-elements" class="navbar-nav">
-        
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../getting_started.html">
                         Getting Started
@@ -156,7 +175,7 @@
                     </li>
                 
             <div class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     More
                 </button>
                 <div class="dropdown-menu">
@@ -177,44 +196,54 @@
                 </div>
             </div>
             
-    </ul>
-</nav>
-      </div>
+  </ul>
+</nav></div>
       
     </div>
-
-    <div id="navbar-end">
+    
+    
+    <div class="navbar-header-items__end">
       
-        <div class="navbar-end-item navbar-persistent--container">
+        <div class="navbar-item navbar-persistent--container">
           
-<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
-  <i class="fa-solid fa-magnifying-glass"></i>
-</button>
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
         </div>
       
       
-      <div class="navbar-end-item">
-        <div class="version-switcher__container dropdown">
-    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.3.1  <!-- this text may get changed later by javascript -->
-        <span class="caret"></span>
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1.dev1+ga34f4c0  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
     <!-- dropdown will be populated by javascript on page load -->
     </div>
-</div>
-      </div>
+  </div>
+`);
+</script></div>
       
-      <div class="navbar-end-item">
-        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
     <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
     <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
-</button>
-      </div>
+  </button>
+`);
+</script></div>
       
-      <div class="navbar-end-item">
-        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
         <li class="nav-item">
           
           
@@ -223,53 +252,58 @@
           
           
           
-          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
             <label class="sr-only">GitHub</label></a>
         </li>
-      </ul>
-      </div>
+</ul></div>
       
     </div>
+    
   </div>
-
-
   
   
     <div class="navbar-persistent--mobile">
-<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
-  <i class="fa-solid fa-magnifying-glass"></i>
-</button>
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
     </div>
   
 
   
-  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
       <span class="fa-solid fa-outdent"></span>
-  </label>
+    </label>
   
-
 </div>
-  </nav>
-  
 
+    </nav>
+  
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
       
       <div class="bd-sidebar-primary bd-sidebar">
         
+
   
   <div class="sidebar-header-items sidebar-primary__section">
     
     
       <div class="sidebar-header-items__center">
-      
-      <div class="navbar-center-item">
-        <nav class="navbar-nav">
-    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
-        Site Navigation
-    </p>
-    <ul id="navbar-main-elements" class="navbar-nav">
         
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../getting_started.html">
                         Getting Started
@@ -305,7 +339,7 @@
                     </li>
                 
             <div class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     More
                 </button>
                 <div class="dropdown-menu">
@@ -326,39 +360,43 @@
                 </div>
             </div>
             
-    </ul>
-</nav>
+  </ul>
+</nav></div>
+        
       </div>
-      
-      </div>
-    
-
     
     
-    <div class="sidebar-header-items__end">
-      
-      <div class="navbar-end-item">
-        <div class="version-switcher__container dropdown">
-    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-toggle="dropdown">
-        0.3.1  <!-- this text may get changed later by javascript -->
-        <span class="caret"></span>
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1.dev1+ga34f4c0  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
     <!-- dropdown will be populated by javascript on page load -->
     </div>
-</div>
-      </div>
-      
-      <div class="navbar-end-item">
-        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
     <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
     <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
-</button>
-      </div>
-      
-      <div class="navbar-end-item">
-        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
         <li class="nav-item">
           
           
@@ -367,24 +405,21 @@
           
           
           
-          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
             <label class="sr-only">GitHub</label></a>
         </li>
-      </ul>
+</ul></div>
+        
       </div>
-      
-    </div>
     
   </div>
-
   
-  <div class="sidebar-start-items sidebar-primary__section">
-    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Section navigation">
-  <p class="bd-links__title" role="heading" aria-level="1">
-    Section Navigation
-  </p>
-  <div class="bd-toc-item navbar-nav">
-    <ul class="current nav bd-sidenav">
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../cofe/index.html"><strong>cofe</strong> — Cluster-Orbit Function Expansion Module</a><input checked class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../cofe/clusterspace.html">Cluster Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../cofe/space.html">Space</a></li>
@@ -394,47 +429,82 @@
 </ul>
 </li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html"><strong>moca</strong> — Monte Carlo Module</a><input checked class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l2 current active"><a class="reference internal" href="processors.html">Processors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ensemble.html">Ensemble</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sampler.html">Sampling</a></li>
+<li class="toctree-l2 current active"><a class="reference internal" href="processors.html">Processors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sublattice.html">Sublattice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sampler.html">Sampling</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../capp/index.html"><strong>capp</strong> — Cluster Function Applications</a><input checked class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../capp/generate.html">Generate</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../io.html">io — Input and Output</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exceptions.html">Exceptions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../constants.html">Global constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utility functions</a></li>
 </ul>
-
-  </div>
-</nav>
+</div>
+</nav></div>
     </div>
-  </div>
   
-
   
-  <div class="sidebar-end-items sidebar-primary__section">
-    <div class="sidebar-end-items__item">
-    </div>
+  <div class="sidebar-primary-items__end sidebar-primary__section">
   </div>
-
   
   <div id="rtd-footer-container"></div>
 
+
       </div>
+      
       <main id="main-content" class="bd-main">
         
         
-        <div class="bd-content">
-          <div class="bd-article-container">
-            
-            <div class="bd-header-article">
-                
-            </div>
-            
-            
-            <article class="bd-article" role="main">
+          <div class="bd-content">
+            <div class="bd-article-container">
               
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+
+
+<nav aria-label="Breadcrumbs">
+  <ul class="bd-breadcrumbs" role="navigation" aria-label="Breadcrumb">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">API Reference</a></li>
+    
+    
+    <li class="breadcrumb-item"><i class="fa-solid fa-ellipsis"></i></li>
+    
+    
+    <li class="breadcrumb-item"><a href="processors.html" class="nav-link">Processors</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Cluster Expansion &amp; Decomposition Processors</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
   <section id="module-smol.moca.processor.expansion">
 <span id="cluster-expansion-decomposition-processors"></span><h1>Cluster Expansion &amp; Decomposition Processors<a class="headerlink" href="#module-smol.moca.processor.expansion" title="Permalink to this heading">#</a></h1>
 <p>Implementation of CE processor class for a fixed size supercell.</p>
@@ -443,8 +513,8 @@ should use the CompositeProcessor with a ClusterExpansionProcessor and an
 EwaldProcessor class to handle changes in the electrostatic interaction energy.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterDecompositionProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interaction_tensors</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="processors.base.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterDecompositionProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interaction_tensors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code></p>
 <p>ClusterDecompositionProcessor to use a CD in MC simulations.</p>
 <p>An ClusterDecompositionProcessor is similar to a ClusterExpansionProcessor
 however it computes properties and changes of properties using cluster interactions
@@ -457,7 +527,7 @@ that are used and sampled are the cluster interactions for each occupancy
 as opposed to the correlation vectors (so if you need correlation vectors
 for further analysis you’re probably better off with a standard
 ClusterExpansionProcessor</p>
-<p>However if you don’t need correlation vectors, then this is probably
+<p>However, if you don’t need correlation vectors, then this is probably
 more efficient and more importantly the scaling complexity with model size
 is in terms of number of orbits (instead of number of corr functions).
 This can give substantial speedups when doing MC calculations of complex
@@ -471,13 +541,23 @@ high component systems.</p>
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>interaction_tensors</strong> (<em>sequence</em><em> of </em><em>ndarray</em>) – Sequence of ndarray where each array corresponds to the
 cluster interaction tensor. These should be in the same order as their
+corresponding orbits in the given cluster_subspace.</p></li>
+<li><p><strong>num_threads</strong> (<em>int</em>) – optional
+Number of threads to use to compute a correlation vector. Note that
+this is not saved when serializing the ClusterSubspace with the
+as_dict method, so if you are loading a ClusterSubspace from a
+file then make sure to set the number of threads as desired.
 corresponding orbits in the given cluster_subspace</p></li>
+<li><p><strong>coefficients</strong> (<em>ndarray</em>) – optional
+coefficients of each mean cluster interaction tensor. This should often
+be some multiple of the orbit multiplicities. Default is the orbit
+multiplicities.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.as_dict" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.as_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -488,7 +568,7 @@ corresponding orbits in the given cluster_subspace</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector">
-<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor.compute_feature_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the cluster interaction vector for a given occupancy string.</p>
 <p>The cluster interaction vector in this case is normalized per supercell.</p>
 <dl class="field-list simple">
@@ -506,7 +586,7 @@ corresponding orbits in the given cluster_subspace</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector_change">
-<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor.compute_feature_vector_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the change in the cluster interaction vector from a list of flips.</p>
 <p>The cluster interaction vector in this case is normalized per supercell.</p>
 <dl class="field-list simple">
@@ -530,16 +610,31 @@ for the new species to place at that site.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.from_dict" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Create a ClusterExpansionProcessor from serialized MSONable dict.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.num_threads">
+<span class="sig-name descname"><span class="pre">num_threads</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.num_threads" title="Permalink to this definition">#</a></dt>
+<dd><p>Descriptor to set an attributed value that cascades to a sequence of objects.</p>
+<p>This descriptor is useful when an attribute is needs to be synchronized between
+a class that holds a sequence of objects that have a corresponding attribute.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.num_threads_full">
+<span class="sig-name descname"><span class="pre">num_threads_full</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.num_threads_full" title="Permalink to this definition">#</a></dt>
+<dd><p>A descriptor used to set threads of an attributed object that has multi-threading.</p>
+<p>Right now it’s only used for the Evaluator class.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterExpansionProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="processors.base.html#smol.moca.processor.base.Processor" title="smol.moca.processor.base.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterExpansionProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterExpansionProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code></p>
 <p>ClusterExpansionProcessor class to use a ClusterExpansion in MC.</p>
 <p>A CE processor is optimized to compute correlation vectors and local
 changes in correlation vectors. This class allows the use of a CE
@@ -578,12 +673,24 @@ Same as <code class="code docutils literal notranslate"><span class="pre">Cluste
 <li><p><strong>supercell_matrix</strong> (<em>ndarray</em>) – an array representing the supercell matrix with respect to the
 Cluster Expansion prim structure.</p></li>
 <li><p><strong>coefficients</strong> (<em>ndarray</em>) – fit coefficients for the represented cluster expansion.</p></li>
+<li><p><strong>num_threads</strong> (<em>int</em>) – optional
+Number of threads to use to compute <cite>updates in a correlation vector
+from local changes. If None is given the number of threads are set
+to the same as set in the given :class:`ClusterSubspace</cite>.
+Note that this is not saved when serializing the ClusterSubspace with
+the as_dict method, so if you are loading a ClusterSubspace from a
+file then make sure to set the number of threads as desired.</p></li>
+<li><p><strong>num_threads_full</strong> (<em>int</em>) – optional
+Number of threads to use to compute a full correlation vector. Note
+that this is not saved when serializing the ClusterSubspace with the
+as_dict method, so if you are loading a ClusterSubspace from a
+file then make sure to set the number of threads as desired.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector">
-<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterExpansionProcessor.compute_feature_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the correlation vector for a given occupancy string.</p>
 <p>The correlation vector in this case is normalized per supercell. In
 other works it is extensive corresponding to the size of the supercell.</p>
@@ -602,7 +709,7 @@ other works it is extensive corresponding to the size of the supercell.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector_change">
-<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterExpansionProcessor.compute_feature_vector_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
 <dd><p>Compute the change in the correlation vector from a list of flips.</p>
 <p>The correlation vector in this case is normalized per supercell. In
 other works it is extensive corresponding to the size of the supercell.</p>
@@ -627,231 +734,207 @@ for the new species to place at that site.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.from_dict" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterExpansionProcessor.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.from_dict" title="Permalink to this definition">#</a></dt>
 <dd><p>Create a ClusterExpansionProcessor from serialized MSONable dict.</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor.num_threads">
+<span class="sig-name descname"><span class="pre">num_threads</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.num_threads" title="Permalink to this definition">#</a></dt>
+<dd><p>Descriptor to set an attributed value that cascades to a sequence of objects.</p>
+<p>This descriptor is useful when an attribute is needs to be synchronized between
+a class that holds a sequence of objects that have a corresponding attribute.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor.num_threads_full">
+<span class="sig-name descname"><span class="pre">num_threads_full</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.num_threads_full" title="Permalink to this definition">#</a></dt>
+<dd><p>A descriptor used to set threads of an attributed object that has multi-threading.</p>
+<p>Right now it’s only used for the Evaluator class.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.LocalEvalData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LocalEvalData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">site_index:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluator:</span> <span class="pre">~smol.utils.cluster.evaluator.ClusterSpaceEvaluator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices:</span> <span class="pre">~smol.cofe.space.clusterspace.OrbitIndices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_ratio:</span> <span class="pre">~numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">&lt;smol.utils.cluster.numthreads.SetNumThreads</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#LocalEvalData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Holds data for local evaluation updates.</p>
+<p>A dataclass to the data for local evaluation updates of correlation and cluster
+interaction vectors.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.LocalEvalData.cluster_ratio">
+<span class="sig-name descname"><span class="pre">cluster_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.cluster_ratio" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.LocalEvalData.evaluator">
+<span class="sig-name descname"><span class="pre">evaluator</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClusterSpaceEvaluator</span></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.evaluator" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.LocalEvalData.indices">
+<span class="sig-name descname"><span class="pre">indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">OrbitIndices</span></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.indices" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.LocalEvalData.num_threads">
+<span class="sig-name descname"><span class="pre">num_threads</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.num_threads" title="Permalink to this definition">#</a></dt>
+<dd><p>A descriptor used to set threads of an attributed object that has multi-threading.</p>
+<p>Right now it’s only used for the Evaluator class.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.moca.processor.expansion.LocalEvalData.site_index">
+<span class="sig-name descname"><span class="pre">site_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.site_index" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
 </section>
 
 
-            </article>
-            
-            
-            
-            <footer class="bd-footer-article">
-                <!-- Previous / next buttons -->
-<div class='prev-next-area'>
-  <a class='left-prev' id="prev-link" href="processors.ewald.html" title="previous page">
+                </article>
+              
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="processors.html"
+       title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
-          <p class="prev-next-subtitle">previous</p>
-          <p class="prev-next-title">Ewald Processor</p>
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Processors</p>
       </div>
-  </a>
-  <a class='right-next' id="next-link" href="ensemble.html" title="next page">
-  <div class="prev-next-info">
-      <p class="prev-next-subtitle">next</p>
-      <p class="prev-next-title">Ensemble</p>
-  </div>
-  <i class="fa-solid fa-angle-right"></i>
-  </a>
+    </a>
+    <a class="right-next"
+       href="processors.ewald.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Ewald Processor</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
 </div>
-            </footer>
-            
-          </div>
-          
-          
-          
-            <div class="bd-sidebar-secondary bd-toc">
+
+                </footer>
               
-<div class="toc-item">
-  
-<div class="tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-</div>
-<nav id="bd-toc-nav" class="page-toc">
-    <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor">
-   <code class="docutils literal notranslate">
-    <span class="pre">
-     ClusterDecompositionProcessor
-    </span>
-   </code>
-  </a>
-  <ul class="visible nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.as_dict">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       ClusterDecompositionProcessor.as_dict()
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       ClusterDecompositionProcessor.compute_feature_vector()
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector_change">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       ClusterDecompositionProcessor.compute_feature_vector_change()
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.from_dict">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       ClusterDecompositionProcessor.from_dict()
-      </span>
-     </code>
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor">
-   <code class="docutils literal notranslate">
-    <span class="pre">
-     ClusterExpansionProcessor
-    </span>
-   </code>
-  </a>
-  <ul class="visible nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.coefs">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       ClusterExpansionProcessor.coefs
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.num_corr_functions">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       ClusterExpansionProcessor.num_corr_functions
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       ClusterExpansionProcessor.compute_feature_vector()
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector_change">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       ClusterExpansionProcessor.compute_feature_vector_change()
-      </span>
-     </code>
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.from_dict">
-     <code class="docutils literal notranslate">
-      <span class="pre">
-       ClusterExpansionProcessor.from_dict()
-      </span>
-     </code>
-    </a>
-   </li>
-  </ul>
- </li>
-</ul>
-
-</nav>
-</div>
-
-<div class="toc-item">
-  
-<div id="searchbox"></div>
-</div>
-
-<div class="toc-item">
-  
-
-<div class="tocsection editthispage">
-    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/api_reference/moca/processors.expansion.rst">
-        <i class="fa-solid fa-pencil"></i> Edit this page
-    </a>
-</div>
-
-</div>
-
-<div class="toc-item">
-  
-</div>
-
             </div>
-          
-          
-        </div>
-        <footer class="bd-footer-content">
-          <div class="bd-footer-content__inner">
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor"><code class="docutils literal notranslate"><span class="pre">ClusterDecompositionProcessor</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.as_dict"><code class="docutils literal notranslate"><span class="pre">ClusterDecompositionProcessor.as_dict()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector"><code class="docutils literal notranslate"><span class="pre">ClusterDecompositionProcessor.compute_feature_vector()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector_change"><code class="docutils literal notranslate"><span class="pre">ClusterDecompositionProcessor.compute_feature_vector_change()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.from_dict"><code class="docutils literal notranslate"><span class="pre">ClusterDecompositionProcessor.from_dict()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.num_threads"><code class="docutils literal notranslate"><span class="pre">ClusterDecompositionProcessor.num_threads</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.num_threads_full"><code class="docutils literal notranslate"><span class="pre">ClusterDecompositionProcessor.num_threads_full</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor"><code class="docutils literal notranslate"><span class="pre">ClusterExpansionProcessor</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.coefs"><code class="docutils literal notranslate"><span class="pre">ClusterExpansionProcessor.coefs</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.num_corr_functions"><code class="docutils literal notranslate"><span class="pre">ClusterExpansionProcessor.num_corr_functions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector"><code class="docutils literal notranslate"><span class="pre">ClusterExpansionProcessor.compute_feature_vector()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector_change"><code class="docutils literal notranslate"><span class="pre">ClusterExpansionProcessor.compute_feature_vector_change()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.from_dict"><code class="docutils literal notranslate"><span class="pre">ClusterExpansionProcessor.from_dict()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.num_threads"><code class="docutils literal notranslate"><span class="pre">ClusterExpansionProcessor.num_threads</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.num_threads_full"><code class="docutils literal notranslate"><span class="pre">ClusterExpansionProcessor.num_threads_full</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.LocalEvalData"><code class="docutils literal notranslate"><span class="pre">LocalEvalData</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.LocalEvalData.cluster_ratio"><code class="docutils literal notranslate"><span class="pre">LocalEvalData.cluster_ratio</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.LocalEvalData.evaluator"><code class="docutils literal notranslate"><span class="pre">LocalEvalData.evaluator</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.LocalEvalData.indices"><code class="docutils literal notranslate"><span class="pre">LocalEvalData.indices</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.LocalEvalData.num_threads"><code class="docutils literal notranslate"><span class="pre">LocalEvalData.num_threads</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.processor.expansion.LocalEvalData.site_index"><code class="docutils literal notranslate"><span class="pre">LocalEvalData.site_index</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/api_reference/moca/processors.expansion.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
             
           </div>
-        </footer>
+          <footer class="bd-footer-content">
+            
+          </footer>
         
       </main>
     </div>
   </div>
-
   
-    
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
 
-  <footer class="bd-footer"><div class="bd-footer__inner container">
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
   
-  <div class="footer-item">
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
     
-<p class="copyright">
-
-    &copy; Copyright 2022-2023, Ceder Group.<br>
-
-</p>
-
-  </div>
-  
-  <div class="footer-item">
-    <p class="theme-version">
-    Built with the
-    <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">
-        PyData Sphinx Theme
-    </a>
-    0.12.0.
-</p>
-  </div>
-  
-  <div class="footer-item">
+      © Copyright 2022-2023, Ceder Group.
+      <br/>
     
-<p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.1.3.<br>
-</p>
-
-  </div>
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.13.3.
+</p></div>
+      
+    </div>
   
 </div>
+
   </footer>
   </body>
 </html>

@@ -1,0 +1,987 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>moca.sampler.sampler &#8212; smol 0.1.dev1+ga34f4c0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/smol.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/moca/sampler/sampler';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1.dev1+ga34f4c0';
+        </script>
+    <script src="../../../_static/require.js"></script>
+    <script src="../../../_static/custom.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="auto">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1.dev1+ga34f4c0  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1.dev1+ga34f4c0  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumbs">
+  <ul class="bd-breadcrumbs" role="navigation" aria-label="Breadcrumb">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">moca.sampler.sampler</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for moca.sampler.sampler</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Implementation of base sampler classes.</span>
+
+<span class="sd">A sampler essentially is an implementation of the MCMC algorithm that is used</span>
+<span class="sd">by the corresponding ensemble to generate Monte Carlo samples.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Luis Barroso-Luque&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">smol.moca.kernel</span> <span class="kn">import</span> <span class="n">mckernel_factory</span>
+<span class="kn">from</span> <span class="nn">smol.moca.kernel.base</span> <span class="kn">import</span> <span class="n">MulticellKernel</span>
+<span class="kn">from</span> <span class="nn">smol.moca.sampler.container</span> <span class="kn">import</span> <span class="n">SampleContainer</span>
+<span class="kn">from</span> <span class="nn">smol.moca.trace</span> <span class="kn">import</span> <span class="n">Trace</span>
+<span class="kn">from</span> <span class="nn">smol.utils.progressbar</span> <span class="kn">import</span> <span class="n">progress_bar</span>
+
+
+<div class="viewcode-block" id="Sampler"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler">[docs]</a><span class="k">class</span> <span class="nc">Sampler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A sampler is used to run MCMC sampling simulations.</span>
+
+<span class="sd">    The specific MCMC algorithm is defined by the given MCKernel.</span>
+<span class="sd">    The default will use a simple Metropolis random walk kernel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernels</span><span class="p">,</span> <span class="n">container</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize BaseSampler.</span>
+
+<span class="sd">        It is recommended to initialize a sampler with the from_ensemble</span>
+<span class="sd">        method, unless you need more control over the sampling kernel,</span>
+<span class="sd">        mcusher, etc.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kernels ([MCKernel]):</span>
+<span class="sd">                a list of MCKernel instances for each walker.</span>
+<span class="sd">                Note: we only support the same type of kernel and the</span>
+<span class="sd">                 same ensemble for all walkers.</span>
+<span class="sd">            container (SampleContainer):</span>
+<span class="sd">                a sampler container to store samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernels</span> <span class="o">=</span> <span class="n">kernels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_container</span> <span class="o">=</span> <span class="n">container</span>
+
+        <span class="c1">#  Save kernel specifications  #</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_container</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">kernels</span> <span class="o">=</span> <span class="p">[</span><span class="n">kernel</span><span class="o">.</span><span class="n">spec</span> <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="n">kernels</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Sampler.from_ensemble"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.from_ensemble">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_ensemble</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">ensemble</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="n">step_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">kernel_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">seeds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">nwalkers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a sampler based on an Ensemble instance.</span>
+
+<span class="sd">        This is the easier way to set up a Sampler. This will</span>
+<span class="sd">        automatically populate and create an appropriate SampleContainer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ensemble (Ensemble):</span>
+<span class="sd">                an Ensemble class to obtain sample probabilities from.</span>
+<span class="sd">            step_type (str): optional</span>
+<span class="sd">                type of step to run MCMC with. If not given the default depends on</span>
+<span class="sd">                whether chemical potentials are defined.</span>
+<span class="sd">            *args:</span>
+<span class="sd">                positional arguments to pass to the MCKernel constructor.</span>
+<span class="sd">                More often than not you want to specify the temperature!</span>
+<span class="sd">            kernel_type (str): optional</span>
+<span class="sd">                string specifying the specific MCMC transition kernel. This</span>
+<span class="sd">                represents the underlying MC algorithm. Currently only</span>
+<span class="sd">                Metropolis is supported.</span>
+<span class="sd">            seeds ([int]): optional</span>
+<span class="sd">                seed for the PRNG in each kernel.</span>
+<span class="sd">            nwalkers (int): optional</span>
+<span class="sd">                number of walkers/chains to sampler. Default is 1. More than 1</span>
+<span class="sd">                is still experimental...</span>
+<span class="sd">            **kwargs:</span>
+<span class="sd">                keyword arguments to pass to the MCKernel constructor.</span>
+<span class="sd">                More often than not you want to specify the temperature!</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Sampler</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">step_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">hasattr</span><span class="p">(</span><span class="n">ensemble</span><span class="p">,</span> <span class="s2">&quot;chemical_potentials&quot;</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">chemical_potentials</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">):</span>
+                <span class="n">step_type</span> <span class="o">=</span> <span class="s2">&quot;flip&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">step_type</span> <span class="o">=</span> <span class="s2">&quot;swap&quot;</span>
+
+        <span class="k">if</span> <span class="n">kernel_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kernel_type</span> <span class="o">=</span> <span class="s2">&quot;Metropolis&quot;</span>
+        <span class="k">if</span> <span class="n">seeds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seeds</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nwalkers</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of seeds does not match number of kernels!&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">seeds</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nwalkers</span><span class="p">)]</span>
+
+        <span class="n">mckernels</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">mckernel_factory</span><span class="p">(</span>
+                <span class="n">kernel_type</span><span class="p">,</span> <span class="n">ensemble</span><span class="p">,</span> <span class="n">step_type</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="n">seeds</span>
+        <span class="p">]</span>
+
+        <span class="c1"># get a trial trace to initialize sample container trace</span>
+        <span class="n">_trace</span> <span class="o">=</span> <span class="n">mckernels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">compute_initial_trace</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ensemble</span><span class="o">.</span><span class="n">num_sites</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">sample_trace</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span>
+            <span class="o">**</span><span class="p">{</span>
+                <span class="n">name</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">nwalkers</span><span class="p">,</span> <span class="o">*</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">_trace</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="n">sampling_metadata</span> <span class="o">=</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">thermo_boundaries</span>
+
+        <span class="c1"># Container will be initialized to read all sub-lattices,</span>
+        <span class="c1"># active or not.</span>
+        <span class="n">container</span> <span class="o">=</span> <span class="n">SampleContainer</span><span class="p">(</span>
+            <span class="n">ensemble</span><span class="p">,</span>
+            <span class="n">sample_trace</span><span class="p">,</span>
+            <span class="n">sampling_metadata</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">mckernels</span><span class="p">,</span> <span class="n">container</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mckernels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the underlying ensemble.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernels</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">seeds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Seed for the random number generator.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">kernel</span><span class="o">.</span><span class="n">seed</span> <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernels</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the SampleContainer.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container</span>
+
+<div class="viewcode-block" id="Sampler.efficiency"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.efficiency">[docs]</a>    <span class="k">def</span> <span class="nf">efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the efficiency of MCMC sampling (accepted/total).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">sampling_efficiency</span><span class="p">(</span><span class="n">discard</span><span class="o">=</span><span class="n">discard</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="n">flat</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Sampler.clear_samples"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.clear_samples">[docs]</a>    <span class="k">def</span> <span class="nf">clear_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear samples from sampler container.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Sampler.sample"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">initial_occupancies</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate MCMC samples.</span>
+
+<span class="sd">        Yield a sampler state every `thin_by` iterations. A state is give by</span>
+<span class="sd">        a tuple of (occupancies, features, enthalpy)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nsteps (int):</span>
+<span class="sd">                number of iterations to run.</span>
+<span class="sd">            initial_occupancies (ndarray):</span>
+<span class="sd">                array of occupancies</span>
+<span class="sd">            thin_by (int): optional</span>
+<span class="sd">                number to thin iterations by and provide samples.</span>
+<span class="sd">            progress (bool):</span>
+<span class="sd">                If true will show a progress bar.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            tuple: accepted, occupancies, features change, enthalpies change</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">nsteps</span> <span class="o">%</span> <span class="n">thin_by</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The number of steps </span><span class="si">{</span><span class="n">nsteps</span><span class="si">}</span><span class="s2"> is not a multiple of thin_by &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">thin_by</span><span class="si">}</span><span class="s2">. The last </span><span class="si">{</span><span class="n">nsteps</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">thin_by</span><span class="si">}</span><span class="s2"> will be ignored.&quot;</span><span class="p">,</span>
+                <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">occupancies</span><span class="p">,</span> <span class="n">trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup_sample</span><span class="p">(</span><span class="n">initial_occupancies</span><span class="p">)</span>
+        <span class="c1"># Initialise progress bar</span>
+        <span class="n">chains</span><span class="p">,</span> <span class="n">nsites</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Sampling </span><span class="si">{</span><span class="n">chains</span><span class="si">}</span><span class="s2"> chain(s) from a cell with </span><span class="si">{</span><span class="n">nsites</span><span class="si">}</span><span class="s2"> sites&quot;</span>
+        <span class="k">with</span> <span class="n">progress_bar</span><span class="p">(</span><span class="n">progress</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">nsteps</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span> <span class="k">as</span> <span class="n">p_bar</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsteps</span> <span class="o">//</span> <span class="n">thin_by</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">thin_by</span><span class="p">):</span>
+                    <span class="c1"># the occupancies are modified in place at each step</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">strace</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_single_step</span><span class="p">(</span><span class="n">occupancies</span><span class="p">)):</span>
+                        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">strace</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                            <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                            <span class="n">val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                            <span class="c1"># this will mess up recording values for &gt; 1 walkers</span>
+                            <span class="c1"># setattr(trace, name, value)</span>
+                        <span class="k">if</span> <span class="n">strace</span><span class="o">.</span><span class="n">accepted</span><span class="p">:</span>
+                            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">delta_val</span> <span class="ow">in</span> <span class="n">strace</span><span class="o">.</span><span class="n">delta_trace</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                                <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                                <span class="n">val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">delta_val</span>
+                    <span class="n">p_bar</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+                <span class="c1"># yield copies</span>
+                <span class="k">yield</span> <span class="n">trace</span></div>
+
+<div class="viewcode-block" id="Sampler.run"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">nsteps</span><span class="p">,</span>
+        <span class="n">initial_occupancies</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">stream_chunk</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">stream_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">keep_last_chunk</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">swmr_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run an MCMC sampling simulation.</span>
+
+<span class="sd">        This will run and save the samples every thin_by into a</span>
+<span class="sd">        SampleContainer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nsteps (int):</span>
+<span class="sd">                number of total MC steps.</span>
+<span class="sd">            initial_occupancies (ndarray):</span>
+<span class="sd">                array of occupancies. If None, the last sampler will be taken.</span>
+<span class="sd">                You should only provide this the first time you call run. If</span>
+<span class="sd">                you want to reset then you should call reset before to start</span>
+<span class="sd">                a fresh run.</span>
+<span class="sd">            thin_by (int): optional</span>
+<span class="sd">                the amount to thin by for saving samples.</span>
+<span class="sd">            progress (bool): optional</span>
+<span class="sd">                if true will show a progress bar.</span>
+<span class="sd">            stream_chunk (int): optional</span>
+<span class="sd">                chunk of samples to stream into a file. If &gt; 0 samples will</span>
+<span class="sd">                be flushed to backend file in stream_chucks</span>
+<span class="sd">            stream_file (str): optional</span>
+<span class="sd">                file name to use as backend. If file already exists will try</span>
+<span class="sd">                to append to datasets. If not given will create a new file.</span>
+<span class="sd">            keep_last_chunk (bool): optional</span>
+<span class="sd">                if True will keep the last chunk of samples in memory, but will reset</span>
+<span class="sd">                the sampler otherwise. This is useful if the last occupancies are</span>
+<span class="sd">                needed to start another run (ie for simulated annealing with streaming)</span>
+<span class="sd">            swmr_mode (bool): optional</span>
+<span class="sd">                if true allows to read file from other processes. Single Writer</span>
+<span class="sd">                Multiple Readers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">initial_occupancies</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">initial_occupancies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_occupancies</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="c1"># auxiliary states from kernels should be set here</span>
+            <span class="k">except</span> <span class="ne">IndexError</span> <span class="k">as</span> <span class="n">index_error</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;There are no saved samples to obtain the initial occupancies.&quot;</span>
+                    <span class="s2">&quot;These must be provided.&quot;</span>
+                <span class="p">)</span> <span class="kn">from</span> <span class="nn">index_error</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Initial occupancies where provided with a pre-existing set of samples.&quot;</span>
+                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Make real sure that is what you want. &quot;</span>
+                <span class="s2">&quot;If not, reset the samples in the sampler.&quot;</span><span class="p">,</span>
+                <span class="ne">RuntimeWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stream_chunk</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">stream_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+                <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;moca-samples-&quot;</span> <span class="o">+</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">-%H%M%S</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">stream_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">file_name</span> <span class="o">+</span> <span class="s2">&quot;.h5&quot;</span><span class="p">)</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span>
+                <span class="n">stream_file</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">//</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">swmr_mode</span><span class="o">=</span><span class="n">swmr_mode</span>
+            <span class="p">)</span>
+            <span class="c1"># allocate memory only if there is None available</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">get_occupancies</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">allocate</span><span class="p">(</span><span class="n">stream_chunk</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">allocate</span><span class="p">(</span><span class="n">nsteps</span> <span class="o">//</span> <span class="n">thin_by</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">trace</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">nsteps</span><span class="p">,</span> <span class="n">initial_occupancies</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="n">thin_by</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="n">progress</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">save_sampled_trace</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span> <span class="n">thinned_by</span><span class="o">=</span><span class="n">thin_by</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">backend</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">stream_chunk</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">flush_to_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">backend</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">backend</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="c1"># Only clear samples if requested.</span>
+            <span class="k">if</span> <span class="n">keep_last_chunk</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">clear_samples</span><span class="p">()</span></div>
+
+        <span class="c1"># A checkpoint of aux states should be saved to container here.</span>
+        <span class="c1"># Note that to save any general &quot;state&quot; we will need to make sure it is</span>
+        <span class="c1"># properly serializable to save as json and also to save in h5py</span>
+
+<div class="viewcode-block" id="Sampler.anneal"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.anneal">[docs]</a>    <span class="k">def</span> <span class="nf">anneal</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">temperatures</span><span class="p">,</span>
+        <span class="n">mcmc_steps</span><span class="p">,</span>
+        <span class="n">initial_occupancies</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">stream_chunk</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">stream_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">swmr_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Carry out a simulated annealing procedure.</span>
+
+<span class="sd">        Will MC sampling for each temperature for the specified number of steps,</span>
+<span class="sd">        taking the last sampled configuration at each temperature as the starting</span>
+<span class="sd">        configuration for the next temperature.</span>
+
+<span class="sd">        Everything is saved to the same SampleContainer, or if streaming, saved to the</span>
+<span class="sd">        same file. To save each temperature in a different container, simply run</span>
+<span class="sd">        a similar &quot;for loop&quot; creating a new sampler at each temperature.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            temperatures (Sequence):</span>
+<span class="sd">               sequence of temperatures to anneal, should be strictly</span>
+<span class="sd">               decreasing.</span>
+<span class="sd">               Note: only available for ThermalKernel.</span>
+<span class="sd">            mcmc_steps (int):</span>
+<span class="sd">               number of Monte Carlo steps to run at each temperature.</span>
+<span class="sd">            initial_occupancies (ndarray):</span>
+<span class="sd">                array of occupancies. If None, the last sample will be taken.</span>
+<span class="sd">                You should only provide this the first time you call run.</span>
+<span class="sd">            thin_by (int): optional</span>
+<span class="sd">                amount to thin by for saving samples.</span>
+<span class="sd">            progress (bool):</span>
+<span class="sd">                if true will show a progress bar.</span>
+<span class="sd">            stream_chunk (int): optional</span>
+<span class="sd">                chunk of samples to stream into a file. If &gt; 0 samples will</span>
+<span class="sd">                be flushed to backend file in stream_chucks</span>
+<span class="sd">            stream_file (str): optional</span>
+<span class="sd">                file name to use as backend. If file already exists will try</span>
+<span class="sd">                to append to datasets. If not given will create a new file.</span>
+<span class="sd">            swmr_mode (bool): optional</span>
+<span class="sd">                if true allows to read file from other processes. Single Writer</span>
+<span class="sd">                Multiple Readers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">temperatures</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">temperatures</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;End temperature is greater than start &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;temperature </span><span class="si">{</span><span class="n">temperatures</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">{</span><span class="n">temperatures</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># initialize for first temperature.</span>
+        <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernels</span><span class="p">:</span>
+            <span class="n">kernel</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperatures</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="n">mcmc_steps</span><span class="p">,</span>
+            <span class="n">initial_occupancies</span><span class="o">=</span><span class="n">initial_occupancies</span><span class="p">,</span>
+            <span class="n">thin_by</span><span class="o">=</span><span class="n">thin_by</span><span class="p">,</span>
+            <span class="n">progress</span><span class="o">=</span><span class="n">progress</span><span class="p">,</span>
+            <span class="n">stream_chunk</span><span class="o">=</span><span class="n">stream_chunk</span><span class="p">,</span>
+            <span class="n">stream_file</span><span class="o">=</span><span class="n">stream_file</span><span class="p">,</span>
+            <span class="n">swmr_mode</span><span class="o">=</span><span class="n">swmr_mode</span><span class="p">,</span>
+            <span class="n">keep_last_chunk</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">temperature</span> <span class="ow">in</span> <span class="n">temperatures</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernels</span><span class="p">:</span>
+                <span class="n">kernel</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="n">mcmc_steps</span><span class="p">,</span>
+                <span class="n">thin_by</span><span class="o">=</span><span class="n">thin_by</span><span class="p">,</span>
+                <span class="n">progress</span><span class="o">=</span><span class="n">progress</span><span class="p">,</span>
+                <span class="n">stream_chunk</span><span class="o">=</span><span class="n">stream_chunk</span><span class="p">,</span>
+                <span class="n">stream_file</span><span class="o">=</span><span class="n">stream_file</span><span class="p">,</span>
+                <span class="n">swmr_mode</span><span class="o">=</span><span class="n">swmr_mode</span><span class="p">,</span>
+                <span class="n">keep_last_chunk</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># If streaming to file was done then clear samplers now.</span>
+        <span class="k">if</span> <span class="n">stream_chunk</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clear_samples</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Sampler.setup_sample"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.sampler.Sampler.setup_sample">[docs]</a>    <span class="k">def</span> <span class="nf">setup_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_occupancies</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy and reshape occupancies and compute initial trace for sampling.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            initial_occupancies (ndarray):</span>
+<span class="sd">                initial occupancies for sampling.</span>
+
+<span class="sd">        Returns: (occupancies, trace)</span>
+<span class="sd">            occupancies (ndarray):</span>
+<span class="sd">                initial occupancies for sampling.</span>
+<span class="sd">            trace (Trace):</span>
+<span class="sd">                initial trace for sampling.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO check that initial states are independent if num_walkers &gt; 1</span>
+        <span class="c1"># TODO make samplers with single chain, multiple and multiprocess</span>
+        <span class="n">occupancies</span> <span class="o">=</span> <span class="n">initial_occupancies</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">occupancies</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="n">occupancies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reshape_occu</span><span class="p">(</span><span class="n">occupancies</span><span class="p">)</span>
+
+        <span class="c1"># set up any auxiliary states from initial occupancies</span>
+        <span class="n">selected_occus</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">occupancy</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kernels</span><span class="p">,</span> <span class="n">occupancies</span><span class="p">):</span>
+            <span class="n">kernel</span><span class="o">.</span><span class="n">set_aux_state</span><span class="p">(</span><span class="n">occupancy</span><span class="p">)</span>
+            <span class="c1"># select the current kernel occu</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">MulticellKernel</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">occupancies</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">occupancies</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+                    <span class="n">kernel</span><span class="o">.</span><span class="n">mckernels</span>
+                <span class="p">):</span>
+                    <span class="n">selected_occus</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">occupancy</span><span class="p">[</span><span class="n">kernel</span><span class="o">.</span><span class="n">trace</span><span class="o">.</span><span class="n">kernel_index</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_occus</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">occupancies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">selected_occus</span><span class="p">)</span>
+
+        <span class="c1"># get initial traces and stack them</span>
+        <span class="n">trace</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">()</span>
+        <span class="n">traces</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">map</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">occu</span><span class="p">:</span> <span class="n">kernel</span><span class="o">.</span><span class="n">compute_initial_trace</span><span class="p">(</span><span class="n">occu</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_kernels</span><span class="p">,</span>
+                <span class="n">occupancies</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">traces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="n">stack</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="nb">getattr</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">tr</span> <span class="ow">in</span> <span class="n">traces</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">stack</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">occupancies</span><span class="p">,</span> <span class="n">trace</span></div>
+
+    <span class="k">def</span> <span class="nf">_single_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancies</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do a single step for all kernels.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">occupancy</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kernels</span><span class="p">,</span> <span class="n">occupancies</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">kernel</span><span class="o">.</span><span class="n">single_step</span><span class="p">(</span><span class="n">occupancy</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_reshape_occu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancies</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reshape occupancies for the single walker case.&quot;&quot;&quot;</span>
+        <span class="c1"># check if this is only a single walker.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">occupancies</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">occupancies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">occupancies</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">occupancies</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">MulticellKernel</span><span class="p">)</span> <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernels</span><span class="p">):</span>
+            <span class="c1"># reshape for multicell kernels</span>
+            <span class="n">occupancies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">occupancies</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">occupancies</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;The given initial occcupancies have incompompatible dimensions. Shape should&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; be </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">occupancies</span></div>
+
+
+<span class="c1"># TODO potential define two _sample functions serial/parallel that get called</span>
+<span class="c1">#  in one sampler function.</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2022-2023, Ceder Group.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.13.3.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

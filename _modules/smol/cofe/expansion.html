@@ -1,0 +1,1071 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>smol.cofe.expansion &#8212; smol 0.1.dev1+ga34f4c0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/smol.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/smol/cofe/expansion';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1.dev1+ga34f4c0';
+        </script>
+    <script src="../../../_static/require.js"></script>
+    <script src="../../../_static/custom.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="auto">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1.dev1+ga34f4c0  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1.dev1+ga34f4c0  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumbs">
+  <ul class="bd-breadcrumbs" role="navigation" aria-label="Breadcrumb">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">smol.cofe.expansion</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for smol.cofe.expansion</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;This module implements the ClusterExpansion class.</span>
+
+<span class="sd">A ClusterExpansion holds the necessary attributes to represent a CE and predict</span>
+<span class="sd">the property for new structures.</span>
+
+<span class="sd">The class also allows to prune a CE to remove low importance orbits function</span>
+<span class="sd">terms and speed up Monte Carlo runs.</span>
+
+<span class="sd">Also has numerical ECI conversion to other basis sets, but has not been</span>
+<span class="sd">strongly tested.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Luis Barroso-Luque&quot;</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">monty.json</span> <span class="kn">import</span> <span class="n">MSONable</span><span class="p">,</span> <span class="n">jsanitize</span>
+
+<span class="kn">from</span> <span class="nn">smol.cofe.space.clusterspace</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span>
+<span class="kn">from</span> <span class="nn">smol.utils.cluster</span> <span class="kn">import</span> <span class="n">get_orbit_data</span>
+
+
+<div class="viewcode-block" id="RegressionData"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">RegressionData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dataclass used to store regression model details.</span>
+
+<span class="sd">    This class is used to store the details used in fitting a cluster expansion</span>
+<span class="sd">    for future reference and good provenance practices. It is highly</span>
+<span class="sd">    recommended to initialize :class:`ClusterExpansion` objects with this</span>
+<span class="sd">    class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">module</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">estimator_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">feature_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">property_vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span>
+
+<div class="viewcode-block" id="RegressionData.from_object"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.from_object">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_object</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="n">feature_matrix</span><span class="p">,</span> <span class="n">property_vector</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a RegressionData object from an estimator class.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            estimator (object):</span>
+<span class="sd">                Estimator class or function.</span>
+<span class="sd">            feature_matrix (ndarray):</span>
+<span class="sd">                feature matrix used in fit.</span>
+<span class="sd">            property_vector (ndarray):</span>
+<span class="sd">                target property vector used in fit.</span>
+<span class="sd">            parameters (dict):</span>
+<span class="sd">                Dictionary with pertinent fitting parameters,</span>
+<span class="sd">                i.e. regularization, etc. It is highly recommended that you save</span>
+<span class="sd">                this out of good practice and to ensure reproducibility.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            RegressionData</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">estimator_name</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">estimator_name</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">module</span><span class="o">=</span><span class="n">estimator</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+            <span class="n">estimator_name</span><span class="o">=</span><span class="n">estimator_name</span><span class="p">,</span>
+            <span class="n">feature_matrix</span><span class="o">=</span><span class="n">feature_matrix</span><span class="p">,</span>
+            <span class="n">property_vector</span><span class="o">=</span><span class="n">property_vector</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="RegressionData.from_sklearn"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.from_sklearn">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_sklearn</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="n">feature_matrix</span><span class="p">,</span> <span class="n">property_vector</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a RegressionData object from sklearn estimator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            estimator (object):</span>
+<span class="sd">                scikit-learn estimator class or derived class.</span>
+<span class="sd">            feature_matrix (ndarray):</span>
+<span class="sd">                feature matrix used in fit.</span>
+<span class="sd">            property_vector (ndarray):</span>
+<span class="sd">                target property vector used in fit.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            RegressionData</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">module</span><span class="o">=</span><span class="n">estimator</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+            <span class="n">estimator_name</span><span class="o">=</span><span class="n">estimator</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">feature_matrix</span><span class="o">=</span><span class="n">feature_matrix</span><span class="p">,</span>
+            <span class="n">property_vector</span><span class="o">=</span><span class="n">property_vector</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="n">estimator</span><span class="o">.</span><span class="n">get_params</span><span class="p">(),</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ClusterExpansion"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion">[docs]</a><span class="k">class</span> <span class="nc">ClusterExpansion</span><span class="p">(</span><span class="n">MSONable</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for the ClusterExpansion proper.</span>
+
+<span class="sd">    This needs a :class:`ClusterSubspace` and a corresponding set of</span>
+<span class="sd">    coefficients from a fit.</span>
+
+<span class="sd">    The main method to use is the :meth:`predict` method to predict the fitted</span>
+<span class="sd">    property for new structures. This can be used to compare the accuracy</span>
+<span class="sd">    of the fit with a set of test structures not used in training.</span>
+
+<span class="sd">    Although this is purely optional and does not change the class performance,</span>
+<span class="sd">    it is also recommended you save some information about learn metrics</span>
+<span class="sd">    such as CV score, test/train rmse, or anything to quantify the &quot;goodness&quot;</span>
+<span class="sd">    in the metadata dictionary. See for example learn metrics in</span>
+<span class="sd">    :code:`sklearn.metrics` for many useful methods to get these quantities.</span>
+
+<span class="sd">    This class is also used for Monte Carlo simulations to create a</span>
+<span class="sd">    :class:`ClusterExpansionProcessor` that calculates the CE for a fixed</span>
+<span class="sd">    supercell size.</span>
+<span class="sd">    Before using a ClusterExpansion for Monte Carlo you should consider pruning</span>
+<span class="sd">    the correlation/orbit functions with very small coefficients or eci.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        coefficients (ndarry): coefficients of the ClusterExpansion</span>
+<span class="sd">        metadata (dict): dict to save optional values describing cluster</span>
+<span class="sd">            expansion. i.e. if it was pruned, any error metrics etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster_subspace</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">regression_data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Initialize a ClusterExpansion.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cluster_subspace (ClusterSubspace):</span>
+<span class="sd">                a ClusterSubspace representing the subspace over which the</span>
+<span class="sd">                ClusterExpansion was fit. Must be the same used to create</span>
+<span class="sd">                the feature matrix.</span>
+<span class="sd">            coefficients (ndarray):</span>
+<span class="sd">                coefficients for cluster expansion. Make sure the supplied</span>
+<span class="sd">                coefficients match the correlation vector terms (length and order)</span>
+<span class="sd">                These correspond to the</span>
+<span class="sd">                ECI x the multiplicity of orbit x multiplicity of bit ordering.</span>
+<span class="sd">            regression_data (RegressionData): optional</span>
+<span class="sd">                RegressionData object with details used in the fit of the</span>
+<span class="sd">                corresponding expansion. The feature_matrix attribute here is</span>
+<span class="sd">                necessary to compute things like numerical ECI transformations</span>
+<span class="sd">                for different bases.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">regression_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span> <span class="o">!=</span> <span class="n">regression_data</span><span class="o">.</span><span class="n">feature_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Feature matrix shape </span><span class="si">{</span><span class="n">regression_data</span><span class="o">.</span><span class="n">feature_matrix</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;does not match the number of coefficients &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster_subspace</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The size of the give subspace </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cluster_subspace</span><span class="p">)</span><span class="si">}</span><span class="s2"> does &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;not match the number of coefficients </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">coefs</span> <span class="o">=</span> <span class="n">coefficients</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span> <span class="o">=</span> <span class="n">regression_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span> <span class="o">=</span> <span class="n">cluster_subspace</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_evaluator_data</span><span class="p">()</span>
+
+        <span class="c1"># make copy for possible changes/pruning</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_feat_matrix</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">regression_data</span><span class="o">.</span><span class="n">feature_matrix</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">regression_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">eci</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the ECI for the cluster expansion.</span>
+
+<span class="sd">        This just divides coefficients by the corresponding multiplicities.</span>
+<span class="sd">        External terms are dropped since their fitted coefficients do not</span>
+<span class="sd">        represent ECI.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_ext_terms</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">external_terms</span><span class="p">)</span>  <span class="c1"># check for extra terms</span>
+        <span class="n">coefs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="p">[:</span><span class="o">-</span><span class="n">num_ext_terms</span><span class="p">]</span> <span class="k">if</span> <span class="n">num_ext_terms</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="p">[:]</span>
+        <span class="n">eci</span> <span class="o">=</span> <span class="n">coefs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">eci</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">function_total_multiplicities</span>
+        <span class="k">return</span> <span class="n">eci</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">cluster_interaction_tensors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get tuple of cluster interaction tensors.</span>
+
+<span class="sd">        Tuple of ndarrays where each array is the interaction tensor for the</span>
+<span class="sd">        corresponding orbit of clusters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">interaction_tensors</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="p">[</span><span class="mi">0</span><span class="p">],)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="nb">sum</span><span class="p">(</span>
+                <span class="n">m</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">eci</span><span class="p">[</span><span class="n">orbit</span><span class="o">.</span><span class="n">bit_id</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">tensor</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">tensor</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                    <span class="nb">zip</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">bit_combo_multiplicities</span><span class="p">,</span> <span class="n">orbit</span><span class="o">.</span><span class="n">correlation_tensors</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">orbit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">orbits</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">interaction_tensors</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get primitive structure which the expansion is based on.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">structure</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">expansion_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get expansion structure.</span>
+
+<span class="sd">        Prim structure with only sites included in the expansion</span>
+<span class="sd">        (i.e. sites with partial occupancies)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">expansion_structure</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cluster_subspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get ClusterSubspace.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">eci_orbit_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get Orbit ids corresponding to each ECI in the Cluster Expansion.</span>
+
+<span class="sd">        If the Cluster Expansion includes external terms these are not included</span>
+<span class="sd">        in the list since they are not associated with any orbit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">function_orbit_ids</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">effective_cluster_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the cluster weights.</span>
+
+<span class="sd">        The cluster weights are defined as the weighted sum of ECI squared, where</span>
+<span class="sd">        the weights are the ordering multiplicities.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">function_ordering_multiplicities</span><span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">function_orbit_ids</span> <span class="o">==</span> <span class="n">i</span>
+                    <span class="p">]</span>
+                    <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">eci</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">eci_orbit_ids</span> <span class="o">==</span> <span class="n">i</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">orbits</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">weights</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">feature_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the feature matrix used in fit.</span>
+
+<span class="sd">        If not given, returns an identity matrix of len num_corrs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feat_matrix</span>
+
+<div class="viewcode-block" id="ClusterExpansion.predict"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">scmatrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">site_mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict the fitted property for a given set of structures.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            structure (Structure):</span>
+<span class="sd">                Structures to predict from</span>
+<span class="sd">            normalized (bool): optional</span>
+<span class="sd">                Whether to return the predicted property normalized</span>
+<span class="sd">                by the prim cell size.</span>
+<span class="sd">            scmatrix (ndarray): optional</span>
+<span class="sd">                supercell matrix relating the prim structure to the given</span>
+<span class="sd">                structure. Passing this if it has already been matched will</span>
+<span class="sd">                make things much quicker. You are responsible that the</span>
+<span class="sd">                supercell matrix is correct.</span>
+<span class="sd">            site_mapping (list): optional</span>
+<span class="sd">                Site mapping as obtained by</span>
+<span class="sd">                :code:`StructureMatcher.get_mapping` such that the elements of</span>
+<span class="sd">                site_mapping represent the indices of the matching sites to the prim</span>
+<span class="sd">                structure. If you pass this option, you are fully responsible that the</span>
+<span class="sd">                mappings are correct!</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">corrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">corr_from_structure</span><span class="p">(</span>
+            <span class="n">structure</span><span class="p">,</span>
+            <span class="n">scmatrix</span><span class="o">=</span><span class="n">scmatrix</span><span class="p">,</span>
+            <span class="n">normalized</span><span class="o">=</span><span class="n">normalized</span><span class="p">,</span>
+            <span class="n">site_mapping</span><span class="o">=</span><span class="n">site_mapping</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="p">,</span> <span class="n">corrs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ClusterExpansion.cluster_interactions_from_structure"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.cluster_interactions_from_structure">[docs]</a>    <span class="k">def</span> <span class="nf">cluster_interactions_from_structure</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scmatrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">site_mapping</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the vector of cluster interaction values for given structure.</span>
+
+<span class="sd">        A cluster interaction is simply a vector made up of the sum of all cluster</span>
+<span class="sd">        expansion terms over the same orbit.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            structure (Structure):</span>
+<span class="sd">                Structures to predict from</span>
+<span class="sd">            normalized (bool):</span>
+<span class="sd">                Whether to return the predicted property normalized by</span>
+<span class="sd">                the prim cell size.</span>
+<span class="sd">            scmatrix (ndarray): optional</span>
+<span class="sd">                supercell matrix relating the prim structure to the given</span>
+<span class="sd">                structure. Passing this if it has already been matched will</span>
+<span class="sd">                make things much quicker. You are responsible that the</span>
+<span class="sd">                supercell matrix is correct.</span>
+<span class="sd">            site_mapping (list): optional</span>
+<span class="sd">                Site mapping as obtained by</span>
+<span class="sd">                :code:`StructureMatcher.get_mapping` such that the elements of</span>
+<span class="sd">                site_mapping represent the indices of the matching sites to the prim</span>
+<span class="sd">                structure. If you pass this option, you are fully responsible that the</span>
+<span class="sd">                mappings are correct!</span>
+
+<span class="sd">        Returns: ndarray</span>
+<span class="sd">            vector of cluster interaction values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">scmatrix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scmatrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">scmatrix_from_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+
+        <span class="n">occu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">occupancy_from_structure</span><span class="p">(</span>
+            <span class="n">structure</span><span class="p">,</span> <span class="n">scmatrix</span><span class="o">=</span><span class="n">scmatrix</span><span class="p">,</span> <span class="n">site_mapping</span><span class="o">=</span><span class="n">site_mapping</span><span class="p">,</span> <span class="n">encode</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">get_orbit_indices</span><span class="p">(</span><span class="n">scmatrix</span><span class="p">)</span>
+        <span class="n">interactions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">interactions_from_occupancy</span><span class="p">(</span>
+            <span class="n">occu</span><span class="p">,</span> <span class="n">indices</span><span class="o">.</span><span class="n">container</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">normalized</span><span class="p">:</span>
+            <span class="n">interactions</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">num_prims_from_matrix</span><span class="p">(</span><span class="n">scmatrix</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">interactions</span></div>
+
+<div class="viewcode-block" id="ClusterExpansion.prune"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.prune">[docs]</a>    <span class="k">def</span> <span class="nf">prune</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">with_multiplicity</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove fit coefficients or ECI&#39;s with small values.</span>
+
+<span class="sd">        Removes ECI&#39;s and orbits in the ClusterSubspaces that have</span>
+<span class="sd">        ECI/parameter values smaller than the given threshold.</span>
+
+<span class="sd">        This will change the fits error metrics (i.e. RMSE) a little, but it</span>
+<span class="sd">        should not be much. If they change a lot then the threshold used is</span>
+<span class="sd">        probably too high and important functions are being pruned.</span>
+
+<span class="sd">        This will not re-fit the ClusterExpansion. Note that if you re-fit</span>
+<span class="sd">        after pruning, the ECI will probably change and hence also the fit</span>
+<span class="sd">        performance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            threshold (float):</span>
+<span class="sd">                threshold below which to remove.</span>
+<span class="sd">            with_multiplicity (bool):</span>
+<span class="sd">                if True, threshold is applied to the ECI proper, otherwise to</span>
+<span class="sd">                the fit coefficients</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">coefs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eci</span> <span class="k">if</span> <span class="n">with_multiplicity</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefs</span>
+        <span class="n">bit_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coef</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coefs</span><span class="p">)</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">coef</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">remove_corr_functions</span><span class="p">(</span><span class="n">bit_ids</span><span class="p">)</span>
+
+        <span class="c1"># Update necessary attributes</span>
+        <span class="n">ids_complement</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="p">)))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">bit_ids</span><span class="p">))</span>
+        <span class="n">ids_complement</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coefs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="p">[</span><span class="n">ids_complement</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feat_matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_feat_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feat_matrix</span><span class="p">[:,</span> <span class="n">ids_complement</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;eci&quot;</span><span class="p">):</span>  <span class="c1"># reset cache</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">eci</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;cluster_interaction_tensors&quot;</span><span class="p">):</span>  <span class="c1"># reset cache</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_interaction_tensors</span>
+
+        <span class="c1"># reset the evaluator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_evaluator_data</span><span class="p">(</span><span class="n">set_orbits</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ClusterExpansion.copy"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a copy of self.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ClusterExpansion</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span></div>
+
+    <span class="k">def</span> <span class="nf">_set_evaluator_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_orbits</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the orbit and cluster interaction data in evaluator.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">set_orbits</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">reset_data</span><span class="p">(</span>
+                <span class="n">get_orbit_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">orbits</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">num_orbits</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">num_corr_functions</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">flat_interaction_tensors</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_interaction_tensors</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">set_cluster_interactions</span><span class="p">(</span>
+            <span class="n">flat_interaction_tensors</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster_interaction_tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pretty string for printing.&quot;&quot;&quot;</span>
+        <span class="n">outs</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[:</span><span class="mi">6</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This might need to be redefined to take &quot;expectation&quot; using measure</span>
+            <span class="n">feature_avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">feature_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_matrix</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">outs</span> <span class="o">+=</span> <span class="p">[</span>
+                <span class="sa">f</span><span class="s2">&quot;Regression Data : estimator=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span><span class="o">.</span><span class="n">estimator_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;                  module=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span><span class="o">.</span><span class="n">module</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;                  parameters=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span><span class="o">.</span><span class="n">parameters</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Target Property    : &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mean=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span><span class="o">.</span><span class="n">property_vector</span><span class="p">)</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">  &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;std=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span><span class="o">.</span><span class="n">property_vector</span><span class="p">)</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="n">fit_var</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">function_total_multiplicities</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">eci</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="n">outs</span> <span class="o">+=</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s2">&quot;ECI-based Property : mean=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">eci</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;  std=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">fit_var</span><span class="p">)</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Fit Summary&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">term</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">external_terms</span><span class="p">):</span>
+            <span class="n">outs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">term</span><span class="p">)</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eci</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">0.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">outs</span> <span class="o">+=</span> <span class="p">[</span>
+                <span class="s2">&quot; ---------------------------------------------------------------------&quot;</span>
+                <span class="s2">&quot;-------------------------------&quot;</span><span class="p">,</span>
+                <span class="s2">&quot; |  ID    Orbit ID    Degree    Cluster Diameter    ECI    Feature AVG&quot;</span>
+                <span class="s2">&quot;    Feature STD    ECI * STD  |&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot; |  0        0          0              NA         &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">eci</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">^7.3f</span><span class="si">}{</span><span class="n">feature_avg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">^15.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_std</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">^15.3f</span><span class="si">}{</span><span class="n">feature_std</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">eci</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">^13.3f</span><span class="si">}</span><span class="s2">|&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">outs</span> <span class="o">+=</span> <span class="p">[</span>
+                <span class="s2">&quot; ---------------------------------------------------------&quot;</span><span class="p">,</span>
+                <span class="s2">&quot; |  ID    Orbit ID    Degree    Cluster Diameter    ECI  |&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot; |   0       0          0              NA        &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">eci</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">^7.3f</span><span class="si">}</span><span class="s2"> |&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">degree</span><span class="p">,</span> <span class="n">orbits</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">orbits_by_size</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">orbit</span> <span class="ow">in</span> <span class="n">orbits</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bits</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">bit_combos</span><span class="p">):</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot; |</span><span class="si">{</span><span class="n">orbit</span><span class="o">.</span><span class="n">bit_id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="si">:</span><span class="s2">^6</span><span class="si">}{</span><span class="n">orbit</span><span class="o">.</span><span class="n">id</span><span class="si">:</span><span class="s2">^12</span><span class="si">}{</span><span class="n">degree</span><span class="si">:</span><span class="s2">^10</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">orbit</span><span class="o">.</span><span class="n">base_cluster</span><span class="o">.</span><span class="n">diameter</span><span class="si">:</span><span class="s2">^20.4f</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">eci</span><span class="p">[</span><span class="n">orbit</span><span class="o">.</span><span class="n">bit_id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">^7.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">line</span> <span class="o">+=</span> <span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_avg</span><span class="p">[</span><span class="n">orbit</span><span class="o">.</span><span class="n">bit_id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">^15.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_std</span><span class="p">[</span><span class="n">orbit</span><span class="o">.</span><span class="n">bit_id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">^15.3f</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">feature_std</span><span class="p">[</span><span class="n">orbit</span><span class="o">.</span><span class="n">bit_id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">eci</span><span class="p">[</span><span class="n">orbit</span><span class="o">.</span><span class="n">bit_id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">^13.3f</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># noqa</span>
+                        <span class="p">)</span>
+                    <span class="n">line</span> <span class="o">+=</span> <span class="s2">&quot;|&quot;</span>
+                    <span class="n">outs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">outs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">outs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return summary of expansion.&quot;&quot;&quot;</span>
+        <span class="n">outs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Cluster Expansion Summary&quot;</span><span class="p">]</span>
+        <span class="n">outs</span> <span class="o">+=</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">outs</span> <span class="o">+=</span> <span class="p">[</span>
+                <span class="sa">f</span><span class="s2">&quot;Regression Data : estimator=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span><span class="o">.</span><span class="n">estimator_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  module=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span><span class="o">.</span><span class="n">module</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;  parameters=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span><span class="o">.</span><span class="n">parameters</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;Target Property    : &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mean=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span><span class="o">.</span><span class="n">property_vector</span><span class="p">)</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">  &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;std=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span><span class="o">.</span><span class="n">property_vector</span><span class="p">)</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="n">fit_var</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_subspace</span><span class="o">.</span><span class="n">function_total_multiplicities</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">eci</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="n">outs</span> <span class="o">+=</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s2">&quot;ECI-based Property : mean=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">eci</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">  std=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">fit_var</span><span class="p">)</span><span class="si">:</span><span class="s2">0.4f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ClusterExpansion.from_dict"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create ClusterExpansion from serialized MSONable dict.&quot;&quot;&quot;</span>
+        <span class="n">reg_data_dict</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;regression_data&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">reg_data_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">reg_data_dict</span><span class="p">[</span><span class="s2">&quot;feature_matrix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;regression_data&quot;</span><span class="p">][</span><span class="s2">&quot;feature_matrix&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">reg_data_dict</span><span class="p">[</span><span class="s2">&quot;property_vector&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;regression_data&quot;</span><span class="p">][</span><span class="s2">&quot;property_vector&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">reg_data</span> <span class="o">=</span> <span class="n">RegressionData</span><span class="p">(</span><span class="o">**</span><span class="n">reg_data_dict</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">reg_data</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">cluster_expansion</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;cluster_subspace&quot;</span><span class="p">]),</span>
+            <span class="n">coefficients</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;coefs&quot;</span><span class="p">]),</span>
+            <span class="n">regression_data</span><span class="o">=</span><span class="n">reg_data</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># update copy of feature matrix to keep any changes</span>
+        <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;feature_matrix&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_feat_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;feature_matrix&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">cluster_expansion</span></div>
+
+<div class="viewcode-block" id="ClusterExpansion.as_dict"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get Json-serialization dict representation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            MSONable dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feat_matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">feature_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feat_matrix</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">feature_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feat_matrix</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">reg_data</span> <span class="o">=</span> <span class="n">jsanitize</span><span class="p">(</span><span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regression_data</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">reg_data</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">ce_d</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;@module&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+            <span class="s2">&quot;@class&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s2">&quot;cluster_subspace&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_subspace</span><span class="o">.</span><span class="n">as_dict</span><span class="p">(),</span>
+            <span class="s2">&quot;coefs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;regression_data&quot;</span><span class="p">:</span> <span class="n">reg_data</span><span class="p">,</span>
+            <span class="s2">&quot;feature_matrix&quot;</span><span class="p">:</span> <span class="n">feature_matrix</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">ce_d</span></div></div>
+</pre></div>
+
+                </article>
+              
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2022-2023, Ceder Group.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.13.3.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

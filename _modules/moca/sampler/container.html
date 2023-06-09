@@ -1,0 +1,1226 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>moca.sampler.container &#8212; smol 0.1.dev1+ga34f4c0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/smol.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/moca/sampler/container';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1.dev1+ga34f4c0';
+        </script>
+    <script src="../../../_static/require.js"></script>
+    <script src="../../../_static/custom.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="auto">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1.dev1+ga34f4c0  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/blob/master/CHANGES.md">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </div>
+            </div>
+            
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      0.1.dev1+ga34f4c0  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumbs">
+  <ul class="bd-breadcrumbs" role="navigation" aria-label="Breadcrumb">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">moca.sampler.container</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for moca.sampler.container</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Implementation of SampleContainer class.</span>
+
+<span class="sd">A SampleContainer is used to store data from Monte Carlo sampling simulation.</span>
+<span class="sd">It has some minimimal methods and properties useful to start analyzing the</span>
+<span class="sd">samples.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Luis Barroso-Luque&quot;</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">monty.dev</span> <span class="kn">import</span> <span class="n">requires</span>
+<span class="kn">from</span> <span class="nn">monty.json</span> <span class="kn">import</span> <span class="n">MontyDecoder</span><span class="p">,</span> <span class="n">MontyEncoder</span><span class="p">,</span> <span class="n">MSONable</span><span class="p">,</span> <span class="n">jsanitize</span>
+
+<span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Ensemble</span>
+<span class="kn">from</span> <span class="nn">smol.moca.metadata</span> <span class="kn">import</span> <span class="n">Metadata</span>
+<span class="kn">from</span> <span class="nn">smol.moca.sublattice</span> <span class="kn">import</span> <span class="n">Sublattice</span>
+<span class="kn">from</span> <span class="nn">smol.moca.trace</span> <span class="kn">import</span> <span class="n">Trace</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">h5py</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">h5py</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="SampleContainer"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer">[docs]</a><span class="k">class</span> <span class="nc">SampleContainer</span><span class="p">(</span><span class="n">MSONable</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A SampleContainer class stores Monte Carlo simulation samples.</span>
+
+<span class="sd">    A SampleContainer holds samples and sampling information from an MCMC</span>
+<span class="sd">    sampling run. It is useful to obtain the raw data and minimal empirical</span>
+<span class="sd">    properties of the underlying distribution in order to carry out further</span>
+<span class="sd">    analysis of the MCMC sampling results.</span>
+
+<span class="sd">    When getting any value from the provided attributes, the highly repeated</span>
+<span class="sd">    args are:</span>
+
+<span class="sd">        discard (int): optional</span>
+<span class="sd">            number of samples to discard to obtain the value requested.</span>
+<span class="sd">        thin_by (int): optional</span>
+<span class="sd">            use every thin_by sample to obtain the value requested.</span>
+<span class="sd">        flat (bool): optional</span>
+<span class="sd">            if more than 1 walker is used, flattening will flatten all</span>
+<span class="sd">            chains into one. Defaults to True.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        num_sites (int):</span>
+<span class="sd">            Size of system (usually in number of prims in supercell, but</span>
+<span class="sd">            can be anything representative, i.e. number of sites)</span>
+<span class="sd">        sublattices (list of Sublattice)</span>
+<span class="sd">            Sublattices of the ensemble sampled.</span>
+<span class="sd">        natural_parameters (ndarray):</span>
+<span class="sd">                Array of natural parameters used in the ensemble.</span>
+<span class="sd">        metadata (dict):</span>
+<span class="sd">            Dictionary of metadata from the MC run that generated the samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ensemble</span><span class="p">,</span> <span class="n">sample_trace</span><span class="p">,</span> <span class="n">sampling_metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a sample container.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ensemble (Ensemble):</span>
+<span class="sd">                Ensemble object used to generate the samples.</span>
+<span class="sd">            sample_trace (Trace):</span>
+<span class="sd">                a trace object for the traced values during MC sampling</span>
+<span class="sd">            sampling_metadata (Ensemble):</span>
+<span class="sd">                sampling metadata (i.e. ensemble name, mckernel type, etc)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">sampling_metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampling_metadata</span><span class="p">,</span> <span class="n">Metadata</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">sampling_metadata</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">Metadata</span><span class="p">(</span><span class="n">SampleContainer</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="o">**</span><span class="n">sampling_metadata</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">Metadata</span><span class="p">(</span><span class="n">SampleContainer</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+        <span class="c1"># TODO these private attributes should be removed once the older format of</span>
+        <span class="c1">#  sample containers (those that do not save ensembles) is no longer supported</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sublattices</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_natural_parameters</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_energy_coefs</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">ensemble</span><span class="o">.</span><span class="n">num_energy_coefs</span> <span class="k">if</span> <span class="n">ensemble</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble</span> <span class="o">=</span> <span class="n">ensemble</span>
+        <span class="c1"># need counter because can&#39;t use shape of arrays when allocating space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nsamples</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span> <span class="o">=</span> <span class="n">sample_trace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_aux_checkpoint</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># for streaming</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sublattices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the sublattices.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sublattices</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble</span><span class="o">.</span><span class="n">sublattices</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">natural_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the natural parameters.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_natural_parameters</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble</span><span class="o">.</span><span class="n">natural_parameters</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ensemble</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the ensemble name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the total number of samples.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nsamples</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">total_mc_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the total number of MC steps taken during sampling.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the shape of the samples in chain.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="o">.</span><span class="n">occupancy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traced_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the names of traced values being sampled.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="o">.</span><span class="n">names</span>
+
+<div class="viewcode-block" id="SampleContainer.sampling_efficiency"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.sampling_efficiency">[docs]</a>    <span class="k">def</span> <span class="nf">sampling_efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the sampling efficiency for chains.&quot;&quot;&quot;</span>
+        <span class="n">total_accepted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="o">.</span><span class="n">accepted</span><span class="p">[</span><span class="n">discard</span><span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">efficiency</span> <span class="o">=</span> <span class="n">total_accepted</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span> <span class="o">-</span> <span class="n">discard</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">flat</span><span class="p">:</span>
+            <span class="n">efficiency</span> <span class="o">=</span> <span class="n">efficiency</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">efficiency</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_sampled_structures"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_sampled_structures">[docs]</a>    <span class="k">def</span> <span class="nf">get_sampled_structures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get sampled structures for MC steps given by indices.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            indices (list of int or int):</span>
+<span class="sd">                A single index or list of indices to obtain sampled structures.</span>
+<span class="sd">            flat (bool): optional</span>
+<span class="sd">                If true will flatten chains, and the indices correspond to flattened</span>
+<span class="sd">                values. If false chain is not flattened, and if multiple walkers where</span>
+<span class="sd">                used returns a list of list where each inner list has the sampled</span>
+<span class="sd">                structure for each walker. Default is set to flat True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list of Structure or list of list of Structure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensemble</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot get structures for SampleContainer with older format!&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="n">indices</span>
+        <span class="n">occupancies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_occupancies</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="n">flat</span><span class="p">)[</span><span class="n">indices</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">flat</span><span class="p">:</span>
+            <span class="n">structures</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">structure_from_occupancy</span><span class="p">(</span><span class="n">occu</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">occu</span> <span class="ow">in</span> <span class="n">occupancies</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">structures</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">structure_from_occupancy</span><span class="p">(</span><span class="n">occu</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">occu</span> <span class="ow">in</span> <span class="n">occus</span>
+                <span class="p">]</span>
+                <span class="k">for</span> <span class="n">occus</span> <span class="ow">in</span> <span class="n">occupancies</span>
+            <span class="p">]</span>
+        <span class="k">return</span> <span class="n">structures</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_trace_value"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_trace_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_trace_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get sampled values of a traced value given by name.&quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="p">,</span> <span class="n">name</span><span class="p">)[</span><span class="n">discard</span> <span class="o">+</span> <span class="n">thin_by</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">::</span> <span class="n">thin_by</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">flat</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="SampleContainer.mean_trace_value"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_trace_value">[docs]</a>    <span class="k">def</span> <span class="nf">mean_trace_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get mean of a traced value given by name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_trace_value</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.trace_value_variance"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.trace_value_variance">[docs]</a>    <span class="k">def</span> <span class="nf">trace_value_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get variance of a traced value given by name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_trace_value</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_occupancies"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_occupancies">[docs]</a>    <span class="k">def</span> <span class="nf">get_occupancies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the occupancy chain of the samples.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_trace_value</span><span class="p">(</span><span class="s2">&quot;occupancy&quot;</span><span class="p">,</span> <span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_enthalpies"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_enthalpies">[docs]</a>    <span class="k">def</span> <span class="nf">get_enthalpies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the generalized enthalpy changes from samples in chain.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_trace_value</span><span class="p">(</span><span class="s2">&quot;enthalpy&quot;</span><span class="p">,</span> <span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_feature_vectors"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_feature_vectors">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the feature vector changes from samples in chain.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_trace_value</span><span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_energies"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_energies">[docs]</a>    <span class="k">def</span> <span class="nf">get_energies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the energies from samples in chain.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">natural_parameters</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_energy_coefs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_enthalpies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span>
+        <span class="c1"># otherwise we have to calculate without the additional terms...</span>
+        <span class="n">feature_trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_feature_vectors</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span>
+                        <span class="n">features</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_energy_coefs</span><span class="p">],</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">natural_parameters</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_energy_coefs</span><span class="p">],</span>
+                        <span class="n">axes</span><span class="o">=</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">features</span> <span class="ow">in</span> <span class="n">feature_trace</span>
+                <span class="p">]</span>
+            <span class="p">),</span>
+            <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">flat</span><span class="p">:</span>
+            <span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten</span><span class="p">(</span><span class="n">energies</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">energies</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_sublattice_compositions"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_sublattice_compositions">[docs]</a>    <span class="k">def</span> <span class="nf">get_sublattice_compositions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sublattice</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the compositions of a specific sublattice.&quot;&quot;&quot;</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sublattice_species_counts</span><span class="p">(</span><span class="n">sublattice</span><span class="p">,</span> <span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">counts</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">sublattice</span><span class="o">.</span><span class="n">sites</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_compositions"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_compositions">[docs]</a>    <span class="k">def</span> <span class="nf">get_compositions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the compositions for each occupancy in the chain.&quot;&quot;&quot;</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_species_counts</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">spec</span><span class="p">:</span> <span class="n">count</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">spec</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+<div class="viewcode-block" id="SampleContainer.mean_enthalpy"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_enthalpy">[docs]</a>    <span class="k">def</span> <span class="nf">mean_enthalpy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the mean generalized enthalpy.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_enthalpies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.enthalpy_variance"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.enthalpy_variance">[docs]</a>    <span class="k">def</span> <span class="nf">enthalpy_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the variance in enthalpy.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_enthalpies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.mean_energy"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_energy">[docs]</a>    <span class="k">def</span> <span class="nf">mean_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the mean energy from samples.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.energy_variance"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.energy_variance">[docs]</a>    <span class="k">def</span> <span class="nf">energy_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the variance of sampled energies.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.mean_feature_vector"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_feature_vector">[docs]</a>    <span class="k">def</span> <span class="nf">mean_feature_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the mean feature vector from samples.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_feature_vectors</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.feature_vector_variance"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.feature_vector_variance">[docs]</a>    <span class="k">def</span> <span class="nf">feature_vector_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the variance of feature vector elements.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_feature_vectors</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_orbit_factors"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_orbit_factors">[docs]</a>    <span class="k">def</span> <span class="nf">get_orbit_factors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function_orbit_ids</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the orbit factor vectors for samples.&quot;&quot;&quot;</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">natural_parameters</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_feature_vectors</span><span class="p">(</span>
+            <span class="n">discard</span><span class="o">=</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="n">flat</span>
+        <span class="p">)</span>
+        <span class="n">orbit_factors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="n">function_orbit_ids</span> <span class="o">==</span> <span class="n">i</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">natural_parameters</span><span class="p">))</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">orbit_factors</span></div>
+
+<div class="viewcode-block" id="SampleContainer.mean_composition"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_composition">[docs]</a>    <span class="k">def</span> <span class="nf">mean_composition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get mean composition for all species regardless of sublattice.&quot;&quot;&quot;</span>
+        <span class="n">comps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_compositions</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">spec</span><span class="p">:</span> <span class="n">comp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">spec</span><span class="p">,</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">comps</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+<div class="viewcode-block" id="SampleContainer.composition_variance"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.composition_variance">[docs]</a>    <span class="k">def</span> <span class="nf">composition_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the variance in composition of all species.&quot;&quot;&quot;</span>
+        <span class="n">comps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_compositions</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">spec</span><span class="p">:</span> <span class="n">comp</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">spec</span><span class="p">,</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">comps</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+<div class="viewcode-block" id="SampleContainer.mean_sublattice_composition"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.mean_sublattice_composition">[docs]</a>    <span class="k">def</span> <span class="nf">mean_sublattice_composition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sublattice</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the mean composition of a specific sublattice.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sublattice_compositions</span><span class="p">(</span>
+            <span class="n">sublattice</span><span class="p">,</span> <span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.sublattice_composition_variance"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.sublattice_composition_variance">[docs]</a>    <span class="k">def</span> <span class="nf">sublattice_composition_variance</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">sublattice</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the variance in composition of a specific sublattice.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sublattice_compositions</span><span class="p">(</span><span class="n">sublattice</span><span class="p">,</span> <span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">var</span><span class="p">(</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_minimum_enthalpy"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_minimum_enthalpy">[docs]</a>    <span class="k">def</span> <span class="nf">get_minimum_enthalpy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the minimum energy from samples.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_enthalpies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_minimum_enthalpy_occupancy"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_minimum_enthalpy_occupancy">[docs]</a>    <span class="k">def</span> <span class="nf">get_minimum_enthalpy_occupancy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the occupancy with minimum energy from samples.&quot;&quot;&quot;</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_enthalpies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">flat</span><span class="p">:</span>
+            <span class="n">occus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_occupancies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)[</span><span class="n">inds</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">occus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_occupancies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)[</span>
+                <span class="n">inds</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">occus</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_minimum_energy"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_minimum_energy">[docs]</a>    <span class="k">def</span> <span class="nf">get_minimum_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the minimum energy from samples.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_minimum_energy_occupancy"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_minimum_energy_occupancy">[docs]</a>    <span class="k">def</span> <span class="nf">get_minimum_energy_occupancy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the occupancy with minimum energy from samples.&quot;&quot;&quot;</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">flat</span><span class="p">:</span>
+            <span class="n">occus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_occupancies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)[</span><span class="n">inds</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">occus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_occupancies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="p">)[</span>
+                <span class="n">inds</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">occus</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_species_counts"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_species_counts">[docs]</a>    <span class="k">def</span> <span class="nf">get_species_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the species counts for each occupancy in the chain.&quot;&quot;&quot;</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">-</span> <span class="n">discard</span><span class="p">)</span> <span class="o">//</span> <span class="n">thin_by</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">samples</span> <span class="k">if</span> <span class="n">flat</span> <span class="k">else</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">samples</span><span class="p">)</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">sublattice</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sublattices</span><span class="p">:</span>
+            <span class="n">subcounts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sublattice_species_counts</span><span class="p">(</span>
+                <span class="n">sublattice</span><span class="p">,</span> <span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">species</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sublattice</span><span class="o">.</span><span class="n">species</span><span class="p">,</span> <span class="n">subcounts</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
+                <span class="n">counts</span><span class="p">[</span><span class="n">species</span><span class="p">]</span> <span class="o">+=</span> <span class="n">count</span>
+        <span class="k">return</span> <span class="n">counts</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_sublattice_species_counts"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_sublattice_species_counts">[docs]</a>    <span class="k">def</span> <span class="nf">get_sublattice_species_counts</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">sublattice</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the counts of each species in a sublattices.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            ndarray: where last axis is the count for each species in the</span>
+<span class="sd">            same order as the underlying site space.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sublattice</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sublattices</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Sublattice provided is not recognized.</span><span class="se">\n</span><span class="s2"> Provide one included&quot;</span>
+                <span class="s2">&quot; in the sublattices attribute of this SampleContainer.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">occus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_occupancies</span><span class="p">(</span><span class="n">discard</span><span class="p">,</span> <span class="n">thin_by</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="o">*</span><span class="n">occus</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">sublattice</span><span class="o">.</span><span class="n">site_space</span><span class="p">)))</span>
+        <span class="c1">#  This can probably be re-written in a clean/faster way</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">occupancies</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">occus</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">occupancy</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">occupancies</span><span class="p">):</span>
+                <span class="n">codes</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
+                    <span class="n">occupancy</span><span class="p">[</span><span class="n">sublattice</span><span class="o">.</span><span class="n">sites</span><span class="p">],</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+                <span class="c1"># check for zero counts</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">codes</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sublattice</span><span class="o">.</span><span class="n">site_space</span><span class="p">):</span>
+                    <span class="n">missed</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">sublattice</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">codes</span><span class="p">))</span>
+                    <span class="n">codes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">codes</span><span class="p">,</span> <span class="n">missed</span><span class="p">)</span>
+                    <span class="n">count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+                <span class="n">original_codes</span> <span class="o">=</span> <span class="n">sublattice</span><span class="o">.</span><span class="n">encoding</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="n">order</span> <span class="o">=</span> <span class="p">[</span><span class="n">codes</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">code</span><span class="p">)</span> <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">original_codes</span><span class="p">]</span>
+                <span class="n">counts</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>  <span class="c1"># order them accordingly</span>
+        <span class="k">if</span> <span class="n">flat</span><span class="p">:</span>
+            <span class="n">counts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">counts</span></div>
+
+<div class="viewcode-block" id="SampleContainer.save_sampled_trace"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.save_sampled_trace">[docs]</a>    <span class="k">def</span> <span class="nf">save_sampled_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trace</span><span class="p">,</span> <span class="n">thinned_by</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save a sampled trace.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            trace (Trace)</span>
+<span class="sd">                Trace of sampled values</span>
+<span class="sd">            thinned_by (int):</span>
+<span class="sd">                the amount that the sampling was thinned by. Used to update</span>
+<span class="sd">                the total mc iterations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">trace</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="p">,</span> <span class="n">name</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">_nsamples</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nsamples</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span> <span class="o">+=</span> <span class="n">thinned_by</span></div>
+
+<div class="viewcode-block" id="SampleContainer.clear"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all samples from container.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nsamples</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="SampleContainer.allocate"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.allocate">[docs]</a>    <span class="k">def</span> <span class="nf">allocate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsamples</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allocate more space in arrays for more samples.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">nsamples</span><span class="p">,</span> <span class="o">*</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="SampleContainer.vacuum"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.vacuum">[docs]</a>    <span class="k">def</span> <span class="nf">vacuum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove any trailing allocated space that has not been used.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nsamples</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="SampleContainer.flush_to_backend"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.flush_to_backend">[docs]</a>    <span class="k">def</span> <span class="nf">flush_to_backend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backend</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Flush current samples and trace to backend file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            backend (object):</span>
+<span class="sd">                backend file object, currently only hdf5 supported.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">backend</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;nsamples&quot;</span><span class="p">]</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nsamples</span> <span class="o">+</span> <span class="n">start</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">backend</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">][</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="n">backend</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;total_mc_steps&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span>
+        <span class="n">backend</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;nsamples&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nsamples</span>
+        <span class="n">backend</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nsamples</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="SampleContainer.get_backend"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.get_backend">[docs]</a>    <span class="nd">@requires</span><span class="p">(</span><span class="n">h5py</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;&#39;h5py&#39; not found. Please install it.&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get_backend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">alloc_nsamples</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">swmr_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a backend file object.</span>
+
+<span class="sd">        Currently only hdf5 files supported</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path (str):</span>
+<span class="sd">                path to backend file.</span>
+<span class="sd">            alloc_nsamples (int): optional</span>
+<span class="sd">                number of new samples to allocate. Will only extend datasets</span>
+<span class="sd">                if number given is larger than space left to write samples</span>
+<span class="sd">                into.</span>
+<span class="sd">            swmr_mode (bool): optional</span>
+<span class="sd">                If true allows to read file from other processes. Single Writer</span>
+<span class="sd">                Multiple Readers.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            h5.File object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_backend</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="n">trace_grp</span> <span class="o">=</span> <span class="n">backend</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">]</span>
+            <span class="n">available</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trace_grp</span><span class="p">[</span><span class="s2">&quot;occupancy&quot;</span><span class="p">])</span> <span class="o">-</span> <span class="n">trace_grp</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;nsamples&quot;</span><span class="p">]</span>
+            <span class="c1"># this probably fails since maxshape is not set.</span>
+            <span class="k">if</span> <span class="n">available</span> <span class="o">&lt;</span> <span class="n">alloc_nsamples</span><span class="p">:</span>
+                <span class="n">SampleContainer</span><span class="o">.</span><span class="n">_grow_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="n">alloc_nsamples</span> <span class="o">-</span> <span class="n">available</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w-&quot;</span><span class="p">,</span> <span class="n">libver</span><span class="o">=</span><span class="s2">&quot;latest&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="n">alloc_nsamples</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">swmr_mode</span><span class="p">:</span>
+            <span class="n">backend</span><span class="o">.</span><span class="n">swmr_mode</span> <span class="o">=</span> <span class="n">swmr_mode</span>
+        <span class="k">return</span> <span class="n">backend</span></div>
+
+    <span class="k">def</span> <span class="nf">_check_backend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if existing backend file is populated correctly.&quot;&quot;&quot;</span>
+        <span class="n">backend</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r+&quot;</span><span class="p">,</span> <span class="n">libver</span><span class="o">=</span><span class="s2">&quot;latest&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">backend</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">][</span><span class="s2">&quot;occupancy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="n">backend</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">][</span><span class="s2">&quot;occupancy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">backend</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Backend file </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> has incompatible dimensions &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">backend</span>
+
+    <span class="k">def</span> <span class="nf">_init_backend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">nsamples</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a backend file.&quot;&quot;&quot;</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">)</span>
+        <span class="n">metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
+            <span class="s2">&quot;ensemble&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ensemble</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">MontyEncoder</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">metadata</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
+            <span class="s2">&quot;sampling_metadata&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">MontyEncoder</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">trace_grp</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;trace&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">trace_grp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
+                <span class="n">name</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">nsamples</span><span class="p">,</span> <span class="o">*</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                <span class="n">maxshape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span>
+            <span class="p">)</span>
+        <span class="n">trace_grp</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;nsamples&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">trace_grp</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;total_mc_steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">backend</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>  <span class="c1"># flush initialization</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_grow_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="n">nsamples</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extend space available in a backend file.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">backend</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">]:</span>
+            <span class="n">backend</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">backend</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">][</span><span class="n">name</span><span class="p">])</span> <span class="o">+</span> <span class="n">nsamples</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_flatten</span><span class="p">(</span><span class="n">traced_values</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Flatten values in trace values with multiple walkers.&quot;&quot;&quot;</span>
+        <span class="n">shape_l</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">traced_values</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">shape_l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">traced_values</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">traced_values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape_l</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of samples.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nsamples</span>
+
+<div class="viewcode-block" id="SampleContainer.as_dict"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get Json-serialization dict representation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            MSONable dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">container_d</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;@module&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+            <span class="s2">&quot;@class&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s2">&quot;ensemble&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">as_dict</span><span class="p">(),</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">as_dict</span><span class="p">(),</span>
+            <span class="s2">&quot;total_mc_steps&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span><span class="p">,</span>
+            <span class="s2">&quot;nsamples&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nsamples</span><span class="p">,</span>
+            <span class="s2">&quot;trace&quot;</span><span class="p">:</span> <span class="n">jsanitize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()),</span>
+            <span class="s2">&quot;aux_checkpoint&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aux_checkpoint</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="c1"># TODO need to think how to generally serialize the aux checkpoint</span>
+        <span class="k">return</span> <span class="n">container_d</span></div>
+
+    <span class="nd">@classmethod</span>  <span class="c1"># TODO remove this when old container format (without ensemble) are no longer supported</span>
+    <span class="k">def</span> <span class="nf">_from_legacy</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">ensemble</span><span class="p">,</span> <span class="n">sublattices</span><span class="p">,</span> <span class="n">trace</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">nat_params</span><span class="p">,</span> <span class="n">n_energy_coefs</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load a legacy container.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ensemble</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;This SampleContainer was created with a previous version of smol.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;This format is deprecated and will not be supported in the future.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;To update your SampleContainer, generate it using the from_dict or &quot;</span>
+                <span class="s2">&quot;from_hdf5 methods passing the Ensemble that was used to generate samples&quot;</span>
+                <span class="s2">&quot; using the `ensemble` keyword argument, and re-save it.&quot;</span><span class="p">,</span>
+                <span class="ne">FutureWarning</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">container</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">trace</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">_sublattices</span> <span class="o">=</span> <span class="n">sublattices</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">_natural_parameters</span> <span class="o">=</span> <span class="n">nat_params</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">_num_energy_coefs</span> <span class="o">=</span> <span class="n">n_energy_coefs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># check that sublattices match (this does not check if active sites match!)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">sl</span> <span class="ow">in</span> <span class="n">sublattices</span> <span class="k">for</span> <span class="n">sl</span> <span class="ow">in</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">sublattices</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="n">ensemble</span><span class="o">.</span><span class="n">sublattices</span>
+            <span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sublattices</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Sublattices in Ensemble object passed do not match, the once saved. </span><span class="se">\n</span><span class="s2"> &quot;</span>
+                    <span class="s2">&quot;Make sure you are passing the correct Ensemble object.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">container</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">ensemble</span><span class="p">,</span> <span class="n">trace</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">container</span>
+
+<div class="viewcode-block" id="SampleContainer.from_dict"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">ensemble</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Instantiate a SampleContainer from dict representation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            d (dict):</span>
+<span class="sd">                dictionary representation.</span>
+<span class="sd">            ensemble (Ensemble): optional</span>
+<span class="sd">                The ensemble object to used for generating samples. Only needed to</span>
+<span class="sd">                update legacy files.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            SampleContainer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">trace</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MontyDecoder</span><span class="p">()</span><span class="o">.</span><span class="n">process_decoded</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">],</span> <span class="n">Metadata</span><span class="p">):</span>  <span class="c1"># backwards compatibility</span>
+            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Metadata</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="s2">&quot;sublattices&quot;</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>  <span class="c1"># legacy file</span>
+            <span class="n">sublattices</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">Sublattice</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">sublatt</span><span class="p">)</span> <span class="k">for</span> <span class="n">sublatt</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;sublattices&quot;</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="n">container</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_legacy</span><span class="p">(</span>
+                <span class="n">ensemble</span><span class="p">,</span>
+                <span class="n">sublattices</span><span class="p">,</span>
+                <span class="n">trace</span><span class="p">,</span>
+                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">],</span>
+                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;natural_parameters&quot;</span><span class="p">],</span>
+                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;num_energy_coefs&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ensemble</span> <span class="o">=</span> <span class="n">Ensemble</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;ensemble&quot;</span><span class="p">])</span>
+            <span class="n">container</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">ensemble</span><span class="p">,</span> <span class="n">trace</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">])</span>
+
+        <span class="c1"># set the container internals</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">_total_steps</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;total_mc_steps&quot;</span><span class="p">]</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">_nsamples</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">occupancy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">_aux_checkpoint</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;aux_checkpoint&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">container</span></div>
+
+<div class="viewcode-block" id="SampleContainer.to_hdf5"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.to_hdf5">[docs]</a>    <span class="k">def</span> <span class="nf">to_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save SampleContainer as an HDF5 file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path (str):</span>
+<span class="sd">                path to file save location. If file exists and dimensions</span>
+<span class="sd">                match samples will be appended.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># keep these to not reset writing</span>
+        <span class="n">total_mc_steps</span><span class="p">,</span> <span class="n">nsamples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nsamples</span>
+        <span class="n">backend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flush_to_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nsamples</span> <span class="o">=</span> <span class="n">total_mc_steps</span><span class="p">,</span> <span class="n">nsamples</span>
+        <span class="n">backend</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SampleContainer.from_hdf5"><a class="viewcode-back" href="../../../api_reference/autogen/moca.sampler.html#moca.sampler.container.SampleContainer.from_hdf5">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="nd">@requires</span><span class="p">(</span><span class="n">h5py</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;&#39;h5py&#39; not found. Please install it.&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">from_hdf5</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">swmr_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ensemble</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Instantiate a SampleContainer from an hdf5 file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path (str):</span>
+<span class="sd">                path to file</span>
+<span class="sd">            swmr_mode (bool): optional</span>
+<span class="sd">                If true allows to read file from other processes. Single Writer</span>
+<span class="sd">                Multiple Readers.</span>
+<span class="sd">            ensemble (Ensemble): optional</span>
+<span class="sd">                The ensemble object to used for generating samples. Only needed to</span>
+<span class="sd">                update legacy files.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SampleContainer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">swmr</span><span class="o">=</span><span class="n">swmr_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="c1"># Check if written states matches the size of datasets</span>
+            <span class="n">nsamples</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;nsamples&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">][</span><span class="s2">&quot;occupancy&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">nsamples</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The hdf5 file provided appears to be from an unifinished&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; MC run.</span><span class="se">\n</span><span class="s2"> Only </span><span class="si">{</span><span class="n">nsamples</span><span class="si">}</span><span class="s2"> of &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s1">&#39;trace&#39;</span><span class="p">][</span><span class="s1">&#39;occupancy&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2"> samples &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;have been written and will be loaded.&quot;</span><span class="p">,</span>
+                    <span class="ne">UserWarning</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">trace</span> <span class="o">=</span> <span class="n">Trace</span><span class="p">(</span>
+                <span class="o">**</span><span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">value</span><span class="p">[:</span><span class="n">nsamples</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="s2">&quot;sublattices&quot;</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>  <span class="c1"># legacy file</span>
+                <span class="n">sampling_metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+                    <span class="n">f</span><span class="p">[</span><span class="s2">&quot;sampling_metadata&quot;</span><span class="p">][()],</span> <span class="bp">cls</span><span class="o">=</span><span class="n">MontyDecoder</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+                    <span class="n">sampling_metadata</span><span class="p">,</span> <span class="n">Metadata</span>
+                <span class="p">):</span>  <span class="c1"># backwards compatibility</span>
+                    <span class="n">sampling_metadata</span> <span class="o">=</span> <span class="n">Metadata</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="o">**</span><span class="n">sampling_metadata</span><span class="p">)</span>
+
+                <span class="n">sublattices</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">Sublattice</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;sublattices&quot;</span><span class="p">][()])</span>
+                <span class="p">]</span>
+                <span class="n">container</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_legacy</span><span class="p">(</span>
+                    <span class="n">ensemble</span><span class="p">,</span>
+                    <span class="n">sublattices</span><span class="p">,</span>
+                    <span class="n">trace</span><span class="p">,</span>
+                    <span class="n">sampling_metadata</span><span class="p">,</span>
+                    <span class="n">f</span><span class="p">[</span><span class="s2">&quot;natural_parameters&quot;</span><span class="p">][()],</span>
+                    <span class="n">f</span><span class="p">[</span><span class="s2">&quot;natural_parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;num_energy_coefs&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sampling_metadata</span> <span class="o">=</span> <span class="n">Metadata</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+                    <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;sampling_metadata&quot;</span><span class="p">][()])</span>
+                <span class="p">)</span>
+                <span class="n">ensemble</span> <span class="o">=</span> <span class="n">Ensemble</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;ensemble&quot;</span><span class="p">][()]))</span>
+                <span class="n">container</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">ensemble</span><span class="p">,</span> <span class="n">trace</span><span class="p">,</span> <span class="n">sampling_metadata</span><span class="p">)</span>
+
+            <span class="n">container</span><span class="o">.</span><span class="n">_nsamples</span> <span class="o">=</span> <span class="n">nsamples</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">_total_steps</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;trace&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;total_mc_steps&quot;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">container</span></div></div>
+</pre></div>
+
+                </article>
+              
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2022-2023, Ceder Group.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.0.1.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.13.3.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
