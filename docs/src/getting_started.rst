@@ -173,8 +173,6 @@ Basic Examples
 - `Running canonical Monte Carlo`_
 - `Running semigrand canonical Monte Carlo`_
 - `Running charge neutral semigrand canonical Monte Carlo`_
-- `Wang-Landau sampling of an FCC Ising model`_
-- `Preparing cluster expansion training data`_
 - `Setting number of threads for OpenMP parallelization`_
 
 
@@ -190,26 +188,31 @@ Basic Examples
 
 .. _Running Charge Neutral Semigrand Canonical Monte Carlo: notebooks/running-charge-balanced-gcmc.ipynb
 
-.. _Wang-Landau sampling of an FCC Ising model: notebooks/wang-landau-ising.ipynb
-
-.. _Preparing cluster expansion training data: notebooks/training-data-preparation.ipynb
-
 .. _Setting number of threads for OpenMP parallelization: notebooks/openmp-parallelism.ipynb
 
 
 Advanced Examples
 -----------------
 
+- `Preparing cluster expansion training data`_
 - `Centering training data in stage-wise fit with electrostatics`_
 - `Adding structures to a StructureWrangler in parallel`_
 - `Simulated annealing with point electrostatics`_
+- `Wang-Landau sampling of an FCC Ising model`_
+- `Generating special quasirandom structures`_
 - `Li-Mn-O DRX cluster expansion and sampling`_
+
+.. _Preparing cluster expansion training data: notebooks/training-data-preparation.ipynb
 
 .. _Centering training data in stage-wise fit with electrostatics: notebooks/ce-fit-w-centering.ipynb
 
 .. _Adding structures to a StructureWrangler in parallel: notebooks/adding-structures-in-parallel.ipynb
 
 .. _Simulated annealing with point electrostatics: notebooks/running-ewald-sim_anneal.ipynb
+
+.. _Wang-Landau sampling of an FCC Ising model: notebooks/wang-landau-ising.ipynb
+
+.. _Generating special quasirandom structures: notebooks/generating-sqs.ipynb
 
 .. _Li-Mn-O DRX cluster expansion and sampling: notebooks/lmo-drx-ce-mc.ipynb
 

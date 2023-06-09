@@ -15,6 +15,10 @@ from smol.moca.processor import (
     CompositeProcessor,
     EwaldProcessor,
 )
+from smol.moca.processor.distance import (
+    ClusterInteractionDistanceProcessor,
+    CorrelationDistanceProcessor,
+)
 from smol.utils.class_utils import get_subclasses
 from tests.utils import gen_fake_training_data
 
@@ -77,12 +81,7 @@ def single_structure():
 @pytest.fixture(params=test_structures, scope="package")
 def cluster_subspace(cluster_cutoffs, request):
     subspace = ClusterSubspace.from_cutoffs(
-        request.param,
-        cutoffs=cluster_cutoffs,
-        supercell_size="volume",
-        ltol=0.3,
-        stol=0.35,
-        angle_tol=10,
+        request.param, cutoffs=cluster_cutoffs, supercell_size="volume"
     )
     return subspace
 
@@ -105,6 +104,51 @@ def single_subspace(single_structure):
     return subspace
 
 
+# fixture for all processors
+@pytest.fixture(
+    params=[
+        "expansion",
+        "decomposition",
+        "ewald",
+        "composite",
+        "corr_distance",
+        "int_distance",
+    ],
+    scope="module",
+)
+def processor(cluster_subspace, rng, request):
+    coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
+    scmatrix = 3 * np.eye(3)
+
+    if request.param == "expansion":
+        proc = ClusterExpansionProcessor(cluster_subspace, scmatrix, coefficients=coefs)
+    elif request.param == "decomposition":
+        expansion = ClusterExpansion(cluster_subspace, coefs)
+        proc = ClusterDecompositionProcessor(
+            cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
+        )
+    elif request.param == "ewald":
+        proc = EwaldProcessor(cluster_subspace, scmatrix, EwaldTerm(), coefficient=1.0)
+    elif request.param == "composite":
+        proc = CompositeProcessor(cluster_subspace, supercell_matrix=scmatrix)
+        proc.add_processor(
+            ClusterExpansionProcessor(cluster_subspace, scmatrix, coefficients=coefs)
+        )
+        proc.add_processor(
+            EwaldProcessor(cluster_subspace, scmatrix, EwaldTerm(), coefficient=1.0)
+        )
+    elif request.param == "corr_distance":
+        proc = CorrelationDistanceProcessor(cluster_subspace, scmatrix)
+    else:
+        expansion = ClusterExpansion(cluster_subspace, coefs)
+        proc = ClusterInteractionDistanceProcessor(
+            cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
+        )
+
+    yield proc
+    cluster_subspace._external_terms = []  # Ewald processor will add one..
+
+
 @pytest.fixture(scope="module")
 def ce_processor(cluster_subspace, rng):
     coefs = 2 * rng.random(cluster_subspace.num_corr_functions)
@@ -114,24 +158,25 @@ def ce_processor(cluster_subspace, rng):
     )
 
 
-@pytest.fixture(params=["CE", "CD"], scope="module")
+@pytest.fixture(params=["expansion", "decomposition"], scope="module")
 def composite_processor(cluster_subspace_ewald, rng, request):
     coefs = 2 * np.random.random(cluster_subspace_ewald.num_corr_functions + 1)
     scmatrix = 3 * np.eye(3)
     proc = CompositeProcessor(cluster_subspace_ewald, supercell_matrix=scmatrix)
-    if request.param == "CE":
+    if request.param == "expansion":
         proc.add_processor(
             ClusterExpansionProcessor(
                 cluster_subspace_ewald, scmatrix, coefficients=coefs[:-1]
             )
         )
-    else:
+    else:  # elif request.param == "decomposition":
         expansion = ClusterExpansion(cluster_subspace_ewald, coefs)
         proc.add_processor(
             ClusterDecompositionProcessor(
                 cluster_subspace_ewald, scmatrix, expansion.cluster_interaction_tensors
             )
         )
+
     proc.add_processor(
         EwaldProcessor(
             cluster_subspace_ewald, scmatrix, EwaldTerm(), coefficient=coefs[-1]
@@ -202,5 +247,5 @@ def structure_wrangler(single_subspace, rng):
     for entry in gen_fake_training_data(single_subspace.structure, n=10, rng=rng):
         wrangler.add_entry(entry, weights={"random": 2.0})
     yield wrangler
-    # force remove any external terms added in tetts
+    # force remove any external terms added in tests
     wrangler.cluster_subspace._external_terms = []

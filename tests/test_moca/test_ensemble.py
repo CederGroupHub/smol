@@ -5,6 +5,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
+from smol.capp.generate.random import _gen_unconstrained_ordered_occu
 from smol.cofe import ClusterExpansion, RegressionData
 from smol.moca import (
     ClusterDecompositionProcessor,
@@ -13,7 +14,7 @@ from smol.moca import (
     Ensemble,
     EwaldProcessor,
 )
-from tests.utils import assert_msonable, gen_random_occupancy
+from tests.utils import assert_msonable
 
 
 @pytest.fixture
@@ -70,6 +71,14 @@ def test_from_cluster_expansion(
             coefficient=coefs[-1],
         )
     )
+    reg_data = RegressionData(
+        module="fake.module",
+        estimator_name="Estimator",
+        feature_matrix=rng.random((5, len(coefs))),
+        property_vector=rng.random(len(coefs)),
+        parameters={"foo": "bar"},
+    )
+    expansion = ClusterExpansion(cluster_subspace_ewald, coefs, reg_data)
 
     if ensemble_type == "semigrand":
         species = {sp for space in proc.active_site_spaces for sp in space.keys()}
@@ -123,7 +132,7 @@ def test_msonable(ensemble):
 
 
 def test_split_ensemble(ensemble, rng):
-    occu = gen_random_occupancy(ensemble.sublattices, rng=rng)
+    occu = _gen_unconstrained_ordered_occu(ensemble.sublattices, rng=rng)
     for sublattice in ensemble.sublattices:
         npt.assert_array_equal(np.arange(len(sublattice.species)), sublattice.encoding)
         # ensemble must have been initialized from default.
@@ -208,7 +217,7 @@ def test_split_ensemble(ensemble, rng):
 # Canonical Ensemble tests
 def test_compute_feature_vector_canonical(canonical_ensemble, rng):
     processor = canonical_ensemble.processor
-    occu = gen_random_occupancy(canonical_ensemble.sublattices, rng=rng)
+    occu = _gen_unconstrained_ordered_occu(canonical_ensemble.sublattices, rng=rng)
     assert np.dot(
         canonical_ensemble.natural_parameters,
         canonical_ensemble.compute_feature_vector(occu),
@@ -267,7 +276,7 @@ def test_compute_feature_vector_canonical(canonical_ensemble, rng):
 # tests for a semigrand ensemble
 def test_compute_feature_vector_sgc(semigrand_ensemble, rng):
     proc = semigrand_ensemble.processor
-    occu = gen_random_occupancy(semigrand_ensemble.sublattices, rng=rng)
+    occu = _gen_unconstrained_ordered_occu(semigrand_ensemble.sublattices, rng=rng)
     chemical_work = sum(
         semigrand_ensemble._chemical_potentials["table"][site][species]
         for site, species in enumerate(occu)

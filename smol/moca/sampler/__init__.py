@@ -8,7 +8,3 @@ simulations.
 
 Samples are saved in a Sample Container.
 """
-
-from smol.moca.sampler.container import SampleContainer
-
-__all__ = ["SampleContainer"]

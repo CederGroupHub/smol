@@ -76,6 +76,25 @@ to include redundancy in cluster expansions, please cite this publication,
     Phys. Rev. B 104, 224203 (2021).
 
 
+Special quasi-random structures (SQS)
+=====================================
+
+When generating special quasi-random structures (SQS), please cite the original
+publication,
+
+    Zunger, A., Wei, S.-H., Ferreira, L. G. & Bernard, J. E.
+    `Special quasirandom structures. <https://doi.org/10.1103/PhysRevLett.65.353>`_
+    Phys. Rev. Lett. 65, 353–356 (1990).
+
+If you use the :class:`StochasticSQSGenerator` class, please cite the following
+publication,
+
+    van de Walle, A. et al.
+    `Efficient stochastic generation of special quasirandom structures.
+    <https://doi.org/10.1016/j.calphad.2013.06.006>`_
+    Calphad 42, 13–18 (2013).
+
+
 Coulomb electrostatic interactions
 ==================================
 When using an :class:`EwaldTerm` as an additional term in a lattice Hamiltonian, please

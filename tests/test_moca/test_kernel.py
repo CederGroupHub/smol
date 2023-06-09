@@ -5,31 +5,33 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
+from smol.capp.generate.random import _gen_unconstrained_ordered_occu
 from smol.constants import kB
-from smol.moca.sampler.bias import FugacityBias
-from smol.moca.sampler.kernel import (
-    ALL_MCUSHERS,
+from smol.moca.kernel import (
     Metropolis,
-    ThermalKernel,
+    MulticellMetropolis,
     UniformlyRandom,
     WangLandau,
 )
-from smol.moca.sampler.mcusher import Flip, Swap, TableFlip
-from smol.moca.sampler.namespace import StepTrace, Trace
-from tests.utils import gen_random_occupancy
+from smol.moca.kernel.base import ALL_MCUSHERS, ThermalKernelMixin
+from smol.moca.kernel.bias import FugacityBias
+from smol.moca.kernel.mcusher import Flip, Swap, TableFlip
+from smol.moca.trace import StepTrace, Trace
 
 kernels_with_bias = [UniformlyRandom, Metropolis]
-kernels_no_bias = [WangLandau]
+kernels_no_bias = [MulticellMetropolis, WangLandau]
 kernels = kernels_with_bias + kernels_no_bias
 ushers = ALL_MCUSHERS
 
 
 @pytest.fixture(params=product(kernels, ushers), scope="module")
-def mckernel(ensemble, request):
+def mckernel(ensemble, rng, request):
     kwargs = {}
     kernel_class, step_type = request.param
-    if issubclass(kernel_class, ThermalKernel):
+
+    if issubclass(kernel_class, ThermalKernelMixin):
         kwargs["temperature"] = 5000
+
     if kernel_class == WangLandau:
         kwargs["min_enthalpy"] = -5000
         kwargs["max_enthalpy"] = 5000
@@ -45,8 +47,27 @@ def mckernel(ensemble, request):
         kwargs["mcushers"] = choices(
             [c for c in ushers if c not in ("MultiStep", "Composite")], k=2
         )
-
-    kernel = kernel_class(ensemble, step_type=step_type, **kwargs)
+    # TODO create ensemble with different cell shapes
+    if kernel_class == MulticellMetropolis:
+        kernels = [
+            Metropolis(ensemble, step_type=step_type, **kwargs) for _ in range(10)
+        ]
+        kernel = kernel_class(
+            kernels, kwargs["temperature"]
+        )  # , kernel_hop_periods=101)
+        kernel.set_aux_state(
+            np.vstack(
+                [
+                    _gen_unconstrained_ordered_occu(kernel.mcusher.sublattices, rng=rng)
+                    for _ in range(len(kernel.mckernels))
+                ]
+            )
+        )
+    else:
+        kernel = kernel_class(ensemble, step_type=step_type, **kwargs)
+        kernel.set_aux_state(
+            _gen_unconstrained_ordered_occu(kernel.mcusher.sublattices, rng=rng)
+        )
     return kernel
 
 
@@ -54,7 +75,7 @@ def mckernel(ensemble, request):
 def mckernel_bias(ensemble, request):
     kwargs = {}
     kernel_class, step_type = request.param
-    if issubclass(kernel_class, ThermalKernel):
+    if issubclass(kernel_class, ThermalKernelMixin):
         kwargs["temperature"] = 5000
 
     if step_type == "MultiStep":
@@ -77,7 +98,7 @@ def mckernel_bias(ensemble, request):
 )
 def test_constructor(ensemble, step_type, mcusher):
     kernel = Metropolis(ensemble, step_type=step_type, temperature=500)
-    assert isinstance(kernel._usher, mcusher)
+    assert isinstance(kernel.mcusher, mcusher)
     assert isinstance(kernel.trace, StepTrace)
     assert "temperature" in kernel.trace.names
     kernel.bias = FugacityBias(kernel.mcusher.sublattices)
@@ -85,16 +106,54 @@ def test_constructor(ensemble, step_type, mcusher):
 
 
 def test_single_step(mckernel, rng):
-    mckernel.set_aux_state(gen_random_occupancy(mckernel._usher.sublattices, rng=rng))
+    occu = _gen_unconstrained_ordered_occu(mckernel.mcusher.sublattices, rng=rng)
+    mckernel.set_aux_state(occu)
+    prev_kernel_index = 0  # for multicell metropolis
+    prev_occu = occu.copy()
+
     for _ in range(100):
-        occu_ = gen_random_occupancy(mckernel._usher.sublattices, rng=rng)
-        trace = mckernel.single_step(occu_.copy())
+        trace = mckernel.single_step(occu)
+        curr_features = mckernel.ensemble.compute_feature_vector(occu)
 
         if trace.accepted:
-            assert not np.array_equal(trace.occupancy, occu_)
+            npt.assert_array_equal(trace.occupancy, occu)
+            if (
+                isinstance(mckernel, MulticellMetropolis)
+                and prev_kernel_index != trace.kernel_index
+            ):
+                prev_features = mckernel._features[prev_kernel_index]
+                assert np.allclose(
+                    mckernel.mckernels[
+                        prev_kernel_index
+                    ].ensemble.compute_feature_vector(prev_occu),
+                    prev_features,
+                )
+                prev_kernel_index = trace.kernel_index
+            else:
+                prev_features = mckernel.ensemble.compute_feature_vector(prev_occu)
+
+            npt.assert_allclose(
+                curr_features - prev_features,
+                trace.delta_trace.features,
+                rtol=1e-5,
+                atol=1e-8,
+            )
         else:
-            npt.assert_array_equal(trace.occupancy, occu_)
-        if isinstance(mckernel, WangLandau):
+            npt.assert_array_equal(trace.occupancy, prev_occu)
+
+        if isinstance(mckernel, MulticellMetropolis):
+            npt.assert_allclose(
+                mckernel._features[trace.kernel_index],
+                curr_features,
+                rtol=1e-5,
+                atol=1e-8,
+            )
+            assert mckernel.trace.kernel_index == mckernel._current_kernel_index
+            assert (
+                mckernel.trace
+                is mckernel.mckernels[mckernel._current_kernel_index].trace
+            )
+        elif isinstance(mckernel, WangLandau):
             assert mckernel.bin_size > 0
             assert isinstance(mckernel.levels, np.ndarray)
             assert isinstance(mckernel.entropy, np.ndarray)
@@ -106,13 +165,18 @@ def test_single_step(mckernel, rng):
             assert "cumulative_mean_features" in trace.names
             assert "mod_factor" in trace.names
 
+        # save previous occu
+        prev_occu[:] = occu
+
 
 def test_single_step_bias(mckernel_bias, rng):
     mckernel_bias.set_aux_state(
-        gen_random_occupancy(mckernel_bias._usher.sublattices, rng=rng)
+        _gen_unconstrained_ordered_occu(mckernel_bias.mcusher.sublattices)
     )
     for _ in range(100):
-        occu = gen_random_occupancy(mckernel_bias._usher.sublattices, rng=rng)
+        occu = _gen_unconstrained_ordered_occu(
+            mckernel_bias.mcusher.sublattices, rng=rng
+        )
         trace = mckernel_bias.single_step(occu.copy())
         # assert delta bias is there and recorded
         assert isinstance(trace.delta_trace.bias, np.ndarray)
@@ -160,3 +224,7 @@ def test_trace(rng):
     steptrace_d = steptrace.__dict__.copy()
     steptrace_d["delta_trace"] = steptrace_d["delta_trace"].__dict__.copy()
     assert steptrace.as_dict() == steptrace_d
+
+
+# TODO add direct multicell tests, especially to check proper updates of traces
+#  before/after cell jumps

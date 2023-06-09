@@ -3,10 +3,10 @@
 Including linear algebra, combinatorics and integer enumerations.
 """
 
-__author___ = "Fengyu Xie"
+__author___ = "Fengyu Xie, Luis Barroso-Luque"
 
 from fractions import Fraction
-from itertools import combinations
+from itertools import combinations, product
 
 import numpy as np
 from monty.dev import requires
@@ -26,6 +26,24 @@ except ImportError:
 
 # Global numerical tolerance in this module.
 NUM_TOL = 1e-6
+
+
+def yield_hermite_normal_forms(determinant):
+    """Yield all hermite normal form matrices with given determinant.
+
+    Args:
+        determinant (int):
+            determinant of hermite normal forms to be yielded
+
+    Yields:
+        ndarray: hermite normal form matrix with given determinant
+    """
+    for a in filter(lambda x: determinant % x == 0, range(1, determinant + 1)):
+        quotient = determinant // a
+        for c in filter(lambda x: quotient % x == 0, range(1, determinant // a + 1)):
+            f = quotient // c
+            for b, d, e in product(range(0, c), range(0, f), range(0, f)):
+                yield np.array([[a, 0, 0], [b, c, 0], [d, e, f]], dtype=int)
 
 
 def gcdex(a, b):
@@ -225,26 +243,23 @@ def compute_snf(a):
 def solve_diophantines(A, b=None):
     """Solve diophantine equations An=b.
 
-    We use Smith normal form to solve equations.
-    If equation is not solvable, we will throw an
-    error.
-    Note: If A decomposes to snf with large matrix
-    elements, the numerical accuracy might have an
-    issue! When this is the case, even if An=b has
-    an integer solution, our function is not
-    guaranteed to find it! But for most application
-    uses, the numerical accuracy here should be enough.
+    We use Smith normal form to solve equations. If equation is not solvable, we will
+    throw an error.
+
+    Note: If A decomposes to snf with large matrix elements, the numerical accuracy
+    might have an issue! When this is the case, even if An=b has an integer solution,
+    our function is not guaranteed to find it! But for most application uses, the
+    numerical accuracy here should be enough.
 
     Args:
-        A(2D ArrayLike[int]):
+        A (2D ArrayLike[int]):
             Matrix A in An=b.
-        b(1D ArrayLike[int], default=None):
+        b (1D ArrayLike[int], default=None):
             Vector b in An=b.
             If not given, will set to zeros.
 
-    Return:
+    Return: (1D np.ndarray[int], 2D np.ndarray[int]
         A base solution and base vectors (as rows):
-        1D np.ndarray[int], 2D np.ndarray[int]
     """
     A = np.array(A, dtype=int)
     n, d = A.shape
@@ -290,9 +305,9 @@ def get_nonneg_float_vertices(A, b):
     a primitive cell.
 
     Args:
-        A(2D np.ndarray):
+        A (2D np.ndarray):
             A in An=b.
-        b(2D np.ndarray):
+        b (2D np.ndarray):
             b in An=b.
     Returns:
         Vertices of polytope An=b, n>=0 in float:
@@ -335,20 +350,19 @@ def get_natural_centroid(
     Note: Need cvxopt and cvxpy!
 
     Args:
-        n0(1D ArrayLike[int]):
+        n0 (1D ArrayLike[int]):
             An origin point of integer lattice.
-        vs(2D ArrayLike[int]):
+        vs (2D ArrayLike[int]):
             Basis vectors of integer lattice.
-        sc_size(int):
+        sc_size (int):
             Super-cell size with n0 as a base solution.
-        a_leq(2D ArrayLike[int]), b_leq(1D ArrayLike[float]):
+        a_leq (2D ArrayLike[int]), b_leq(1D ArrayLike[float]):
             Constraint A @ n <= b. Unit is per prim.
-        a_geq(2D ArrayLike[int]), b_geq(1D ArrayLike[float]):
+        a_geq (2D ArrayLike[int]), b_geq(1D ArrayLike[float]):
             Constraint A @ n >= b. Unit is per prim.
 
-    Returns:
+    Returns: 1D np.ndarray[int]
         The natural number point on the grid closest to centroid ("x"):
-            1D np.ndarray[int]
     """
     n0 = np.array(n0, dtype=int)
     vs = np.array(vs, dtype=int)
@@ -384,17 +398,17 @@ def get_one_dim_solutions(n0, v, integer_tol=NUM_TOL, step=1):
     This will solve n0 + v * x >= 0, give all
     integer solutions. x should be a single int.
     Args:
-        n0(1D np.ndarray[int]):
+        n0 (1D ArrayLinke[int]:
             1 dimensional constraining factors
-        v(1D np.ndarray[int]):
+        v (1D ArrayLinke[int]:
             1 dimensional constraining factors
-        integer_tol(float): optional
+        integer_tol (float): optional
             Tolerance of a number off integer
             value. If (number - round(number))
             <= integer_tol, it will be considered
             as an integer. Default is set by global
             NUM_TOL.
-        step(int): optional
+        step (int): optional
             Step to skip when yielding solutions. For example,
             when step=2, will yield every 2 solutions.
             Default is 1, yield every solution.

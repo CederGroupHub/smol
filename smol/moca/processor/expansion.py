@@ -91,12 +91,11 @@ class ClusterExpansionProcessor(Processor):
         """
         super().__init__(cluster_subspace, supercell_matrix, coefficients)
 
-        self.num_corr_functions = self.cluster_subspace.num_corr_functions
-        if len(coefficients) != self.num_corr_functions:
+        if len(coefficients) != self.cluster_subspace.num_corr_functions:
             raise ValueError(
                 f"The provided coefficients are not the right length. "
                 f"Got {len(coefficients)} coefficients, the length must be "
-                f"{self.num_corr_functions} based on the provided cluster "
+                f"{self.cluster_subspace.num_corr_functions} based on the provided cluster "
                 f"subspace."
             )
 
@@ -200,7 +199,7 @@ class ClusterExpansionProcessor(Processor):
             array: change in correlation vector
         """
         occu_i = occupancy
-        delta_corr = np.zeros(self.num_corr_functions)
+        delta_corr = np.zeros(self.cluster_subspace.num_corr_functions)
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
@@ -254,6 +253,7 @@ class ClusterDecompositionProcessor(Processor):
         cluster_subspace,
         supercell_matrix,
         interaction_tensors,
+        coefficients=None,
         num_threads=None,
         num_threads_full=None,
     ):
@@ -274,6 +274,11 @@ class ClusterDecompositionProcessor(Processor):
                 this is not saved when serializing the ClusterSubspace with the
                 as_dict method, so if you are loading a ClusterSubspace from a
                 file then make sure to set the number of threads as desired.
+                corresponding orbits in the given cluster_subspace
+            coefficients (ndarray): optional
+                coefficients of each mean cluster interaction tensor. This should often
+                be some multiple of the orbit multiplicities. Default is the orbit
+                multiplicities.
         """
         if len(interaction_tensors) != cluster_subspace.num_orbits:
             raise ValueError(
@@ -284,11 +289,12 @@ class ClusterDecompositionProcessor(Processor):
             )
 
         #  the orbit multiplicities play the role of coefficients here.
-        super().__init__(
-            cluster_subspace,
-            supercell_matrix,
-            coefficients=cluster_subspace.orbit_multiplicities,
+        coefficients = (
+            cluster_subspace.orbit_multiplicities
+            if coefficients is None
+            else coefficients
         )
+        super().__init__(cluster_subspace, supercell_matrix, coefficients=coefficients)
 
         self._interaction_tensors = interaction_tensors  # keep these for serialization
 
