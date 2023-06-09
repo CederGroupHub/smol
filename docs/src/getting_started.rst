@@ -34,20 +34,22 @@ expansion terms and compute the corresponding correlation functions.
 
 Start by creating a disordered primitive structure.
 
-.. nbplot::
+.. code-block:: python
 
-    >>> from pymatgen.core.structure import Structure, Lattice
-    >>> species = {"Au": 0.5, "Cu": 0.5}
-    >>> prim = Structure.from_spacegroup("Fm-3m", Lattice.cubic(3.6), [species], [[0, 0, 0]])
+    from pymatgen.core.structure import Structure, Lattice
+
+    species = {"Au": 0.5, "Cu": 0.5}
+    prim = Structure.from_spacegroup("Fm-3m", Lattice.cubic(3.6), [species], [[0, 0, 0]])
 
 Now create a cluster subspace for that structure including pair, triplet and
 quadruplet clusters up to given cluster diameter cutoffs.
 
-.. nbplot::
+.. code-block:: python
 
-    >>> from smol.cofe import ClusterSubspace
-    >>> cutoffs = {2: 6, 3: 5, 4: 4}
-    >>> subspace = ClusterSubspace.from_cutoffs(prim, cutoffs=cutoffs)
+    from smol.cofe import ClusterSubspace
+
+    cutoffs = {2: 6, 3: 5, 4: 4}
+    subspace = ClusterSubspace.from_cutoffs(prim, cutoffs=cutoffs)
 
 Preparing training data
 -----------------------
@@ -57,14 +59,15 @@ generate the necessary fitting data (formation energy and correlation vector
 for each training structure). Training data is added as instances of
 `ComputedStructureEntry <https://pymatgen.org/pymatgen.entries.computed_entries.html?highlight=computedstructureentry#pymatgen.entries.computed_entries.ComputedStructureEntry>`_
 
-.. nbplot::
+.. code-block:: python
 
-    >>> from monty.serialization import loadfn
-    >>> from smol.cofe import StructureWrangler
-    >>> entries = loadfn("path_to_file.json")
-    >>> wrangler = StructureWrangler(subspace)
-    >>> for entry in entries:
-            wrangler.add_entry(entry)
+    from monty.serialization import loadfn
+    from smol.cofe import StructureWrangler
+
+    entries = loadfn("path_to_file.json")
+    wrangler = StructureWrangler(subspace)
+    for entry in entries:
+        wrangler.add_entry(entry)
 
 Fitting and creating a cluster expansion
 ----------------------------------------
@@ -74,25 +77,27 @@ In this case we use simple linear regression, although for most cases this will
 not be appropriate and a regularized regression model will yield a much better
 fit.
 
-.. nbplot::
+.. code-block:: python
 
-    >>> from sklearn.linear_model import LinearRegression
-    >>> reg = LinearRegression(fit_intercept=False)
-    >>> reg.fit(wrangler.feature_matrix, wrangler.get_property_vector("energy"))
+    from sklearn.linear_model import LinearRegression
+
+    reg = LinearRegression(fit_intercept=False)
+    reg.fit(wrangler.feature_matrix, wrangler.get_property_vector("energy"))
 
 Finally, create a cluster expansion for prediction of new structures and
 eventual Monte Carlo sampling. We recommend saving the details used to fit the
 expansion for future reproducibility (although this is not strictly necessary).
 
-.. nbplot::
+.. code-block:: python
 
-    >>> from smol.cofe import ClusterExpansion, RegressionData
-    >>> reg_data = RegressionData.from_sklearn(
-            estimator=reg,
-            feature_matrix=wrangler.feature_matrix,
-            property_vector=wrangler.get_property_vector('energy')
-        )
-    >>> expansion = ClusterExpansion(subspace, coefficients=reg.coef_, regression_data=reg_data)
+    from smol.cofe import ClusterExpansion, RegressionData
+
+    reg_data = RegressionData.from_sklearn(
+        estimator=reg,
+        feature_matrix=wrangler.feature_matrix,
+        property_vector=wrangler.get_property_vector("energy"),
+    )
+    expansion = ClusterExpansion(subspace, coefficients=reg.coef_, regression_data=reg_data)
 
 Creating an ensemble for Monte Carlo Sampling
 ---------------------------------------------
@@ -100,41 +105,46 @@ Creating an ensemble for Monte Carlo Sampling
 Creating an ensemble only requires the cluster expansion and a supercell matrix
 to define the sampling domain.
 
-.. nbplot::
+.. code-block:: python
 
-    >>> from smol.moca import Ensemble
-    >>> sc_matrix = [[5, 0, 0], [0, 5, 0], [0, 0, 5]]
-    >>> ensemble = Ensemble.from_cluster_expansion(expansion, supercell_matrix=sc_matrix)
+    from smol.moca import Ensemble
+
+    sc_matrix = [[5, 0, 0], [0, 5, 0], [0, 0, 5]]
+    ensemble = Ensemble.from_cluster_expansion(expansion, supercell_matrix=sc_matrix)
 
 Running Monte Carlo sampling
 ----------------------------
 To generate MC samples for the ensemble, we need to create a sampler
 object.
 
-.. nbplot::
+.. code-block:: python
 
-    >>> from smol.moca import Sampler
-    >>> sampler = Sampler.from_ensemble(ensemble, temperature=1000)
+    from smol.moca import Sampler
+
+    sampler = Sampler.from_ensemble(ensemble, temperature=1000)
 
 In order to begin an MC simulation, an initial configuration must be provided.
 In this case we use pymatgen's functionality to provide an ordered structure
 given a disordered one.
 
-.. nbplot::
+.. code-block:: python
 
-    >>> from pymatgen.transformations.standard_transformations import OrderDisorderedStructureTransformation
-    >>> transformation = OrderDisorderedStructureTransformation()
-    >>> structure = expansion.cluster_subspace.structure.copy()
-    >>> structure.make_supercell(sc_matrix)
-    >>> structure = transformation.apply_transformation(structure)
+    from pymatgen.transformations.standard_transformations import (
+        OrderDisorderedStructureTransformation,
+    )
+
+    transformation = OrderDisorderedStructureTransformation()
+    structure = expansion.cluster_subspace.structure.copy()
+    structure.make_supercell(sc_matrix)
+    structure = transformation.apply_transformation(structure)
 
 Finally, the ordered structure can be used to generate an initial configuration
 to run MC sampling.
 
-.. nbplot::
+.. code-block:: python
 
-    >>> init_occu = ensemble.processor.occupancy_from_structure(structure)
-    >>> sampler.run(100000, initial_occupancy=init_occu)
+    init_occu = ensemble.processor.occupancy_from_structure(structure)
+    sampler.run(100000, initial_occupancy=init_occu)
 
 Saving the generated objects and data
 -------------------------------------
@@ -144,9 +154,9 @@ serializable just as pymatgen and so can be saved as json dictionaries or
 using the `monty <https://guide.materialsvirtuallab.org/monty//>`_ python
 package.
 
-.. nbplot::
+.. code-block:: python
 
-    >>> save_work("CuAu_ce_mc.json", wrangler, expansion, ensemble, sampler.samples)
+    save_work("CuAu_ce_mc.json", wrangler, expansion, ensemble, sampler.samples)
 
 
 .. code-links:: python
