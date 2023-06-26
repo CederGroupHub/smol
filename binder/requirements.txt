@@ -3,5 +3,5 @@ numpy>=1.20.1
 monty==2023.5.8
 pymatgen==2023.5.31
 scikit-learn==1.2.2
-h5py==3.8.0
+h5py==3.9.0
 crystal_toolkit
