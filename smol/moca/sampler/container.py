@@ -17,8 +17,9 @@ from monty.dev import requires
 from monty.json import MontyDecoder, MontyEncoder, MSONable, jsanitize
 
 from smol.moca import Ensemble
-from smol.moca.sampler.namespace import Metadata, Trace
+from smol.moca.metadata import Metadata
 from smol.moca.sublattice import Sublattice
+from smol.moca.trace import Trace
 
 try:
     import h5py
@@ -406,6 +407,11 @@ class SampleContainer(MSONable):
         for name, value in self._trace.items():
             arr = np.empty((nsamples, *value.shape[1:]), dtype=value.dtype)
             setattr(self._trace, name, np.append(value, arr, axis=0))
+
+    def vacuum(self):
+        """Remove any trailing allocated space that has not been used."""
+        for name, value in self._trace.items():
+            setattr(self._trace, name, value[: self._nsamples])
 
     def flush_to_backend(self, backend):
         """Flush current samples and trace to backend file.

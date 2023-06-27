@@ -12,9 +12,10 @@ from warnings import warn
 
 import numpy as np
 
+from smol.moca.kernel import mckernel_factory
+from smol.moca.kernel.base import MulticellKernel
 from smol.moca.sampler.container import SampleContainer
-from smol.moca.sampler.kernel import mckernel_factory
-from smol.moca.sampler.namespace import Trace
+from smol.moca.trace import Trace
 from smol.utils.progressbar import progress_bar
 
 
@@ -158,11 +159,6 @@ class Sampler:
         """Clear samples from sampler container."""
         self.samples.clear()
 
-    def _single_step(self, occupancies):
-        """Do a single step for all kernels."""
-        for kernel, occupancy in zip(self._kernels, occupancies):
-            yield kernel.single_step(occupancy)
-
     def sample(self, nsteps, initial_occupancies, thin_by=1, progress=False):
         """Generate MCMC samples.
 
@@ -182,35 +178,21 @@ class Sampler:
         Yields:
             tuple: accepted, occupancies, features change, enthalpies change
         """
-        occupancies = initial_occupancies.copy()
-        if occupancies.shape != self.samples.shape:
-            occupancies = self._reshape_occu(occupancies)
         if nsteps % thin_by != 0:
             warn(
                 f"The number of steps {nsteps} is not a multiple of thin_by "
                 f" {thin_by}. The last {nsteps % thin_by} will be ignored.",
                 category=RuntimeWarning,
             )
-        # TODO check that initial states are independent if num_walkers > 1
-        # TODO make samplers with single chain, multiple and multiprocess
-        # TODO kernel should take only 1 occupancy
-        # set up any auxiliary states from initial occupancies
-        for kernel, occupancy in zip(self._kernels, occupancies):
-            kernel.set_aux_state(occupancy)
 
-        # get initial traces and stack them
-        trace = Trace()
-        traces = list(map(self._kernels[0].compute_initial_trace, occupancies))
-        for name in traces[0].names:
-            stack = np.stack([getattr(tr, name) for tr in traces], axis=0)
-            setattr(trace, name, stack)
-
+        occupancies, trace = self.setup_sample(initial_occupancies)
         # Initialise progress bar
         chains, nsites = self.samples.shape
-        desc = f"Sampling {chains} chain(s) from a cell with {nsites} sites..."
+        desc = f"Sampling {chains} chain(s) from a cell with {nsites} sites"
         with progress_bar(progress, total=nsteps, description=desc) as p_bar:
             for _ in range(nsteps // thin_by):
                 for _ in range(thin_by):
+                    # the occupancies are modified in place at each step
                     for i, strace in enumerate(self._single_step(occupancies)):
                         for name, value in strace.items():
                             val = getattr(trace, name)
@@ -271,11 +253,11 @@ class Sampler:
             try:
                 initial_occupancies = self.samples.get_occupancies(flat=False)[-1]
                 # auxiliary states from kernels should be set here
-            except IndexError as ind_error:
+            except IndexError as index_error:
                 raise RuntimeError(
                     "There are no saved samples to obtain the initial occupancies."
                     "These must be provided."
-                ) from ind_error
+                ) from index_error
         elif self.samples.num_samples > 0:
             warn(
                 "Initial occupancies where provided with a pre-existing set of samples."
@@ -283,9 +265,6 @@ class Sampler:
                 "If not, reset the samples in the sampler.",
                 RuntimeWarning,
             )
-        else:
-            if initial_occupancies.shape != self.samples.shape:
-                initial_occupancies = self._reshape_occu(initial_occupancies)
 
         if stream_chunk > 0:
             if stream_file is None:
@@ -367,9 +346,9 @@ class Sampler:
         if temperatures[0] < temperatures[-1]:
             raise ValueError(
                 "End temperature is greater than start "
-                f"temperature {temperatures[-1]:.2f} > "
-                f"{temperatures[0]:.2f}."
+                f"temperature {temperatures[-1]:.2f} > {temperatures[0]:.2f}."
             )
+
         # initialize for first temperature.
         for kernel in self._kernels:
             kernel.temperature = temperatures[0]
@@ -400,15 +379,69 @@ class Sampler:
         if stream_chunk > 0:
             self.clear_samples()
 
+    def setup_sample(self, initial_occupancies):
+        """Copy and reshape occupancies and compute initial trace for sampling.
+
+        Args:
+            initial_occupancies (ndarray):
+                initial occupancies for sampling.
+
+        Returns: (occupancies, trace)
+            occupancies (ndarray):
+                initial occupancies for sampling.
+            trace (Trace):
+                initial trace for sampling.
+        """
+        # TODO check that initial states are independent if num_walkers > 1
+        # TODO make samplers with single chain, multiple and multiprocess
+        occupancies = initial_occupancies.copy()
+        if occupancies.shape != self.samples.shape:
+            occupancies = self._reshape_occu(occupancies)
+
+        # set up any auxiliary states from initial occupancies
+        selected_occus = []
+        for kernel, occupancy in zip(self._kernels, occupancies):
+            kernel.set_aux_state(occupancy)
+            # select the current kernel occu
+            if isinstance(kernel, MulticellKernel):
+                if occupancies.ndim == 3 and occupancies.shape[1] == len(
+                    kernel.mckernels
+                ):
+                    selected_occus.append(occupancy[kernel.trace.kernel_index])
+        if len(selected_occus) > 0:
+            occupancies = np.vstack(selected_occus)
+
+        # get initial traces and stack them
+        trace = Trace()
+        traces = list(
+            map(
+                lambda kernel, occu: kernel.compute_initial_trace(occu),
+                self._kernels,
+                occupancies,
+            )
+        )
+        for name in traces[0].names:
+            stack = np.stack([getattr(tr, name) for tr in traces], axis=0)
+            setattr(trace, name, stack)
+
+        return occupancies, trace
+
+    def _single_step(self, occupancies):
+        """Do a single step for all kernels."""
+        for kernel, occupancy in zip(self._kernels, occupancies):
+            yield kernel.single_step(occupancy)
+
     def _reshape_occu(self, occupancies):
         """Reshape occupancies for the single walker case."""
         # check if this is only a single walker.
         if len(occupancies.shape) == 1 and self.samples.shape[0] == 1:
             occupancies = np.reshape(occupancies, (1, len(occupancies)))
+        elif any(isinstance(kernel, MulticellKernel) for kernel in self._kernels):
+            # reshape for multicell kernels
+            occupancies = np.reshape(occupancies, (1, *occupancies.shape))
         else:
             raise AttributeError(
-                "The given initial occcupancies have "
-                "incompompatible dimensions. Shape should"
+                "The given initial occcupancies have incompompatible dimensions. Shape should"
                 f" be {self.samples.shape}."
             )
         return occupancies

@@ -7,7 +7,7 @@ import numpy.testing as npt
 import polytope as pc
 import pytest
 
-from smol.moca.utils.math import (
+from smol.utils.math import (
     NUM_TOL,
     choose_section_from_partition,
     compute_snf,
@@ -25,6 +25,7 @@ from smol.moca.utils.math import (
     integerize_vector,
     rationalize_number,
     solve_diophantines,
+    yield_hermite_normal_forms,
 )
 from tests.utils import assert_table_set_equal
 
@@ -681,3 +682,13 @@ def test_choose_sections():
         # np.random
         if i == 1:
             assert counts[i] <= 1
+
+
+@pytest.mark.parametrize("determinant", range(6, 13))
+def test_yield_hermite_normal_forms(determinant):
+    hnfs = [hnf for hnf in yield_hermite_normal_forms(determinant)]
+    for hnf in hnfs:
+        assert np.linalg.det(hnf) == pytest.approx(determinant)
+
+    # make sure that all the HNFs are unique
+    assert len(np.unique(hnfs, axis=0)) == len(hnfs)

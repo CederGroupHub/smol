@@ -8,6 +8,7 @@ import numpy as np
 from cython.parallel import prange
 
 cimport numpy as np
+from libc.math cimport fabs
 
 from smol.utils.cluster.container cimport (
     FloatArray1DContainer,
@@ -298,5 +299,123 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
                     ind_f = ind_f + orbit.tensor_indices.data[i] * occu_f[indices.data[j * I + i]]
                 p = p + (interaction_tensor.data[ind_f] - interaction_tensor.data[ind_i])
             o_view[orbit.id] = p / cluster_ratio[n] / J
+
+        return out
+
+    cpdef np.ndarray[np.float64_t, ndim=1] corr_distances_from_occupancies(
+            self,
+            const long[::1] occu_f,
+            const long[::1] occu_i,
+            const double[::1] ref_corr_vector,
+            IntArray2DContainer cluster_indices
+    ):
+        """Computes the absolute distance of two correlation vectors separated by a single
+        flip and a given correlation vector.
+
+        Unfortunately this scales just as bad as computing the full correlation vector.
+
+        Args:
+            occu_f (ndarray):
+                encoded occupancy array with flip
+            occu_i (ndarray):
+                encoded occupancy array without flip
+            ref_corr_vector (ndarray):
+                reference correlation vector
+            cluster_indices (IntArray2DContainer):
+                Container with pointers to arrays with indices of sites of all clusters
+                in each orbit given as a container of arrays.
+
+        Returns:
+            ndarray: 2D with correlation vector distances from reference for each of occu_i
+            and occu_f
+        """
+        cdef int i, j, k, n, I, J, K, N, bit_id, ind_i, ind_f
+        cdef double p_i, p_f
+        cdef IntArray2D indices  # flattened tensor indices
+        cdef OrbitC orbit
+
+        out = np.zeros((2, self.num_corr))
+        cdef double[:, ::1] o_view = out
+        o_view[:, 0] = 0
+
+        # loop thru orbits
+        for n in prange(self.size, nogil=True, schedule="guided", num_threads=self.num_threads):
+            orbit = self.data[n]
+            indices = cluster_indices.data[n]
+            bit_id = orbit.bit_id
+            K = orbit.correlation_tensors.size_r  # index of bit combos
+            J = indices.size_r # cluster index
+            I = indices.size_c # index within cluster
+            N = orbit.correlation_tensors.size_c # size of single flattened tensor
+
+            for k in range(K):  # loop thru bit combos
+                p_f, p_i = 0, 0
+                for j in range(J):  # loop thru clusters
+                    ind_f, ind_i = 0, 0
+                    for i in range(I):  # loop thru sites in cluster
+                        ind_f = ind_f + orbit.tensor_indices.data[i] * occu_f[indices.data[j * I + i]]
+                        ind_i = ind_i + orbit.tensor_indices.data[i] * occu_i[indices.data[j * I + i]]
+                    # sum contribution of correlation of cluster k with occupancy at "ind"
+                    p_f = p_f + orbit.correlation_tensors.data[k * N + ind_f]
+                    p_i = p_i + orbit.correlation_tensors.data[k * N + ind_i]
+                o_view[1, bit_id] = fabs(p_f / J - ref_corr_vector[bit_id])
+                o_view[0, bit_id] = fabs(p_i / J - ref_corr_vector[bit_id])
+                bit_id = bit_id + 1
+
+        return out
+
+    cpdef np.ndarray[np.float64_t, ndim=1] interaction_distances_from_occupancies(
+            self,
+            const long[::1] occu_f,
+            const long[::1] occu_i,
+            const double[::1] ref_interaction_vector,
+            IntArray2DContainer cluster_indices
+    ):
+        """Computes the absolute distance of two cluster interaction vectors separated by a
+            single flip and a given correlation vector.
+
+            Unfortunately this scales just as bad as computing the full interaction vector.
+
+            Args:
+                occu_f (ndarray):
+                    encoded occupancy array with flip
+                occu_i (ndarray):
+                    encoded occupancy array without flip
+                ref_interaction_vector (ndarray):
+                    reference cluster interaction vector
+                cluster_indices (IntArray2DContainer):
+                    Container with pointers to arrays with indices of sites of all clusters
+                    in each orbit given as a container of arrays.
+
+            Returns:
+                ndarray: 2D with cluster interaction vector distances from reference for each of
+                occu_i and occu_f
+            """
+        cdef int n, i, j, I, J, ind_i, ind_f
+        cdef double p_i, p_f
+        cdef IntArray2D indices
+        cdef OrbitC orbit
+        cdef FloatArray1D interaction_tensor
+
+        out = np.zeros((2, self.num_orbits))
+        cdef double[:, ::1] o_view = out
+        o_view[:, 0] = 0
+
+        for n in prange(self.size, nogil=True, schedule="guided", num_threads=self.num_threads):
+            orbit = self.data[n]
+            indices = cluster_indices.data[n]
+            interaction_tensor = self.cluster_interactions.data[n]
+            J = indices.size_r # cluster index
+            I = indices.size_c  # index within cluster
+            p_f, p_i = 0, 0
+            for j in range(J):
+                ind_f, ind_i = 0, 0
+                for i in range(I):
+                    ind_f = ind_f + orbit.tensor_indices.data[i] * occu_f[indices.data[j * I + i]]
+                    ind_i = ind_i + orbit.tensor_indices.data[i] * occu_i[indices.data[j * I + i]]
+                p_f = p_f + interaction_tensor.data[ind_f]
+                p_i = p_i + interaction_tensor.data[ind_i]
+            o_view[1, orbit.id] = fabs(p_f / J - ref_interaction_vector[orbit.id])
+            o_view[0, orbit.id] = fabs(p_i / J - ref_interaction_vector[orbit.id])
 
         return out

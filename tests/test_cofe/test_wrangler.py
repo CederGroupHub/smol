@@ -7,7 +7,11 @@ from pymatgen.entries.computed_entries import ComputedStructureEntry
 
 from smol.cofe import StructureWrangler
 from smol.cofe.extern import EwaldTerm
-from tests.utils import assert_msonable, gen_fake_training_data, gen_random_structure
+from tests.utils import (
+    assert_msonable,
+    gen_fake_training_data,
+    gen_random_ordered_structure,
+)
 
 pytestmark = [
     pytest.mark.filterwarnings("ignore:.*supercell_structure. Throwing out."),
@@ -20,7 +24,7 @@ def test_add_data(structure_wrangler, rng):
         structure_wrangler.cluster_subspace.structure, rng=rng
     ):
         structure_wrangler.add_entry(entry, weights={"random": 2.0})
-    struct = gen_random_structure(
+    struct = gen_random_ordered_structure(
         structure_wrangler.cluster_subspace.structure, rng=rng
     )
     energy = -len(struct) * rng.random()

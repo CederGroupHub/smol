@@ -39,7 +39,7 @@ class Processor(MSONable, metaclass=ABCMeta):
             Number of prims in the supercell structure.
     """
 
-    def __init__(self, cluster_subspace, supercell_matrix, coefficients):
+    def __init__(self, cluster_subspace, supercell_matrix, coefficients, **kwargs):
         """Initialize a BaseProcessor.
 
         Args:
@@ -62,7 +62,7 @@ class Processor(MSONable, metaclass=ABCMeta):
             self.coefs = self.coefs[np.newaxis]
 
         # this can be used (maybe should) to check if a flip is valid
-        site_spaces = set(get_site_spaces(self.structure))
+        site_spaces = set(get_site_spaces(self.structure, include_measure=True))
         self.unique_site_spaces = tuple(sorted(site_spaces))
         # Sort to ensure a fixed ordering between sub-lattices.
         self.active_site_spaces = tuple(
@@ -127,6 +127,30 @@ class Processor(MSONable, metaclass=ABCMeta):
             array: change in correlation vector
         """
         return
+
+    def compute_feature_vector_distance_change(self, feature_vector, occupancy, flips):
+        """
+        Compute the change of feature vector differences from a fixed vector from a list of flips.
+
+        The distance used implicitly is a "Manhattan distancc", ie absolute value of differences.
+
+        Args:
+            feature_vector (ndarray):
+                fixed vector to compute absolute distance differences from.
+            occupancy (ndarray):
+                encoded occupancy array
+            flips (list of tuple):
+                list of tuples with two elements. Each tuple represents a
+                single flip where the first element is the index of the site
+                in the occupancy array and the second element is the index
+                for the new species to place at that site.
+
+        Returns:
+            array: change in correlation vector
+        """
+        raise NotImplementedError(
+            "This processor can not be currently used to compute feature vector distances."
+        )
 
     def compute_property(self, occupancy):
         """Compute the value of the property for the given occupancy array.

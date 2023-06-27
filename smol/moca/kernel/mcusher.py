@@ -17,14 +17,9 @@ import numpy as np
 from monty.json import jsanitize
 from scipy.special import gammaln
 
-from smol.moca.composition.space import CompositionSpace
-from smol.moca.sampler.namespace import Metadata
-from smol.moca.utils.math import (
-    NUM_TOL,
-    choose_section_from_partition,
-    flip_weights_mask,
-)
-from smol.moca.utils.occu import (
+from smol.moca.composition import CompositionSpace
+from smol.moca.metadata import Metadata
+from smol.moca.occu_utils import (
     delta_counts_from_step,
     get_dim_ids_by_sublattice,
     get_dim_ids_table,
@@ -32,6 +27,7 @@ from smol.moca.utils.occu import (
     occu_to_species_list,
 )
 from smol.utils.class_utils import class_name_from_str, derived_class_factory
+from smol.utils.math import NUM_TOL, choose_section_from_partition, flip_weights_mask
 
 
 class MCUsher(ABC):
@@ -133,13 +129,13 @@ class MCUsher(ABC):
         Returns:
             float: log of a-priori adjustment weight.
         """
-        return 0
+        return 0.0
 
     def update_aux_state(self, step, *args, **kwargs):
         """Update any auxiliary state information based on an accepted step."""
         return
 
-    def set_aux_state(self, occupancies, *args, **kwargs):
+    def set_aux_state(self, occupancy, *args, **kwargs):
         """Set the auxiliary occupancies from a checkpoint values."""
         return
 

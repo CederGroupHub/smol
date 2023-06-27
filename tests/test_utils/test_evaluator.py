@@ -10,7 +10,7 @@ from smol.utils.cluster.correlations import (
     interactions_from_occupancy,
 )
 from smol.utils.exceptions import StructureMatchError
-from tests.utils import compute_cluster_interactions, gen_random_structure
+from tests.utils import compute_cluster_interactions, gen_random_ordered_structure
 
 ATOL = 2e4 * np.finfo(float).eps
 
@@ -49,7 +49,9 @@ def test_corr_from_occu(cluster_subspace, supercell_matrix, rng):
     indices = cluster_subspace.get_orbit_indices(supercell_matrix)
 
     for _ in range(10):
-        structure = gen_random_structure(cluster_subspace.structure, supercell_matrix)
+        structure = gen_random_ordered_structure(
+            cluster_subspace.structure, supercell_matrix
+        )
 
         # test correlations
         occu = cluster_subspace.occupancy_from_structure(
@@ -140,7 +142,9 @@ def test_interactions_from_occu(cluster_subspace, supercell_matrix, rng):
     indices = cluster_subspace.get_orbit_indices(supercell_matrix)
 
     for _ in range(10):
-        structure = gen_random_structure(cluster_subspace.structure, supercell_matrix)
+        structure = gen_random_ordered_structure(
+            cluster_subspace.structure, supercell_matrix
+        )
 
         # test correlations
         occu = cluster_subspace.occupancy_from_structure(

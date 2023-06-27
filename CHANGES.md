@@ -7,13 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
-* openmp parallelization when computing correlation and cluster interaction vectors. #338 @lbluque
 ### Changed
 ### Fixed
-* Fix #353 appending in `Sublattice.restricted_sites` property. #355 @qchempku2017
-* Fix #334 getting subclasses of non-abstract classes. #335 @lbluque
 ### Removed
 ### Deprecated
+
+# [v0.4.0](https://github.com/CederGroupHub/smol/releases/tag/v0.4.0) (2023-06-09)
+### Added
+* openmp parallelization when computing correlation and cluster interaction vectors. #338 @lbluque
+* stochastic SQS generation functionality. #344 @lbluque
+* enumeration of symmetrically distinct supercell matrices. #344 @lbluque
+### Fixed
+* Fix #334 getting subclasses of non-abstract classes. #335 @lbluque
+* Fix #353 appending in `Sublattice.restricted_sites` property. #355 @qchempku2017
+* Use jsanitize to serialize dicts/lists of msonables. #354 @lbluque
+* Use site_mappings in `StructureWrangler.process_entry`. #363 @lbluque
 
 # [v0.3.1](https://github.com/CederGroupHub/smol/releases/tag/v0.3.1) (2023-02-07)
 ### Changed

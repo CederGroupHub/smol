@@ -4,9 +4,10 @@ from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core import PeriodicSite, Structure
 
+from smol.capp.generate.random import _gen_neutral_occu
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.domain import Vacancy, get_allowed_species
-from tests.utils import assert_msonable, gen_random_neutral_occupancy
+from tests.utils import assert_msonable
 
 
 def test_get_ewald_structure(ce_processor):
@@ -47,7 +48,7 @@ def test_val_from_occupancy(ce_processor, rng):
     for _ in range(10):
         try:
             # We should only test neutral occupancies.
-            occu = gen_random_neutral_occupancy(sublattices, rng=rng)
+            occu = _gen_neutral_occu(sublattices, rng=rng)
             n_success += 1
         except TimeoutError:
             occu = None

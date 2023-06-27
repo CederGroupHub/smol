@@ -11,7 +11,8 @@ from pymatgen.core import Composition, Element
 
 from smol.cofe.space.domain import Vacancy
 from smol.moca.composition.constraints import CompositionConstraintsManager
-from smol.moca.utils.math import (
+from smol.moca.occu_utils import get_dim_ids_by_sublattice
+from smol.utils.math import (
     NUM_TOL,
     get_ergodic_vectors,
     get_natural_centroid,
@@ -22,7 +23,6 @@ from smol.moca.utils.math import (
     integerize_vector,
     solve_diophantines,
 )
-from smol.moca.utils.occu import get_dim_ids_by_sublattice
 
 
 def get_oxi_state(sp):
@@ -70,8 +70,6 @@ def flip_vec_to_reaction(u, bits):
     return from_str + " -> " + to_str
 
 
-# TODO: move composition constraints manager to here and maybe enable
-#  setting constraints with strings like "A + B <= C".
 class CompositionSpace(MSONable):
     """Composition space class.
 
@@ -794,8 +792,6 @@ class CompositionSpace(MSONable):
         ]
         sublattice_sizes = d.get("sublattice_sizes")
         other_constraints = d.get("other_constraints")
-        d.get("leq_constraints")
-        d.get("geq_constraints")
         charge_balanced = d.get("charge_balanced", True)
         optimize_basis = d.get("optimize_basis", False)
         table_ergodic = d.get("table_ergodic", False)

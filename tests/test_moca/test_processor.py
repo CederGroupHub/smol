@@ -3,6 +3,7 @@ import numpy.testing as npt
 import pytest
 from pymatgen.analysis.structure_matcher import StructureMatcher
 
+from smol.capp.generate.random import _gen_unconstrained_ordered_occu
 from smol.cofe import ClusterExpansion
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.domain import Vacancy, get_allowed_species
@@ -13,9 +14,13 @@ from smol.moca.processor import (
     EwaldProcessor,
 )
 from smol.moca.processor.base import Processor
+from smol.moca.processor.distance import (
+    ClusterInteractionDistanceProcessor,
+    CorrelationDistanceProcessor,
+)
 from smol.utils._openmp_helpers import _openmp_effective_numthreads
 from smol.utils.cluster.numthreads import DEFAULT_NUM_THREADS
-from tests.utils import assert_msonable, gen_random_occupancy, gen_random_structure
+from tests.utils import assert_msonable, gen_random_ordered_structure
 
 pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
 
@@ -47,16 +52,42 @@ def ewald_processor(cluster_subspace, rng, request):
     )
 
 
-# General tests for all processors
-# Currently being done only on composites because I can not for the life of
-# me figure out a clean way to parametrize with parametrized fixtures or use a
-# fixture union from pytest_cases that works.
-def test_encode_decode_property(composite_processor, rng):
-    occu = gen_random_occupancy(composite_processor.get_sublattices(), rng=rng)
-    decoccu = composite_processor.decode_occupancy(occu)
-    for species, space in zip(decoccu, composite_processor.allowed_species):
+@pytest.fixture(params=["correlation", "interaction"])
+def processor_distance_processor(cluster_subspace, rng, request):
+    # return a processor and the corresponding distance processor
+    scmatrix = 3 * np.eye(3)
+    coefs = np.ones(len(cluster_subspace))
+    if request.param == "correlation":
+        target_weights = rng.random(len(cluster_subspace) - 1)
+        procs = (
+            ClusterExpansionProcessor(cluster_subspace, scmatrix, coefs),
+            CorrelationDistanceProcessor(
+                cluster_subspace, scmatrix, target_weights=target_weights
+            ),
+        )
+    else:
+        expansion = ClusterExpansion(cluster_subspace, coefs)
+        target_weights = rng.random(cluster_subspace.num_orbits - 1)
+        procs = (
+            ClusterDecompositionProcessor(
+                cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
+            ),
+            ClusterInteractionDistanceProcessor(
+                cluster_subspace,
+                scmatrix,
+                expansion.cluster_interaction_tensors,
+                target_weights=target_weights,
+            ),
+        )
+    return procs
+
+
+def test_encode_decode_property(ce_processor, rng):
+    occu = _gen_unconstrained_ordered_occu(ce_processor.get_sublattices(), rng=rng)
+    decoccu = ce_processor.decode_occupancy(occu)
+    for species, space in zip(decoccu, ce_processor.allowed_species):
         assert species in space
-    npt.assert_equal(occu, composite_processor.encode_occupancy(decoccu))
+    npt.assert_equal(occu, ce_processor.encode_occupancy(decoccu))
 
 
 def test_site_spaces(ce_processor):
@@ -87,37 +118,10 @@ def test_sublattice(ce_processor):
     )
 
 
-def test_get_average_drift(composite_processor):
-    forward, reverse = composite_processor.compute_average_drift()
-    assert forward <= DRIFT_TOL and reverse <= DRIFT_TOL
-
-
-def test_compute_property_change(composite_processor, rng):
-    sublattices = composite_processor.get_sublattices()
-    occu = gen_random_occupancy(sublattices, rng=rng)
-    active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
-
-    for _ in range(100):
-        sublatt = rng.choice(active_sublattices)
-        site = rng.choice(sublatt.sites)
-        new_sp = rng.choice(sublatt.encoding)
-        new_occu = occu.copy()
-        new_occu[site] = new_sp
-        prop_f = composite_processor.compute_property(new_occu)
-        prop_i = composite_processor.compute_property(occu)
-        dprop = composite_processor.compute_property_change(occu, [(site, new_sp)])
-        # Check with some tight tolerances.
-        npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
-        # Test reverse matches forward
-        old_sp = occu[site]
-        rdprop = composite_processor.compute_property_change(new_occu, [(site, old_sp)])
-        npt.assert_allclose(dprop, -1 * rdprop, rtol=RTOL, atol=ATOL)
-
-
 def test_structure_occupancy_conversion(ce_processor, rng):
     sm = StructureMatcher()
     for _ in range(10):
-        s_init = gen_random_structure(
+        s_init = gen_random_ordered_structure(
             ce_processor.cluster_subspace.structure,
             size=ce_processor.supercell_matrix,
             rng=rng,
@@ -144,35 +148,11 @@ def test_structure_occupancy_conversion(ce_processor, rng):
         assert sm.fit(s_init, s_conv)
 
 
-def test_compute_feature_change(composite_processor, rng):
-    sublattices = composite_processor.get_sublattices()
-    occu = gen_random_occupancy(sublattices, rng=rng)
-    active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
-    composite_processor.cluster_subspace.change_site_bases("indicator")
-
-    for _ in range(100):
-        sublatt = rng.choice(active_sublattices)
-        site = rng.choice(sublatt.sites)
-        new_sp = rng.choice(sublatt.encoding)
-        new_occu = occu.copy()
-        new_occu[site] = new_sp
-        feat_f = composite_processor.compute_feature_vector(new_occu)
-        feat_i = composite_processor.compute_feature_vector(occu)
-        dfeat = composite_processor.compute_feature_vector_change(
-            occu, [(site, new_sp)]
-        )
-        # Check with some tight tolerances.
-        npt.assert_allclose(dfeat, feat_f - feat_i, rtol=RTOL, atol=ATOL)
-        # Test reverse matches forward
-        old_sp = occu[site]
-        rdfeat = composite_processor.compute_feature_vector_change(
-            new_occu, [(site, old_sp)]
-        )
-        npt.assert_allclose(dfeat, -1 * rdfeat, rtol=RTOL, atol=ATOL)
-
-
-def test_compute_property(composite_processor, rng):
-    occu = gen_random_occupancy(composite_processor.get_sublattices(), rng=rng)
+# only test composite_processor predicting an energy value
+def test_compute_energy(composite_processor, rng):
+    occu = _gen_unconstrained_ordered_occu(
+        composite_processor.get_sublattices(), rng=rng
+    )
     struct = composite_processor.structure_from_occupancy(occu)
     pred = np.dot(
         composite_processor.raw_coefs,
@@ -181,20 +161,76 @@ def test_compute_property(composite_processor, rng):
     assert composite_processor.compute_property(occu) == pytest.approx(pred, abs=ATOL)
 
 
-def test_msonable(composite_processor, rng):
-    occu = gen_random_occupancy(composite_processor.get_sublattices(), rng=rng)
-    d = composite_processor.as_dict()
+# General tests for all processors
+# Currently being done only on composites because I can not for the life of
+# me figure out a clean way to parametrize with parametrized fixtures or use a
+# fixture union from pytest_cases that works.
+
+
+def test_get_average_drift(processor):
+    forward, reverse = processor.compute_average_drift()
+    assert forward <= DRIFT_TOL and reverse <= DRIFT_TOL
+
+
+def test_compute_property_change(processor, rng):
+    sublattices = processor.get_sublattices()
+    occu = _gen_unconstrained_ordered_occu(sublattices, rng=rng)
+    active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
+
+    for _ in range(100):
+        sublatt = rng.choice(active_sublattices)
+        site = rng.choice(sublatt.sites)
+        new_sp = rng.choice(sublatt.encoding)
+        new_occu = occu.copy()
+        new_occu[site] = new_sp
+        prop_f = processor.compute_property(new_occu)
+        prop_i = processor.compute_property(occu)
+        dprop = processor.compute_property_change(occu, [(site, new_sp)])
+        # Check with some tight tolerances.
+        npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
+        # Test reverse matches forward
+        old_sp = occu[site]
+        rdprop = processor.compute_property_change(new_occu, [(site, old_sp)])
+        npt.assert_allclose(dprop, -1 * rdprop, rtol=RTOL, atol=ATOL)
+
+
+def test_compute_feature_change(processor, rng):
+    sublattices = processor.get_sublattices()
+    occu = _gen_unconstrained_ordered_occu(sublattices, rng=rng)
+    active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
+    processor.cluster_subspace.change_site_bases("indicator")
+
+    for _ in range(100):
+        sublatt = rng.choice(active_sublattices)
+        site = rng.choice(sublatt.sites)
+        new_sp = rng.choice(sublatt.encoding)
+        new_occu = occu.copy()
+        new_occu[site] = new_sp
+        feat_f = processor.compute_feature_vector(new_occu)
+        feat_i = processor.compute_feature_vector(occu)
+        dfeat = processor.compute_feature_vector_change(occu, [(site, new_sp)])
+        # Check with some tight tolerances.
+        npt.assert_allclose(dfeat, feat_f - feat_i, rtol=RTOL, atol=ATOL)
+        # Test reverse matches forward
+        old_sp = occu[site]
+        rdfeat = processor.compute_feature_vector_change(new_occu, [(site, old_sp)])
+        npt.assert_allclose(dfeat, -1 * rdfeat, rtol=RTOL, atol=ATOL)
+
+
+def test_msonable(processor, rng):
+    occu = _gen_unconstrained_ordered_occu(processor.get_sublattices(), rng=rng)
+    d = processor.as_dict()
     pr = Processor.from_dict(d)
-    assert composite_processor.compute_property(occu) == pr.compute_property(occu)
-    npt.assert_array_equal(composite_processor.coefs, pr.coefs)
+    assert processor.compute_property(occu) == pr.compute_property(occu)
+    npt.assert_array_equal(processor.coefs, pr.coefs)
     # send in pr bc composite_processor is scoped for function and new random
     # coefficients will be created.
     assert_msonable(pr)
 
 
 # ClusterExpansionProcessor only tests
-def test_compute_feature_vector(ce_processor, rng):
-    occu = gen_random_occupancy(ce_processor.get_sublattices(), rng=rng)
+def test_compute_correlation_vector(ce_processor, rng):
+    occu = _gen_unconstrained_ordered_occu(ce_processor.get_sublattices(), rng=rng)
     struct = ce_processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
     npt.assert_allclose(
@@ -208,7 +244,7 @@ def test_compute_feature_vector(ce_processor, rng):
     )
 
 
-# orbit decomp processor
+# cluster decomposition processor
 def test_compute_cluster_interactions(cluster_subspace, rng):
     coefs = 2 * np.random.random(cluster_subspace.num_corr_functions)
     scmatrix = 3 * np.eye(3)
@@ -217,7 +253,7 @@ def test_compute_cluster_interactions(cluster_subspace, rng):
         cluster_subspace, scmatrix, expansion.cluster_interaction_tensors
     )
 
-    occu = gen_random_occupancy(processor.get_sublattices(), rng=rng)
+    occu = _gen_unconstrained_ordered_occu(processor.get_sublattices(), rng=rng)
     struct = processor.structure_from_occupancy(occu)
     # same as normalize=False in corr_from_structure
     proc_interactions = processor.compute_feature_vector(occu) / processor.size
@@ -255,6 +291,111 @@ def test_bad_composite(cluster_subspace, rng):
         new_cs.remove_corr_functions(rng.choice(ids, size=10))
         proc.add_processor(
             ClusterExpansionProcessor(new_cs, scmatrix, coefficients=coefs)
+        )
+
+
+def test_distance_processor(processor_distance_processor, rng):
+    # test distance processor results vs compute directly from the corresponding
+    # processor
+    processor, distance_processor = processor_distance_processor
+    for _ in range(5):
+        occu = _gen_unconstrained_ordered_occu(processor.get_sublattices(), rng=rng)
+
+        # remove first entry since it is the "exact match diameter" in the distance metric
+        expected = abs(
+            processor.compute_feature_vector(occu)[1:] / processor.size
+            - distance_processor.target_vector[1:]
+        )
+        actual = distance_processor.compute_feature_vector(occu)
+        npt.assert_allclose(actual[1:], expected)
+
+        diameter = distance_processor.exact_match_max_diameter(actual)
+        expected = np.dot(
+            distance_processor.coefs, np.concatenate([[diameter], expected])
+        )
+        actual = distance_processor.compute_property(occu)
+        assert actual == pytest.approx(expected)
+
+        for _ in range(100):
+            active_sublattices = [
+                sublatt for sublatt in processor.get_sublattices() if sublatt.is_active
+            ]
+            sublatt = rng.choice(active_sublattices)
+            site = rng.choice(sublatt.sites)
+            new_sp = rng.choice(sublatt.encoding)
+            new_occu = occu.copy()
+            new_occu[site] = new_sp
+            flips = [(site, new_sp)]
+
+            # remove first element since it is the "exact match diameter" in the distance metric
+            dist_f = abs(
+                processor.compute_feature_vector(new_occu)[1:] / processor.size
+                - distance_processor.target_vector[1:]
+            )
+            dist_i = abs(
+                processor.compute_feature_vector(occu)[1:] / processor.size
+                - distance_processor.target_vector[1:]
+            )
+
+            distances = distance_processor.compute_feature_vector_distances(occu, flips)
+            npt.assert_allclose(distances[0][1:], dist_i, rtol=RTOL, atol=ATOL)
+            npt.assert_allclose(distances[1][1:], dist_f, rtol=RTOL, atol=ATOL)
+
+            diameter_i = distance_processor.exact_match_max_diameter(distances[0])
+            diameter_f = distance_processor.exact_match_max_diameter(distances[1])
+
+            expected = np.dot(
+                distance_processor.coefs,
+                np.concatenate([[diameter_f - diameter_i], dist_f - dist_i]),
+            )
+            actual = distance_processor.compute_property_change(occu, flips)
+            assert actual == pytest.approx(expected)
+
+
+def test_exact_match_max_diameter(processor_distance_processor, rng):
+    processor, distance_processor = processor_distance_processor
+
+    # check a vector with all zeros returns the max diameter
+    distance_vector = np.zeros(len(processor.coefs))
+    max_diameter = max(processor.cluster_subspace.orbits_by_diameter.keys())
+    assert distance_processor.exact_match_max_diameter(distance_vector) == max_diameter
+
+    # check a random orbit in between
+    # exclude zero diameter, and smallest diameter orbit
+    diameter = rng.choice(
+        list(processor.cluster_subspace.orbits_by_diameter.keys())[2:]
+    )
+    orbit = rng.choice(processor.cluster_subspace.orbits_by_diameter[diameter])
+
+    if isinstance(distance_processor, CorrelationDistanceProcessor):
+        # this is correlation based
+        index = rng.choice(range(orbit.bit_id, orbit.bit_id + len(orbit)))
+    else:
+        index = orbit.id
+
+    distance_vector[index] = 2 * distance_processor.match_tol
+    assert 0 < distance_processor.exact_match_max_diameter(distance_vector) < diameter
+
+    # check a vector exceeding match_tol for first point orbit
+    distance_vector[1] = 2 * distance_processor.match_tol
+    assert distance_processor.exact_match_max_diameter(distance_vector) == 0.0
+
+
+def test_bad_distance_processor(single_subspace, rng):
+    scm = 3 * np.eye(3)
+    subspace = single_subspace.copy()
+
+    with pytest.raises(ValueError):
+        subspace.add_external_term(EwaldTerm())
+        proc = CorrelationDistanceProcessor(subspace, scm)
+
+    with pytest.raises(ValueError):
+        proc = CorrelationDistanceProcessor(single_subspace, scm, match_weight=-1)
+
+    with pytest.raises(ValueError):
+        target_weights = np.ones(len(single_subspace) - 4)
+        proc = CorrelationDistanceProcessor(
+            single_subspace, scm, target_weights=target_weights
         )
 
 

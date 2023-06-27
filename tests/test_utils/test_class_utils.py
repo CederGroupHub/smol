@@ -11,20 +11,15 @@ from smol.cofe.space.basis import (
     PolynomialIterator,
     SinusoidIterator,
 )
-from smol.moca.sampler.bias import (
+from smol.moca.kernel import Metropolis, UniformlyRandom, WangLandau
+from smol.moca.kernel.base import MCKernelInterface, ThermalKernelMixin
+from smol.moca.kernel.bias import (
     FugacityBias,
     MCBias,
     SquareChargeBias,
     SquareHyperplaneBias,
 )
-from smol.moca.sampler.kernel import (
-    MCKernel,
-    Metropolis,
-    ThermalKernel,
-    UniformlyRandom,
-    WangLandau,
-)
-from smol.moca.sampler.mcusher import (
+from smol.moca.kernel.mcusher import (
     Composite,
     Flip,
     MCUsher,
@@ -83,10 +78,10 @@ def test_get_subclasses():
 
     # now test classes in smol
     assert all(
-        c in get_subclasses(MCKernel).values()
+        c in get_subclasses(MCKernelInterface).values()
         for c in [UniformlyRandom, Metropolis, WangLandau]
     )
-    assert Metropolis in get_subclasses(ThermalKernel).values()
+    assert Metropolis in get_subclasses(ThermalKernelMixin).values()
 
     assert all(
         c in get_subclasses(MCUsher).values()
@@ -120,12 +115,16 @@ def test_get_subclasses():
 
 def test_derived_class_factory(single_canonical_ensemble):
     kernel = derived_class_factory(
-        "Metropolis", ThermalKernel, single_canonical_ensemble, "swap", temperature=500
+        "Metropolis",
+        MCKernelInterface,
+        single_canonical_ensemble,
+        "swap",
+        temperature=500,
     )
     assert isinstance(kernel, Metropolis)
-    assert isinstance(kernel, MCKernel)
+    assert isinstance(kernel, MCKernelInterface)
 
     with pytest.raises(NotImplementedError):
         derived_class_factory(
-            "BeepBoop", ThermalKernel, single_canonical_ensemble, "swap"
+            "BeepBoop", MCKernelInterface, single_canonical_ensemble, "swap"
         )

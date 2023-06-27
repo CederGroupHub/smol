@@ -39,16 +39,16 @@ version = smol.__version__
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
-    # "sphinx.ext.intersphinx",
+    "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "sphinx.ext.autosummary",
     # "sphinx.ext.coverage",
     # "sphinx.ext.doctest",
     # "sphinx.ext.todo",
-    # "sphinx.ext.viewcode",
+    "sphinx.ext.viewcode",
     # "sphinx.ext.linkcode",
     "nbsphinx",
-    "nb2plots",
+    "sphinx_copybutton",
     "IPython.sphinxext.ipython_console_highlighting",
 ]
 

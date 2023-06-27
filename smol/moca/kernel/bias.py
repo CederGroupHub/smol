@@ -13,9 +13,9 @@ from math import log
 import numpy as np
 
 from smol.cofe.space.domain import get_species
-from smol.moca.composition.space import get_oxi_state
-from smol.moca.sampler.namespace import Metadata
-from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
+from smol.moca.composition import get_oxi_state
+from smol.moca.metadata import Metadata
+from smol.moca.occu_utils import get_dim_ids_table, occu_to_counts
 from smol.utils.class_utils import class_name_from_str, derived_class_factory
 
 
@@ -71,13 +71,8 @@ class MCBias(ABC):
         """
         return
 
-    @abstractmethod
     def compute_bias_change(self, occupancy, step):
         """Compute bias change from step.
-
-        The returned value needs to be the difference of bias logs,
-        log(bias_f) - log(bias_i), when the bias terms would directly multiply
-        the ensemble probability (i.e. exp(-beta * E) * bias).
 
         Args:
             occupancy: (ndarray):
@@ -87,7 +82,10 @@ class MCBias(ABC):
         Return:
             Float, change of bias value after step.
         """
-        return
+        occu_next = occupancy.copy()
+        for site, code in step:
+            occu_next[site] = code
+        return self.compute_bias(occu_next) - self.compute_bias(occupancy)
 
 
 class FugacityBias(MCBias):
@@ -184,7 +182,7 @@ class FugacityBias(MCBias):
             Float, bias value.
         """
         return sum(
-            log(self._fu_table[site][species]) for site, species in enumerate(occupancy)
+            log(self._fu_table[site, species]) for site, species in enumerate(occupancy)
         )
 
     def compute_bias_change(self, occupancy, step):
@@ -202,10 +200,12 @@ class FugacityBias(MCBias):
         Return:
             float, change of bias value after step.
         """
+        # if a site is flipped twice in a step only use the last flip
+        steps = {site: code for site, code in step}
         delta_log_fu = sum(
-            log(self._fu_table[f[0]][f[1]] / self._fu_table[f[0]][occupancy[f[0]]])
-            for f in step
-        )  # Can be wrong if step has two same sites.
+            log(self._fu_table[site, code] / self._fu_table[site, occupancy[site]])
+            for site, code in steps.items()
+        )
         return delta_log_fu
 
     def _build_fu_table(self, fugacity_fractions):
@@ -281,22 +281,6 @@ class SquareChargeBias(MCBias):
         # Returns a negative value because of the implementation in mckernels.
         return -self.penalty * c**2
 
-    def compute_bias_change(self, occupancy, step):
-        """Compute bias change from step.
-
-        Args:
-            occupancy: (ndarray):
-                Encoded occupancy array.
-            step: (List[tuple(int,int)]):
-                Step returned by MCUsher.
-        Return:
-            Float, change of bias value after step.
-        """
-        occu_next = occupancy.copy()
-        for site, code in step:
-            occu_next[site] = code
-        return self.compute_bias(occu_next) - self.compute_bias(occupancy)
-
 
 class SquareHyperplaneBias(MCBias):
     """Square hyperplane bias.
@@ -361,22 +345,6 @@ class SquareHyperplaneBias(MCBias):
         """
         n = occu_to_counts(occupancy, self.d, self._dim_ids_table)
         return -self.penalty * np.sum((self._A @ n - self._b) ** 2)
-
-    def compute_bias_change(self, occupancy, step):
-        """Compute bias change from step.
-
-        Args:
-            occupancy: (ndarray):
-                Encoded occupancy array.
-            step: (List[tuple(int,int)]):
-                Step returned by MCUsher.
-        Return:
-            Float, change of bias value after step.
-        """
-        occu_next = occupancy.copy()
-        for site, code in step:
-            occu_next[site] = code
-        return self.compute_bias(occu_next) - self.compute_bias(occupancy)
 
 
 def mcbias_factory(bias_type, sublattices, *args, **kwargs):
