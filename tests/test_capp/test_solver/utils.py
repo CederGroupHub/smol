@@ -11,7 +11,7 @@ from smol.capp.generate.groundstate.upper_bound.variables import (
     get_variable_values_from_occupancy,
 )
 from smol.cofe.space.domain import Vacancy
-from smol.moca.sampler.mcusher import Swap
+from smol.moca.kernel.mcusher import Swap
 
 
 def get_random_exotic_occu(sublattices):

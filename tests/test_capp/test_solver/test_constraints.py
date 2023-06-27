@@ -12,7 +12,7 @@ from smol.capp.generate.groundstate.upper_bound.constraints import (
 from smol.capp.generate.groundstate.upper_bound.variables import (
     get_upper_bound_variables_from_sublattices,
 )
-from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
+from smol.moca.occu_utils import get_dim_ids_table, occu_to_counts
 
 from .utils import get_random_neutral_variable_values, get_random_variable_values
 

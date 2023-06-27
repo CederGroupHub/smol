@@ -7,7 +7,7 @@ from numbers import Number
 import numpy as np
 
 from smol.cofe.space.domain import get_species
-from smol.moca.utils.occu import get_dim_ids_by_sublattice
+from smol.moca.occu_utils import get_dim_ids_by_sublattice
 
 __author__ = "Fengyu Xie"
 

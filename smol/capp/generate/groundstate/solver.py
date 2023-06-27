@@ -28,13 +28,13 @@ from smol.capp.generate.groundstate.upper_bound.variables import (
     get_upper_bound_variables_from_sublattices,
 )
 from smol.moca.ensemble import Ensemble
+from smol.moca.occu_utils import get_dim_ids_table, occu_to_counts
 from smol.moca.processor import (
     ClusterDecompositionProcessor,
     ClusterExpansionProcessor,
     CompositeProcessor,
     EwaldProcessor,
 )
-from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
 
 __author__ = "Fengyu Xie"
 

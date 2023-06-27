@@ -7,7 +7,7 @@ import numpy.testing as npt
 import pytest
 
 from smol.capp.generate.random import _gen_unconstrained_ordered_occu
-from smol.moca.composition import get_oxi_state
+from smol.moca.composition.space import get_oxi_state
 from smol.moca.kernel.bias import (
     FugacityBias,
     SquareChargeBias,

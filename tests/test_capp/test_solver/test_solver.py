@@ -13,7 +13,7 @@ from smol.capp.generate.groundstate.upper_bound.variables import (
 )
 from smol.cofe import ClusterExpansion, ClusterSubspace
 from smol.moca import Ensemble
-from smol.moca.utils.occu import get_dim_ids_table, occu_to_counts
+from smol.moca.occu_utils import get_dim_ids_table, occu_to_counts
 from tests.utils import assert_msonable
 
 
