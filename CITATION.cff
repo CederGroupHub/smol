@@ -1,0 +1,76 @@
+cff-version: 1.2.0
+title: smol - Statistical Mechanics on Lattices
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Luis
+    family-names: Barroso-Luque
+    email: lbluque@berkeley.edu
+    orcid: 'https://orcid.org/0000-0002-6453-9545'
+  - given-names: Julia
+    name-particle: H.
+    family-names: Yang
+    orcid: 'https://orcid.org/0000-0002-5713-2288'
+  - given-names: Fengyu
+    family-names: Xie
+    orcid: 'https://orcid.org/0000-0002-1169-1690'
+  - given-names: Tina
+    family-names: Chen
+    orcid: 'https://orcid.org/0000-0003-0254-8339'
+  - given-names: Ronald
+    name-particle: L.
+    family-names: Kam
+  - given-names: Zinab
+    family-names: Yadidi
+  - given-names: Peichen
+    family-names: Zhong
+    orcid: 'https://orcid.org/0000-0003-1921-1628'
+identifiers:
+  - type: doi
+    value: 10.21105/joss.04504
+    description: JOSS publication for this package
+  - type: doi
+    value: 10.5281/zenodo.7115050
+    description: Zenodo archive of version v0.0.7
+repository-code: 'https://github.com/CederGroupHub/smol'
+url: 'https://cedergrouphub.github.io/smol/'
+license: BSD-3-Clause-LBNL
+preferred-citation:
+  type: article
+  authors:
+  - given-names: Luis
+    family-names: Barroso-Luque
+    email: lbluque@berkeley.edu
+    orcid: 'https://orcid.org/0000-0002-6453-9545'
+  - given-names: Julia
+    name-particle: H.
+    family-names: Yang
+    orcid: 'https://orcid.org/0000-0002-5713-2288'
+  - given-names: Fengyu
+    family-names: Xie
+    orcid: 'https://orcid.org/0000-0002-1169-1690'
+  - given-names: Tina
+    family-names: Chen
+    orcid: 'https://orcid.org/0000-0003-0254-8339'
+  - given-names: Ronald
+    name-particle: L.
+    family-names: Kam
+  - given-names: Zinab
+    family-names: Yadidi
+  - given-names: Peichen
+    family-names: Zhong
+    orcid: 'https://orcid.org/0000-0003-1921-1628'
+  - given-names: Gerbrand
+    family-names: Ceder
+    orcid: 'https://orcid.org/0000-0001-9275-3605'
+  doi: "10.21105/joss.04504"
+  journal: "Journal of Open Source Software"
+  month: 9
+  start: 4504 # First page number
+  end: 4504 # Last page number
+  title: "smol: A Python package for cluster expansions and beyond"
+  volume: 7
+  number: 77
+  year: 2022
