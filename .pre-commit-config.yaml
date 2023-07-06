@@ -38,13 +38,13 @@ repos:
     - --profile=black
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.6.0
+  rev: v3.7.0
   hooks:
     - id: pyupgrade
       args: [--py38-plus]
 
 - repo: https://github.com/PyCQA/autoflake
-  rev: v2.1.1
+  rev: v2.2.0
   hooks:
     - id: autoflake
       args:
@@ -81,7 +81,7 @@ repos:
   - id: rst-inline-touching-normal
 
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.2.4
+  rev: v2.2.5
   hooks:
     - id: codespell
       stages: [commit, commit-msg]
