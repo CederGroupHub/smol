@@ -4,6 +4,7 @@ Some of these are borrowed from pymatgen test scripts.
 """
 
 import json
+import pickle
 
 import numpy as np
 import numpy.testing as npt
@@ -41,7 +42,19 @@ def assert_msonable(obj, skip_keys=None, test_if_subclass=True):
         if key in skip_keys:
             continue
         assert d1[key] == d2[key]
-    _ = json.loads(obj.to_json(), cls=MontyDecoder)
+
+    try:
+        _ = json.loads(obj.to_json(), cls=MontyDecoder)
+    except Exception as e:
+        raise AssertionError(e)
+
+
+def assert_pickles(obj):
+    """Test if obj is picklable."""
+    try:
+        pickle.dumps(obj)
+    except Exception as e:
+        raise AssertionError(e)
 
 
 def gen_fake_training_data(prim_structure, n=10, rng=None):

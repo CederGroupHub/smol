@@ -17,6 +17,7 @@ from smol.moca.kernel.base import ALL_MCUSHERS, ThermalKernelMixin
 from smol.moca.kernel.bias import FugacityBias
 from smol.moca.kernel.mcusher import Flip, Swap, TableFlip
 from smol.moca.trace import StepTrace, Trace
+from tests.utils import assert_pickles
 
 kernels_with_bias = [UniformlyRandom, Metropolis]
 kernels_no_bias = [MulticellMetropolis, WangLandau]
@@ -224,6 +225,10 @@ def test_trace(rng):
     steptrace_d = steptrace.__dict__.copy()
     steptrace_d["delta_trace"] = steptrace_d["delta_trace"].__dict__.copy()
     assert steptrace.as_dict() == steptrace_d
+
+
+def test_pickles(mckernel):
+    assert_pickles(mckernel)
 
 
 # TODO add direct multicell tests, especially to check proper updates of traces

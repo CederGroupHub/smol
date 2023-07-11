@@ -14,7 +14,7 @@ from smol.moca import (
     Ensemble,
     EwaldProcessor,
 )
-from tests.utils import assert_msonable
+from tests.utils import assert_msonable, assert_pickles
 
 
 @pytest.fixture
@@ -129,6 +129,10 @@ def test_restrict_sites(ensemble, rng):
 
 def test_msonable(ensemble):
     assert_msonable(ensemble)
+
+
+def test_pickles(ensemble):
+    assert_pickles(ensemble)
 
 
 def test_split_ensemble(ensemble, rng):

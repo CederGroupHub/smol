@@ -13,6 +13,7 @@ from smol.moca.kernel import mcusher
 from smol.moca.kernel.base import ALL_MCUSHERS
 from smol.moca.kernel.bias import SquareChargeBias
 from smol.moca.sublattice import Sublattice
+from tests.utils import assert_pickles
 
 mcmcusher_classes = [getattr(mcusher, i) for i in ALL_MCUSHERS]
 num_sites = 100
@@ -321,3 +322,7 @@ def test_table_flip(table_flip, rand_occu_lmtpo):
     # print("occupancies:", o_counter)
     # assert False
     # Read numerical values, they are acceptable.
+
+
+def test_pickles(mcmcusher):
+    assert_pickles(mcmcusher)

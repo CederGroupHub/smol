@@ -17,7 +17,7 @@ from smol.cofe.space.domain import Vacancy, get_allowed_species
 from smol.utils.cluster import get_orbit_data
 from smol.utils.cluster.evaluator import ClusterSpaceEvaluator
 from smol.utils.exceptions import StructureMatchError
-from tests.utils import assert_msonable, gen_random_ordered_structure
+from tests.utils import assert_msonable, assert_pickles, gen_random_ordered_structure
 
 pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
 
@@ -938,3 +938,7 @@ def test_vs_CASM_multicomp(single_structure):
     npt.assert_allclose(
         corr, [1, 0.5, 0, 0, 1, 0, 0.5, 0, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0.5, 0, 0]
     )
+
+
+def test_pickles(single_subspace):
+    assert_pickles(single_subspace)

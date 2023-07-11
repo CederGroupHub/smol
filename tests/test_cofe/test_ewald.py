@@ -7,7 +7,7 @@ from pymatgen.core import PeriodicSite, Structure
 from smol.capp.generate.random import _gen_neutral_occu
 from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.domain import Vacancy, get_allowed_species
-from tests.utils import assert_msonable
+from tests.utils import assert_msonable, assert_pickles
 
 
 def test_get_ewald_structure(ce_processor):
@@ -86,3 +86,8 @@ def test_val_from_occupancy(ce_processor, rng):
 def test_msonable():
     ew = EwaldTerm(eta=0.15, real_space_cut=0.5, use_term="point")
     assert_msonable(ew)
+
+
+def test_pickles():
+    ew = EwaldTerm(eta=0.15, real_space_cut=0.5, use_term="point")
+    assert_pickles(ew)
