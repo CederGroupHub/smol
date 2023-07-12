@@ -4,7 +4,7 @@ import pytest
 from sklearn.linear_model import LinearRegression, Ridge
 
 from smol.cofe import ClusterExpansion, RegressionData
-from tests.utils import assert_msonable, gen_random_ordered_structure
+from tests.utils import assert_msonable, assert_pickles, gen_random_ordered_structure
 
 
 @pytest.fixture(scope="module")
@@ -164,3 +164,7 @@ def test_msonable(cluster_expansion):
     npt.assert_array_equal(cluster_expansion.coefs, ce1.coefs)
     # change this to just use assert_msonable
     assert_msonable(cluster_expansion)
+
+
+def test_pickles(cluster_expansion):
+    assert_pickles(cluster_expansion)

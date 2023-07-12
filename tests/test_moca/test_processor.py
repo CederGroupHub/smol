@@ -20,7 +20,7 @@ from smol.moca.processor.distance import (
 )
 from smol.utils._openmp_helpers import _openmp_effective_numthreads
 from smol.utils.cluster.numthreads import DEFAULT_NUM_THREADS
-from tests.utils import assert_msonable, gen_random_ordered_structure
+from tests.utils import assert_msonable, assert_pickles, gen_random_ordered_structure
 
 pytestmark = pytest.mark.filterwarnings("ignore:All bit combos have been removed")
 
@@ -226,6 +226,10 @@ def test_msonable(processor, rng):
     # send in pr bc composite_processor is scoped for function and new random
     # coefficients will be created.
     assert_msonable(pr)
+
+
+def test_pickles(processor, rng):
+    assert_pickles(processor)
 
 
 # ClusterExpansionProcessor only tests

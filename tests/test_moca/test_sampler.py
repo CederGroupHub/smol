@@ -8,6 +8,7 @@ from smol.capp.generate.random import _gen_unconstrained_ordered_occu
 from smol.moca import SampleContainer, Sampler
 from smol.moca.kernel import Metropolis
 from smol.moca.kernel.mcusher import Flip, Swap
+from tests.utils import assert_pickles
 
 TEMPERATURE = 5000
 # Correlations are within ATOL 1E-14, but ewald energies sometimes need more slack
@@ -132,3 +133,7 @@ def test_reshape_occu(ensemble, rng):
     sampler = Sampler.from_ensemble(ensemble, temperature=TEMPERATURE)
     occu = _gen_unconstrained_ordered_occu(ensemble.sublattices, rng=rng)
     assert sampler._reshape_occu(occu).shape == (1, len(occu))
+
+
+def test_pickles(sampler):
+    assert_pickles(sampler)
