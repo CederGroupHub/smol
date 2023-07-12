@@ -63,6 +63,20 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
         self.cluster_interactions = FloatArray1DContainer(cluster_interaction_tensors)
 
+    def __reduce__(self):
+        """Return a tuple of the arguments needed to re-initialize the object."""
+        return (
+            ClusterSpaceEvaluator,
+            (
+                self._orbit_data,
+                self.num_orbits,
+                self.num_corr,
+                self.num_threads,
+                self.offset,
+                self.cluster_interactions._arrays,
+            ),
+        )
+
     cpdef public void reset_data(
             self,
             tuple orbit_data,

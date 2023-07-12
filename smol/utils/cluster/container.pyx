@@ -40,6 +40,10 @@ cdef class OrbitContainer:
         # populate orbits array
         self.set_orbits(orbit_data)
 
+    def __reduce__(self):
+        """Return a tuple of the arguments needed to re-initialize the object."""
+        return OrbitContainer, (self._orbit_data,)
+
     cpdef public void set_orbits(self, tuple orbit_data) except *:
         """Populated data using a list of orbit data."""
         cdef int i
@@ -121,6 +125,10 @@ cdef class FloatArray2DContainer:
         # populate orbits array
         self.set_arrays(arrays)
 
+    def __reduce__(self):
+        """Return a tuple of the arguments needed to re-initialize the object."""
+        return FloatArray2DContainer, (self._arrays,)
+
     cpdef public void set_arrays(self, tuple arrays) except *:
         """Populated data using a list of 2D arrays."""
         cdef int i
@@ -176,6 +184,10 @@ cdef class FloatArray1DContainer:
         # populate orbits array
         self.set_arrays(arrays)
 
+    def __reduce__(self):
+        """Return a tuple of the arguments needed to re-initialize the object."""
+        return FloatArray1DContainer, (self._arrays,)
+
     cpdef public void set_arrays(self, tuple arrays) except *:
         """Populated data using a list of 1D arrays."""
         cdef int i
@@ -229,6 +241,10 @@ cdef class IntArray1DContainer:
         # populate orbits array
         self.set_arrays(arrays)
 
+    def __reduce__(self):
+        """Return a tuple of the arguments needed to re-initialize the object."""
+        return IntArray1DContainer, (self._arrays,)
+
     cpdef public void set_arrays(self, tuple arrays) except *:
         """Populated data using a list of 1D arrays."""
         cdef int i
@@ -281,6 +297,10 @@ cdef class IntArray2DContainer:
 
         # populate orbits array
         self.set_arrays(arrays)
+
+    def __reduce__(self):
+        """Return a tuple of the arguments needed to re-initialize the object."""
+        return IntArray2DContainer, (self._arrays,)
 
     cpdef public void set_arrays(self, tuple arrays)  except *:
         """Populated data using a list of 2D arrays."""

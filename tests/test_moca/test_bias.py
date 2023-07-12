@@ -14,6 +14,7 @@ from smol.moca.kernel.bias import (
     SquareHyperplaneBias,
     mcbias_factory,
 )
+from tests.utils import assert_pickles
 
 bias_classes = [FugacityBias, SquareChargeBias, SquareHyperplaneBias]
 
@@ -146,3 +147,7 @@ def test_comp_bias(square_comp_bias, rng):
     for _ in range(100):
         occu = _gen_unconstrained_ordered_occu(square_comp_bias.sublattices, rng=rng)
         assert square_comp_bias.compute_bias(occu) <= 1e-6
+
+
+def test_pickles(mcbias):
+    assert_pickles(mcbias)

@@ -11,7 +11,7 @@ from smol.cofe.space.domain import Vacancy
 from smol.moca.composition.space import CompositionSpace
 from smol.moca.occu_utils import get_dim_ids_by_sublattice
 from smol.utils.math import NUM_TOL, compute_snf, integerize_vector
-from tests.utils import assert_msonable, assert_table_set_equal
+from tests.utils import assert_msonable, assert_pickles, assert_table_set_equal
 
 
 @pytest.fixture(scope="module")
@@ -207,6 +207,11 @@ def test_serialize(comp_space, comp_space_lmtpo3, comp_space_lmntof):
     assert_msonable(comp_space)
     assert_msonable(comp_space_lmtpo3)
     assert_msonable(comp_space_lmntof)
+
+    assert_pickles(comp_space)
+    assert_pickles(comp_space_lmtpo3)
+    assert_pickles(comp_space_lmntof)
+
     comp_space_reload = CompositionSpace.from_dict(comp_space.as_dict())
     npt.assert_array_equal(comp_space_reload._flip_table, comp_space._flip_table)
     npt.assert_array_equal(comp_space_reload._vs, comp_space._vs)

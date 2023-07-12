@@ -6,6 +6,7 @@ Based on: https://link.aps.org/doi/10.1103/PhysRevLett.86.2050
 
 __author__ = "Luis Barroso-Luque, Fengyu Xie"
 
+from functools import partial
 from math import log
 
 import numpy as np
@@ -95,12 +96,13 @@ class WangLandau(MCKernel):
         self.update_period = update_period
         self._m = mod_factor
         self._window = (min_enthalpy, max_enthalpy, bin_size)
+
         if callable(mod_update):
             self._mod_update = mod_update
         elif mod_update is not None:
-            self._mod_update = lambda x: x / mod_update
+            self._mod_update = partial(_divide, m=mod_update)
         else:
-            self._mod_update = lambda x: x / 2.0
+            self._mod_update = partial(_divide, m=2.0)
 
         self._levels = np.arange(min_enthalpy, max_enthalpy, bin_size)
 
@@ -296,3 +298,8 @@ class WangLandau(MCKernel):
         self._current_features = features
         self._current_enthalpy = enthalpy
         self.mcusher.set_aux_state(occupancy)
+
+
+def _divide(x, m):
+    """Use to allow WangLandau to be pickled."""
+    return x / m

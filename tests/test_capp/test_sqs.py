@@ -4,6 +4,7 @@ import pytest
 
 from smol.capp.generate import StochasticSQSGenerator
 from smol.utils.math import integerize_vector
+from tests.utils import assert_pickles
 
 
 @pytest.fixture(params=["correlation", "cluster-interaction"], scope="package")
@@ -89,3 +90,7 @@ def test_bad_generator(cluster_subspace):
         StochasticSQSGenerator(
             cluster_subspace, 2, supercell_matrices=[np.random.random((3, 3))]
         )
+
+
+def test_pickles(generator):
+    assert_pickles(generator)
