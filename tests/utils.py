@@ -52,9 +52,24 @@ def assert_msonable(obj, skip_keys=None, test_if_subclass=True):
 def assert_pickles(obj):
     """Test if obj is picklable."""
     try:
-        pickle.dumps(obj)
+        p = pickle.dumps(obj)
+        obj_copy = pickle.loads(p)
     except Exception as e:
         raise AssertionError(e)
+
+    assert isinstance(obj_copy, obj.__class__)
+
+    if isinstance(obj, MSONable):
+        d1 = obj.as_dict()
+        d2 = obj_copy.as_dict()
+        for key in d1.keys():
+            assert d1[key] == d2[key]
+    else:
+        # fallback for objects that are not MSONable
+        # not a complete test, since we are only checking that attribute names match
+        d1 = obj.__dict__
+        d2 = obj_copy.__dict__
+        assert d1.keys() == d2.keys()
 
 
 def gen_fake_training_data(prim_structure, n=10, rng=None):
