@@ -104,18 +104,17 @@ def test_constraints_manager(bits):
         [1, 1, 1, 2, 0, 4, -1, 3],
     ]
     b_eq_std = [0, 10, 6, 6, 4]
-    a_leq_std = [[1, 0.5, 0, 2, 0, 0, -1, 3]]
-    b_leq_std = [10]
-    a_geq_std = [[0, 0, -1, 1, -0.4, 0, 0, 0]]
-    b_geq_std = [0]
+    a_leq_std = [[1, 0.5, 0, 2, 0, 0, -1, 3], [0, 0, 1, -1, 0.4, 0, 0, 0]]
+    b_leq_std = [10, 0]
+    # No more geq constraints stored in manager.
 
     # Test all allowed formats of input.
     other_constraints = [
         # converted to int.
-        ({"Li+": -1, "Ti4+": 0.5}, 3, "eq"),
+        "-1 Li+ + 0.5 Ti4+ == 3",
         ([1, 1, 1, 2, 0, 4, -1, 3], 4, "="),
         # not converted to int.
-        ([{"Li+": 1, "Mn3+": 0.5, "Vacancy": 2}, {"O-": -1, "F-": 3}], 10, "<="),
+        "Li+(0) + 0.5 Mn3+(0) + 2 Vacancy(0) - O-(1) + 3 F-(1) <= 10",
         "- Ti4+ + Vacancy >= 0.4 Li+(1)",
     ]
 
@@ -130,13 +129,11 @@ def test_constraints_manager(bits):
     npt.assert_array_equal(b_eq_std, comp_space._b)
     npt.assert_array_equal(a_leq_std, comp_space._A_leq)
     npt.assert_array_equal(b_leq_std, comp_space._b_leq)
-    npt.assert_array_equal(a_geq_std, comp_space._A_geq)
-    npt.assert_array_equal(b_geq_std, comp_space._b_geq)
 
     # Test None cases.
     other_constraints = [
         # converted to int.
-        ({"Li+": -1, "Ti4+": 0.5}, 3, "eq"),
+        "-1 Li+ + 0.5 Ti4+ == 3",
         ([1, 1, 1, 2, 0, 4, -1, 3], 4, "="),
     ]
     comp_space = CompositionSpace(
@@ -149,8 +146,6 @@ def test_constraints_manager(bits):
     npt.assert_array_equal(b_eq_std, comp_space._b)
     assert comp_space._A_leq is None
     assert comp_space._b_leq is None
-    assert comp_space._A_geq is None
-    assert comp_space._b_geq is None
 
     comp_space = CompositionSpace(
         bits,
@@ -161,5 +156,3 @@ def test_constraints_manager(bits):
     npt.assert_array_equal(b_eq_std[:-2], comp_space._b)
     assert comp_space._A_leq is None
     assert comp_space._b_leq is None
-    assert comp_space._A_geq is None
-    assert comp_space._b_geq is None

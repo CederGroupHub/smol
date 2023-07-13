@@ -24,7 +24,7 @@ def get_upper_bound_variables_from_sublattices(
 
     Inactive sites (sites will only 1 allowed species) will not be added into variables.
     Args:
-        sublattices (list[Sublattice]):
+        sublattices (list of Sublattice):
             Sub-lattices to build the upper-bound problem on.
             Note:1, Must contain all sub-lattices in the ensemble! 2, Must either be
             original sub-lattices computed from the structure, or sub-lattices
@@ -43,7 +43,7 @@ def get_upper_bound_variables_from_sublattices(
             manually restricted, this argument will be mandatory.
 
     Returns:
-        cp.Variable, list[list[int]]:
+        cp.Variable, list of lists of int:
           Flatten variables for each species on active sites; list of variable
           index corresponding to each site and species indices in
           its site space. Each sub-list will have the same shape as the corresponding
@@ -126,11 +126,11 @@ def get_occupancy_from_variables(
     """Get encoded occupancy array from value of variables.
 
     Args:
-        sublattices(list[Sublattice]):
+        sublattices(list of Sublattice):
             Sub-lattices to build the upper-bound problem on.
         variable_values(ArrayLike):
             Value of cvxpy variables storing the ground-state result.
-        variable_indices(list[list[int]]):
+        variable_indices(list of lists of int):
             List of variable indices corresponding to each site index and
             the species in its site space.
     Returns:
@@ -171,12 +171,12 @@ def get_variable_values_from_occupancy(
     """Get value of variables from encoded occupancy array.
 
     Args:
-        sublattices(list[Sublattice]):
+        sublattices(list of Sublattice):
             Sub-lattices to build the upper-bound problem on.
         occupancy(ArrayLike): optional
             An encoded occupancy array. Does not check whether it satisfies
             constraints.
-        variable_indices(list[list[int]]):
+        variable_indices(list of lists of int):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be empty.
 

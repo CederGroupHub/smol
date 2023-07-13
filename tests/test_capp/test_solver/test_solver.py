@@ -19,13 +19,13 @@ from tests.utils import assert_msonable
 
 # Only SCIP tried on this instance.
 @pytest.fixture
-def exotic_solver(exotic_ensemble, exotic_initial_occupancy):
-    return GroundStateSolver(exotic_ensemble, exotic_initial_occupancy)
+def solver_test_solver(solver_test_ensemble, solver_test_initial_occupancy):
+    return GroundStateSolver(solver_test_ensemble, solver_test_initial_occupancy)
 
 
-def test_msonable(exotic_solver, exotic_initial_occupancy):
-    assert_msonable(exotic_solver)
-    solver_dict = exotic_solver.as_dict()
+def test_msonable(solver_test_solver, solver_test_initial_occupancy):
+    assert_msonable(solver_test_solver)
+    solver_dict = solver_test_solver.as_dict()
     solver_reload = GroundStateSolver.from_dict(solver_dict)
     with pytest.raises(RuntimeError):
         _ = solver_reload.ground_state_solution
@@ -37,32 +37,32 @@ def test_msonable(exotic_solver, exotic_initial_occupancy):
         _ = solver_reload.ground_state_energy
 
 
-def test_setting_results(exotic_solver):
-    exotic_solver._ground_state_solution = get_variable_values_from_occupancy(
-        exotic_solver._ensemble.sublattices,
-        exotic_solver._initial_occupancy,
-        exotic_solver._canonicals.variable_indices,
+def test_setting_results(solver_test_solver):
+    solver_test_solver._ground_state_solution = get_variable_values_from_occupancy(
+        solver_test_solver._ensemble.sublattices,
+        solver_test_solver._initial_occupancy,
+        solver_test_solver._canonicals.variable_indices,
     )
     with pytest.raises(RuntimeError):
-        _ = exotic_solver.ground_state_energy
+        _ = solver_test_solver.ground_state_energy
 
-    exotic_solver._ground_state_energy = 0
-    assert exotic_solver.ground_state_energy == 0
+    solver_test_solver._ground_state_energy = 0
+    assert solver_test_solver.ground_state_energy == 0
     npt.assert_array_equal(
-        exotic_solver.ground_state_occupancy, exotic_solver._initial_occupancy
+        solver_test_solver.ground_state_occupancy, solver_test_solver._initial_occupancy
     )
     assert StructureMatcher().fit(
-        exotic_solver.ground_state_structure,
-        exotic_solver._ensemble.processor.structure_from_occupancy(
-            exotic_solver._initial_occupancy
+        solver_test_solver.ground_state_structure,
+        solver_test_solver._ensemble.processor.structure_from_occupancy(
+            solver_test_solver._initial_occupancy
         ),
     )
     # reset.
-    exotic_solver.reset()
+    solver_test_solver.reset()
     with pytest.raises(RuntimeError):
-        _ = exotic_solver.ground_state_structure
+        _ = solver_test_solver.ground_state_structure
     with pytest.raises(RuntimeError):
-        _ = exotic_solver.ground_state_energy
+        _ = solver_test_solver.ground_state_energy
 
 
 @pytest.fixture(scope="module")

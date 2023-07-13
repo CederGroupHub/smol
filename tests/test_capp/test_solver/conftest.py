@@ -10,11 +10,12 @@ from smol.cofe.extern import EwaldTerm
 from smol.cofe.space.domain import Vacancy
 from smol.moca.ensemble import Ensemble
 
-from .utils import get_random_exotic_occu
+from .utils import get_random_solver_test_occu
 
 
+# The following fixtures are designed specifically for testing the ground-state solver.
 @pytest.fixture(scope="module")
-def exotic_prim():
+def solver_test_prim():
     lat = Lattice.from_parameters(2, 2, 2, 60, 60, 60)
     return Structure(
         lat,
@@ -37,43 +38,43 @@ def exotic_prim():
 
 
 @pytest.fixture(scope="module", params=["indicator", "sinusoid"])
-def exotic_subspace(exotic_prim, request):
+def solver_test_subspace(solver_test_prim, request):
     # Use sinusoid basis to test if useful.
     space = ClusterSubspace.from_cutoffs(
-        exotic_prim, {2: 3, 3: 2.1}, basis=request.param
+        solver_test_prim, {2: 3, 3: 2.1}, basis=request.param
     )
     space.add_external_term(EwaldTerm())
     return space
 
 
 @pytest.fixture(scope="module")
-def exotic_coefs(exotic_subspace):
-    exotic_coefs = np.zeros(exotic_subspace.num_corr_functions + 1)
-    exotic_coefs[0] = -10
-    n_pair = len(exotic_subspace.function_inds_by_size[2])
-    n_tri = len(exotic_subspace.function_inds_by_size[3])
+def solver_test_coefs(solver_test_subspace):
+    solver_test_coefs = np.zeros(solver_test_subspace.num_corr_functions + 1)
+    solver_test_coefs[0] = -10
+    n_pair = len(solver_test_subspace.function_inds_by_size[2])
+    n_tri = len(solver_test_subspace.function_inds_by_size[3])
     n_quad = 0
     i = 1
-    exotic_coefs[i : i + n_pair] = np.random.normal(size=n_pair)
+    solver_test_coefs[i : i + n_pair] = np.random.normal(size=n_pair)
     i += n_pair
-    exotic_coefs[i : i + n_tri] = np.random.normal(size=n_tri) * 0.4
+    solver_test_coefs[i : i + n_tri] = np.random.normal(size=n_tri) * 0.4
     i += n_tri
-    exotic_coefs[i : i + n_quad] = np.random.normal(size=n_quad) * 0.1
+    solver_test_coefs[i : i + n_quad] = np.random.normal(size=n_quad) * 0.1
 
-    exotic_coefs[-1] = 0.2
-    return exotic_coefs
+    solver_test_coefs[-1] = 0.2
+    return solver_test_coefs
 
 
 @pytest.fixture(scope="module")
-def exotic_expansion(exotic_subspace, exotic_coefs):
-    return ClusterExpansion(exotic_subspace, exotic_coefs)
+def solver_test_expansion(solver_test_subspace, solver_test_coefs):
+    return ClusterExpansion(solver_test_subspace, solver_test_coefs)
 
 
 @pytest.fixture(
     scope="module",
     params=list(product(["canonical", "semigrand"], ["expansion", "decomposition"])),
 )
-def orig_ensemble(exotic_expansion, request):
+def orig_ensemble(solver_test_expansion, request):
     if request.param[0] == "semigrand":
         chemical_potentials = {
             "Li+": np.random.normal(),
@@ -89,7 +90,7 @@ def orig_ensemble(exotic_expansion, request):
     else:
         chemical_potentials = None
     return Ensemble.from_cluster_expansion(
-        exotic_expansion,
+        solver_test_expansion,
         np.diag([5, 2, 2]),
         request.param[1],
         chemical_potentials=chemical_potentials,
@@ -103,12 +104,12 @@ def orig_sublattices(orig_ensemble):
 
 
 @pytest.fixture(scope="module")
-def exotic_initial_occupancy(orig_sublattices):
-    return get_random_exotic_occu(orig_sublattices)
+def solver_test_initial_occupancy(orig_sublattices):
+    return get_random_solver_test_occu(orig_sublattices)
 
 
 @pytest.fixture(scope="module")
-def exotic_ensemble(orig_ensemble, exotic_initial_occupancy):
+def solver_test_ensemble(orig_ensemble, solver_test_initial_occupancy):
     cation_id = None
     anion_id = None
     for sl_id in range(2):
@@ -126,7 +127,7 @@ def exotic_ensemble(orig_ensemble, exotic_initial_occupancy):
         new_ensemble.sublattices[cation_id].species.index(Species("Li", 1))
     ]
     li_sites = new_ensemble.sublattices[cation_id].sites[
-        np.where(exotic_initial_occupancy[cation_sites] == li_code)[0]
+        np.where(solver_test_initial_occupancy[cation_sites] == li_code)[0]
     ]
     li_restricts = np.random.choice(li_sites, size=3, replace=False)
     new_ensemble.restrict_sites(li_restricts)
@@ -134,7 +135,7 @@ def exotic_ensemble(orig_ensemble, exotic_initial_occupancy):
         new_ensemble.sublattices[cation_id].species.index(Vacancy())
     ]
     va_sites = new_ensemble.sublattices[cation_id].sites[
-        np.where(exotic_initial_occupancy[cation_sites] == va_code)[0]
+        np.where(solver_test_initial_occupancy[cation_sites] == va_code)[0]
     ]
     va_restricts = np.random.choice(va_sites, size=1, replace=False)
     new_ensemble.restrict_sites(va_restricts)
@@ -145,7 +146,7 @@ def exotic_ensemble(orig_ensemble, exotic_initial_occupancy):
         new_ensemble.sublattices[anion_id].species.index(Species("O", -2))
     ]
     o2_sites = new_ensemble.sublattices[anion_id].sites[
-        np.where(exotic_initial_occupancy[anion_sites] == o2_code)[0]
+        np.where(solver_test_initial_occupancy[anion_sites] == o2_code)[0]
     ]
     o2_restricts = np.random.choice(o2_sites, size=2, replace=False)
     new_ensemble.restrict_sites(o2_restricts)
@@ -156,12 +157,12 @@ def exotic_ensemble(orig_ensemble, exotic_initial_occupancy):
     ]
     an_partitions = [[Species("O", -2), Species("O", -1)], [Species("F", -1)]]
     new_ensemble.split_sublattice_by_species(
-        cation_id, exotic_initial_occupancy, ca_partitions
+        cation_id, solver_test_initial_occupancy, ca_partitions
     )
     # Sub-lattices all updated after partition.
     anion_id = anion_id if cation_id > anion_id else anion_id + 1
     new_ensemble.split_sublattice_by_species(
-        anion_id, exotic_initial_occupancy, an_partitions
+        anion_id, solver_test_initial_occupancy, an_partitions
     )
 
     # Check if sites a correctly restricted.

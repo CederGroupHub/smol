@@ -15,9 +15,9 @@ def get_auxiliary_variable_values(
     """Get the value of auxiliary variables from site variables.
 
     Args:
-        variable_values(ArrayLike[bool, int]):
+        variable_values(ArrayLike of bool or int):
             Values of site variables.
-        indices_in_auxiliary_products(list[list[int]]):
+        indices_in_auxiliary_products(list of lists of int):
             A list containing the indices of variables whose product equals to the
             corresponding auxiliary slack variable.
     Returns:
@@ -43,7 +43,7 @@ def get_expression_and_auxiliary_from_terms(
     This function simplify duplicates and linearizes multi-site cluster terms.
 
     Args:
-        cluster_terms(list[tuple(list[int], float)]):
+        cluster_terms(list of tuples of (list of int, float)):
             A list of tuples, each represents a cluster term in the energy
             representation, containing indices of variables to be taken product with,
             and the factor before the boolean product.
@@ -55,7 +55,7 @@ def get_expression_and_auxiliary_from_terms(
             term coefficient is less than cutoff, it will not be included in the
             objective function. If no cutoff is given, will include every term.
     Returns:
-        cp.Expression, cp.Variable, list[list[int]], list[Constraint]:
+        cp.Expression, cp.Variable, list of lists of int, list of Constraint:
             The linearized energy expression, auxiliary slack variables for each
             multi-body product term, a list containing the indices of variables whose
             product equals to the corresponding auxiliary slack variable, and

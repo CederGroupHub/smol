@@ -22,27 +22,29 @@ from smol.capp.generate.groundstate.upper_bound.variables import (
 from smol.cofe.space.domain import Vacancy, get_allowed_species
 
 
-def test_variable_indices_for_components(exotic_ensemble, exotic_initial_occupancy):
+def test_variable_indices_for_components(
+    solver_test_ensemble, solver_test_initial_occupancy
+):
     _, variable_indices = get_upper_bound_variables_from_sublattices(
-        exotic_ensemble.sublattices,
-        exotic_ensemble.processor.structure,
-        exotic_initial_occupancy,
+        solver_test_ensemble.sublattices,
+        solver_test_ensemble.processor.structure,
+        solver_test_initial_occupancy,
     )
 
     var_inds_for_components = get_variable_indices_for_each_composition_component(
-        exotic_ensemble.sublattices,
+        solver_test_ensemble.sublattices,
         variable_indices,
-        exotic_ensemble.processor.structure,
+        solver_test_ensemble.processor.structure,
     )
     # Total 9 species on all sub-lattices.
     assert len(var_inds_for_components) == 9
     dim_id = 0
-    for sublattice in exotic_ensemble.sublattices:
+    for sublattice in solver_test_ensemble.sublattices:
         sub_bits = sublattice.species
         sl_active_variables = np.array(
             [
                 [v for v in variable_indices[i] if v >= 0]
-                for i in range(exotic_ensemble.num_sites)
+                for i in range(solver_test_ensemble.num_sites)
                 if i in sublattice.active_sites
             ],
             dtype=int,
@@ -54,7 +56,9 @@ def test_variable_indices_for_components(exotic_ensemble, exotic_initial_occupan
             restricted_all_sites = sublattice.restricted_sites
             assert len(restricted_all_sites) == 4
             restricted_li_sites = restricted_all_sites[
-                np.where(exotic_initial_occupancy[restricted_all_sites] == li_code)[0]
+                np.where(
+                    solver_test_initial_occupancy[restricted_all_sites] == li_code
+                )[0]
             ]
             restricted_vac_sites = np.setdiff1d(
                 restricted_all_sites, restricted_li_sites
@@ -63,10 +67,10 @@ def test_variable_indices_for_components(exotic_ensemble, exotic_initial_occupan
             assert len(restricted_vac_sites) == 1
             # Only li sites restricted.
             npt.assert_array_equal(
-                exotic_initial_occupancy[restricted_li_sites], li_code
+                solver_test_initial_occupancy[restricted_li_sites], li_code
             )
             npt.assert_array_equal(
-                exotic_initial_occupancy[restricted_vac_sites], va_code
+                solver_test_initial_occupancy[restricted_vac_sites], va_code
             )
             for sp_id, species in enumerate(sub_bits):
                 var_ids, n_fix = var_inds_for_components[dim_id]
@@ -112,44 +116,48 @@ def test_variable_indices_for_components(exotic_ensemble, exotic_initial_occupan
             dim_id += 1
 
 
-def test_ewald_indices(exotic_ensemble, exotic_initial_occupancy):
+def test_ewald_indices(solver_test_ensemble, solver_test_initial_occupancy):
     _, variable_indices = get_upper_bound_variables_from_sublattices(
-        exotic_ensemble.sublattices,
-        exotic_ensemble.processor.structure,
-        exotic_initial_occupancy,
+        solver_test_ensemble.sublattices,
+        solver_test_ensemble.processor.structure,
+        solver_test_initial_occupancy,
     )
-    assert len(variable_indices) == exotic_ensemble.num_sites
-    ew_processor = exotic_ensemble.processor.processors[-1]
-    site_sublattice_ids = get_sublattice_indices_by_site(exotic_ensemble.sublattices)
+    assert len(variable_indices) == solver_test_ensemble.num_sites
+    ew_processor = solver_test_ensemble.processor.processors[-1]
+    site_sublattice_ids = get_sublattice_indices_by_site(
+        solver_test_ensemble.sublattices
+    )
 
     ew_to_var_id = map_ewald_indices_to_variable_indices(
         ew_processor.structure,
         variable_indices,
     )
 
-    n_ew_rows = len(exotic_ensemble.processor.processors[-1]._ewald_structure)
-    site_spaces = get_allowed_species(exotic_ensemble.processor.structure)
+    n_ew_rows = len(solver_test_ensemble.processor.processors[-1]._ewald_structure)
+    site_spaces = get_allowed_species(solver_test_ensemble.processor.structure)
     assert len(ew_to_var_id) == n_ew_rows
     ew_id = 0
     var_id = 0
 
-    restricted_vac_sites = exotic_ensemble.restricted_sites[
-        np.where(exotic_initial_occupancy[exotic_ensemble.restricted_sites] == 5)[0]
+    restricted_vac_sites = solver_test_ensemble.restricted_sites[
+        np.where(
+            solver_test_initial_occupancy[solver_test_ensemble.restricted_sites] == 5
+        )[0]
     ]
     # print("supercell:\n", ew_processor.structure)
-    # print("Initial occu:", exotic_initial_occupancy)
-    # print("sub-lattices:", exotic_ensemble.sublattices)
+    # print("Initial occu:", solver_test_initial_occupancy)
+    # print("sub-lattices:", solver_test_ensemble.sublattices)
     # print("site sub-lattice indices:", site_sublattice_ids)
     # print("variable indices:", variable_indices)
-    # print("restricted_sites:", exotic_ensemble.restricted_sites)
+    # print("restricted_sites:", solver_test_ensemble.restricted_sites)
     # print("restricted_vac_sites:", restricted_vac_sites)
     # print("ew_to_var_id:\n", ew_to_var_id)
 
-    # This test is only applied to the exotic ensemble in conftest.
+    # This test is only applied to the solver_test ensemble in conftest.
     expects = []
     for site_id, site_space in enumerate(site_spaces):
         sublattice_id = site_sublattice_ids[site_id]
-        sublattice = exotic_ensemble.sublattices[sublattice_id]
+        sublattice = solver_test_ensemble.sublattices[sublattice_id]
         for spec in site_space:
             if isinstance(spec, Vacancy):
                 # In the Li/Vac sub-lattice.
@@ -159,7 +167,7 @@ def test_ewald_indices(exotic_ensemble, exotic_initial_occupancy):
                     if site_id in sublattice.active_sites:
                         var_id += 1
                 continue
-            if site_id in exotic_ensemble.restricted_sites:
+            if site_id in solver_test_ensemble.restricted_sites:
                 # Not the inactive F sub-lattice, just manually restricted.
                 if Species("F", -1) not in sublattice.species:
                     # Always occupied by one non-vacancy species.

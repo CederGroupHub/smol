@@ -25,11 +25,11 @@ def get_upper_bound_normalization_constraints(
     Args:
         variables(cp.Variable):
             cvxpy variables storing the ground-state result.
-        variable_indices(list[list[int]]):
+        variable_indices(list of lists of int):
             List of variable indices corresponding to each active site index and
             species indices in its site space.
     Returns:
-        List[Constraint].
+        list of Constraint.
     """
     constraints = []
     for site_indices in variable_indices:
@@ -50,10 +50,6 @@ def _extract_constraint_matrix(comp_space, constraint_type):
         mat_a = comp_space._A_leq if comp_space._A_leq is not None else []
         vec_b = comp_space._b_leq if comp_space._b_leq is not None else []
         constraint_type = "<="
-    elif constraint_type in [">=", "geq"]:
-        mat_a = comp_space._A_geq if comp_space._A_geq is not None else []
-        vec_b = comp_space._b_geq if comp_space._b_geq is not None else []
-        constraint_type = ">="
     else:
         raise NotImplementedError(f"Constraint type {constraint_type} not supported!")
     return mat_a, vec_b, constraint_type
@@ -78,8 +74,6 @@ def _get_upper_bound_formula_constraints(
                 raise ValueError(f"Unsatisfiable constraint an=b, a: {a}, b: {b}.")
             if constraint_type == "<=" and b < 0:
                 raise ValueError(f"Unsatisfiable constraint an<=b, a: {a}, b: {b}.")
-            if constraint_type == ">=" and b > 0:
-                raise ValueError(f"Unsatisfiable constraint an>=b, a: {a}, b: {b}.")
             continue
 
         expression = 0
@@ -89,10 +83,8 @@ def _get_upper_bound_formula_constraints(
                 expression += cp.sum(variables[indices]) * a[dim_id]
             expression += n_fixed * a[dim_id]
         if not isinstance(expression, Expression):
-            if (
-                (constraint_type == "==" and expression != b)
-                or (constraint_type == "<=" and expression > b)
-                or (constraint_type == ">=" and expression < b)
+            if (constraint_type == "==" and expression != b) or (
+                constraint_type == "<=" and expression > b
             ):
                 raise ValueError(
                     f"Constraint {a} {constraint_type} {b} can never be"
@@ -104,8 +96,6 @@ def _get_upper_bound_formula_constraints(
                 constraints.append(expression == b)
             if constraint_type == "<=":
                 constraints.append(expression <= b)
-            if constraint_type == ">=":
-                constraints.append(expression >= b)
 
     return constraints
 
@@ -124,11 +114,11 @@ def get_upper_bound_composition_space_constraints(
     Supports charge balance and other generic composition constraints.
     See moca.CompositionSpace.
     Args:
-        sublattices(list[Sublattice]):
+        sublattices(list of Sublattice):
             Sub-lattices to build the upper-bound problem on.
         variables(cp.Variable):
             cvxpy variables storing the ground-state result.
-        variable_indices(list[list[int]]):
+        variable_indices(list of lists of int):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
             either -1 or -2. See documentation in groundstate.upper_bound.variables.
@@ -143,7 +133,7 @@ def get_upper_bound_composition_space_constraints(
             Note that constraints are now to be satisfied with the number of sites
             in sub-lattices of the supercell instead of the primitive cell.
     Returns:
-        list[Constraint]: Constraints corresponding to the given composition space.
+        list of Constraint: Constraints corresponding to the given composition space.
     """
     # Get the variable indices corresponding to each dimension in "counts" format.
     variables_per_component = get_variable_indices_for_each_composition_component(
@@ -184,11 +174,7 @@ def get_upper_bound_composition_space_constraints(
             comp_space, "leq", variables, variables_per_component
         )
     )
-    constraints.extend(
-        _get_upper_bound_formula_constraints(
-            comp_space, "geq", variables, variables_per_component
-        )
-    )
+    # All inequality constraints must be of leq type.
 
     return constraints
 
@@ -204,11 +190,11 @@ def get_upper_bound_fixed_composition_constraints(
 
     Used for searching ground-states in a canonical ensemble.
     Args:
-        sublattices(list[Sublattice]):
+        sublattices(list of Sublattice):
             Sub-lattices to build the upper-bound problem on.
         variables(cp.Variable):
             cvxpy variables storing the ground-state result.
-        variable_indices(list[list[int]]):
+        variable_indices(list of lists of int):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
             either -1 or -2. See documentation in groundstate.upper_bound.variables.
@@ -217,12 +203,12 @@ def get_upper_bound_fixed_composition_constraints(
             The sub-lattices must match the processor structure, or they must be the result
             of splitting with the initial_occupancy. See smol.moca.sublattice for the
             explanation of splitting a sub-lattice.
-        fixed_composition(list[int]):
+        fixed_composition(list of int):
             Amount of each species to be fixed in the SUPER-cell, in CompositionSpace
             "counts" format. You are fully responsible for setting the order of species
             in the list correctly as would be generated by a CompositionSpace.
     Return:
-        list[Constraint]: Constraints corresponding to a fixed composition on each
+        list of Constraint: Constraints corresponding to a fixed composition on each
         sub-lattice.
     """
     # Get the variable indices corresponding to each dimension in "counts" format.

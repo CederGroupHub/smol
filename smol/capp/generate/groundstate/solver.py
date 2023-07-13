@@ -54,7 +54,7 @@ class ProblemCanonicals(NamedTuple):
         auxiliary_variables (cp.Variable):
             Slack variables used to linearize polynomial pseudo-boolean objective
             terms.
-        indices_in_auxiliary_products (list[list[int]]):
+        indices_in_auxiliary_products (list of lists of int):
             A list containing the indices of variables whose product equals to the
             corresponding auxiliary slack variable.
         objective_function (cp.Expression):
@@ -315,7 +315,7 @@ class GroundStateSolver(MSONable):
 
         Potentially contains split sub-lattices or manually restricted sites.
         Returns:
-            List[Sublattice].
+            List of Sublattice.
         """
         return self._sublattices
 
@@ -342,7 +342,7 @@ class GroundStateSolver(MSONable):
         """Indices of variables on each site if site is active.
 
         Returns:
-            list[list[int]]: each sub-list contains variable
+            list of lists of int: each sub-list contains variable
             indices on an active site.
         """
         return self._canonicals.variable_indices
@@ -386,7 +386,7 @@ class GroundStateSolver(MSONable):
         """Indices of variables in cluster terms corresponding to auxiliary variables.
 
         Returns:
-            List[List[int]].
+            list of lists of int
         """
         return self._canonicals.indices_in_auxiliary_products
 

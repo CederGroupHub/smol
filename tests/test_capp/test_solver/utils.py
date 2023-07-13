@@ -1,4 +1,4 @@
-"""Utilities to perform groundstate tests. Only valid for exotic ensemble."""
+"""Utilities to perform groundstate tests. Only valid for solver_test ensemble."""
 
 import numpy as np
 import numpy.testing as npt
@@ -14,7 +14,7 @@ from smol.cofe.space.domain import Vacancy
 from smol.moca.kernel.mcusher import Swap
 
 
-def get_random_exotic_occu(sublattices):
+def get_random_solver_test_occu(sublattices):
     # Only use this on orig_sublattices.
     # Li+ 9 Mn2+ 2 Mn3+ 1 Mn4+ 1 Ti4+ 2 Vac 5 O2- 8 O- 2 F- 10
     cation_sublattice = None

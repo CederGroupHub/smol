@@ -26,13 +26,13 @@ from .utils import (
 )
 
 
-def test_expansion_upper(exotic_ensemble, exotic_initial_occupancy):
+def test_expansion_upper(solver_test_ensemble, solver_test_initial_occupancy):
     variables, variable_indices = get_upper_bound_variables_from_sublattices(
-        exotic_ensemble.sublattices,
-        exotic_ensemble.processor.structure,
-        exotic_initial_occupancy,
+        solver_test_ensemble.sublattices,
+        solver_test_ensemble.processor.structure,
+        solver_test_initial_occupancy,
     )
-    proc = exotic_ensemble.processor.processors[0]
+    proc = solver_test_ensemble.processor.processors[0]
     if isinstance(proc, ClusterExpansionProcessor):
         terms = get_upper_bound_terms_from_expansion_processor(
             variable_indices,
@@ -57,10 +57,10 @@ def test_expansion_upper(exotic_ensemble, exotic_initial_occupancy):
         terms, variables
     )
     for _ in range(50):
-        rand_val = get_random_variable_values(exotic_ensemble.sublattices)
+        rand_val = get_random_variable_values(solver_test_ensemble.sublattices)
         aux_val = get_auxiliary_variable_values(rand_val, aux_indices)
         rand_occu = get_occupancy_from_variables(
-            exotic_ensemble.sublattices,
+            solver_test_ensemble.sublattices,
             rand_val,
             variable_indices,
         )
@@ -82,13 +82,13 @@ def test_expansion_upper(exotic_ensemble, exotic_initial_occupancy):
             assert con.value()
 
 
-def test_ewald_upper(exotic_ensemble, exotic_initial_occupancy):
+def test_ewald_upper(solver_test_ensemble, solver_test_initial_occupancy):
     variables, variable_indices = get_upper_bound_variables_from_sublattices(
-        exotic_ensemble.sublattices,
-        exotic_ensemble.processor.structure,
-        exotic_initial_occupancy,
+        solver_test_ensemble.sublattices,
+        solver_test_ensemble.processor.structure,
+        solver_test_initial_occupancy,
     )
-    proc = exotic_ensemble.processor.processors[1]
+    proc = solver_test_ensemble.processor.processors[1]
     terms = get_upper_bound_terms_from_ewald_processor(
         variable_indices,
         ewald_processor=proc,
@@ -101,10 +101,10 @@ def test_ewald_upper(exotic_ensemble, exotic_initial_occupancy):
 
     for _ in range(50):
         # Should have the same ewald for either neutral or not neutral.
-        rand_val = get_random_variable_values(exotic_ensemble.sublattices)
+        rand_val = get_random_variable_values(solver_test_ensemble.sublattices)
         aux_val = get_auxiliary_variable_values(rand_val, aux_indices)
         rand_occu = get_occupancy_from_variables(
-            exotic_ensemble.sublattices,
+            solver_test_ensemble.sublattices,
             rand_val,
             variable_indices,
         )
@@ -117,17 +117,17 @@ def test_ewald_upper(exotic_ensemble, exotic_initial_occupancy):
             assert con.value()
 
 
-def test_chemical_potentials_upper(exotic_ensemble, exotic_initial_occupancy):
+def test_chemical_potentials_upper(solver_test_ensemble, solver_test_initial_occupancy):
     variables, variable_indices = get_upper_bound_variables_from_sublattices(
-        exotic_ensemble.sublattices,
-        exotic_ensemble.processor.structure,
-        exotic_initial_occupancy,
+        solver_test_ensemble.sublattices,
+        solver_test_ensemble.processor.structure,
+        solver_test_initial_occupancy,
     )
     # Only test semi-grand ensemble.
-    if exotic_ensemble.chemical_potentials is not None:
+    if solver_test_ensemble.chemical_potentials is not None:
         terms = get_upper_bound_terms_from_chemical_potentials(
             variable_indices,
-            exotic_ensemble._chemical_potentials["table"],
+            solver_test_ensemble._chemical_potentials["table"],
         )
         objective, aux, aux_indices, aux_cons = get_expression_and_auxiliary_from_terms(
             terms, variables
@@ -137,14 +137,16 @@ def test_chemical_potentials_upper(exotic_ensemble, exotic_initial_occupancy):
         assert len(aux_indices) == 0
         assert len(aux_cons) == 0
         for _ in range(50):
-            rand_val = get_random_variable_values(exotic_ensemble.sublattices)
+            rand_val = get_random_variable_values(solver_test_ensemble.sublattices)
             rand_occu = get_occupancy_from_variables(
-                exotic_ensemble.sublattices,
+                solver_test_ensemble.sublattices,
                 rand_val,
                 variable_indices,
             )
             variables.value = rand_val
             energy_obj = objective.value
             # The last number is -1 * chemical work.
-            energy_true = -1 * exotic_ensemble.compute_feature_vector(rand_occu)[-1]
+            energy_true = (
+                -1 * solver_test_ensemble.compute_feature_vector(rand_occu)[-1]
+            )
             assert np.isclose(energy_obj, energy_true)

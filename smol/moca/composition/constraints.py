@@ -1,7 +1,6 @@
 """Utility manager that converts input of composition constraints to equations."""
 import itertools
 import re
-from collections import Counter
 from numbers import Number
 
 import numpy as np
@@ -59,7 +58,7 @@ def handle_side_string(side: str):
         side(str):
            A side of equation in string.
     Returns:
-        list[tuple(Number, Species, int|None)], Number:
+        list of tuple of (Number, Species, int or None), Number:
             A list of tuples packing coefficients, species, and sub-lattice indices (if any)
             on this side of equation, and the intercept term.
     """
@@ -154,7 +153,7 @@ def convert_constraint_string(entry, bits):
             Allowed species on each sub-lattice. Must be in the same ordering
             as will appear in moca.composition.
     Returns:
-        list[Number], Number, str:
+        list of Number, Number, str:
             Left side of the equation, right side of the equation (simplified
             to only contain a number), and the label of relation. All in "counts"
             format as specified in moca.composition.
@@ -232,7 +231,11 @@ def convert_constraint_string(entry, bits):
 
 
 class CompositionConstraintsManager:
-    """A descriptor class that manages setting composition constraints."""
+    """A descriptor class that manages setting composition constraints.
+
+    Composition constraints can be provided in the string format or the
+    dictionary format. See documentations in space.py.
+    """
 
     def __set_name__(self, owner, name):
         """Set the private variable names."""
@@ -244,60 +247,6 @@ class CompositionConstraintsManager:
         value = getattr(obj, self.private_name, None)
         return value if value is None else value["value"]
 
-    @staticmethod
-    def _check_single_dict(d):
-        for spec, count in Counter(map(get_species, d.keys())).items():
-            if count > 1:
-                raise ValueError(
-                    f"{count} values of the constraint coefficient for the same "
-                    f"species {spec} were provided.\n Make sure the dictionary "
-                    "you are using has only string keys or only Species "
-                    "objects as keys."
-                )
-
-    @staticmethod
-    def _convert_single_dict(left, bits):
-        # Set a constraint with only one dictionary.
-        CompositionConstraintsManager._check_single_dict(left)
-        n_dims = sum([len(sublattice_bits) for sublattice_bits in bits])
-        dim_ids = get_dim_ids_by_sublattice(bits)
-        left_list = [0 for _ in range(n_dims)]
-        for spec, coef in left.items():
-            spec = get_species(spec)
-            if spec not in itertools.chain(*bits):
-                raise ValueError(
-                    f"Species {spec} cannot be found in any"
-                    f" sub-lattice! Consider only species in"
-                    f" {set(itertools.chain(*bits))}!"
-                )
-            for sl_dim_ids, sl_bits in zip(dim_ids, bits):
-                if spec in sl_bits:
-                    dim_id = sl_dim_ids[sl_bits.index(spec)]
-                    left_list[dim_id] = coef
-        return left_list
-
-    @staticmethod
-    def _convert_sublattice_dicts(left, bits):
-        # Set a constraint with one dict per sub-lattice.
-        n_dims = sum([len(sublattice_bits) for sublattice_bits in bits])
-        dim_ids = get_dim_ids_by_sublattice(bits)
-        left_list = [0 for _ in range(n_dims)]
-        for sl_id, (sl_dict, sl_bits, sl_dim_ids) in enumerate(
-            zip(left, bits, dim_ids)
-        ):
-            CompositionConstraintsManager._check_single_dict(sl_dict)
-            for spec, coef in sl_dict.items():
-                spec = get_species(spec)
-                if spec not in sl_bits:
-                    raise ValueError(
-                        f"Species {spec} cannot be found on"
-                        f" given sub-lattice {sl_id}. Consider"
-                        f" species {sl_bits}!"
-                    )
-                dim_id = sl_dim_ids[sl_bits.index(spec)]
-                left_list[dim_id] = coef
-        return left_list
-
     def __set__(self, obj, value):
         """Set the table given the owner and value."""
         if value is None:  # call delete if set to None
@@ -307,30 +256,13 @@ class CompositionConstraintsManager:
         # value must be list of tuples, each with a list and a number.
         # No scaling would be done. Take care when filling in!
         constraints_eq = []
+        # All geq constraints will be rearranged into leq constraints.
         constraints_leq = []
-        constraints_geq = []
         bits = obj.bits
-
-        def _contains_dict(item):
-            if isinstance(item, dict):
-                return True
-            elif hasattr(item, "__iter__"):
-                return any(isinstance(sub_item, dict) for sub_item in item)
-            return False
 
         for entry in value:
             if isinstance(entry, (tuple, list)):
-                if _contains_dict(entry[0]):
-                    left, right, relation = entry
-                    # Constraint specified as non lattice-specific dictionary.
-                    if isinstance(left, dict):
-                        left_vec = self._convert_single_dict(left, bits)
-                    # Constraint specified as lattice-specific dictionaries.
-                    else:
-                        left_vec = self._convert_sublattice_dicts(left, bits)
-                # Constraints specified directly as left, right, relation.
-                else:
-                    left_vec, right, relation = entry
+                left_vec, right, relation = entry
             # Constraint set as a string.
             elif isinstance(entry, str):
                 left_vec, right, relation = convert_constraint_string(entry, bits)
@@ -343,13 +275,12 @@ class CompositionConstraintsManager:
             if relation == "leq" or relation == "<=":
                 constraints_leq.append((left_vec, right))
             if relation == "geq" or relation == ">=":
-                constraints_geq.append((left_vec, right))
+                constraints_leq.append(([-1 * num for num in left_vec], -1 * right))
             if relation == "eq" or relation == "==" or relation == "=":
                 constraints_eq.append((left_vec, right))
 
         value = {
             "leq": constraints_leq,
-            "geq": constraints_geq,
             "eq": constraints_eq,
         }
 

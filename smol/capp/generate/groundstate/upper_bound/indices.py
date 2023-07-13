@@ -21,9 +21,9 @@ def get_variable_indices_for_each_composition_component(
     Composition components are the components in a vector representation of composition
     defined as the "counts" format in moca.composition.
     Args:
-        sublattices(list[Sublattice]):
+        sublattices(list of Sublattice):
             Sub-lattices to build the upper-bound problem on.
-        variable_indices(list[list[int]]):
+        variable_indices(list of lists of int):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
             either -1 or -2. See documentation in groundstate.upper_bound.variables.
@@ -33,7 +33,7 @@ def get_variable_indices_for_each_composition_component(
             of splitting with the initial_occupancy. See smol.moca.sublattice for the
             explanation of splitting a sub-lattice.
     Returns:
-        list[Tuple[list[int], int]]:
+        list of tuples of (list of int, int):
             A list of tuples containing indices of variables falling under each
             composition component, and the number of sites manually restricted
             or naturally inactive to always be occupied by the species corresponding
@@ -73,12 +73,12 @@ def map_ewald_indices_to_variable_indices(
             to correctly parse the rows in the ewald_structure of an
             EwaldTerm, as the given sub-lattices might come form a split
             ensemble, whose site_spaces can not match the ewald_structure.
-        variable_indices(list[list[int]]):
+        variable_indices(list of lists of int):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
             either -1 or -2. See documentation in groundstate.upper_bound.variables.
     Returns:
-        list[int]:
+        list of int:
             Index of cvxpy variable corresponding to each ewald matrix row. If a
             row corresponds to a site with only one allowed species or the species
             on a manually restricted site in a pre-defined initial occupancy,
@@ -108,12 +108,12 @@ def get_sublattice_indices_by_site(sublattices: List[Sublattice]) -> np.array:
     """Get the indices of sub-lattice to which each site belong.
 
     Args:
-        sublattices(list[Sublattice]):
+        sublattices(list of Sublattice):
             Sub-lattices to build the upper-bound problem on.
             Must contain all sites in the ensemble, and the site indices must start from
             0 and be continuous.
     Returns:
-        np.ndarray[int]:
+        1D np.ndarray of int:
             An array containing the sub-lattice index where each site belongs to.
             Used to quickly access the sub-lattice information.
     """

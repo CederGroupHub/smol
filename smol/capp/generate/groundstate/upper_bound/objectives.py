@@ -28,7 +28,7 @@ def get_upper_bound_terms_from_expansion_processor(
     """Get the cluster terms from cluster expansion processor.
 
     Args:
-        variable_indices(list[list[int]]):
+        variable_indices(list of lists of int):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
             either -1 or -2. See documentation in groundstate.upper_bound.variables.
@@ -41,7 +41,7 @@ def get_upper_bound_terms_from_expansion_processor(
             This is used specifically for checking the value of each correlation
             function in the objective function.
     Returns:
-        list[tuple(list[int], float, float)]:
+        list of tuples of (list of int, float, float):
             A list of tuples, each represents a cluster term in the energy
             representation, containing indices of variables to be taken product with,
             the correlation factor, and the corresponding coefficient.
@@ -134,7 +134,7 @@ def get_upper_bound_terms_from_decomposition_processor(
     """Get the cluster terms from cluster decomposition processor.
 
     Args:
-        variable_indices(list[list[int]]):
+        variable_indices(list of lists of int):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
             either -1 or -2. See documentation in groundstate.upper_bound.variables.
@@ -147,7 +147,7 @@ def get_upper_bound_terms_from_decomposition_processor(
             This is used specifically for checking the value of each interaction
             term in the objective function.
     Returns:
-        list[tuple(list[int], float, float)]:
+        list of tuples of (list of int, float, float):
             A list of tuples, each represents a cluster term in the energy
             representation, containing indices of variables to be taken product with,
             the interaction factor and the multiplicity coefficient.
@@ -236,7 +236,7 @@ def get_upper_bound_terms_from_ewald_processor(
     """Get the objective function from cluster expansion processor.
 
     Args:
-        variable_indices(list[list[int]]):
+        variable_indices(list of lists of int):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
             either -1 or -2. See documentation in groundstate.upper_bound.variables.
@@ -245,7 +245,7 @@ def get_upper_bound_terms_from_ewald_processor(
             You are fully responsible for checking variables have the correct site
             orderings as will be in ewald_processor.
     Returns:
-        list[tuple(list[int], float, float)]:
+        list of tuples of (list of int, float, float):
             A list of tuples, each represents a cluster term in the energy
             representation, containing indices of variables to be taken product with,
             and the factors before the boolean product.
@@ -296,7 +296,7 @@ def get_upper_bound_terms_from_chemical_potentials(
 
     Notice: returns the -mu N term. Negation already included.
     Args:
-        variable_indices(list[list[int]]):
+        variable_indices(list of lists of int):
             List of variable indices corresponding to each active site index and
             index of species in its site space. Inactive sites will be marked by
             either -1 or -2. See documentation in groundstate.upper_bound.variables.
@@ -304,7 +304,7 @@ def get_upper_bound_terms_from_chemical_potentials(
             Chemical potentials corresponding to each species (cols) on each site
             (rows). Simply use ensemble._chemical_potential["table"].
     Returns:
-        list[tuple(list[int], float)]:
+        list of tuples of (list of int, float):
             A list of tuples, each represents a cluster term in the energy
             representation, containing indices of variables to be taken product with,
             and the factor before the boolean product.
