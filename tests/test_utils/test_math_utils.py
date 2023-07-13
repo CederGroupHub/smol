@@ -265,7 +265,9 @@ def test_centroid_conditioned():
     a = np.array([[1, 3, 4, -3, -2], [1, 1, 1, 0, 0], [0, 0, 0, 1, 1]])
     b = np.array([0, 1, 1]) * 12  # LMTPO, sc_size = 12
 
-    a_leq = np.array([[0, 1, 0, 0, 0], [0, 0, 0, 1, 0], [0, -1, 0, 0, 0], [0, 0, 0, -1, 0]])
+    a_leq = np.array(
+        [[0, 1, 0, 0, 0], [0, 0, 0, 1, 0], [0, -1, 0, 0, 0], [0, 0, 0, -1, 0]]
+    )
     b_leq = np.array([5 / 6, 5 / 6, -1 / 6, -1 / 6])
 
     n0, vs = solve_diophantines(a, b)
