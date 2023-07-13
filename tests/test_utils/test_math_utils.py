@@ -265,17 +265,14 @@ def test_centroid_conditioned():
     a = np.array([[1, 3, 4, -3, -2], [1, 1, 1, 0, 0], [0, 0, 0, 1, 1]])
     b = np.array([0, 1, 1]) * 12  # LMTPO, sc_size = 12
 
-    a_leq = np.array([[0, 1, 0, 0, 0], [0, 0, 0, 1, 0]])
-    b_leq = np.array([5 / 6, 5 / 6])
-
-    a_geq = np.array([[0, 1, 0, 0, 0], [0, 0, 0, 1, 0]])
-    b_geq = np.array([1 / 6, 1 / 6])
+    a_leq = np.array([[0, 1, 0, 0, 0], [0, 0, 0, 1, 0], [0, -1, 0, 0, 0], [0, 0, 0, -1, 0]])
+    b_leq = np.array([5 / 6, 5 / 6, -1 / 6, -1 / 6])
 
     n0, vs = solve_diophantines(a, b)
     poly = pc.Polytope(-vs.transpose(), n0)
     centroid = np.average(pc.extreme(poly), axis=0)
     x_cent = get_natural_centroid(n0, vs, 12)
-    x_cent2 = get_natural_centroid(n0, vs, 12, a_leq, b_leq, a_geq, b_geq)
+    x_cent2 = get_natural_centroid(n0, vs, 12, a_leq, b_leq)
     assert np.isclose(
         np.linalg.norm(x_cent - centroid), np.linalg.norm(x_cent2 - centroid)
     )
@@ -283,8 +280,8 @@ def test_centroid_conditioned():
 
     # When setting 4 / 6 in ECOS_BB, this test can not work. In guorbi 4/6 works.
     # Very strange indeed.
-    b_geq2 = np.array([1 / 6, 3.5 / 6])  # In per prim unit.
-    x_cent3 = get_natural_centroid(n0, vs, 12, a_leq, b_leq, a_geq, b_geq2)
+    b_leq2 = np.array([5 / 6, 5 / 6, -1 / 6, -3.5 / 6])  # In per prim unit.
+    x_cent3 = get_natural_centroid(n0, vs, 12, a_leq, b_leq2)
     assert np.linalg.norm(x_cent - centroid) < np.linalg.norm(x_cent3 - centroid)
 
 
