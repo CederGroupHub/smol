@@ -69,8 +69,8 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
         other_constraints=[
             "Mn4+ == 1",  # Broken when force_flip, kept when canonical. 2nd.
             "Ti4+ = 2",  # Broken when force_flip, kept when canonical. 3rd.
-            "Mn4+ + Mn3+ + Mn2+ >= 7",  # Never true. GEQ comes after LEQ. 5th.
-            "Mn3+ + Mn2+ <= 3",  # Always true. 4th.
+            "Mn4+ + Mn3+ + Mn2+ >= 7",  # Never true. 4th.
+            "Mn3+ + Mn2+ <= 3",  # Always true. 5th.
             "0 >= -1",  # Always True. Skipped.
             "0 <= 1.5",  # Always True. Skipped.
             "0.0 = 0.0",  # Always True. Skipped.
@@ -88,7 +88,7 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
         )
         variables.value = rand_val
         results = [c.value() for c in constraints]
-        assert results == [True, False, False, True, False]
+        assert results == [True, False, False, False, True]
     # Check with canonical.
     for _ in range(20):
         rand_val = get_random_neutral_variable_values(
@@ -99,7 +99,7 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
         )
         variables.value = rand_val
         results = [c.value() for c in constraints]
-        assert results == [True, True, True, True, False]
+        assert results == [True, True, True, False, True]
 
     # Bad test cases.
     with pytest.raises(ValueError):
