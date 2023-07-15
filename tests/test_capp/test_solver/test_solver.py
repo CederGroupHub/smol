@@ -15,6 +15,7 @@ from smol.cofe import ClusterExpansion, ClusterSubspace
 from smol.moca import Ensemble
 from smol.moca.occu_utils import get_dim_ids_table, occu_to_counts
 from tests.utils import assert_msonable
+from tests.utils import assert_pickles
 
 
 # Only SCIP tried on this instance.
@@ -35,6 +36,10 @@ def test_msonable(solver_test_solver, solver_test_initial_occupancy):
         _ = solver_reload.ground_state_structure
     with pytest.raises(RuntimeError):
         _ = solver_reload.ground_state_energy
+
+
+def test_pickles(solver_test_solver):
+    assert_pickles(solver_test_solver)
 
 
 def test_setting_results(solver_test_solver):
