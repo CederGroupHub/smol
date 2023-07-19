@@ -15,7 +15,7 @@ from collections.abc import Hashable, Mapping
 
 from monty.json import MSONable
 from pymatgen.core import Composition
-from pymatgen.core.periodic_table import DummySpecie, get_el_sp
+from pymatgen.core.periodic_table import DummySpecies, get_el_sp
 from pymatgen.util.string import formula_double_format
 
 
@@ -233,11 +233,14 @@ class SiteSpace(Mapping, Hashable, MSONable):
         return cls(Composition.from_dict(d["composition"]))
 
 
-class Vacancy(DummySpecie):
+class Vacancy(DummySpecies):
     """Wrapper class around DummySpecie to treat vacancies as their own species."""
 
     def __init__(
-        self, symbol: str = "A", oxidation_state: float = 0, properties: dict = None
+        self,
+        symbol: str = "A",
+        oxidation_state: float = 0,
+        properties: dict | None = None,
     ):
         """Initialize a Vacancy.
 
@@ -250,6 +253,7 @@ class Vacancy(DummySpecie):
                 because Vac contains V, a valid Element.
             oxidation_state (float): oxidation state for Vacancy. More like
                 the charge of a point defect. Defaults to zero.
+            properties (dict): Deprecated. See pymatgen 2023.6.28 release notes.
         """
         super().__init__(
             symbol=symbol, oxidation_state=oxidation_state, properties=properties
@@ -275,8 +279,8 @@ class Vacancy(DummySpecie):
 
     def __copy__(self):
         """Copy the vacancy object."""
-        return Vacancy(self.symbol, self._oxi_state, self._properties)
+        return Vacancy(self.symbol, self._oxi_state)
 
     def __deepcopy__(self, memo):
         """Deepcopy the vacancy object."""
-        return Vacancy(self.symbol, self._oxi_state, self._properties)
+        return Vacancy(self.symbol, self._oxi_state)
