@@ -48,7 +48,7 @@ def test_get_specie_vacancy(vacancy):  # smol part
 
 
 @pytest.mark.parametrize(
-    "specie",
+    "species",
     [
         "Li",
         "Li+",
@@ -60,9 +60,9 @@ def test_get_specie_vacancy(vacancy):  # smol part
         ("Li+", "Mn2+"),
     ],
 )
-def test_get_specie_others(specie):  # pymatgen part
-    sp = get_species(specie)
-    if isinstance(specie, (list, tuple)):
+def test_get_specie_others(species):  # pymatgen part
+    sp = get_species(species)
+    if isinstance(species, (list, tuple)):
         assert all(isinstance(s, Species) or isinstance(s, Element) for s in sp)
     else:
         assert isinstance(sp, Species) or isinstance(sp, Element)
