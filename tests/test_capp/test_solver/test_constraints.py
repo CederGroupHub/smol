@@ -5,12 +5,12 @@ import pytest
 from pymatgen.core import Species
 
 from smol.capp.generate.groundstate.upper_bound.constraints import (
-    get_upper_bound_composition_space_constraints,
-    get_upper_bound_fixed_composition_constraints,
-    get_upper_bound_normalization_constraints,
+    get_composition_space_constraints,
+    get_fixed_composition_constraints,
+    get_normalization_constraints,
 )
 from smol.capp.generate.groundstate.upper_bound.variables import (
-    get_upper_bound_variables_from_sublattices,
+    get_variables_from_sublattices,
 )
 from smol.moca.occu_utils import get_dim_ids_table, occu_to_counts
 
@@ -18,12 +18,12 @@ from .utils import get_random_neutral_variable_values, get_random_variable_value
 
 
 def test_normalization(solver_test_ensemble, solver_test_initial_occupancy):
-    variables, variable_indices = get_upper_bound_variables_from_sublattices(
+    variables, variable_indices = get_variables_from_sublattices(
         solver_test_ensemble.sublattices,
         solver_test_ensemble.processor.structure,
         solver_test_initial_occupancy,
     )
-    constraints = get_upper_bound_normalization_constraints(variables, variable_indices)
+    constraints = get_normalization_constraints(variables, variable_indices)
     assert len(constraints) == solver_test_ensemble.num_sites - len(
         solver_test_ensemble.restricted_sites
     )
@@ -36,12 +36,12 @@ def test_normalization(solver_test_ensemble, solver_test_initial_occupancy):
 
 
 def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupancy):
-    variables, variable_indices = get_upper_bound_variables_from_sublattices(
+    variables, variable_indices = get_variables_from_sublattices(
         solver_test_ensemble.sublattices,
         solver_test_ensemble.processor.structure,
         solver_test_initial_occupancy,
     )
-    constraints = get_upper_bound_composition_space_constraints(
+    constraints = get_composition_space_constraints(
         solver_test_ensemble.sublattices,
         variables,
         variable_indices,
@@ -61,7 +61,7 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
             assert c.value()
 
     # Add one more constraint to constrain some species amounts.
-    constraints = get_upper_bound_composition_space_constraints(
+    constraints = get_composition_space_constraints(
         solver_test_ensemble.sublattices,
         variables,
         variable_indices,
@@ -103,7 +103,7 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
 
     # Bad test cases.
     with pytest.raises(ValueError):
-        _ = get_upper_bound_composition_space_constraints(
+        _ = get_composition_space_constraints(
             solver_test_ensemble.sublattices,
             variables,
             variable_indices,
@@ -113,7 +113,7 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
             ],
         )
     with pytest.raises(ValueError):
-        _ = get_upper_bound_composition_space_constraints(
+        _ = get_composition_space_constraints(
             solver_test_ensemble.sublattices,
             variables,
             variable_indices,
@@ -123,7 +123,7 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
             ],
         )
     with pytest.raises(ValueError):
-        _ = get_upper_bound_composition_space_constraints(
+        _ = get_composition_space_constraints(
             solver_test_ensemble.sublattices,
             variables,
             variable_indices,
@@ -133,7 +133,7 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
             ],
         )
     with pytest.raises(ValueError):
-        _ = get_upper_bound_composition_space_constraints(
+        _ = get_composition_space_constraints(
             solver_test_ensemble.sublattices,
             variables,
             variable_indices,
@@ -143,7 +143,7 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
             ],
         )
     with pytest.raises(ValueError):
-        _ = get_upper_bound_composition_space_constraints(
+        _ = get_composition_space_constraints(
             solver_test_ensemble.sublattices,
             variables,
             variable_indices,
@@ -153,7 +153,7 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
             ],
         )
     with pytest.raises(ValueError):
-        _ = get_upper_bound_composition_space_constraints(
+        _ = get_composition_space_constraints(
             solver_test_ensemble.sublattices,
             variables,
             variable_indices,
@@ -167,7 +167,7 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
 def test_fixed_composition_constraints(
     solver_test_ensemble, solver_test_initial_occupancy
 ):
-    variables, variable_indices = get_upper_bound_variables_from_sublattices(
+    variables, variable_indices = get_variables_from_sublattices(
         solver_test_ensemble.sublattices,
         solver_test_ensemble.processor.structure,
         solver_test_initial_occupancy,
@@ -176,7 +176,7 @@ def test_fixed_composition_constraints(
     n_dims = sum([len(sl_species) for sl_species in bits])
     table = get_dim_ids_table(solver_test_ensemble.sublattices)
     fixed_counts = occu_to_counts(solver_test_initial_occupancy, n_dims, table)
-    constraints = get_upper_bound_fixed_composition_constraints(
+    constraints = get_fixed_composition_constraints(
         solver_test_ensemble.sublattices,
         variables,
         variable_indices,

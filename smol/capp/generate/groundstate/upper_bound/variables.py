@@ -15,7 +15,7 @@ from smol.moca.ensemble import Sublattice
 __author__ = "Fengyu Xie"
 
 
-def get_upper_bound_variables_from_sublattices(
+def get_variables_from_sublattices(
     sublattices: List[Sublattice],
     structure: Structure,
     initial_occupancy: ArrayLike = None,

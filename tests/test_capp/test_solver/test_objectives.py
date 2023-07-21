@@ -3,10 +3,10 @@ import numpy as np
 import numpy.testing as npt
 
 from smol.capp.generate.groundstate.upper_bound.objectives import (
-    get_upper_bound_terms_from_chemical_potentials,
-    get_upper_bound_terms_from_decomposition_processor,
-    get_upper_bound_terms_from_ewald_processor,
-    get_upper_bound_terms_from_expansion_processor,
+    get_terms_from_chemical_potentials,
+    get_terms_from_decomposition_processor,
+    get_terms_from_ewald_processor,
+    get_terms_from_expansion_processor,
 )
 from smol.capp.generate.groundstate.upper_bound.terms import (
     get_auxiliary_variable_values,
@@ -14,7 +14,7 @@ from smol.capp.generate.groundstate.upper_bound.terms import (
 )
 from smol.capp.generate.groundstate.upper_bound.variables import (
     get_occupancy_from_variables,
-    get_upper_bound_variables_from_sublattices,
+    get_variables_from_sublattices,
 )
 from smol.moca.processor import ClusterExpansionProcessor
 
@@ -27,28 +27,28 @@ from .utils import (
 
 
 def test_expansion_upper(solver_test_ensemble, solver_test_initial_occupancy):
-    variables, variable_indices = get_upper_bound_variables_from_sublattices(
+    variables, variable_indices = get_variables_from_sublattices(
         solver_test_ensemble.sublattices,
         solver_test_ensemble.processor.structure,
         solver_test_initial_occupancy,
     )
     proc = solver_test_ensemble.processor.processors[0]
     if isinstance(proc, ClusterExpansionProcessor):
-        terms = get_upper_bound_terms_from_expansion_processor(
+        terms = get_terms_from_expansion_processor(
             variable_indices,
             expansion_processor=proc,
         )
-        grouped_terms = get_upper_bound_terms_from_expansion_processor(
+        grouped_terms = get_terms_from_expansion_processor(
             variable_indices,
             expansion_processor=proc,
             group_output_by_function=True,
         )
     else:
-        terms = get_upper_bound_terms_from_decomposition_processor(
+        terms = get_terms_from_decomposition_processor(
             variable_indices,
             decomposition_processor=proc,
         )
-        grouped_terms = get_upper_bound_terms_from_decomposition_processor(
+        grouped_terms = get_terms_from_decomposition_processor(
             variable_indices,
             decomposition_processor=proc,
             group_output_by_orbit=True,
@@ -83,13 +83,13 @@ def test_expansion_upper(solver_test_ensemble, solver_test_initial_occupancy):
 
 
 def test_ewald_upper(solver_test_ensemble, solver_test_initial_occupancy):
-    variables, variable_indices = get_upper_bound_variables_from_sublattices(
+    variables, variable_indices = get_variables_from_sublattices(
         solver_test_ensemble.sublattices,
         solver_test_ensemble.processor.structure,
         solver_test_initial_occupancy,
     )
     proc = solver_test_ensemble.processor.processors[1]
-    terms = get_upper_bound_terms_from_ewald_processor(
+    terms = get_terms_from_ewald_processor(
         variable_indices,
         ewald_processor=proc,
     )
@@ -118,14 +118,14 @@ def test_ewald_upper(solver_test_ensemble, solver_test_initial_occupancy):
 
 
 def test_chemical_potentials_upper(solver_test_ensemble, solver_test_initial_occupancy):
-    variables, variable_indices = get_upper_bound_variables_from_sublattices(
+    variables, variable_indices = get_variables_from_sublattices(
         solver_test_ensemble.sublattices,
         solver_test_ensemble.processor.structure,
         solver_test_initial_occupancy,
     )
     # Only test semi-grand ensemble.
     if solver_test_ensemble.chemical_potentials is not None:
-        terms = get_upper_bound_terms_from_chemical_potentials(
+        terms = get_terms_from_chemical_potentials(
             variable_indices,
             solver_test_ensemble._chemical_potentials["table"],
         )

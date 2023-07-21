@@ -7,34 +7,20 @@ import pytest
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core import Lattice, Structure
 
-from smol.capp.generate.groundstate.solver import GroundStateSolver
+from smol.capp.generate.groundstate.upper_bound.solver import UpperBoundSolver
 from smol.capp.generate.groundstate.upper_bound.variables import (
     get_variable_values_from_occupancy,
 )
 from smol.cofe import ClusterExpansion, ClusterSubspace
 from smol.moca import Ensemble
 from smol.moca.occu_utils import get_dim_ids_table, occu_to_counts
-from tests.utils import assert_msonable, assert_pickles
+from tests.utils import assert_pickles
 
 
 # Only SCIP tried on this instance.
 @pytest.fixture
 def solver_test_solver(solver_test_ensemble, solver_test_initial_occupancy):
-    return GroundStateSolver(solver_test_ensemble, solver_test_initial_occupancy)
-
-
-def test_msonable(solver_test_solver, solver_test_initial_occupancy):
-    assert_msonable(solver_test_solver)
-    solver_dict = solver_test_solver.as_dict()
-    solver_reload = GroundStateSolver.from_dict(solver_dict)
-    with pytest.raises(RuntimeError):
-        _ = solver_reload.ground_state_solution
-    with pytest.raises(RuntimeError):
-        _ = solver_reload.ground_state_occupancy
-    with pytest.raises(RuntimeError):
-        _ = solver_reload.ground_state_structure
-    with pytest.raises(RuntimeError):
-        _ = solver_reload.ground_state_energy
+    return UpperBoundSolver(solver_test_ensemble, solver_test_initial_occupancy)
 
 
 def test_pickles(solver_test_solver):
@@ -43,8 +29,8 @@ def test_pickles(solver_test_solver):
 
 def test_setting_results(solver_test_solver):
     solver_test_solver._ground_state_solution = get_variable_values_from_occupancy(
-        solver_test_solver._ensemble.sublattices,
-        solver_test_solver._initial_occupancy,
+        solver_test_solver.ensemble.sublattices,
+        solver_test_solver.initial_occupancy,
         solver_test_solver._canonicals.variable_indices,
     )
     with pytest.raises(RuntimeError):
@@ -53,12 +39,12 @@ def test_setting_results(solver_test_solver):
     solver_test_solver._ground_state_energy = 0
     assert solver_test_solver.ground_state_energy == 0
     npt.assert_array_equal(
-        solver_test_solver.ground_state_occupancy, solver_test_solver._initial_occupancy
+        solver_test_solver.ground_state_occupancy, solver_test_solver.initial_occupancy
     )
     assert StructureMatcher().fit(
         solver_test_solver.ground_state_structure,
-        solver_test_solver._ensemble.processor.structure_from_occupancy(
-            solver_test_solver._initial_occupancy
+        solver_test_solver.ensemble.processor.structure_from_occupancy(
+            solver_test_solver.initial_occupancy
         ),
     )
     # reset.
@@ -132,19 +118,21 @@ def simple_ensemble(simple_expansion, request):
 @pytest.fixture(params=["SCIP", "GUROBI"])
 def simple_solver(simple_ensemble, request):
     if simple_ensemble.chemical_potentials is not None:
-        return GroundStateSolver(simple_ensemble, solver=request.param)
+        return UpperBoundSolver(simple_ensemble, solver=request.param)
     else:
         fixed_composition = np.array([4, 4])
-        return GroundStateSolver(
+        return UpperBoundSolver(
             simple_ensemble, fixed_composition=fixed_composition, solver=request.param
         )
 
 
 # Do a small scale solving test.
 def test_solve(simple_solver):
-    solution, energy = simple_solver.solve()
+    simple_solver.solve()
+    solution = simple_solver.ground_state_solution
+    energy = simple_solver.ground_state_energy
 
-    occu = simple_solver._ensemble.processor.occupancy_from_structure(
+    occu = simple_solver.ensemble.processor.occupancy_from_structure(
         simple_solver.ground_state_structure
     )
     sol_occu = get_variable_values_from_occupancy(
@@ -156,24 +144,24 @@ def test_solve(simple_solver):
     assert n_dims == 2
     table = get_dim_ids_table(simple_solver.sublattices)
     counts = occu_to_counts(occu, n_dims, dim_ids_table=table)
-    if simple_solver._ensemble.chemical_potentials is None:
+    if simple_solver.ensemble.chemical_potentials is None:
         # Canonical ensemble, should assume same composition.
-        npt.assert_array_equal(counts, simple_solver._fixed_composition)
+        npt.assert_array_equal(counts, simple_solver.fixed_composition)
 
-    features = simple_solver._ensemble.compute_feature_vector(occu)
-    true_energy = np.dot(features, simple_solver._ensemble.natural_parameters)
+    features = simple_solver.ensemble.compute_feature_vector(occu)
+    true_energy = np.dot(features, simple_solver.ensemble.natural_parameters)
 
     assert np.isclose(energy, true_energy)
 
     # Exhaust all other configurations. None should have higher energy than optimal.
-    if simple_solver._ensemble.chemical_potentials is not None:
+    if simple_solver.ensemble.chemical_potentials is not None:
         other_states = list(product(range(2), repeat=8))
     else:
         other_states = set(permutations([0] * 4 + [1] * 4))
     for other_state in other_states:
         other_state = np.array(list(other_state), dtype=int)
-        other_feats = simple_solver._ensemble.compute_feature_vector(other_state)
-        other_energy = np.dot(other_feats, simple_solver._ensemble.natural_parameters)
+        other_feats = simple_solver.ensemble.compute_feature_vector(other_state)
+        other_energy = np.dot(other_feats, simple_solver.ensemble.natural_parameters)
         # allow just a tiny slack.
         assert other_energy >= energy - 1e-6
         if np.allclose(other_state, occu):

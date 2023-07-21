@@ -8,8 +8,8 @@ from smol.capp.generate.groundstate.upper_bound.indices import (
 )
 from smol.capp.generate.groundstate.upper_bound.variables import (
     get_occupancy_from_variables,
-    get_upper_bound_variables_from_sublattices,
     get_variable_values_from_occupancy,
+    get_variables_from_sublattices,
 )
 from smol.cofe.space.domain import get_allowed_species
 
@@ -23,10 +23,10 @@ def test_upper_variables_and_indices(
     orig_site_spaces = get_allowed_species(processor_structure)
     # If not given initial occupancy, will throw an error.
     with pytest.raises(ValueError):
-        _ = get_upper_bound_variables_from_sublattices(
+        _ = get_variables_from_sublattices(
             solver_test_ensemble.sublattices, processor_structure
         )
-    variables, variable_indices = get_upper_bound_variables_from_sublattices(
+    variables, variable_indices = get_variables_from_sublattices(
         solver_test_ensemble.sublattices,
         processor_structure,
         solver_test_initial_occupancy,
@@ -75,7 +75,7 @@ def test_upper_variables_and_indices(
 
 
 def test_occupancy_from_variables(solver_test_ensemble, solver_test_initial_occupancy):
-    _, variable_indices = get_upper_bound_variables_from_sublattices(
+    _, variable_indices = get_variables_from_sublattices(
         solver_test_ensemble.sublattices,
         solver_test_ensemble.processor.structure,
         solver_test_initial_occupancy,
@@ -115,7 +115,7 @@ def test_occupancy_from_variables(solver_test_ensemble, solver_test_initial_occu
 
 
 def test_variables_from_occupancy(solver_test_ensemble, solver_test_initial_occupancy):
-    _, variable_indices = get_upper_bound_variables_from_sublattices(
+    _, variable_indices = get_variables_from_sublattices(
         solver_test_ensemble.sublattices,
         solver_test_ensemble.processor.structure,
         solver_test_initial_occupancy,

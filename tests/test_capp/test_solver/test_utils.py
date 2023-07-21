@@ -17,7 +17,7 @@ from smol.capp.generate.groundstate.upper_bound.terms import (
     get_expression_and_auxiliary_from_terms,
 )
 from smol.capp.generate.groundstate.upper_bound.variables import (
-    get_upper_bound_variables_from_sublattices,
+    get_variables_from_sublattices,
 )
 from smol.cofe.space.domain import Vacancy, get_allowed_species
 
@@ -25,7 +25,7 @@ from smol.cofe.space.domain import Vacancy, get_allowed_species
 def test_variable_indices_for_components(
     solver_test_ensemble, solver_test_initial_occupancy
 ):
-    _, variable_indices = get_upper_bound_variables_from_sublattices(
+    _, variable_indices = get_variables_from_sublattices(
         solver_test_ensemble.sublattices,
         solver_test_ensemble.processor.structure,
         solver_test_initial_occupancy,
@@ -117,7 +117,7 @@ def test_variable_indices_for_components(
 
 
 def test_ewald_indices(solver_test_ensemble, solver_test_initial_occupancy):
-    _, variable_indices = get_upper_bound_variables_from_sublattices(
+    _, variable_indices = get_variables_from_sublattices(
         solver_test_ensemble.sublattices,
         solver_test_ensemble.processor.structure,
         solver_test_initial_occupancy,

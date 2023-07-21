@@ -18,7 +18,7 @@ from smol.moca.processor import (
 __author__ = "Fengyu Xie"
 
 
-def get_upper_bound_terms_from_expansion_processor(
+def get_terms_from_expansion_processor(
     variable_indices: List[List[int]],
     expansion_processor: ClusterExpansionProcessor,
     group_output_by_function: bool = False,
@@ -124,7 +124,7 @@ def get_upper_bound_terms_from_expansion_processor(
         ]
 
 
-def get_upper_bound_terms_from_decomposition_processor(
+def get_terms_from_decomposition_processor(
     variable_indices: List[List[int]],
     decomposition_processor: ClusterDecompositionProcessor,
     group_output_by_orbit: bool = False,
@@ -229,7 +229,7 @@ def get_upper_bound_terms_from_decomposition_processor(
         ]
 
 
-def get_upper_bound_terms_from_ewald_processor(
+def get_terms_from_ewald_processor(
     variable_indices: List[List[int]],
     ewald_processor: EwaldProcessor,
 ) -> List[Tuple[List[int], float, float]]:
@@ -288,7 +288,7 @@ def get_upper_bound_terms_from_ewald_processor(
     return ewald_cluster_terms
 
 
-def get_upper_bound_terms_from_chemical_potentials(
+def get_terms_from_chemical_potentials(
     variable_indices: List[List[int]],
     chemical_table: ArrayLike,
 ) -> List[Tuple[List[int], float, float]]:

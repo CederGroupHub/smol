@@ -17,7 +17,7 @@ from smol.moca.ensemble import Sublattice
 __author__ = "Fengyu Xie"
 
 
-def get_upper_bound_normalization_constraints(
+def get_normalization_constraints(
     variables: cp.Variable, variable_indices: List[List[int]]
 ) -> List[Constraint]:
     """Get normalization constraints of variables on each site.
@@ -55,7 +55,7 @@ def _extract_constraint_matrix(comp_space, constraint_type):
     return mat_a, vec_b, constraint_type
 
 
-def _get_upper_bound_formula_constraints(
+def _get_formula_constraints(
     comp_space, constraint_type, variables, variables_per_component, skip_cids=None
 ):
     """Get a specific type of composition constraints."""
@@ -100,11 +100,12 @@ def _get_upper_bound_formula_constraints(
     return constraints
 
 
-def get_upper_bound_composition_space_constraints(
+def get_composition_space_constraints(
     sublattices: List[Sublattice],
     variables: cp.Variable,
     variable_indices: List[List[int]],
     processor_structure: Structure,
+    charge_balanced: bool = True,
     other_constraints: List[
         Union[str, Tuple[Union[dict, List[dict], List[Number]], Number, str]]
     ] = None,
@@ -127,6 +128,8 @@ def get_upper_bound_composition_space_constraints(
             The sub-lattices must match the processor structure, or they must be the result
             of splitting with the initial_occupancy. See smol.moca.sublattice for the
             explanation of splitting a sub-lattice.
+        charge_balanced(bool): optional
+            Whether to enforce charge balance. Default is True.
         other_constraints(list): optional
             Other constraints to set in composition space. See moca.composition
             for detailed description.
@@ -146,7 +149,7 @@ def get_upper_bound_composition_space_constraints(
     comp_space = CompositionSpace(
         bits,
         sizes,
-        charge_balanced=True,
+        charge_balanced=charge_balanced,
         other_constraints=other_constraints,
         optimize_basis=False,
         table_ergodic=False,
@@ -165,21 +168,19 @@ def get_upper_bound_composition_space_constraints(
     # EQ, LEQ and GEQ. No skip in LEQ and GEQ.
     constraints = []
     constraints.extend(
-        _get_upper_bound_formula_constraints(
+        _get_formula_constraints(
             comp_space, "eq", variables, variables_per_component, skip_cids
         )
     )
     constraints.extend(
-        _get_upper_bound_formula_constraints(
-            comp_space, "leq", variables, variables_per_component
-        )
+        _get_formula_constraints(comp_space, "leq", variables, variables_per_component)
     )
     # All inequality constraints must be of leq type.
 
     return constraints
 
 
-def get_upper_bound_fixed_composition_constraints(
+def get_fixed_composition_constraints(
     sublattices: List[Sublattice],
     variables: cp.Variable,
     variable_indices: List[List[int]],
