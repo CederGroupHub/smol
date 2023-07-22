@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.cofe.space.domain &#8212; smol 0.1.dev1+gbf39e19 documentation</title>
+    <title>smol.cofe.space.domain &#8212; smol 0.4.1 documentation</title>
   
   
   
@@ -44,7 +44,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/smol/cofe/space/domain';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.1.dev1+gbf39e19';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.4.1';
         </script>
     <script src="../../../../_static/require.js"></script>
     <script src="../../../../_static/custom.js"></script>
@@ -218,7 +218,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.1.dev1+gbf39e19  <!-- this text may get changed later by javascript -->
+      0.4.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -367,7 +367,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.1.dev1+gbf39e19  <!-- this text may get changed later by javascript -->
+      0.4.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -471,6 +471,8 @@ document.write(`
 <span class="sd">of a site function and many site spaces make up the space of configurations.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Luis Barroso-Luque, Fengyu Xie&quot;</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
@@ -478,11 +480,11 @@ document.write(`
 
 <span class="kn">from</span> <span class="nn">monty.json</span> <span class="kn">import</span> <span class="n">MSONable</span>
 <span class="kn">from</span> <span class="nn">pymatgen.core</span> <span class="kn">import</span> <span class="n">Composition</span>
-<span class="kn">from</span> <span class="nn">pymatgen.core.periodic_table</span> <span class="kn">import</span> <span class="n">DummySpecie</span><span class="p">,</span> <span class="n">get_el_sp</span>
+<span class="kn">from</span> <span class="nn">pymatgen.core.periodic_table</span> <span class="kn">import</span> <span class="n">DummySpecies</span><span class="p">,</span> <span class="n">Element</span><span class="p">,</span> <span class="n">Species</span><span class="p">,</span> <span class="n">get_el_sp</span>
 <span class="kn">from</span> <span class="nn">pymatgen.util.string</span> <span class="kn">import</span> <span class="n">formula_double_format</span>
 
 
-<div class="viewcode-block" id="get_allowed_species"><a class="viewcode-back" href="../../../../api_reference/cofe/space.domain.html#smol.cofe.space.domain.get_allowed_species">[docs]</a><span class="k">def</span> <span class="nf">get_allowed_species</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
+<div class="viewcode-block" id="get_allowed_species"><a class="viewcode-back" href="../../../../api_reference/cofe/space.domain.html#smol.cofe.space.domain.get_allowed_species">[docs]</a><span class="k">def</span> <span class="nf">get_allowed_species</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Species</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the allowed species for each site in a disordered structure.</span>
 
 <span class="sd">    This will get all the allowed species for each site in a pymatgen structure.</span>
@@ -505,7 +507,7 @@ document.write(`
     <span class="k">return</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">site_space</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="k">for</span> <span class="n">site_space</span> <span class="ow">in</span> <span class="n">all_site_spaces</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="get_site_spaces"><a class="viewcode-back" href="../../../../api_reference/cofe/space.domain.html#smol.cofe.space.domain.get_site_spaces">[docs]</a><span class="k">def</span> <span class="nf">get_site_spaces</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">include_measure</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="get_site_spaces"><a class="viewcode-back" href="../../../../api_reference/cofe/space.domain.html#smol.cofe.space.domain.get_site_spaces">[docs]</a><span class="k">def</span> <span class="nf">get_site_spaces</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">include_measure</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SiteSpace</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get site spaces for each site in a disordered structure.</span>
 
 <span class="sd">    Method to obtain the single site spaces for the sites in a structure.</span>
@@ -543,7 +545,7 @@ document.write(`
     <span class="k">return</span> <span class="n">all_site_spaces</span></div>
 
 
-<div class="viewcode-block" id="get_species"><a class="viewcode-back" href="../../../../api_reference/cofe/space.domain.html#smol.cofe.space.domain.get_species">[docs]</a><span class="k">def</span> <span class="nf">get_species</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<div class="viewcode-block" id="get_species"><a class="viewcode-back" href="../../../../api_reference/cofe/space.domain.html#smol.cofe.space.domain.get_species">[docs]</a><span class="k">def</span> <span class="nf">get_species</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Species</span> <span class="o">|</span> <span class="n">Element</span> <span class="o">|</span> <span class="n">Vacancy</span> <span class="o">|</span> <span class="n">DummySpecies</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get specie object.</span>
 
 <span class="sd">    Wraps pymatgen.core.periodic_table.get_el_sp to be able to catch and</span>
@@ -691,16 +693,19 @@ document.write(`
         <span class="k">return</span> <span class="n">site_space_d</span></div>
 
 <div class="viewcode-block" id="SiteSpace.from_dict"><a class="viewcode-back" href="../../../../api_reference/cofe/space.domain.html#smol.cofe.space.domain.SiteSpace.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SiteSpace</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a SiteSpace from dict representation.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">Composition</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;composition&quot;</span><span class="p">]))</span></div></div>
 
 
-<div class="viewcode-block" id="Vacancy"><a class="viewcode-back" href="../../../../api_reference/cofe/space.domain.html#smol.cofe.space.domain.Vacancy">[docs]</a><span class="k">class</span> <span class="nc">Vacancy</span><span class="p">(</span><span class="n">DummySpecie</span><span class="p">):</span>
+<div class="viewcode-block" id="Vacancy"><a class="viewcode-back" href="../../../../api_reference/cofe/space.domain.html#smol.cofe.space.domain.Vacancy">[docs]</a><span class="k">class</span> <span class="nc">Vacancy</span><span class="p">(</span><span class="n">DummySpecies</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper class around DummySpecie to treat vacancies as their own species.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">oxidation_state</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">symbol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>
+        <span class="n">oxidation_state</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">properties</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a Vacancy.</span>
 
@@ -713,6 +718,7 @@ document.write(`
 <span class="sd">                because Vac contains V, a valid Element.</span>
 <span class="sd">            oxidation_state (float): oxidation state for Vacancy. More like</span>
 <span class="sd">                the charge of a point defect. Defaults to zero.</span>
+<span class="sd">            properties (dict): Deprecated. See pymatgen 2023.6.28 release notes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">symbol</span><span class="o">=</span><span class="n">symbol</span><span class="p">,</span> <span class="n">oxidation_state</span><span class="o">=</span><span class="n">oxidation_state</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">properties</span>
@@ -738,11 +744,11 @@ document.write(`
 
     <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the vacancy object.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Vacancy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oxi_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Vacancy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oxi_state</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Deepcopy the vacancy object.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Vacancy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oxi_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_properties</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Vacancy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symbol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oxi_state</span><span class="p">)</span></div>
 </pre></div>
 
                 </article>
