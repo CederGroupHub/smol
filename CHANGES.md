@@ -12,6 +12,11 @@ Use this section to keep track of changes in the works.
 ### Removed
 ### Deprecated
 
+# [v0.4.1](https://github.com/CederGroupHub/smol/releases/tag/v0.4.0) (2023-07-21)
+### Fixed
+* Fix #386 by making cython extension classes pickleable. #387 @lbluque
+* Fix #385 data type issues on Windows. #392 @qchempku2017
+
 # [v0.4.0](https://github.com/CederGroupHub/smol/releases/tag/v0.4.0) (2023-06-09)
 ### Added
 * openmp parallelization when computing correlation and cluster interaction vectors. #338 @lbluque

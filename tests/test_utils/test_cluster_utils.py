@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 
 from smol.utils.cluster.container import (
@@ -13,15 +14,18 @@ from smol.utils.cluster.container import (
     "IntArrayContainer, dim", [(IntArray1DContainer, 1), (IntArray2DContainer, 2)]
 )
 def test_int_container(IntArrayContainer, dim, rng):
+    # Use np.int_ to ensure cross-platform compatibility.
     arrays = tuple(
-        rng.integers(1, 5, size=dim * (rng.integers(1, 5),)) for _ in range(10)
+        rng.integers(1, 5, size=dim * (rng.integers(1, 5),)).astype(np.int_)
+        for _ in range(10)
     )
     container = IntArrayContainer(arrays)
     assert len(container) == 10
 
     # test setting the same sized list (no memory reallocation)
     new_arrays = tuple(
-        rng.integers(1, 5, size=dim * (rng.integers(1, 5),)) for _ in range(10)
+        rng.integers(1, 5, size=dim * (rng.integers(1, 5),)).astype(np.int_)
+        for _ in range(10)
     )
     container.set_arrays(new_arrays)
 
@@ -29,7 +33,8 @@ def test_int_container(IntArrayContainer, dim, rng):
 
     # test setting a different sized list (needs memory reallocation)
     new_arrays = tuple(
-        rng.integers(1, 5, size=dim * (rng.integers(1, 5),)) for _ in range(12)
+        rng.integers(1, 5, size=dim * (rng.integers(1, 5),)).astype(np.int_)
+        for _ in range(12)
     )
     container.set_arrays(new_arrays)
 
@@ -37,7 +42,7 @@ def test_int_container(IntArrayContainer, dim, rng):
 
     with pytest.raises(ValueError):
         new_arrays = tuple(
-            rng.integers(1, 5, size=(dim + 1) * (rng.integers(1, 5),))
+            rng.integers(1, 5, size=(dim + 1) * (rng.integers(1, 5),)).astype(np.int_)
             for _ in range(12)
         )
         container.set_arrays(new_arrays)
@@ -79,7 +84,9 @@ def test_orbit_container(rng):
         orbit_id = i
         bit_id = rng.integers(1, 5, dtype=int)
         correlation_tensors = rng.random(tuple(rng.integers(1, 5, size=2)))
-        tensor_indices = rng.integers(1, 5, size=correlation_tensors.shape[0])
+        tensor_indices = rng.integers(1, 5, size=correlation_tensors.shape[0]).astype(
+            np.int_
+        )
         orbit_data.append((orbit_id, bit_id, correlation_tensors, tensor_indices))
 
     container = OrbitContainer(tuple(orbit_data))
@@ -91,7 +98,9 @@ def test_orbit_container(rng):
         orbit_id = i
         bit_id = rng.integers(1, 5, dtype=int)
         correlation_tensors = rng.random(tuple(rng.integers(1, 5, size=2)))
-        tensor_indices = rng.integers(1, 5, size=correlation_tensors.shape[0])
+        tensor_indices = rng.integers(1, 5, size=correlation_tensors.shape[0]).astype(
+            np.int_
+        )
         new_orbit_data.append((orbit_id, bit_id, correlation_tensors, tensor_indices))
 
     container.set_orbits(tuple(new_orbit_data))
@@ -103,7 +112,9 @@ def test_orbit_container(rng):
         orbit_id = i
         bit_id = rng.integers(1, 5, dtype=int)
         correlation_tensors = rng.random(tuple(rng.integers(1, 5, size=2)))
-        tensor_indices = rng.integers(1, 5, size=correlation_tensors.shape[0])
+        tensor_indices = rng.integers(1, 5, size=correlation_tensors.shape[0]).astype(
+            np.int_
+        )
         new_orbit_data.append((orbit_id, bit_id, correlation_tensors, tensor_indices))
 
     container.set_orbits(tuple(new_orbit_data))
