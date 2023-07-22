@@ -20,7 +20,9 @@ from tests.utils import assert_pickles
 # Only SCIP tried on this instance.
 @pytest.fixture
 def solver_test_solver(solver_test_ensemble, solver_test_initial_occupancy):
-    return UpperBoundSolver(solver_test_ensemble, solver_test_initial_occupancy)
+    return UpperBoundSolver(
+        solver_test_ensemble, initial_occupancy=solver_test_initial_occupancy
+    )
 
 
 def test_pickles(solver_test_solver):
