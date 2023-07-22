@@ -179,7 +179,7 @@ class ClusterExpansion(MSONable):
         num_ext_terms = len(self._subspace.external_terms)  # check for extra terms
         coefs = self.coefs[:-num_ext_terms] if num_ext_terms else self.coefs[:]
         eci = coefs.copy()
-        eci /= self._subspace.function_total_multiplicities
+        eci = eci / self._subspace.function_total_multiplicities
         return eci
 
     @cached_property

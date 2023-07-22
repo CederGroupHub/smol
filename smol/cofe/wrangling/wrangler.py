@@ -426,7 +426,7 @@ class StructureWrangler(MSONable):
                 ) from error
 
         if normalize:
-            properties /= self.sizes
+            properties = properties / self.sizes
 
         return properties
 
