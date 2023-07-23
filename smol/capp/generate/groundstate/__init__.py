@@ -1,5 +1,6 @@
 """Ground state solver functionalities."""
 from importlib.util import find_spec
+
 from .upper_bound.solver import UpperBoundSolver
 
 # Check cvxpy installation.
