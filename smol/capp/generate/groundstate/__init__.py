@@ -14,5 +14,4 @@ except ImportError:
         """Dummy class to fail gracefully when cvxpy is not installed."""
 
 
-
 __all__ = ["UpperBoundSolver"]
