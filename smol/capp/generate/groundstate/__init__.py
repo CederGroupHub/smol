@@ -1,12 +1,18 @@
 """Ground state solver functionalities."""
-from importlib.util import find_spec
 
-from .upper_bound.solver import UpperBoundSolver
+from monty.dev import requires
 
-# Check cvxpy installation.
-if find_spec("cvxpy") is None:
-    raise ImportError(
-        "Ground state utilities require cvxpy and integer-programming solvers!"
+try:
+    from smol.capp.generate.groundstate.upper_bound.solver import UpperBoundSolver
+except ImportError:
+
+    @requires(
+        False,
+        "Ground state solver functionality requires cvxpy to be installed, please install it.",
     )
+    class UpperBoundSolver:
+        """Dummy class to fail gracefully when cvxpy is not installed."""
+
+
 
 __all__ = ["UpperBoundSolver"]
