@@ -210,6 +210,7 @@ Advanced Examples
 - `Simulated annealing with point electrostatics`_
 - `Wang-Landau sampling of an FCC Ising model`_
 - `Generating special quasirandom structures`_
+- `Solving for periodic ground-states`_
 - `Li-Mn-O DRX cluster expansion and sampling`_
 
 .. _Preparing cluster expansion training data: notebooks/training-data-preparation.ipynb
@@ -223,6 +224,8 @@ Advanced Examples
 .. _Wang-Landau sampling of an FCC Ising model: notebooks/wang-landau-ising.ipynb
 
 .. _Generating special quasirandom structures: notebooks/generating-sqs.ipynb
+
+.. _Solving for periodic ground-states: notebooks/finding-groundstates.ipynb
 
 .. _Li-Mn-O DRX cluster expansion and sampling: notebooks/lmo-drx-ce-mc.ipynb
 
