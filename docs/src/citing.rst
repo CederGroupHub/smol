@@ -173,3 +173,13 @@ for hierarchical constrained expansion fits, please cite these publications,
     `Cluster expansions of multicomponent ionic materials: Formalism and methodology.
     <https://doi.org/10.1103/PhysRevB.106.144202>`_.
     Phys. Rev. B 106, 144202 (2022).
+
+Ground state searches
+=====================
+
+If you use the :class:`PeriodicGroundStateSolver` class please cite the following,
+
+    Huang, W. et al.
+    `Finding and proving the exact ground state of a generalized Ising model by convex
+    optimization and MAX-SAT. Phys. Rev. B 94, 134424 (2016).
+    <https://link.aps.org/doi/10.1103/PhysRevB.94.134424>`_

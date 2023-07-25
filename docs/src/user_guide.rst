@@ -8,13 +8,15 @@ User Guide
 to define, generate and fit a cluster expansion (or more generally an applied lattice
 model). Additionally, it includes tools to run Monte Carlo simulations to sample
 thermodynamic properties based on a fitted lattice model. The package is organized in
-two main submodules:
+three main subpackages:
 
 - :ref:`smol.cofe ug` (:mod:`smol.cofe`) includes classes and
   functions to define, train, and test cluster expansions.
 - :ref:`smol.moca ug` (:mod:`smol.moca`) includes classes and functions to run
   Markov Chain Monte Carlo (MCMC) sampling based on a cluster expansion
   Hamiltonian (and a few other Hamiltonian models).
+- :ref:`smol.capp ug` (:mod:`smol.capp`) includes classes and
+  functions to generate random, special-quasirandom, and ground-state structures.
 
 Overview diagram
 ================
@@ -50,6 +52,8 @@ model is as follows,
    disordered structure used in the first step.
 #. Finally, an :class:`Ensemble` can be sampled in a Monte Carlo simulation by using a
    an :class:`Sampler`.
+#. Optionally or in addition, use classes in the :mod:`smol.capp` modules application to
+   search for special-quasirandom structures or ground-state structures.
 
 This simple workflow shown is sufficient for the majority of applications. A summary of
 the main classes is given below. For more advanced use and custom calculations a more
@@ -67,8 +71,8 @@ for full documentation of all classes and functions in the package.
 
 .. _smol.cofe ug:
 
-Cluster Orbit Function Expansions
----------------------------------
+Cluster Orbit Function Expansions package
+-----------------------------------------
 
 :mod:`smol.cofe` includes the necessary classes to define, train, and test cluster
 expansions. A cluster expansion is essentially a way to fit a function of
@@ -88,8 +92,8 @@ The core classes are:
 
 .. _cluster subspace ug:
 
-Cluster subspace
-^^^^^^^^^^^^^^^^
+:class:`Cluster subspace`
+^^^^^^^^^^^^^^^^^^^^^^^^^
 :class:`ClusterSubspace` contains the finite set of orbits and orbit basis
 functions to be included in the cluster expansion.
 In general, a cluster expansion is created by first generating a
@@ -116,8 +120,8 @@ Full documentation of the class is available here, :ref:`cluster space`.
 
 .. _structure wrangler ug:
 
-Structure wrangler
-^^^^^^^^^^^^^^^^^^
+:class:`Structure wrangler`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 :class:`StructureWrangler` handles input data structures and properties
 to fit to the cluster expansion.
 Once a set of structures and their relevant properties (for example, their
@@ -133,8 +137,8 @@ Full documentation of the class is available here: :ref:`structure wrangler`.
 
 .. _cluster expansion ug:
 
-Cluster expansion
-^^^^^^^^^^^^^^^^^
+:class:`Cluster expansion`
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 :class:`ClusterExpansion` contains the fitted coefficients of the cluster
 expansion for predicting CE properties of new structures.
 Based on the feature matrix from the :class:`StructureWrangler`, one can fit
@@ -159,8 +163,8 @@ Full documentation of the class is available here: :ref:`cluster expansion`.
 
 .. _smol.moca ug:
 
-Monte Carlo
------------
+Monte Carlo package
+-------------------
 
 :mod:`smol.moca` includes classes and functions to run Markov Chain Monte Carlo
 sampling of statistical mechanical ensembles represented by a cluster expansion
@@ -176,6 +180,9 @@ prim).
 
 The core classes are:
 
+- :ref:`ensemble ug`
+- :ref:`sampler ug`
+- :ref:`samplecontainer ug`
 - :ref:`processors ug`
 
   - :class:`ClusterExpansionProcessor`
@@ -183,33 +190,10 @@ The core classes are:
   - :class:`EwaldProcessor`
   - :class:`CompositeProcessor`
 
-- :ref:`ensemble ug`
-- :ref:`sampler ug`
-- :ref:`samplecontainer ug`
-
-.. _processors ug:
-
-Processors
-^^^^^^^^^^
-A :class:`Processor` is used to optimally compute correlation vectors, energy,
-and differences in these from variations in site occupancies. Processors
-compute values only for a specific supercell specified by a given supercell
-matrix.
-
-Users will rarely need to directly instantiate a processor, and it is recommended
-to simply create an ensemble using the :meth:`from_cluster_expansion` which
-will automatically instantiate the appropriate processor. Then, accessing the
-processor can be done simply by the corresponding attribute (i.e.
-:code:`ensemble.processor`). Many methods and attributes of a processor are
-very useful for setting up and analysing MCMC sampling runs. For more advanced or
-specific use cases, users will need to instantiate the appropriate processor directly.
-
-Full documentation of the class and its subclasses available here: :ref:`processors`.
-
 .. _ensemble ug:
 
-Ensemble
-^^^^^^^^
+:class:`Ensemble`
+^^^^^^^^^^^^^^^^^
 The :class:`Ensemble` class represents the specific statistical mechanics ensemble
 by defining the relevant thermodynamic boundary conditions in order to compute
 the appropriate ensemble probability ratios. For example,
@@ -227,8 +211,8 @@ Full documentation of the class and its subclasses are available here: :ref:`ens
 
 .. _sampler ug:
 
-Sampler
-^^^^^^^
+:class:`Sampler`
+^^^^^^^^^^^^^^^^
 A :class:`Sampler` takes care of running MCMC sampling for a given ensemble.
 The easiest way to create a sampler (which suffices for most use cases) is to
 use the :meth:`from_ensemble` class method, which is sufficient for most cases using
@@ -242,8 +226,8 @@ Full documentation of the class is available here: :ref:`sampler`.
 
 .. _samplecontainer ug:
 
-SampleContainer
-^^^^^^^^^^^^^^^
+:class:`SampleContainer`
+^^^^^^^^^^^^^^^^^^^^^^^^
 A :class:`SampleContainer` stores data from Monte Carlo sampling simulations,
 especially the occupancies and feature vectors. For lengthy MC simulations a
 :class:`SampleContainer` allows streaming directly to an
@@ -253,3 +237,68 @@ useful to begin analysing the raw samples, including methods to obtain the
 mean/variance/minimum of energies, enthalpies, and composition.
 
 Full documentation of the class is available here: :ref:`sample container`.
+
+.. _processors ug:
+
+:class:`Processors`
+^^^^^^^^^^^^^^^^^^^
+A :class:`Processor` is used to optimally compute correlation vectors, energy,
+and differences in these from variations in site occupancies. Processors
+compute values only for a specific supercell specified by a given supercell
+matrix.
+
+Users will rarely need to directly instantiate a processor, and it is recommended
+to simply create an ensemble using the :meth:`from_cluster_expansion` which
+will automatically instantiate the appropriate processor. Then, accessing the
+processor can be done simply by the corresponding attribute (i.e.
+:code:`ensemble.processor`). Many methods and attributes of a processor are
+very useful for setting up and analysing MCMC sampling runs. For more advanced or
+specific use cases, users will need to instantiate the appropriate processor directly.
+
+Full documentation of the class and its subclasses available here: :ref:`processors`.
+
+----------------------------------------------------------------------------------------
+
+.. _smol.capp ug:
+
+Cluster Analysis and Applications package
+-----------------------------------------
+
+:mod:`smol.capp` includes functions and classes that enable further analysis and
+applications of lattice models and cluster expansions. Notably, this includes
+classes to generate special quasirandom structures (SQS) and to perform ground-state
+searches.
+
+The main classes are:
+
+- :ref:`sqs ug`
+- :ref:`ground state ug`
+
+.. _sqs ug:
+
+:class:`StochasticSQSGenerator`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The :class:`StochasticSQSGenerator` class implements the stochastic SQS generation
+algorithm proposed by
+`van de Walle, A. et al. <https://doi.org/10.1016/j.calphad.2013.06.006>`_ that allows
+generating SQS with a given number of sites and composition. In addition, the algorithm
+can search for SQS using the original method based on correlation functions, or a more
+efficient method based on cluster interactions instead.
+
+Full documentation of the class is available here: :ref:`special`.
+
+.. _ground state ug:
+
+:class:`PeriodicGroundStateSolver`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Ground-state searches can be performed using the :class:`PeriodicGroundStateSolver`,
+which implements the ground state search procedure for a given supercell with periodic
+boundary conditions proposed by
+`Huang, W. et al. <https://link.aps.org/doi/10.1103/PhysRevB.94.134424>`_. The
+implementation in **smol** uses a different implementation based on mixed-integer
+programming instead of MAXSAT, which allows searching for ground-states of cluster
+expansion constructed with any arbitrary basis and complexity.
+
+Full documentation of the class is available here: :ref:`ground state`.

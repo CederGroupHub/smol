@@ -9,5 +9,6 @@ random structures and special quasi-random structures.
    :maxdepth: 2
 
    generate.special
+   generate.groundstate
    generate.enumerate
    generate.random
