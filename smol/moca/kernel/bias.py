@@ -22,8 +22,9 @@ from smol.utils.class_utils import class_name_from_str, derived_class_factory
 class MCBias(ABC):
     """Base bias term class.
 
-    Note: Any MCBias should be implemented as beta * E - bias
-    will be minimized in thermodynamics kernel.
+    .. note::
+        Any MCBias should be implemented as beta * E - bias
+        will be minimized in thermodynamics kernel.
 
     Attributes:
         sublattices (List[Sublattice]):

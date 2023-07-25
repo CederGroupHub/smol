@@ -252,16 +252,19 @@ class StandardBasis(DiscreteBasis):
         subspace spanned by them. This implies a rotation orthogonal to
         all other basis vectors. This will keep any underlying orthogonality.
 
-        WARNING: this is only implemented for uniform site space measures, not
-        for non-uniform measures.
+        .. warning::
+            this is only implemented for uniform site space measures, not
+            for non-uniform measures.
 
-        SECOND WARNING: I haven't really thought through what happens if basis
-        vectors are not orthogonal to the constant (i.e. indicator basis); use
-        at your own peril with non-orthogonal basis sets.
+        .. warning::
+            I haven't really thought through what happens if basis
+            vectors are not orthogonal to the constant (i.e. indicator basis); use
+            at your own peril with non-orthogonal basis sets.
 
-        THIRD WARNING: When rotating a binary space basis this will only
-        multiply by -1, regardless of the indices or angle provided. Think
-        about what it means to rotate in this case...
+        .. warning::
+            When rotating a binary space basis this will only
+            multiply by -1, regardless of the indices or angle provided. Think
+            about what it means to rotate in this case...
 
         Args:
             angle (float):

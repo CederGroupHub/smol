@@ -402,6 +402,9 @@ class TableFlip(MCUsher):
     Direct use of this class is not recommended, because the
     dict form of the flip table is not very easy to read and
     write.
+
+    .. note::
+
     """
 
     def __init__(
@@ -474,9 +477,10 @@ class TableFlip(MCUsher):
                 flip vector and its inverse. Length must equal to
                 2*len(flip_table).
 
-        Note: In table flip, adding proposal bias to different
-        sub-lattices is not meaningful. We will always assign
-        sub-lattice probabilities as equal.
+        .. note::
+            In table flip, adding proposal bias to different
+            sub-lattices is not meaningful. We will always assign
+            sub-lattice probabilities as equal.
         """
         super().__init__(sublattices, rng=rng)
         self.bits = [sl.species for sl in self.sublattices]

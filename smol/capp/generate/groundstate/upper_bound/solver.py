@@ -87,6 +87,16 @@ class PeriodicGroundStateSolver:
     lower bounds, please see:
 
     https://doi.org/10.1103/PhysRevB.94.134424
+
+    .. warning::
+        The number of terms and constraints in underlying mixed-integer problem grow
+        very rapidly with the size of the supercell, the number of allowed species,
+        and the number of terms in the cluster expansion. As a result, solving for
+        ground-states of large supercells and complex systems can be very
+        time-consuming or even impossible, even using proprietary solvers and many
+        cores. Make sure to check the number of terms and constraints in the problem
+        and benchmark on a smaller supercell.
+
     """
 
     def __init__(
