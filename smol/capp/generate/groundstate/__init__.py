@@ -3,15 +3,17 @@
 from monty.dev import requires
 
 try:
-    from smol.capp.generate.groundstate.upper_bound.solver import UpperBoundSolver
+    from smol.capp.generate.groundstate.upper_bound.solver import (
+        PeriodicGroundStateSolver,
+    )
 except ImportError:
 
     @requires(
         False,
         "Ground state solver functionality requires cvxpy to be installed, please install it.",
     )
-    class UpperBoundSolver:
+    class PeriodicGroundStateSolver:
         """Dummy class to fail gracefully when cvxpy is not installed."""
 
 
-__all__ = ["UpperBoundSolver"]
+__all__ = ["PeriodicGroundStateSolver"]

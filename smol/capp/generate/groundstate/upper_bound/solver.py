@@ -75,16 +75,16 @@ class ProblemCanonicals(NamedTuple):
     num_auxiliary_constraints: int
 
 
-class UpperBoundSolver:
+class PeriodicGroundStateSolver:
     """Class to solve for the ground state occupancy/structure of a given ensemble.
 
-    This implementation solves for the ground state for a fixed super-cell size stored
-    as the supercell matrix in the ensemble's processor. Meaning that the solution
-    corresponds only to an upper bound of the global ground state of the corresponding
-    infinitely sized system.
+    This implementation solves for the periodic ground-state configuration for a
+    fixed super-cell size stored as the supercell matrix in the ensemble's processor.
+    Meaning that the solution corresponds only to an upper bound of the global ground
+    state of the corresponding infinitely sized system.
 
-    For more details on the nature of the global problem, finding upper and lower bounds
-    please see:
+    For more details on the nature of the global problem, i.e. finding the upper and the
+    lower bounds, please see:
 
     https://doi.org/10.1103/PhysRevB.94.134424
     """
@@ -101,7 +101,7 @@ class UpperBoundSolver:
         solver: str = "SCIP",
         solver_options: dict = None,
     ):
-        """Initialize UpperBoundSolver.
+        """Initialize PeriodicGroundStateSolver.
 
         Args:
             ensemble (Ensemble):

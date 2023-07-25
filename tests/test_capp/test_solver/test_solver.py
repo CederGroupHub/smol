@@ -7,7 +7,7 @@ import pytest
 from pymatgen.analysis.structure_matcher import StructureMatcher
 from pymatgen.core import Lattice, Structure
 
-from smol.capp.generate.groundstate.upper_bound.solver import UpperBoundSolver
+from smol.capp.generate.groundstate.upper_bound.solver import PeriodicGroundStateSolver
 from smol.capp.generate.groundstate.upper_bound.variables import (
     get_variable_values_from_occupancy,
 )
@@ -20,7 +20,7 @@ from tests.utils import assert_pickles
 # Only SCIP tried on this instance.
 @pytest.fixture
 def solver_test_solver(solver_test_ensemble, solver_test_initial_occupancy):
-    return UpperBoundSolver(
+    return PeriodicGroundStateSolver(
         solver_test_ensemble, initial_occupancy=solver_test_initial_occupancy
     )
 
@@ -120,10 +120,10 @@ def simple_ensemble(simple_expansion, request):
 @pytest.fixture(params=["SCIP", "GUROBI"])
 def simple_solver(simple_ensemble, request):
     if simple_ensemble.chemical_potentials is not None:
-        return UpperBoundSolver(simple_ensemble, solver=request.param)
+        return PeriodicGroundStateSolver(simple_ensemble, solver=request.param)
     else:
         fixed_composition = np.array([4, 4])
-        return UpperBoundSolver(
+        return PeriodicGroundStateSolver(
             simple_ensemble, fixed_composition=fixed_composition, solver=request.param
         )
 
