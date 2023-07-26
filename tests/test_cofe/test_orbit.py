@@ -428,7 +428,6 @@ def licabr_orbit(single_structure):
 
 def test_fixed_values(licabr_orbit):
     assert licabr_orbit.multiplicity == 4
-    # TODO: figure out this failure.
     assert len(licabr_orbit.cluster_symops) == 12
 
 
