@@ -1,6 +1,6 @@
-==========================================
-**capp** --- Cluster Function Applications
-==========================================
+==============================================
+**capp** --- Cluster Analysis and Applications
+==============================================
 
 This module classes and functions for several applications based on
 cluster expansions and decompositions.

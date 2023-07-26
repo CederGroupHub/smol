@@ -78,7 +78,8 @@ def composition_select(
 ):
     """Structure selection based on composition multinomial probability.
 
-    Note: this function is needs quite a bit of tweaking to get nice samples.
+    .. note::
+        This function is needs quite a bit of tweaking to get nice samples.
 
     Args:
         composition_vector (ndarray):

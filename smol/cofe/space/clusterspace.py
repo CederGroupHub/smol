@@ -471,8 +471,9 @@ class ClusterSubspace(MSONable):
     def site_rotation_matrix(self):
         """Get change of basis matrix from site function rotations.
 
-        Note: this is meant only for rotations using orthonormal site bases.
-        Using it otherwise will not work as expected.
+        .. note::
+            this is meant only for rotations using orthonormal site bases.
+            Using it otherwise will not work as expected.
         """
         return block_diag([1], *[orb.rotation_array for orb in self.orbits])
 
@@ -1663,8 +1664,9 @@ def get_complete_mapping(mapping):
     Using this function, you can get a full mapping from an incomplete
     mapping.
 
-    NOTE: Since complete hierarchy is not very useful for actual CE fit, we
-    will not include it as an attribute of ClusterSubspace.
+    .. note::
+        Since complete hierarchy is not very useful for actual CE fit, we
+        will not include it as an attribute of ClusterSubspace.
 
     Args:
         mapping (list of lists):

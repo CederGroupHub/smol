@@ -10,6 +10,7 @@ from monty.json import MontyDecoder, MSONable
 from pymatgen.core import Composition, Element
 
 from smol.cofe.space.domain import Vacancy
+from smol.moca.composition.constraints import CompositionConstraintsManager
 from smol.moca.occu_utils import get_dim_ids_by_sublattice
 from smol.utils.math import (
     NUM_TOL,
@@ -28,7 +29,7 @@ def get_oxi_state(sp):
     """Oxidation state from Specie/Element/Vacancy.
 
     Args:
-       sp(Specie/Vacancy/Element):
+       sp(Specie or Vacancy or Element):
           A species.
     Return:
        Charge of species: int.
@@ -44,9 +45,9 @@ def flip_vec_to_reaction(u, bits):
 
     This function is for easy interpretation of flip directions.
     Args:
-        u(1D ArrayLike[int]):
+        u(1D ArrayLike of int):
             The flip vector in number change of species.
-        bits(List[List[Specie|DummySpecie|Element|Vacancy]]):
+        bits(list of lists of Specie or DummySpecie or Element or Vacancy):
             Species on all sub-lattices.
     Return:
         Reaction formulas: str.
@@ -100,14 +101,16 @@ class CompositionSpace(MSONable):
             The dimension of unconstrained composition space, which equals to
             the sum of site space size in all sub-lattices. Namely, it is the
             dimension of "counts" format.
-        species(List[Species|DummySpecies|Element|Vacancy]):
+        species(List of Species or DummySpecies or Element or Vacancy):
             All species in the given system (sorted).
-        dim_ids(List[List[int]]):
+        dim_ids(list of lists of int):
             The corresponding index in the "counts" vector
             of each species on each sub-lattice.
-        species_ids(List[List[int]]):
-            The index of sorted species in self.species, in each sub-lattice.
+        species_ids(list of lists of int):
+            The index of sorted species in each sub-lattice as shown in self.species.
     """
+
+    other_constraints = CompositionConstraintsManager()
 
     def __init__(
         self,
@@ -115,39 +118,66 @@ class CompositionSpace(MSONable):
         sublattice_sizes=None,
         charge_balanced=True,
         other_constraints=None,
-        leq_constraints=None,
-        geq_constraints=None,
         optimize_basis=False,
         table_ergodic=False,
     ):
         """Initialize CompositionSpace.
 
         Args:
-            bits(List[List[Specie|Vacancy|Element]]):
+            bits(list of lists of Specie or Vacancy or Element):
                 Species on each sub-lattice.
-            sublattice_sizes(1D ArrayLike[int]): optional
+            sublattice_sizes(1D ArrayLike of int): optional
                 Number of sites in each sub-lattice per primitive cell.
                 If not given, assume one site for each sub-lattice.
                 Better provide them as co-prime integers.
             charge_balanced(bool): optional
                 Whether to add charge balance constraint. Default
                 to true.
-            other_constraints(List[tuple(1D arrayLike[float], float)]): optional
-                Other equality type composition constraints except charge balance
-                and site-number conservation. Should be given in the form of
-                tuple(a, bb), each gives constraint np.dot(a, n)=bb. a and bb
-                should be in the form of per primitive cell.
-                For example, you may want to constrain n_Li + n_Vac = 0.5 per
-                primitive cell.
-            leq_constraints(List[tuple(1D arrayLike[float], float)]): optional
-                Constraint np.dot(a, n)<=bb. a and bb should be in the form of
-                per primitive cell.
-            geq_constraints(List[tuple(1D arrayLike[float], float)]): optional
-                Constraint np.dot(a, n)>=bb. a and bb should be in the form of
-                per primitive cell.
-                Both leq and geq constraints are only used when enumerating
-                compositions. Table ergodicity code will only consider equality
-                constraints, not leq and geqs.
+            other_constraints
+            (list of tuples of (1D arrayLike[float], float, str) or str): optional
+                Other composition constraints to be applied to restrict the
+                enumerated compositions.
+                Allows two formats for each constraint in the list:
+                    1, A string that encodes the constraint equation.
+                    For example: "2 Ag+(0) + Cl-(1) +3 H+(2) <= 3 Mn2+ +4".
+                       A string representation of constraint must satisfy the following
+                       rules,
+                       a, Contains a relation symbol ("==", "<=", ">=" or "=") are
+                       allowed.
+                       The relation symbol must have exactly one space before and one
+                       space after to separate the left and the right sides.
+                       b, Species strings must be readable by get_species in smol.cofe
+                       .space.domain. No space is allowed within a species string.
+                       For the format of a legal species string, refer to
+                       pymatgen.core.species and smol.cofe.
+                       c, You can add a number in brackets following a species string
+                       to specify constraining the amount of species in a particular
+                       sub-lattice. If not given, will apply the constraint to this
+                       species on all sub-lattices.
+                       This sub-lattice index label must not be separated from
+                       the species string with space or any other character.
+                       d, Species strings along with any sub-lattice index label must
+                       be separated from other parts (such as operators and numbers)
+                       with at least one space.
+                       e, The intercept terms (a number with no species that follows)
+                       must always be written at the end on both side of the equation.
+                    2, The equation expression, which is a tuple containing a list of
+                    floats of length self.n_dims to give the left-hand side coefficients
+                    of each component in the composition "counts" format, a float to
+                    give the right-hand side, and a string to specify the comparative
+                    relationship between the left- and right-hand sides. Constrained in
+                    the form of a_left @ n = (or <= or >=) b_right.
+                    The components in the left-hand side are in the same order as in
+                    itertools.chain(*self.bits).
+                Note that all numerical values in the constraints must be set as they are
+                to be satisfied per primitive cell given the sublattice_sizes!
+                For example, if each primitive cell contains 1 site in 1 sub-lattice
+                specified as sublattice_sizes=[1], with the requirement that species
+                A, B and C sum up to occupy less than 0.6 sites per sub-lattice, then
+                you must write: "A + B + C <= 0.6".
+                While if you specify sublattice_sizes=[2] in the same system per
+                primitive cell, to specify the same constraint, write
+                "A + B + C <= 1.2" or "0.5 A + 0.5 B + 0.5 C <= 0.6", etc.
             optimize_basis(bool): optional
                 Whether to optimize the basis to minimal flip sizes and maximal
                 connectivity in the minimum super-cell size.
@@ -211,6 +241,15 @@ class CompositionSpace(MSONable):
         self.optimize_basis = optimize_basis
         self.table_ergodic = table_ergodic
 
+        # Pre-process input constraints.
+        self.other_constraints = other_constraints
+        if self.other_constraints is not None:
+            self._other_eq_constraints = self.other_constraints["eq"]
+            self._other_leq_constraints = self.other_constraints["leq"]
+        else:
+            self._other_eq_constraints = []
+            self._other_leq_constraints = []
+
         # Set constraint equations An=b (per primitive cell).
         A = []
         b = []
@@ -222,9 +261,7 @@ class CompositionSpace(MSONable):
             a[dim_id] = 1
             A.append(a.tolist())
             b.append(sublattice_size)
-        if other_constraints is None:
-            other_constraints = []
-        for a, bb in other_constraints:
+        for a, bb in self._other_eq_constraints:
             if len(a) != self.n_dims:
                 raise ValueError(
                     f"Constraint length: {len(a)} does not match"
@@ -233,25 +270,20 @@ class CompositionSpace(MSONable):
             # No-longer enforce integers in a and b.
             # Integerize a.
             a_new, scale = integerize_vector(a)
-            A.append(np.round(a * scale).astype(int))
+            # Convert to array before multiplying!!
+            A.append(np.round(np.array(a) * scale).astype(int))
             b.append(bb * scale)
         self._A = np.array(A, dtype=int)
         self._b = np.array(b)  # per-prim
         if np.linalg.matrix_rank(self._A) >= self.n_dims:
             raise ValueError("Valid constraints more than number of dimensions!")
 
-        if leq_constraints is not None:
-            self._A_leq = np.array([a for a, bb in leq_constraints])
-            self._b_leq = np.array([bb for a, bb in leq_constraints])
+        if len(self._other_leq_constraints) > 0:
+            self._A_leq = np.array([a for a, bb in self._other_leq_constraints])
+            self._b_leq = np.array([bb for a, bb in self._other_leq_constraints])
         else:
             self._A_leq = None
             self._b_leq = None
-        if geq_constraints is not None:
-            self._A_geq = np.array([a for a, bb in geq_constraints])
-            self._b_geq = np.array([bb for a, bb in geq_constraints])
-        else:
-            self._A_geq = None
-            self._b_geq = None
 
         self._prim_vertices = None
         # Minimum supercell size required to make prim_vertices coordinates
@@ -266,10 +298,10 @@ class CompositionSpace(MSONable):
     def prim_vertices(self):
         """Vertex compositions in a primitive cell.
 
-        leq and geq constraints are not considered here.
+        leq constraints are not considered here.
         Returns:
             prim vertices in "counts" format:
-                2D np.ndarray[float]
+                2D np.ndarray of float
         """
         if self._prim_vertices is None:
             self._prim_vertices = get_nonneg_float_vertices(self._A, self._b)
@@ -291,7 +323,11 @@ class CompositionSpace(MSONable):
 
     @property
     def num_unconstrained_compositions(self):
-        """Estimated number of unconstrained compositions."""
+        """Estimated number of unconstrained compositions.
+
+        Returns:
+            int
+        """
         return np.prod(
             [
                 (sublattice_size * self.min_supercell_size) ** len(species)
@@ -307,7 +343,7 @@ class CompositionSpace(MSONable):
                 Super-cell size in the number of primitive cells.
                 If not given, will use self.min_supercell_size.
         Returns:
-             1D np.ndarray[int]
+             1D np.ndarray of int
         """
         # This conserves scalability of grid enumeration, which means a grid
         # enumerated at supercell_size = 2 * a and step = 2 is exactly 2 * the
@@ -340,7 +376,7 @@ class CompositionSpace(MSONable):
         compositions in a self.min_supercell_size super-cell is maximized.
         Returns:
             Basis vectors in "counts" format, each in a row:
-                2D np.ndarray[int]
+                2D np.ndarray of int
         """
         if self._vs is None:
             n0, vs = solve_diophantines(
@@ -370,7 +406,7 @@ class CompositionSpace(MSONable):
         in a self.min_supercell_size super-cell.
         Returns:
             Flip vectors in the "counts" format:
-                2D np.ndarray[int]
+                2D np.ndarray of int
         """
         if self._flip_table is None:
             if not self.table_ergodic:
@@ -395,8 +431,8 @@ class CompositionSpace(MSONable):
         """Reaction formula representations of table flips.
 
         Return:
-            Reaction formulae (only forward direction):
-                List[str]
+            All reaction formulas (only forward direction):
+                list of str
         """
         return [flip_vec_to_reaction(u, self.bits) for u in self.flip_table]
 
@@ -413,7 +449,7 @@ class CompositionSpace(MSONable):
                 Default to 1.
         Returns:
             Integer compositions ("coordinates" format, not normalized):
-                2Dnp.ndarray[int]
+                2D np.ndarray of int
         """
         # Also scalablity issue.
         scale = None
@@ -446,13 +482,6 @@ class CompositionSpace(MSONable):
                 grid = get_natural_solutions(n0, self.basis, step=step)
 
                 ns = grid @ self.basis + n0  # each row
-                if self._A_geq is not None and self._b_geq is not None:
-                    _filter_geq = (
-                        self._A_geq @ ns.T / supercell_size
-                        >= self._b_geq[:, None] - NUM_TOL
-                    ).all(axis=0)
-                else:
-                    _filter_geq = np.ones(len(ns)).astype(bool)
                 if self._A_leq is not None and self._b_leq is not None:
                     _filter_leq = (
                         self._A_leq @ ns.T / supercell_size
@@ -462,9 +491,7 @@ class CompositionSpace(MSONable):
                     _filter_leq = np.ones(len(ns)).astype(bool)
 
                 # Filter inequality constraints.
-                self._comp_grids[(supercell_size, step)] = grid[
-                    _filter_leq & _filter_geq
-                ]
+                self._comp_grids[(supercell_size, step)] = grid[_filter_leq]
                 return self._comp_grids[(supercell_size, step)]
 
     @property
@@ -473,7 +500,7 @@ class CompositionSpace(MSONable):
 
         Returns:
             Integer compositions ("coordinates" format, not normalized):
-                2Dnp.ndarray[int]
+                2D np.ndarray of int
         """
         return self.get_composition_grid(supercell_size=self.min_supercell_size)
 
@@ -487,7 +514,7 @@ class CompositionSpace(MSONable):
         Return:
             the closest composition to the centroid ("coordinates" format,
             not normalized):
-                1D np.ndarray[int]
+                1D np.ndarray of int
         """
         if supercell_size is None:
             supercell_size = self.min_supercell_size
@@ -498,8 +525,6 @@ class CompositionSpace(MSONable):
             supercell_size,
             self._A_leq,
             self._b_leq,
-            self._A_geq,
-            self._b_geq,
         )
 
     def translate_format(
@@ -508,7 +533,7 @@ class CompositionSpace(MSONable):
         """Translate a composition representation to another format.
 
         Args:
-            c(1D ArrayLike|List[Composition]):
+            c(1D ArrayLike or list of Composition):
                 Input format. Can be int or fractional.
             supercell_size (int):
                 Supercell size of this composition. You must make sure
@@ -542,8 +567,8 @@ class CompositionSpace(MSONable):
                 If the returned format is "counts", "coordinates" or "species-counts",
                 whether to round up the output array as integers. Default to False.
         Return:
-            Depends on to_format argument:
-                1D np.ndarray[int|float]|List[Composition]
+            Depends on the argument "to_format":
+                1D np.ndarray of int or float, or list of Composition
         """
         if from_format == "species-counts":
             raise ValueError("species-counts can not be converted to other formats!")
@@ -657,27 +682,27 @@ class CompositionSpace(MSONable):
         """Serialize into dictionary.
 
         Return:
-            Dict.
+            dict
         """
         bits = [[sp.as_dict() for sp in sl_sps] for sl_sps in self.bits]
 
         n_cons = len(self.bits)
         if self.charge_balanced:
             n_cons += 1
-        other_constraints = [
-            (a, bb)
+        eq_constraints = [
+            (a, bb, "eq")
             for a, bb in zip(self._A[n_cons:].tolist(), self._b[n_cons:].tolist())
         ]
         leq_constraints = (
-            [(a, bb) for a, bb in zip(self._A_leq.tolist(), self._b_leq.tolist())]
+            [
+                (a, bb, "leq")
+                for a, bb in zip(self._A_leq.tolist(), self._b_leq.tolist())
+            ]
             if self._A_leq is not None and self._b_leq is not None
-            else None
+            else []
         )
-        geq_constraints = (
-            [(a, bb) for a, bb in zip(self._A_geq.tolist(), self._b_geq.tolist())]
-            if self._A_geq is not None and self._b_geq is not None
-            else None
-        )
+
+        other_constraints = eq_constraints + leq_constraints
 
         comp_grids = {
             f"{k[0]}_{k[1]}": v.tolist() for k, v in self._comp_grids.items()
@@ -693,8 +718,6 @@ class CompositionSpace(MSONable):
             "bits": bits,
             "sublattice_sizes": self.sublattice_sizes,
             "other_constraints": other_constraints,
-            "leq_constraints": leq_constraints,
-            "geq_constraints": geq_constraints,
             "charge_balanced": self.charge_balanced,
             "optimize_basis": self.optimize_basis,
             "table_ergodic": self.table_ergodic,
@@ -724,8 +747,6 @@ class CompositionSpace(MSONable):
         ]
         sublattice_sizes = d.get("sublattice_sizes")
         other_constraints = d.get("other_constraints")
-        leq_constraints = d.get("leq_constraints")
-        geq_constraints = d.get("geq_constraints")
         charge_balanced = d.get("charge_balanced", True)
         optimize_basis = d.get("optimize_basis", False)
         table_ergodic = d.get("table_ergodic", False)
@@ -734,8 +755,6 @@ class CompositionSpace(MSONable):
             bits,
             sublattice_sizes,
             other_constraints=other_constraints,
-            leq_constraints=leq_constraints,
-            geq_constraints=geq_constraints,
             charge_balanced=charge_balanced,
             optimize_basis=optimize_basis,
             table_ergodic=table_ergodic,
