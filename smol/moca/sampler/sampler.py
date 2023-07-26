@@ -37,8 +37,9 @@ class Sampler:
         Args:
             kernels ([MCKernel]):
                 a list of MCKernel instances for each walker.
-                Note: we only support the same type of kernel and the
-                 same ensemble for all walkers.
+                .. note::
+                    we only support the same type of kernel and the same ensemble for
+                    all walkers.
             container (SampleContainer):
                 a sampler container to store samples.
         """
@@ -319,11 +320,13 @@ class Sampler:
         same file. To save each temperature in a different container, simply run
         a similar "for loop" creating a new sampler at each temperature.
 
+        .. note::
+            This method is only available for Samplers with a ThermalKernel.
+
         Args:
             temperatures (Sequence):
                sequence of temperatures to anneal, should be strictly
                decreasing.
-               Note: only available for ThermalKernel.
             mcmc_steps (int):
                number of Monte Carlo steps to run at each temperature.
             initial_occupancies (ndarray):

@@ -1,5 +1,8 @@
 name: test
 
+env:
+  scip-version: 8.0.0
+
 on:
   push:
     branches:
@@ -11,7 +14,8 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Only 20.04 is known to work with scip 8.0.0
+    runs-on: ubuntu-20.04
     strategy:
       max-parallel: 10
       matrix:
@@ -24,6 +28,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version:  ${{ matrix.python_version }}
+
+      - name: Install dependencies
+        run: |
+          wget --quiet --no-check-certificate https://scipopt.org/download/release/SCIPOptSuite-${{ env.scip-version }}-Linux-ubuntu.deb
+          sudo apt-get update && sudo apt install -y ./SCIPOptSuite-${{ env.scip-version }}-Linux-ubuntu.deb
 
       - name: Cache pip
         uses: actions/cache@v3

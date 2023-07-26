@@ -337,7 +337,11 @@ def get_nonneg_float_vertices(A, b):
     "'polytope' and 'cvxpy' packages are required. Please install them.",
 )
 def get_natural_centroid(
-    n0, vs, sc_size, a_leq=None, b_leq=None, a_geq=None, b_geq=None
+    n0,
+    vs,
+    sc_size,
+    a_leq=None,
+    b_leq=None,
 ):
     """Get the natural number solution closest to centroid.
 
@@ -356,10 +360,10 @@ def get_natural_centroid(
             Basis vectors of integer lattice.
         sc_size (int):
             Super-cell size with n0 as a base solution.
-        a_leq (2D ArrayLike[int]), b_leq(1D ArrayLike[float]):
-            Constraint A @ n <= b. Unit is per prim.
-        a_geq (2D ArrayLike[int]), b_geq(1D ArrayLike[float]):
-            Constraint A @ n >= b. Unit is per prim.
+        a_leq (2D ArrayLike[int]):
+            Left-hand side of constraint A @ n <= b. Unit is per prim.
+        b_leq(1D ArrayLike[float]):
+            Right-hand side of constraint A @ n <= b. Unit is per prim.
 
     Returns: 1D np.ndarray[int]
         The natural number point on the grid closest to centroid ("x"):
@@ -375,9 +379,6 @@ def get_natural_centroid(
     if a_leq is not None and b_leq is not None:
         for a, bb in zip(a_leq, b_leq):
             constraints.append(a @ (n0 + x @ vs) <= bb * sc_size)
-    if a_geq is not None and b_geq is not None:
-        for a, bb in zip(a_geq, b_geq):
-            constraints.append(a @ (n0 + x @ vs) >= bb * sc_size)
     prob = cp.Problem(cp.Minimize(cp.sum_squares(x - centroid)), constraints)
     # Use gurobi if present.
     if "GUROBI" in cp.installed_solvers():
