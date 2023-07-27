@@ -500,7 +500,7 @@ class TableFlip(MCUsher):
         self._comp_space = CompositionSpace(
             self.bits,
             self.sublattice_sizes,
-            charge_balanced=charge_balanced,
+            charge_neutral=charge_balanced,
             other_constraints=other_constraints,
             optimize_basis=optimize_basis,
             table_ergodic=table_ergodic,

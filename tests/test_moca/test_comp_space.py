@@ -36,7 +36,7 @@ def comp_space_lmtpo():
     return CompositionSpace(
         bits,
         sublattice_sizes,
-        charge_balanced=True,
+        charge_neutral=True,
         optimize_basis=True,
         table_ergodic=True,
     )
@@ -55,7 +55,7 @@ def comp_space_lmtpo2():
     return CompositionSpace(
         bits,
         sublattice_sizes,
-        charge_balanced=True,
+        charge_neutral=True,
         optimize_basis=True,
         table_ergodic=True,
         other_constraints=[([2, 1, 0, 0, 0], 7 / 6, "eq")],
@@ -75,7 +75,7 @@ def comp_space_lmtpo3():
     return CompositionSpace(
         bits,
         sublattice_sizes,
-        charge_balanced=True,
+        charge_neutral=True,
         optimize_basis=True,
         table_ergodic=True,
         other_constraints=[
@@ -106,7 +106,7 @@ def comp_space_lmntof():
         bits,
         sublattice_sizes,
         other_constraints=other_constraints,
-        charge_balanced=True,
+        charge_neutral=True,
         optimize_basis=True,
         table_ergodic=True,
     )
@@ -115,8 +115,8 @@ def comp_space_lmntof():
 # Generic attributes test.
 def test_generic_attributes(comp_space):
     dim_ids = comp_space.dim_ids
-    assert dim_ids == get_dim_ids_by_sublattice(comp_space.bits)
-    species_set = set(itertools.chain(*comp_space.bits))
+    assert dim_ids == get_dim_ids_by_sublattice(comp_space.site_spaces)
+    species_set = set(itertools.chain(*comp_space.site_spaces))
     vac_count = 0
     for sp in comp_space.species:
         assert sp in species_set
@@ -128,7 +128,7 @@ def test_generic_attributes(comp_space):
 
     for sl_id, dim_ids_sl in enumerate(comp_space.species_ids):
         for sp_id, d in enumerate(dim_ids_sl):
-            bit = comp_space.bits[sl_id][sp_id]
+            bit = comp_space.site_spaces[sl_id][sp_id]
             sp = comp_space.species[d]
             if not isinstance(sp, Vacancy):
                 assert bit == sp
@@ -137,7 +137,7 @@ def test_generic_attributes(comp_space):
 
     A = comp_space._A
     b = comp_space._b
-    assert len(A) == 1 + len(comp_space.bits)  # No other constraints.
+    assert len(A) == 1 + len(comp_space.site_spaces)  # No other constraints.
     assert len(b) == len(A)
     assert b[0] == 0
     assert np.all(A[1:, :] <= 1)
@@ -168,7 +168,7 @@ def test_generic_attributes(comp_space):
 
     reactions = comp_space.flip_reactions
     flips = []
-    bits_str = [[str(sp) for sp in sl_sps] for sl_sps in comp_space.bits]
+    bits_str = [[str(sp) for sp in sl_sps] for sl_sps in comp_space.site_spaces]
     for r in reactions:
         sps = []
         sl_ids = []
@@ -189,7 +189,7 @@ def test_generic_attributes(comp_space):
                         nums.append(int(t))
             elif t == "->":
                 n_from = tub_id
-        flip = np.zeros(comp_space.n_dims, dtype=int)
+        flip = np.zeros(comp_space.num_dims, dtype=int)
 
         for sl_id, sp_str, n in zip(sl_ids, sps, nums):
             sp_id = bits_str[sl_id].index(sp_str)
@@ -424,7 +424,7 @@ def test_grid_storage(comp_space_lmtpo):
 
 def test_convert_formats(comp_space):
     s, m, t = compute_snf(comp_space._A)
-    null_space = t[:, : comp_space.n_dims - len(comp_space.basis)].T
+    null_space = t[:, : comp_space.num_dims - len(comp_space.basis)].T
     for _ in range(5):
         # Test good cases.
         supercell_size = (
@@ -463,7 +463,7 @@ def test_convert_formats(comp_space):
         c = comp_space.translate_format(
             n, supercell_size, from_format="counts", to_format="compositions"
         )
-        assert len(c) == len(comp_space.bits)
+        assert len(c) == len(comp_space.site_spaces)
         assert all(isinstance(sl_c, Composition) for sl_c in c)
         assert all(0 <= sl_c.num_atoms <= 1 for sl_c in c)
         npt.assert_almost_equal(
@@ -478,7 +478,7 @@ def test_convert_formats(comp_space):
         )
         for sp_id, sp in enumerate(comp_space.species):
             dim_id = []
-            for dim_ids, sl_sps in zip(comp_space.dim_ids, comp_space.bits):
+            for dim_ids, sl_sps in zip(comp_space.dim_ids, comp_space.site_spaces):
                 for d, sp2 in zip(dim_ids, sl_sps):
                     if not isinstance(sp, Vacancy):
                         if sp == sp2:

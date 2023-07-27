@@ -336,7 +336,7 @@ def test_basis_orthonormal(orbit):
     orbit1 = Orbit(
         orbit.base_cluster.frac_coords,
         orbit.base_cluster.lattice,
-        orbit.bits,
+        orbit.site_spaces,
         bases,
         orbit.structure_symops,
     )
