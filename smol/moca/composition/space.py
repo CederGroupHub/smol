@@ -1,4 +1,4 @@
-"""Defines a space of compositions."""
+"""Defines a composition space with optional charge-neutrality or other constraints."""
 
 __author__ = "Fengyu Xie"
 
@@ -73,8 +73,9 @@ def flip_vec_to_reaction(u, bits):
 class CompositionSpace(MSONable):
     """Composition space class.
 
-    Generates a charge neutral compositional space from a list of Species
-    or DummySpecies and the number of sites in each sub-lattice in a PRIM CELL.
+    Generates a compositional space with given charge neutrality or additional
+    composition constraints and a given a list of Species or DummySpecies and the number
+    of sites in each sub-lattice in a given unit cell.
 
     A composition in the CompositionSpace can be expressed in 4 formats:
         1, Count of species on each sub-lattice, ordered and concatenated as
@@ -97,16 +98,16 @@ class CompositionSpace(MSONable):
            given in self.species. ("species-counts" format).
 
     Attributes:
-        n_dims(int):
+        num_dims (int):
             The dimension of unconstrained composition space, which equals to
             the sum of site space size in all sub-lattices. Namely, it is the
             dimension of "counts" format.
-        species(List of Species or DummySpecies or Element or Vacancy):
+        species (List of Species or DummySpecies or Element or Vacancy):
             All species in the given system (sorted).
-        dim_ids(list of lists of int):
+        dim_ids (list of lists of int):
             The corresponding index in the "counts" vector
             of each species on each sub-lattice.
-        species_ids(list of lists of int):
+        species_ids (list of lists of int):
             The index of sorted species in each sub-lattice as shown in self.species.
     """
 
@@ -114,9 +115,9 @@ class CompositionSpace(MSONable):
 
     def __init__(
         self,
-        bits,
+        site_spaces,
         sublattice_sizes=None,
-        charge_balanced=True,
+        charge_neutral=True,
         other_constraints=None,
         optimize_basis=False,
         table_ergodic=False,
@@ -124,15 +125,14 @@ class CompositionSpace(MSONable):
         """Initialize CompositionSpace.
 
         Args:
-            bits(list of lists of Specie or Vacancy or Element):
-                Species on each sub-lattice.
-            sublattice_sizes(1D ArrayLike of int): optional
+            site_spaces (list of lists of Specie or Vacancy or Element):
+                Site spaces specifying the allowed species on each sub-lattice.
+            sublattice_sizes (1D ArrayLike of int): optional
                 Number of sites in each sub-lattice per primitive cell.
                 If not given, assume one site for each sub-lattice.
                 Better provide them as co-prime integers.
-            charge_balanced(bool): optional
-                Whether to add charge balance constraint. Default
-                to true.
+            charge_neutral (bool): optional
+                Whether to add charge balance constraint. Default is true.
             other_constraints
             (list of tuples of (1D arrayLike[float], float, str) or str): optional
                 Other composition constraints to be applied to restrict the
@@ -178,12 +178,12 @@ class CompositionSpace(MSONable):
                 While if you specify sublattice_sizes=[2] in the same system per
                 primitive cell, to specify the same constraint, write
                 "A + B + C <= 1.2" or "0.5 A + 0.5 B + 0.5 C <= 0.6", etc.
-            optimize_basis(bool): optional
+            optimize_basis (bool): optional
                 Whether to optimize the basis to minimal flip sizes and maximal
                 connectivity in the minimum super-cell size.
                 When the minimal super-cell size is large, we recommend not to
                 optimize basis.
-            table_ergodic(bool): optional
+            table_ergodic (bool): optional
                 When generating a flip table, whether to add vectors and
                 ensure ergodicity under a minimal super-cell size.
                 Default to False.
@@ -193,13 +193,13 @@ class CompositionSpace(MSONable):
                 the fraction of inaccessible compositions usually becomes
                 minimal.
         """
-        self.bits = bits
-        self.n_dims = sum(len(species) for species in bits)
-        self.dim_ids = get_dim_ids_by_sublattice(self.bits)
+        self.site_spaces = site_spaces
+        self.num_dims = sum(len(species) for species in site_spaces)
+        self.dim_ids = get_dim_ids_by_sublattice(self.site_spaces)
         # dimension of "n" format
 
         # For non-discriminative coordinates
-        species = list(set(chain(*self.bits)))
+        species = list(set(chain(*self.site_spaces)))
         self.species = []
         for b in species:
             if isinstance(b, Vacancy):
@@ -214,7 +214,7 @@ class CompositionSpace(MSONable):
         self.species = sorted(self.species)
 
         species_ids = []
-        for species in self.bits:
+        for species in self.site_spaces:
             sl_dim_ids = []
             for sp in species:
                 if not isinstance(sp, Vacancy):
@@ -228,8 +228,8 @@ class CompositionSpace(MSONable):
         self.species_ids = species_ids
 
         if sublattice_sizes is None:
-            self.sublattice_sizes = [1 for _ in range(len(self.bits))]
-        elif len(sublattice_sizes) == len(bits):
+            self.sublattice_sizes = [1 for _ in range(len(self.site_spaces))]
+        elif len(sublattice_sizes) == len(site_spaces):
             self.sublattice_sizes = np.array(sublattice_sizes, dtype=int).tolist()
         else:
             raise ValueError(
@@ -237,7 +237,7 @@ class CompositionSpace(MSONable):
                 "in parameters bits and sublattice_sizes."
             )
 
-        self.charge_balanced = charge_balanced
+        self.charge_neutral = charge_neutral
         self.optimize_basis = optimize_basis
         self.table_ergodic = table_ergodic
 
@@ -253,19 +253,19 @@ class CompositionSpace(MSONable):
         # Set constraint equations An=b (per primitive cell).
         A = []
         b = []
-        if charge_balanced:
-            A.append([get_oxi_state(sp) for species in bits for sp in species])
+        if charge_neutral:
+            A.append([get_oxi_state(sp) for species in site_spaces for sp in species])
             b.append(0)
         for dim_id, sublattice_size in zip(self.dim_ids, self.sublattice_sizes):
-            a = np.zeros(self.n_dims, dtype=int)
+            a = np.zeros(self.num_dims, dtype=int)
             a[dim_id] = 1
             A.append(a.tolist())
             b.append(sublattice_size)
         for a, bb in self._other_eq_constraints:
-            if len(a) != self.n_dims:
+            if len(a) != self.num_dims:
                 raise ValueError(
                     f"Constraint length: {len(a)} does not match"
-                    f" dimensions: {self.n_dims}!"
+                    f" dimensions: {self.num_dims}!"
                 )
             # No-longer enforce integers in a and b.
             # Integerize a.
@@ -275,7 +275,7 @@ class CompositionSpace(MSONable):
             b.append(bb * scale)
         self._A = np.array(A, dtype=int)
         self._b = np.array(b)  # per-prim
-        if np.linalg.matrix_rank(self._A) >= self.n_dims:
+        if np.linalg.matrix_rank(self._A) >= self.num_dims:
             raise ValueError("Valid constraints more than number of dimensions!")
 
         if len(self._other_leq_constraints) > 0:
@@ -299,6 +299,7 @@ class CompositionSpace(MSONable):
         """Vertex compositions in a primitive cell.
 
         leq constraints are not considered here.
+
         Returns:
             prim vertices in "counts" format:
                 2D np.ndarray of float
@@ -313,8 +314,8 @@ class CompositionSpace(MSONable):
 
         Computed as the minimum integer that can multiply prim_vertices into
         integral vectors.
-        Returns:
-            int
+
+        Returns: int
         """
         if self._min_supercell_size is None:
             int_verts, supercell_size = integerize_multiple(self.prim_vertices)
@@ -325,13 +326,14 @@ class CompositionSpace(MSONable):
     def num_unconstrained_compositions(self):
         """Estimated number of unconstrained compositions.
 
-        Returns:
-            int
+        Returns: int
         """
         return np.prod(
             [
                 (sublattice_size * self.min_supercell_size) ** len(species)
-                for species, sublattice_size in zip(self.bits, self.sublattice_sizes)
+                for species, sublattice_size in zip(
+                    self.site_spaces, self.sublattice_sizes
+                )
             ]
         )
 
@@ -404,9 +406,9 @@ class CompositionSpace(MSONable):
 
         If self.table_ergodic is true, will add flips until the flip table is ergodic
         in a self.min_supercell_size super-cell.
-        Returns:
-            Flip vectors in the "counts" format:
-                2D np.ndarray of int
+
+        Returns: 2D np.ndarray of int
+            Flip vectors in the "counts" format
         """
         if self._flip_table is None:
             if not self.table_ergodic:
@@ -434,22 +436,22 @@ class CompositionSpace(MSONable):
             All reaction formulas (only forward direction):
                 list of str
         """
-        return [flip_vec_to_reaction(u, self.bits) for u in self.flip_table]
+        return [flip_vec_to_reaction(u, self.site_spaces) for u in self.flip_table]
 
     def get_composition_grid(self, supercell_size=1, step=1):
         """Get the integer compositions ("coordinates").
 
         Args:
-            supercell_size(int):
+            supercell_size (int):
                 Super-cell size to enumerate with.
-            step(int): optional
+            step (int): optional
                 Step in returning the enumerated compositions.
                 If step = N > 1, on each dimension of the composition space,
                 we will only yield one composition every N compositions.
                 Default to 1.
-        Returns:
+
+        Returns: 2D np.ndarray of int
             Integer compositions ("coordinates" format, not normalized):
-                2D np.ndarray of int
         """
         # Also scalablity issue.
         scale = None
@@ -498,9 +500,8 @@ class CompositionSpace(MSONable):
     def min_supercell_grid(self):
         """Get integer compositions on grid at min_supercell_size ("coordinates").
 
-        Returns:
+        Returns: 2D np.ndarray of int
             Integer compositions ("coordinates" format, not normalized):
-                2D np.ndarray of int
         """
         return self.get_composition_grid(supercell_size=self.min_supercell_size)
 
@@ -511,10 +512,8 @@ class CompositionSpace(MSONable):
             supercell_size(int): optional
                Super-cell size to get the composition with.
                If not given, will use self.min_supercell_size
-        Return:
-            the closest composition to the centroid ("coordinates" format,
-            not normalized):
-                1D np.ndarray of int
+        Return: 1D np.ndarray of int
+            the closest composition to the centroid ("coordinates" format, not normalized)
         """
         if supercell_size is None:
             supercell_size = self.min_supercell_size
@@ -533,12 +532,12 @@ class CompositionSpace(MSONable):
         """Translate a composition representation to another format.
 
         Args:
-            c(1D ArrayLike or list of Composition):
+            c (1D ArrayLike or list of Composition):
                 Input format. Can be int or fractional.
             supercell_size (int):
                 Supercell size of this composition. You must make sure
                 it is the right super-cell size of composition c.
-            from_format(str):
+            from_format (str):
                 Specifies the input format.
                 A composition can be expressed in 4 formats:
                 1, Count of species on each sub-lattice, ordered and concatenated as
@@ -560,10 +559,10 @@ class CompositionSpace(MSONable):
                 Note: "species-counts" format cannot be converted to other formats,
                 because it does not have information on species distribution across
                 sub-lattices.
-            to_format(str): optional
+            to_format (str): optional
                 Specified the output format.
                 Same as from_format, with an addition "species-counts".
-            rounding(bool): optional
+            rounding (bool): optional
                 If the returned format is "counts", "coordinates" or "species-counts",
                 whether to round up the output array as integers. Default to False.
         Return:
@@ -591,7 +590,7 @@ class CompositionSpace(MSONable):
         elif form == "compositions":
             n = []
             for species, sublattice_size, comp in zip(
-                self.bits, self.sublattice_sizes, c
+                self.site_spaces, self.sublattice_sizes, c
             ):
                 if comp.num_atoms > 1 or comp.num_atoms < 0:
                     raise ValueError(
@@ -652,7 +651,7 @@ class CompositionSpace(MSONable):
         elif form == "compositions":
             c = []
             for species, sublattice_size, dim_id in zip(
-                self.bits, self.sublattice_sizes, self.dim_ids
+                self.site_spaces, self.sublattice_sizes, self.dim_ids
             ):
                 n_sl = n[dim_id] / (sublattice_size * supercell_size)
                 c.append(
@@ -684,10 +683,10 @@ class CompositionSpace(MSONable):
         Return:
             dict
         """
-        bits = [[sp.as_dict() for sp in sl_sps] for sl_sps in self.bits]
+        bits = [[sp.as_dict() for sp in sl_sps] for sl_sps in self.site_spaces]
 
-        n_cons = len(self.bits)
-        if self.charge_balanced:
+        n_cons = len(self.site_spaces)
+        if self.charge_neutral:
             n_cons += 1
         eq_constraints = [
             (a, bb, "eq")
@@ -718,7 +717,7 @@ class CompositionSpace(MSONable):
             "bits": bits,
             "sublattice_sizes": self.sublattice_sizes,
             "other_constraints": other_constraints,
-            "charge_balanced": self.charge_balanced,
+            "charge_neutral": self.charge_neutral,
             "optimize_basis": self.optimize_basis,
             "table_ergodic": self.table_ergodic,
             "min_supercell_size": self._min_supercell_size,
@@ -747,7 +746,7 @@ class CompositionSpace(MSONable):
         ]
         sublattice_sizes = d.get("sublattice_sizes")
         other_constraints = d.get("other_constraints")
-        charge_balanced = d.get("charge_balanced", True)
+        charge_neutral = d.get("charge_neutral", True)
         optimize_basis = d.get("optimize_basis", False)
         table_ergodic = d.get("table_ergodic", False)
 
@@ -755,7 +754,7 @@ class CompositionSpace(MSONable):
             bits,
             sublattice_sizes,
             other_constraints=other_constraints,
-            charge_balanced=charge_balanced,
+            charge_neutral=charge_neutral,
             optimize_basis=optimize_basis,
             table_ergodic=table_ergodic,
         )

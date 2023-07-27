@@ -149,14 +149,14 @@ def get_composition_space_constraints(
     comp_space = CompositionSpace(
         bits,
         sizes,
-        charge_balanced=charge_balanced,
+        charge_neutral=charge_balanced,
         other_constraints=other_constraints,
         optimize_basis=False,
         table_ergodic=False,
     )
 
     # Charge balance is the first constraint in CompositionSpace.
-    n_charge = 1 if comp_space.charge_balanced else 0
+    n_charge = 1 if comp_space.charge_neutral else 0
     n_sublattices = len(sublattices)
     # Normalization on each sublattice are not necessary because it is already satisfied
     # by normalization on each site.
