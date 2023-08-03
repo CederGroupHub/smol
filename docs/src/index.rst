@@ -5,6 +5,7 @@
    :hidden:
 
    getting_started
+   examples
    user_guide
    api_reference/index
    citing
@@ -30,9 +31,9 @@ crystalline materials.*
       :alt: PyPi Version
       :target: https://pypi.org/project/smol
 
-.. image:: https://img.shields.io/pypi/pyversions/smol
+.. image:: https://img.shields.io/badge/python-3.8%2B-blue
       :alt: Python Versions
-      :target: https://img.shields.io/pypi/pyversions/smol
+      :target: https://www.python.org/downloads/
 
 .. image:: https://joss.theoj.org/papers/e96a568ca53ee9d14548d7b8bed69b25/status.svg
       :alt: JOSS Status
