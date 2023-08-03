@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Use this section to keep track of changes in the works.
 ### Added
 ### Changed
+* Periodic ground state solver (upper-bound problem formulation) @qchempku2017
 ### Fixed
 ### Removed
 ### Deprecated
