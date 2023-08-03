@@ -20,7 +20,7 @@ jobs:
       max-parallel: 10
       matrix:
         # '3.11' fails because h5py has to be built from source since prebuilt wheels are not provided yet
-        python_version: ['3.8', '3.9', '3.10']
+        python_version: ['3.8', '3.9', '3.10', '3.11']
 
     steps:
       - uses: actions/checkout@v3
