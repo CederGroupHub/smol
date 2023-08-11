@@ -2,8 +2,7 @@
 Sampling
 ========
 
-This module contains a number of classes for MC sampling. The
-main modules users will generally interact with are
+The main classes users will generally interact with are
 :class:`Sampler` and :class:`SampleContainer`. :class:`Sampler`
 contains a :class:`MCKernel` to implement a specific MC
 algorithm to sample the :class:`Ensemble` class as well as an
@@ -17,7 +16,4 @@ such as occupancy, feature vector, energy, enthalpy, etc.
    :maxdepth: 2
 
    sampler.sampler
-   sampler.kernel
-   sampler.mcusher
    sampler.container
-   sampler.bias

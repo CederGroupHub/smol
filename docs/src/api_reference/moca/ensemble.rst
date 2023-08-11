@@ -1,10 +1,10 @@
 .. _ensemble:
 
-========
-Ensemble
-========
+=========
+Ensembles
+=========
 
-This module contains the :class:`Ensemble` class for the different types of ensembles
+The :class:`Ensemble` class is used to represent different types of ensembles
 that can be implemented for MC sampling. Systems at constant
 temperature and constant composition (no species flow in/out of
 the system) should have ``chemical_potentials`` set to ``None`` and choose an

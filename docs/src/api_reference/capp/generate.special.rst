@@ -1,8 +1,8 @@
 .. _special:
 
-=======
-Special
-=======
+=================
+Special Structures
+=================
 
 Classes to generate special quasi-random structures (SQS).
 
