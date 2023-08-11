@@ -1,8 +1,8 @@
 .. _ground state:
 
-============
-Ground State
-============
+=============
+Ground States
+=============
 
 Classes to perform ground-state searches.
 
