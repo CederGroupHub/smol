@@ -121,7 +121,7 @@ def test_constraints_manager(bits):
     comp_space = CompositionSpace(
         bits,
         sublattice_sizes,
-        charge_balanced=True,
+        charge_neutral=True,
         other_constraints=other_constraints,
     )
 
@@ -139,7 +139,7 @@ def test_constraints_manager(bits):
     comp_space = CompositionSpace(
         bits,
         sublattice_sizes,
-        charge_balanced=True,
+        charge_neutral=True,
         other_constraints=other_constraints,
     )
     npt.assert_array_equal(a_eq_std, comp_space._A)
@@ -150,7 +150,7 @@ def test_constraints_manager(bits):
     comp_space = CompositionSpace(
         bits,
         sublattice_sizes,
-        charge_balanced=True,
+        charge_neutral=True,
     )
     npt.assert_array_equal(a_eq_std[:-2], comp_space._A)
     npt.assert_array_equal(b_eq_std[:-2], comp_space._b)

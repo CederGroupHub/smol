@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
+* `SQSGenerator.from_processors` to create a generator from a list of processors. #398 @lbluque
 ### Changed
+* Periodic ground state solver (upper-bound problem formulation) #343 @qchempku2017
 ### Fixed
 ### Removed
 ### Deprecated

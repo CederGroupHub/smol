@@ -10,5 +10,6 @@ using a cluster expansion Hamiltonian with/or using optional pair potentials.
 
    ensemble
    processors
-   sublattice
    sampler
+   kernel
+   sublattice

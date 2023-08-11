@@ -258,7 +258,7 @@ class CompositionConstraintsManager:
         constraints_eq = []
         # All geq constraints will be rearranged into leq constraints.
         constraints_leq = []
-        bits = obj.bits
+        bits = obj.site_spaces
 
         for entry in value:
             if isinstance(entry, (tuple, list)):
