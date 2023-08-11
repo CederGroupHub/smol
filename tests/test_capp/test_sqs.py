@@ -92,5 +92,37 @@ def test_bad_generator(cluster_subspace):
         )
 
 
+@pytest.mark.parametrize("feature_type", ["correlation", "cluster-interaction"])
+def test_from_processors(single_subspace, feature_type):
+    generator = StochasticSQSGenerator(
+        single_subspace,
+        supercell_size=2,
+        feature_type=feature_type,
+    )
+
+    assert len(generator.processors) > 0
+
+    new_generator = StochasticSQSGenerator.from_processors(generator.processors)
+
+    assert (
+        generator._processors_by_scm.keys() == new_generator._processors_by_scm.keys()
+    )
+
+    with pytest.raises(ValueError):
+        StochasticSQSGenerator(
+            generator.processors[0].cluster_subspace,
+            supercell_size=3,
+            processors=generator.processors,
+        )
+
+    with pytest.raises(ValueError):
+        StochasticSQSGenerator(
+            generator.processors[0].cluster_subspace,
+            supercell_size=3,
+            supercell_matrices=[np.eye(3)],
+            processors=generator.processors,
+        )
+
+
 def test_pickles(generator):
     assert_pickles(generator)
