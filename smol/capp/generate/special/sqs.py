@@ -16,7 +16,11 @@ from smol.capp.generate.random import generate_random_ordered_occupancy
 from smol.cofe import ClusterSubspace
 from smol.moca import Ensemble, SampleContainer, Sampler
 from smol.moca.kernel import MulticellMetropolis, mckernel_factory
-from smol.moca.processor.distance import DistanceProcessor
+from smol.moca.processor.distance import (
+    ClusterInteractionDistanceProcessor,
+    CorrelationDistanceProcessor,
+    DistanceProcessor,
+)
 from smol.moca.trace import Trace
 from smol.utils.class_utils import class_name_from_str, derived_class_factory
 from smol.utils.progressbar import progress_bar
@@ -37,6 +41,7 @@ class SQSGenerator(ABC):
         match_weight=1.0,
         match_tol=1e-5,
         supercell_matrices=None,
+        processors=None,
         **kwargs,
     ):
         """Initialize SQSGenerator.
@@ -63,10 +68,23 @@ class SQSGenerator(ABC):
             supercell_matrices (list of ndarray): optional
                 list of supercell matrices to use. If None, all symmetrically distinct
                 supercell matrices are generated.
+            processors (list of DistanceProcessor): optional
+                list of processors to use. If this is passed supercell_matrices
+                cannot be passed.
         """
         self.cluster_subspace = cluster_subspace
         self.supercell_size = supercell_size
         self._sqs_deque = None
+
+        if processors is not None:
+            if processors[0].cluster_subspace != cluster_subspace:
+                raise ValueError(
+                    "Processors must have the same cluster subspace as the generator"
+                )
+            if not all(processor.size == supercell_size for processor in processors):
+                raise ValueError(
+                    "processors must have the same supercell size given to the generator"
+                )
 
         if feature_type == "correlation":
             num_features = len(cluster_subspace)
@@ -93,34 +111,47 @@ class SQSGenerator(ABC):
                 )
 
         if supercell_matrices is not None:
+            if processors is not None:
+                raise ValueError(
+                    "processors and supercell_matrices cannot both be specified"
+                )
             for scm in supercell_matrices:
                 if scm.shape != (3, 3):
                     raise ValueError("supercell matrices must be 3x3")
                 if not np.isclose(np.linalg.det(scm), supercell_size):
                     raise ValueError(
-                        "supercell matrices must have determinant equal to "
-                        "supercell_size"
+                        "supercell matrices must have determinant equal to supercell_size"
                     )
-        else:
+        elif processors is None:
             supercell_matrices = enumerate_supercell_matrices(
                 supercell_size, cluster_subspace.symops
             )
             # reverse since most skewed cells are enumerated first
             supercell_matrices.reverse()
 
-        self._processors_by_scm = {
-            tuple(sorted(tuple(s.tolist()) for s in scm)): derived_class_factory(
-                class_name_from_str(feature_type + "DistanceProcessor"),
-                DistanceProcessor,
-                cluster_subspace,
-                scm,
-                target_vector=target_vector,
-                target_weights=target_weights,
-                match_weight=match_weight,
-                match_tol=match_tol,
-            )
-            for scm in supercell_matrices
-        }
+        if processors is None:
+            self._processors_by_scm = {
+                tuple(sorted(tuple(s.tolist()) for s in scm)): derived_class_factory(
+                    class_name_from_str(feature_type + "DistanceProcessor"),
+                    DistanceProcessor,
+                    cluster_subspace,
+                    scm,
+                    target_vector=target_vector,
+                    target_weights=target_weights,
+                    match_weight=match_weight,
+                    match_tol=match_tol,
+                )
+                for scm in supercell_matrices
+            }
+        else:
+            # TODO should we also check the type of processor?
+            self._processors_by_scm = {
+                tuple(
+                    sorted(tuple(s.tolist()) for s in processor.supercell_matrix)
+                ): processor
+                for processor in processors
+            }
+
         self._processors = list(self._processors_by_scm.values())
 
     @classmethod
@@ -201,10 +232,64 @@ class SQSGenerator(ABC):
             **kwargs,
         )
 
+    @classmethod
+    def from_processors(
+        cls,
+        processors,
+        target_vector=None,
+        target_weights=None,
+        match_weight=1.0,
+        match_tol=1e-5,
+        **kwargs,
+    ):
+        """Initialize an SQSGenerator from a list of processors.
+
+        Args:
+            processors: list of processors
+            target_vector (ndarray): optional
+                target feature vector to use for distance calculations
+            target_weights (ndarray): optional
+                weights for each target feature
+            match_weight (float): optional
+                weight for the in the wL term above. That is how much to weight the
+                largest diameter below which all features are matched exactly.
+                Set to any number >0 to use this term. Default is 1.0. to ignore it
+                set it to zero.
+            match_tol (float): optional
+                tolerance for exact matching features. Default is 1e-5.
+            **kwargs:
+                additional keyword arguments specific to the SQSGenerator
+        Returns:
+            SQSGenerator
+        """
+        if isinstance(processors[0], CorrelationDistanceProcessor):
+            feature_type = "correlation"
+        elif isinstance(processors[0], ClusterInteractionDistanceProcessor):
+            feature_type = "cluster-interaction"
+        else:
+            raise ValueError(f"Invalid processor type {type(processors[0])}")
+
+        return cls(
+            processors[0].cluster_subspace,
+            processors[0].size,
+            feature_type=feature_type,
+            target_vector=target_vector,
+            target_weights=target_weights,
+            match_weight=match_weight,
+            match_tol=match_tol,
+            processors=processors,
+            **kwargs,
+        )
+
     @property
     def num_structures(self):
         """Get number of structures generated."""
         return 0 if self._sqs_deque is None else len(self._sqs_deque)
+
+    @property
+    def processors(self):
+        """Get list of processors."""
+        return self._processors
 
     @abstractmethod
     def generate(self, *args, **kwargs):
@@ -358,6 +443,7 @@ class StochasticSQSGenerator(SQSGenerator):
         match_weight=1.0,
         match_tol=1e-5,
         supercell_matrices=None,
+        processors=None,
         kernel_kwargs=None,
         **kwargs,
     ):
@@ -385,6 +471,8 @@ class StochasticSQSGenerator(SQSGenerator):
             supercell_matrices (list of ndarray): optional
                 list of supercell matrices to use. If None, all symmetrically distinct
                 supercell matrices are generated.
+            processors (list of Processor): optional
+                list of processors to use. If None, all processors are generated.
             kernel_kwargs (dict): optional
                 keyword arguments for the transition kernel used in each supercell.
                 For example see the documentation for :class:`Metropolis` kernel.
@@ -401,6 +489,7 @@ class StochasticSQSGenerator(SQSGenerator):
             match_weight,
             match_tol,
             supercell_matrices,
+            processors,
         )
         step_type = kwargs.pop("step_type", "swap")
         temperature = kwargs.pop("temperature", 5.0)
