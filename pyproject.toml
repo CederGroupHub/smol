@@ -11,6 +11,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
@@ -20,7 +21,7 @@ classifiers = [
 ]
 dependencies = [
     "numpy >=1.24",
-    "pymatgen >=2023.1.9",
+    "pymatgen >=2023.08.10",
     "monty >=v2022.9.8"
 ]
 authors = [
@@ -63,7 +64,6 @@ test = [
 ]
 dev = [
     "pre-commit >=2.12.1",
-    "cython >=0.29.32",
     "flake8",
     "pycodestyle",
     "pydocstyle",
