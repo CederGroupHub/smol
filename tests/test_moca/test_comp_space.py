@@ -25,11 +25,11 @@ def comp_space(ensemble):
 
 @pytest.fixture(scope="module")
 def comp_space_lmtpo():
-    li = Species.from_string("Li+")
-    mn = Species.from_string("Mn3+")
-    ti = Species.from_string("Ti4+")
-    o = Species.from_string("O2-")
-    p = Species.from_string("P3-")
+    li = Species.from_str("Li+")
+    mn = Species.from_str("Mn3+")
+    ti = Species.from_str("Ti4+")
+    o = Species.from_str("O2-")
+    p = Species.from_str("P3-")
 
     bits = [[li, mn, ti], [p, o]]
     sublattice_sizes = [1, 1]
@@ -44,11 +44,11 @@ def comp_space_lmtpo():
 
 @pytest.fixture(scope="module")
 def comp_space_lmtpo2():
-    li = Species.from_string("Li+")
-    mn = Species.from_string("Mn3+")
-    ti = Species.from_string("Ti4+")
-    o = Species.from_string("O2-")
-    p = Species.from_string("P3-")
+    li = Species.from_str("Li+")
+    mn = Species.from_str("Mn3+")
+    ti = Species.from_str("Ti4+")
+    o = Species.from_str("O2-")
+    p = Species.from_str("P3-")
 
     bits = [[li, mn, ti], [p, o]]
     sublattice_sizes = [1, 1]
@@ -64,11 +64,11 @@ def comp_space_lmtpo2():
 
 @pytest.fixture(scope="module")
 def comp_space_lmtpo3():
-    li = Species.from_string("Li+")
-    mn = Species.from_string("Mn3+")
-    ti = Species.from_string("Ti4+")
-    o = Species.from_string("O2-")
-    p = Species.from_string("P3-")
+    li = Species.from_str("Li+")
+    mn = Species.from_str("Mn3+")
+    ti = Species.from_str("Ti4+")
+    o = Species.from_str("O2-")
+    p = Species.from_str("P3-")
 
     bits = [[li, mn, ti], [p, o]]
     sublattice_sizes = [1, 1]
@@ -92,12 +92,12 @@ def comp_space_lmtpo3():
 # A test example with extra constraints.
 @pytest.fixture(scope="module")
 def comp_space_lmntof():
-    li = Species.from_string("Li+")
-    ni = Species.from_string("Ni2+")
-    mn = Species.from_string("Mn3+")
-    ti = Species.from_string("Ti4+")
-    f = Species.from_string("F-")
-    o = Species.from_string("O2-")
+    li = Species.from_str("Li+")
+    ni = Species.from_str("Ni2+")
+    mn = Species.from_str("Mn3+")
+    ti = Species.from_str("Ti4+")
+    f = Species.from_str("F-")
+    o = Species.from_str("O2-")
 
     bits = [[li, ni, mn, ti], [o, f]]
     sublattice_sizes = [1, 1]
