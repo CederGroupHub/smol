@@ -119,7 +119,17 @@ def simple_ensemble(simple_expansion, request):
 # @pytest.fixture(params=["SCIP", "GUROBI"])
 # SCIP has a very small probability of failing to satisfy constraints.
 # Now only use GUROBI for testing.
-@pytest.fixture(params=["GUROBI"])
+@pytest.fixture(
+    params=
+    [
+        pytest.param("SCIP", marks=pytest.mark.xfail(
+            reason="SCIP has a small probability of failing to satisfy constraints.",
+            raises=IndexError
+        )
+                     ),
+        "GUROBI"
+    ]
+)
 def simple_solver(simple_ensemble, request):
     if simple_ensemble.chemical_potentials is not None:
         return PeriodicGroundStateSolver(simple_ensemble, solver=request.param)
