@@ -120,14 +120,15 @@ def simple_ensemble(simple_expansion, request):
 # SCIP has a very small probability of failing to satisfy constraints.
 # Now only use GUROBI for testing.
 @pytest.fixture(
-    params=
-    [
-        pytest.param("SCIP", marks=pytest.mark.xfail(
-            reason="SCIP has a small probability of failing to satisfy constraints.",
-            raises=IndexError
-        )
-                     ),
-        "GUROBI"
+    params=[
+        pytest.param(
+            "SCIP",
+            marks=pytest.mark.xfail(
+                reason="SCIP has a small probability of failing to satisfy constraints.",
+                raises=IndexError,
+            ),
+        ),
+        "GUROBI",
     ]
 )
 def simple_solver(simple_ensemble, request):
