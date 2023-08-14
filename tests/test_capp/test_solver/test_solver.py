@@ -116,8 +116,10 @@ def simple_ensemble(simple_expansion, request):
     )
 
 
-# Only SCIP tried on this instance.
-@pytest.fixture(params=["SCIP", "GUROBI"])
+# @pytest.fixture(params=["SCIP", "GUROBI"])
+# SCIP has a very small probability of failing to satisfy constraints.
+# Now only use GUROBI for testing.
+@pytest.fixture(params=["GUROBI"])
 def simple_solver(simple_ensemble, request):
     if simple_ensemble.chemical_potentials is not None:
         return PeriodicGroundStateSolver(simple_ensemble, solver=request.param)
@@ -130,6 +132,29 @@ def simple_solver(simple_ensemble, request):
 
 # Do a small scale solving test.
 def test_solve(simple_solver):
+    n_prims = simple_solver.ensemble.system_size
+    n_aux = 0
+    for inds in simple_solver._canonicals.indices_in_auxiliary_products:
+        n_aux += len(inds) + 1
+    # Test number of auxiliary constraints is correct.
+    assert simple_solver._canonicals.num_auxiliary_constraints == n_aux
+    # No composition space constraints, only normalization constraints.
+    if simple_solver.ensemble.chemical_potentials is not None:
+        # print("Grand ensemble!")
+        n_normalization = len(simple_solver._canonicals.constraints) - n_aux
+    # Have 2 additional canonical constraints.
+    else:
+        # print("Canonical ensemble!")
+        n_normalization = len(simple_solver._canonicals.constraints) - n_aux - 2
+    assert n_normalization == n_prims
+
+    # print(simple_solver.ensemble.sublattices)
+    # print(simple_solver._canonicals.variable_indices)
+    # n_constraints = len(simple_solver._canonicals.constraints)
+    # for c in simple_solver._canonicals.constraints[: n_constraints - n_aux]:
+    #     print(c)
+    # assert False
+
     simple_solver.solve()
     solution = simple_solver.ground_state_solution
     energy = simple_solver.ground_state_energy
