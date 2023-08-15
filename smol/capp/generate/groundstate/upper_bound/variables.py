@@ -115,7 +115,8 @@ def get_variables_from_sublattices(
                 site_variable_indices.append(-2)
         variable_indices.append(site_variable_indices)
 
-    return cp.Variable(n_variables, boolean=True), variable_indices
+    # Add a name to variable for better identification.
+    return cp.Variable(n_variables, name="s", boolean=True), variable_indices
 
 
 def get_occupancy_from_variables(

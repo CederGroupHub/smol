@@ -109,6 +109,12 @@ class Cluster(SiteCollection, MSONable):
         """
         return self[i].distance(self[j])
 
+    def copy(self):
+        """Return a copy of the cluster."""
+        new_sites = [Site(site.species, site.coords.copy()) for site in self.sites]
+        lattice = self.lattice.copy()
+        return Cluster.from_sites(new_sites, lattice)
+
     def assign_ids(self, cluster_id):
         """Recursively assign IDs to clusters after initialization."""
         self.id = cluster_id
