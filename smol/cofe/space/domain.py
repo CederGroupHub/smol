@@ -243,6 +243,7 @@ class Vacancy(DummySpecies):
         symbol: str = "A",
         oxidation_state: float = 0,
         properties: dict | None = None,
+        spin: float | None = None,
     ):
         """Initialize a Vacancy.
 
@@ -256,9 +257,13 @@ class Vacancy(DummySpecies):
             oxidation_state (float): oxidation state for Vacancy. More like
                 the charge of a point defect. Defaults to zero.
             properties (dict): Deprecated. See pymatgen 2023.6.28 release notes.
+            spin: Spin associated with Species. Defaults to None.
         """
         super().__init__(
-            symbol=symbol, oxidation_state=oxidation_state, properties=properties
+            symbol=symbol,
+            oxidation_state=oxidation_state,
+            properties=properties,
+            spin=spin,
         )
 
     def __eq__(self, other):
