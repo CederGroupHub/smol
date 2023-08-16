@@ -7,14 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # [Unreleased]
 Use this section to keep track of changes in the works.
 ### Added
-* `SQSGenerator.from_processors` to create a generator from a list of processors. #398 @lbluque
 ### Changed
-* Periodic ground state solver (upper-bound problem formulation) #343 @qchempku2017
 ### Fixed
 ### Removed
 ### Deprecated
 
-# [v0.4.1](https://github.com/CederGroupHub/smol/releases/tag/v0.4.0) (2023-07-21)
+# [v0.5.0](https://github.com/CederGroupHub/smol/releases/tag/v0.5.0) (2023-08-15)
+### Added
+* `SQSGenerator.from_processors` to create a generator from a list of processors. #398 @lbluque
+### Changed
+* Periodic ground state solver (upper-bound problem formulation) #343 @qchempku2017
+### Fixed
+
+# [v0.4.1](https://github.com/CederGroupHub/smol/releases/tag/v0.4.1) (2023-07-21)
 ### Fixed
 * Fix #386 by making cython extension classes pickleable. #387 @lbluque
 * Fix #385 data type issues on Windows. #392 @qchempku2017
