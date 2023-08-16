@@ -15,9 +15,7 @@ Use this section to keep track of changes in the works.
 # [v0.5.0](https://github.com/CederGroupHub/smol/releases/tag/v0.5.0) (2023-08-15)
 ### Added
 * `SQSGenerator.from_processors` to create a generator from a list of processors. #398 @lbluque
-### Changed
 * Periodic ground state solver (upper-bound problem formulation) #343 @qchempku2017
-### Fixed
 
 # [v0.4.1](https://github.com/CederGroupHub/smol/releases/tag/v0.4.1) (2023-07-21)
 ### Fixed
