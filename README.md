@@ -53,6 +53,9 @@ Functionality
 -   Special quasi-random structure generation based on either correlation vectors or
     cluster interaction vectors.
 
+-   Solving for periodic ground-states of any given cluster expansion with or without
+    electrostatics over a given supercell.
+
 **smol** is built on top of [pymatgen](https://pymatgen.org) so any pre/post
 structure analysis can be done seamlessly using the various functionality
 supported there.
