@@ -75,3 +75,13 @@ cpdef _openmp_effective_numthreads(n_threads=None):
         return max(1, max_n_threads + n_threads + 1)
 
     return n_threads
+
+
+cpdef _openmp_enabled():
+    """Return true if openmp is available and enabled in build."""
+    return OPENMP_ENABLED == 1
+
+
+cpdef _openmp_get_max_threads():
+    """Return the number of threads available to the OpenMP runtime."""
+    return omp_get_max_threads()
