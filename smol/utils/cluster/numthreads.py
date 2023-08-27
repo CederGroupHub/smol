@@ -1,9 +1,14 @@
 """Simple mixin class that has an attributed/method that runs in parallel."""
 
 
+import os
+
 from .._openmp_helpers import _openmp_effective_numthreads
 
-DEFAULT_NUM_THREADS = _openmp_effective_numthreads(n_threads=2)
+if os.getenv("OMP_NUM_THREADS") is not None:
+    DEFAULT_NUM_THREADS = _openmp_effective_numthreads()
+else:
+    DEFAULT_NUM_THREADS = _openmp_effective_numthreads(n_threads=2)
 
 
 class SetNumThreads:
