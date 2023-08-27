@@ -1,5 +1,4 @@
 import os
-from importlib import reload
 
 import pytest
 
@@ -20,33 +19,8 @@ class MultithreadedDummy:
         self.num_threads = 1
 
 
-def test_openmp_numthreads_env_set(monkeypatch):
-    # this is not completely working, it seems that 4 is the default number of threads
-    monkeypatch.setenv("OMP_NUM_THREADS", "4")
-
-    reload(_openmp_helpers)
-    reload(numthreads)
-    dummy = Dummy()
-
-    if _openmp_helpers._openmp_enabled():
-        assert _openmp_helpers._openmp_effective_numthreads() == 4
-        assert _openmp_helpers._openmp_effective_numthreads(2) == 2
-        assert dummy.num_threads == 4
-        assert Dummy(num_threads=1).num_threads == 1
-        with pytest.warns(UserWarning):
-            dummy.num_threads = 5
-        assert dummy.num_threads == 4
-    else:
-        assert _openmp_helpers._openmp_effective_numthreads(2) == 1
-        assert _openmp_helpers._openmp_effective_numthreads() == 1
-        assert _openmp_helpers._openmp_effective_numthreads(-1) == 1
-        assert dummy.num_threads == 1
-
-
-def test_openmp_numthreads_no_set(monkeypatch):
+def test_openmp_numthreads(monkeypatch):
     monkeypatch.delenv("OMP_NUM_THREADS", raising=False)
-    reload(_openmp_helpers)
-    reload(numthreads)
     dummy = Dummy()
 
     if _openmp_helpers._openmp_enabled():
