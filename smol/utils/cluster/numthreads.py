@@ -2,6 +2,7 @@
 
 
 import os
+import warnings
 
 from .._openmp_helpers import _openmp_effective_numthreads
 
@@ -41,7 +42,13 @@ class SetNumThreads:
 
         max_threads = _openmp_effective_numthreads()
         if value > max_threads:
-            raise ValueError(f"num_threads cannot be greater than {max_threads}.")
+            warnings.warn(
+                f"num_threads cannot be greater than {max_threads}. "
+                f"Setting to {max_threads}."
+                "If you want to use more threads, make sure openmp is enabled and set"
+                "the OMP_NUM_THREADS environment variable accordingly."
+            )
+            value = max_threads
 
         obj = getattr(instance, self._obj_name)
         num_threads = _openmp_effective_numthreads(value)
