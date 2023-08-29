@@ -41,7 +41,6 @@ cpdef _openmp_effective_numthreads(n_threads=None):
     - For ``n_threads = None``,
       - if the ``OMP_NUM_THREADS`` environment variable is set, return
         ``openmp.omp_get_max_threads()``
-      - otherwise, default to 2 threads
       The result of ``omp_get_max_threads`` can be influenced by environment
       variable ``OMP_NUM_THREADS`` or at runtime by ``omp_set_num_threads``.
 
@@ -76,3 +75,13 @@ cpdef _openmp_effective_numthreads(n_threads=None):
         return max(1, max_n_threads + n_threads + 1)
 
     return n_threads
+
+
+cpdef _openmp_enabled():
+    """Return true if openmp is available and enabled in build."""
+    return OPENMP_ENABLED == 1
+
+
+cpdef _openmp_get_max_threads():
+    """Return the number of threads available to the OpenMP runtime."""
+    return omp_get_max_threads()

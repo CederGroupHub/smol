@@ -453,5 +453,6 @@ def test_set_threads(single_subspace):
     assert ceproc.num_threads == _openmp_effective_numthreads(n_threads=-1)
 
     # assert setting more complains
-    with pytest.raises(ValueError):
+    with pytest.warns(UserWarning):
         ceproc.num_threads = _openmp_effective_numthreads() + 1
+        assert ceproc.num_threads == _openmp_effective_numthreads()
