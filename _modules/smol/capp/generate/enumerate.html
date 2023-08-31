@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.capp.generate.enumerate &#8212; smol 0.5.0 documentation</title>
+    <title>smol.capp.generate.enumerate &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -35,16 +35,16 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/smol/capp/generate/enumerate';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../../../_static/require.js?v=d4dd881e"></script>
     <script src="../../../../_static/custom.js?v=1f4f4097"></script>
@@ -225,7 +225,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -381,7 +381,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -485,7 +485,9 @@ document.write(`
 <span class="kn">from</span> <span class="nn">smol.utils.math</span> <span class="kn">import</span> <span class="n">yield_hermite_normal_forms</span>
 
 
-<div class="viewcode-block" id="enumerate_supercell_matrices"><a class="viewcode-back" href="../../../../api_reference/capp/generate.enumerate.html#smol.capp.generate.enumerate.enumerate_supercell_matrices">[docs]</a><span class="k">def</span> <span class="nf">enumerate_supercell_matrices</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">symmops</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<div class="viewcode-block" id="enumerate_supercell_matrices">
+<a class="viewcode-back" href="../../../../api_reference/capp/generate.enumerate.html#smol.capp.generate.enumerate.enumerate_supercell_matrices">[docs]</a>
+<span class="k">def</span> <span class="nf">enumerate_supercell_matrices</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">symmops</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate all symmetrically distinct supercell matrices of a given size.</span>
 
 <span class="sd">    Matrices are given in Hermite normal form following the following work:</span>
@@ -518,6 +520,7 @@ document.write(`
             <span class="n">supercell_matrices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hnf</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>  <span class="c1"># supercells in pmg are transpose of hnf</span>
 
     <span class="k">return</span> <span class="n">supercell_matrices</span></div>
+
 </pre></div>
 
                 </article>
@@ -570,7 +573,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

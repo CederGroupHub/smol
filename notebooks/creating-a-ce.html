@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Creating a basic Cluster Expansion &#8212; smol 0.5.0 documentation</title>
+    <title>Creating a basic Cluster Expansion &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -37,9 +37,9 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/creating-a-ce';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../_static/require.js?v=d4dd881e"></script>
     <script src="../_static/custom.js?v=1f4f4097"></script>
@@ -229,7 +229,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -389,7 +389,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -481,7 +481,7 @@ document.write(`
                   
   <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.0/docs/src/notebooks/creating-a-ce.ipynb">docs/src/notebooks/creating-a-ce.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.1/docs/src/notebooks/creating-a-ce.ipynb">docs/src/notebooks/creating-a-ce.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -495,7 +495,7 @@ document.write(`
     }
   </script>
 </div><section id="Creating-a-basic-Cluster-Expansion">
-<h1>Creating a basic Cluster Expansion<a class="headerlink" href="#Creating-a-basic-Cluster-Expansion" title="Permalink to this heading">#</a></h1>
+<h1>Creating a basic Cluster Expansion<a class="headerlink" href="#Creating-a-basic-Cluster-Expansion" title="Link to this heading">#</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -521,7 +521,7 @@ document.write(`
 </div>
 </div>
 <section id="0)-The-prim-structure">
-<h2>0) The prim structure<a class="headerlink" href="#0)-The-prim-structure" title="Permalink to this heading">#</a></h2>
+<h2>0) The prim structure<a class="headerlink" href="#0)-The-prim-structure" title="Link to this heading">#</a></h2>
 <p>The prim structure defines the <strong>configurational space</strong> for the Cluster Expansion. The <strong>configurational space</strong> is defined by the site <strong>compositional spaces</strong> and the crystal symetries of the prim structure. The occupancy of the sites determine site <strong>compositional spaces</strong>. Sites are <strong>active</strong> if they have compositional degrees of freedom.</p>
 <p>Active sites have fractional compositions. Vacancies are allowed in sites where the composition does not sum to one.</p>
 <ol class="arabic simple" start="0">
@@ -558,7 +558,7 @@ Sites (4)
 </div>
 </section>
 <section id="1)-The-cluster-subspace">
-<h2>1) The cluster subspace<a class="headerlink" href="#1)-The-cluster-subspace" title="Permalink to this heading">#</a></h2>
+<h2>1) The cluster subspace<a class="headerlink" href="#1)-The-cluster-subspace" title="Link to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> represents all the orbits (groups of equivalent clusters) that will be considered when fitting the cluster expansion. Its main purpose is to compute the <strong>correlations functions</strong> for each included orbit given a structure in the compositional space defined by the prim.</p>
 <p>In order to do be able to compute the correlation functions, the given structure must match the prim structure in a “crystallographic” sense but allowing for compositional degrees of freedom in the “active” sites.</p>
 <p>A cluster subspace most easily created by providing: 1. The prim structure representing the configurational space. 2. A set of diameter cutoffs for each size of orbit we want to consider. 3. A type of site basis function to use.</p>
@@ -609,7 +609,7 @@ Orbit Summary
 </pre></div></div>
 </div>
 <section id="1.1)-Computing-a-correlation-vector.">
-<h3>1.1) Computing a correlation vector.<a class="headerlink" href="#1.1)-Computing-a-correlation-vector." title="Permalink to this heading">#</a></h3>
+<h3>1.1) Computing a correlation vector.<a class="headerlink" href="#1.1)-Computing-a-correlation-vector." title="Link to this heading">#</a></h3>
 <p>A correlation vector for a specific structure (represents the feature vector) used to train and predict target values.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -637,7 +637,7 @@ The correlation vector for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 i
 </section>
 </section>
 <section id="2)-The-structure-wrangler">
-<h2>2) The structure wrangler<a class="headerlink" href="#2)-The-structure-wrangler" title="Permalink to this heading">#</a></h2>
+<h2>2) The structure wrangler<a class="headerlink" href="#2)-The-structure-wrangler" title="Link to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> is a class that will is used to create and organize the data that will be used to train (and possibly test) the cluster expansion. It makes sure that all the supplied structures appropriately match the prim structure, and obtains the necessary information to correctly normalize target properties (such as energy) necessary for training.</p>
 <p>Training data is added to a <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> using <code class="docutils literal notranslate"><span class="pre">ComputedStructureEntry</span></code> instances from <code class="docutils literal notranslate"><span class="pre">pymatgen</span></code>.</p>
 <p>Matching relaxed structures can be a tricky problem, especially for ionic systems with vacancies. See the notebook on structure matching for tips on how to tweak parameters.</p>
@@ -703,7 +703,7 @@ Total structures that match 27/31
 </div>
 </div>
 <section id="3.1)-Check-the-quality-of-the-fit">
-<h3>3.1) Check the quality of the fit<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit" title="Permalink to this heading">#</a></h3>
+<h3>3.1) Check the quality of the fit<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit" title="Link to this heading">#</a></h3>
 <p>There are many ways to evaluate the quality of a fit. The simplest involve stadard training set prediction error metrics. But when evaluating a CE more seriously we need to consider further metrics and how the CE will be used. Here we will just look at in sample mean squared error and max error.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
@@ -735,7 +735,7 @@ MAX 22.82618658175295 meV/prim
 </section>
 </section>
 <section id="4)-The-cluster-expansion">
-<h2>4) The cluster expansion<a class="headerlink" href="#4)-The-cluster-expansion" title="Permalink to this heading">#</a></h2>
+<h2>4) The cluster expansion<a class="headerlink" href="#4)-The-cluster-expansion" title="Link to this heading">#</a></h2>
 <p>Now we can use the above work to create the <code class="docutils literal notranslate"><span class="pre">ClusterExpansion</span></code>. The cluster expansion can be used to predict the fitted property for new structures, either for testing quality or for simulations such as in Monte Carlo. Note that when using the <code class="docutils literal notranslate"><span class="pre">predict</span></code> function, the cluster expansion will have to match the given structure if it has not seen it before. We will also store the details of the regression model used to fit the cluster expansion by using a <code class="docutils literal notranslate"><span class="pre">RegressionData</span></code> object.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
@@ -808,7 +808,7 @@ Fit Summary
 </div>
 </section>
 <section id="5)-Saving-your-work">
-<h2>5) Saving your work<a class="headerlink" href="#5)-Saving-your-work" title="Permalink to this heading">#</a></h2>
+<h2>5) Saving your work<a class="headerlink" href="#5)-Saving-your-work" title="Link to this heading">#</a></h2>
 <p>All core classes in <code class="docutils literal notranslate"><span class="pre">smol</span></code> are <code class="docutils literal notranslate"><span class="pre">MSONables</span></code> and so can be saved using their <code class="docutils literal notranslate"><span class="pre">as_dict</span></code> methods or better yet with <code class="docutils literal notranslate"><span class="pre">monty.serialization.dumpfn</span></code>.</p>
 <p>Currently there is also a convenience function in <code class="docutils literal notranslate"><span class="pre">smol</span></code> that will nicely save all of your work for you in a standardized way. Work saved with the <code class="docutils literal notranslate"><span class="pre">save_work</span></code> function is saved as a dictionary with standardized names for the classes. Since a work flow should only contain 1 of each core classes the function will complain if you give it two of the same class (i.e. two wranglers)</p>
 <div class="nbinput nblast docutils container">
@@ -825,7 +825,7 @@ Fit Summary
 </div>
 </div>
 <section id="5.1)-Loading-previously-saved-work">
-<h3>5.1) Loading previously saved work<a class="headerlink" href="#5.1)-Loading-previously-saved-work" title="Permalink to this heading">#</a></h3>
+<h3>5.1) Loading previously saved work<a class="headerlink" href="#5.1)-Loading-previously-saved-work" title="Link to this heading">#</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
@@ -946,7 +946,7 @@ ClusterExpansion: &lt;class &#39;smol.cofe.expansion.ClusterExpansion&#39;&gt;
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

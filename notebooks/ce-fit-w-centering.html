@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Fitting an ionic cluster expansion with energy centering &#8212; smol 0.5.0 documentation</title>
+    <title>Fitting an ionic cluster expansion with energy centering &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -37,9 +37,9 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/ce-fit-w-centering';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../_static/require.js?v=d4dd881e"></script>
     <script src="../_static/custom.js?v=1f4f4097"></script>
@@ -229,7 +229,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -389,7 +389,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -481,7 +481,7 @@ document.write(`
                   
   <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.0/docs/src/notebooks/ce-fit-w-centering.ipynb">docs/src/notebooks/ce-fit-w-centering.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.1/docs/src/notebooks/ce-fit-w-centering.ipynb">docs/src/notebooks/ce-fit-w-centering.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -495,7 +495,7 @@ document.write(`
     }
   </script>
 </div><section id="Fitting-an-ionic-cluster-expansion-with-energy-centering">
-<h1>Fitting an ionic cluster expansion with energy centering<a class="headerlink" href="#Fitting-an-ionic-cluster-expansion-with-energy-centering" title="Permalink to this heading">#</a></h1>
+<h1>Fitting an ionic cluster expansion with energy centering<a class="headerlink" href="#Fitting-an-ionic-cluster-expansion-with-energy-centering" title="Link to this heading">#</a></h1>
 <p>Determining a good center for data can speed up optimization model solving and lead to sparser, more physical solutions for complex systems. Here we pick up from “lmo-drx-ce-mc.ipynb” and fit the data in a different way, using L1 regularization.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -512,7 +512,7 @@ document.write(`
 </div>
 </div>
 <section id="Load-the-LMO-DRX-prim">
-<h2>Load the LMO DRX prim<a class="headerlink" href="#Load-the-LMO-DRX-prim" title="Permalink to this heading">#</a></h2>
+<h2>Load the LMO DRX prim<a class="headerlink" href="#Load-the-LMO-DRX-prim" title="Link to this heading">#</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -576,7 +576,7 @@ PeriodicSite: O2- (1.7146, 1.2124, 2.9699) [0.5000, 0.5000, 0.5000]
 </section>
 </section>
 <section id="1)-Create-the-cluster-subspace">
-<h1>1) Create the cluster subspace<a class="headerlink" href="#1)-Create-the-cluster-subspace" title="Permalink to this heading">#</a></h1>
+<h1>1) Create the cluster subspace<a class="headerlink" href="#1)-Create-the-cluster-subspace" title="Link to this heading">#</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -602,7 +602,7 @@ PeriodicSite: O2- (1.7146, 1.2124, 2.9699) [0.5000, 0.5000, 0.5000]
 </div>
 </section>
 <section id="2)-Load-data-into-a-Structure-Wrangler">
-<h1>2) Load data into a Structure Wrangler<a class="headerlink" href="#2)-Load-data-into-a-Structure-Wrangler" title="Permalink to this heading">#</a></h1>
+<h1>2) Load data into a Structure Wrangler<a class="headerlink" href="#2)-Load-data-into-a-Structure-Wrangler" title="Link to this heading">#</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
@@ -694,7 +694,7 @@ Orbit Summary
 </div>
 </section>
 <section id="3)-Perform-a-piecewise-fit,-with-the-first-fit-only-using-the-Points-and-Ewald-features.">
-<h1>3) Perform a <em>piecewise fit</em>, with the first fit only using the Points and Ewald features.<a class="headerlink" href="#3)-Perform-a-piecewise-fit,-with-the-first-fit-only-using-the-Points-and-Ewald-features." title="Permalink to this heading">#</a></h1>
+<h1>3) Perform a <em>piecewise fit</em>, with the first fit only using the Points and Ewald features.<a class="headerlink" href="#3)-Perform-a-piecewise-fit,-with-the-first-fit-only-using-the-Points-and-Ewald-features." title="Link to this heading">#</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
@@ -756,7 +756,7 @@ array([  1,   2,   3,   4,   5,   6, 386])
 </pre></div></div>
 </div>
 <section id="Perform-initial-fit-with-only-Points-and-Ewald-features,-and-determine-the-intercept.">
-<h2>Perform initial fit with only Points and Ewald features, and determine the intercept.<a class="headerlink" href="#Perform-initial-fit-with-only-Points-and-Ewald-features,-and-determine-the-intercept." title="Permalink to this heading">#</a></h2>
+<h2>Perform initial fit with only Points and Ewald features, and determine the intercept.<a class="headerlink" href="#Perform-initial-fit-with-only-Points-and-Ewald-features,-and-determine-the-intercept." title="Link to this heading">#</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
@@ -794,7 +794,7 @@ The effective dielectric constant is 18.361322767175043
 </div>
 </section>
 <section id="Let's-visualize-the-variance-that-these-features-can-capture.-To-do-so,-we-plot-the-%22centered-energies%22-by-subtracting-the-DFT-energies-by-the-contributions-from-the-fitted-Point-and-Ewald-features.">
-<h2>Let’s visualize the variance that these features can capture. To do so, we plot the “centered energies” by subtracting the DFT energies by the contributions from the fitted Point and Ewald features.<a class="headerlink" href="#Let's-visualize-the-variance-that-these-features-can-capture.-To-do-so,-we-plot-the-%22centered-energies%22-by-subtracting-the-DFT-energies-by-the-contributions-from-the-fitted-Point-and-Ewald-features." title="Permalink to this heading">#</a></h2>
+<h2>Let’s visualize the variance that these features can capture. To do so, we plot the “centered energies” by subtracting the DFT energies by the contributions from the fitted Point and Ewald features.<a class="headerlink" href="#Let's-visualize-the-variance-that-these-features-can-capture.-To-do-so,-we-plot-the-%22centered-energies%22-by-subtracting-the-DFT-energies-by-the-contributions-from-the-fitted-Point-and-Ewald-features." title="Link to this heading">#</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
@@ -877,7 +877,7 @@ The variance of DFT energies is 1.4573599233718875, while the variance of the ce
 </section>
 </section>
 <section id="4)-Perform-cross-validation-on-the-rest-of-features-to-train-the-L1-hyperparameter.">
-<h1>4) Perform cross validation on the rest of features to train the L1 hyperparameter.<a class="headerlink" href="#4)-Perform-cross-validation-on-the-rest-of-features-to-train-the-L1-hyperparameter." title="Permalink to this heading">#</a></h1>
+<h1>4) Perform cross validation on the rest of features to train the L1 hyperparameter.<a class="headerlink" href="#4)-Perform-cross-validation-on-the-rest-of-features-to-train-the-L1-hyperparameter." title="Link to this heading">#</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
@@ -1010,7 +1010,7 @@ The optimal hyperparameter is 3.5564803062231285e-06
 </div>
 </section>
 <section id="5)-Obtain-the-cluster-expansion-model-that-minimizes-CV">
-<h1>5) Obtain the cluster expansion model that minimizes CV<a class="headerlink" href="#5)-Obtain-the-cluster-expansion-model-that-minimizes-CV" title="Permalink to this heading">#</a></h1>
+<h1>5) Obtain the cluster expansion model that minimizes CV<a class="headerlink" href="#5)-Obtain-the-cluster-expansion-model-that-minimizes-CV" title="Link to this heading">#</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
@@ -1037,7 +1037,7 @@ The optimal hyperparameter is 3.5564803062231285e-06
 </div>
 </section>
 <section id="6)-Get-an-idea-of-the-predictive-capabilities-of-this-cluster-expansion">
-<h1>6) Get an idea of the predictive capabilities of this cluster expansion<a class="headerlink" href="#6)-Get-an-idea-of-the-predictive-capabilities-of-this-cluster-expansion" title="Permalink to this heading">#</a></h1>
+<h1>6) Get an idea of the predictive capabilities of this cluster expansion<a class="headerlink" href="#6)-Get-an-idea-of-the-predictive-capabilities-of-this-cluster-expansion" title="Link to this heading">#</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
@@ -1106,7 +1106,7 @@ Text(0, 0.5, &#39;Magnitude |$w_i$| eV/prim&#39;)
 </div>
 </section>
 <section id="7)-Plot-the-ECI">
-<h1>7) Plot the ECI<a class="headerlink" href="#7)-Plot-the-ECI" title="Permalink to this heading">#</a></h1>
+<h1>7) Plot the ECI<a class="headerlink" href="#7)-Plot-the-ECI" title="Link to this heading">#</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
@@ -1257,7 +1257,7 @@ Text(0, 0.5, &#39;Magnitude |$w_i$| eV/prim&#39;)
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

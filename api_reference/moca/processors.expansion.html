@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Cluster Expansion &amp; Decomposition Processors &#8212; smol 0.5.0 documentation</title>
+    <title>Cluster Expansion &amp; Decomposition Processors &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -36,16 +36,16 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/moca/processors.expansion';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../_static/require.js?v=d4dd881e"></script>
     <script src="../../_static/custom.js?v=1f4f4097"></script>
@@ -228,7 +228,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -388,7 +388,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -521,14 +521,14 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="module-smol.moca.processor.expansion">
-<span id="cluster-expansion-decomposition-processors"></span><h1>Cluster Expansion &amp; Decomposition Processors<a class="headerlink" href="#module-smol.moca.processor.expansion" title="Permalink to this heading">#</a></h1>
+<span id="cluster-expansion-decomposition-processors"></span><h1>Cluster Expansion &amp; Decomposition Processors<a class="headerlink" href="#module-smol.moca.processor.expansion" title="Link to this heading">#</a></h1>
 <p>Implementation of CE processor class for a fixed size supercell.</p>
 <p>If you are using a Hamiltonian with an Ewald summation electrostatic term, you
 should use the CompositeProcessor with a ClusterExpansionProcessor and an
 EwaldProcessor class to handle changes in the electrostatic interaction energy.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterDecompositionProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interaction_tensors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterDecompositionProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interaction_tensors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code></p>
 <p>ClusterDecompositionProcessor to use a CD in MC simulations.</p>
 <p>An ClusterDecompositionProcessor is similar to a ClusterExpansionProcessor
@@ -572,7 +572,7 @@ multiplicities.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.as_dict" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.as_dict" title="Link to this definition">#</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -586,7 +586,7 @@ multiplicities.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector">
-<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor.compute_feature_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor.compute_feature_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector" title="Link to this definition">#</a></dt>
 <dd><p>Compute the cluster interaction vector for a given occupancy string.</p>
 <p>The cluster interaction vector in this case is normalized per supercell.</p>
 <dl class="field-list simple">
@@ -604,7 +604,7 @@ multiplicities.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector_change">
-<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor.compute_feature_vector_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor.compute_feature_vector_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector_change" title="Link to this definition">#</a></dt>
 <dd><p>Compute the change in the cluster interaction vector from a list of flips.</p>
 <p>The cluster interaction vector in this case is normalized per supercell.</p>
 <dl class="field-list simple">
@@ -628,13 +628,13 @@ for the new species to place at that site.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.from_dict" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterDecompositionProcessor.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.from_dict" title="Link to this definition">#</a></dt>
 <dd><p>Create a ClusterExpansionProcessor from serialized MSONable dict.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.num_threads">
-<span class="sig-name descname"><span class="pre">num_threads</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.num_threads" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">num_threads</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.num_threads" title="Link to this definition">#</a></dt>
 <dd><p>Descriptor to set an attributed value that cascades to a sequence of objects.</p>
 <p>This descriptor is useful when an attribute is needs to be synchronized between
 a class that holds a sequence of objects that have a corresponding attribute.</p>
@@ -642,7 +642,7 @@ a class that holds a sequence of objects that have a corresponding attribute.</p
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterDecompositionProcessor.num_threads_full">
-<span class="sig-name descname"><span class="pre">num_threads_full</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.num_threads_full" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">num_threads_full</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterDecompositionProcessor.num_threads_full" title="Link to this definition">#</a></dt>
 <dd><p>A descriptor used to set threads of an attributed object that has multi-threading.</p>
 <p>Right now it’s only used for the Evaluator class.</p>
 </dd></dl>
@@ -651,7 +651,7 @@ a class that holds a sequence of objects that have a corresponding attribute.</p
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterExpansionProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterExpansionProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterExpansionProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads_full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterExpansionProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code></p>
 <p>ClusterExpansionProcessor class to use a ClusterExpansion in MC.</p>
 <p>A CE processor is optimized to compute correlation vectors and local
@@ -661,7 +661,7 @@ Hamiltonian to run Monte Carlo-based simulations</p>
 for sampling thermodynamic properties from a CE Hamiltonian.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor.coefs">
-<span class="sig-name descname"><span class="pre">coefs</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.coefs" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">coefs</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.coefs" title="Link to this definition">#</a></dt>
 <dd><p>Fitted coefficients from the cluster expansion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -672,7 +672,7 @@ for sampling thermodynamic properties from a CE Hamiltonian.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor.num_corr_functions">
-<span class="sig-name descname"><span class="pre">num_corr_functions</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.num_corr_functions" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">num_corr_functions</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.num_corr_functions" title="Link to this definition">#</a></dt>
 <dd><p>Total number of orbit basis functions (correlation functions).
 This includes all possible labelings/orderings for all orbits.
 Same as <code class="code docutils literal notranslate"><span class="pre">ClusterSubspace.n_bit_orderings</span></code>.</p>
@@ -708,7 +708,7 @@ file then make sure to set the number of threads as desired.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector">
-<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterExpansionProcessor.compute_feature_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterExpansionProcessor.compute_feature_vector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector" title="Link to this definition">#</a></dt>
 <dd><p>Compute the correlation vector for a given occupancy string.</p>
 <p>The correlation vector in this case is normalized per supercell. In
 other works it is extensive corresponding to the size of the supercell.</p>
@@ -727,7 +727,7 @@ other works it is extensive corresponding to the size of the supercell.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector_change">
-<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterExpansionProcessor.compute_feature_vector_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector_change" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">compute_feature_vector_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flips</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterExpansionProcessor.compute_feature_vector_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector_change" title="Link to this definition">#</a></dt>
 <dd><p>Compute the change in the correlation vector from a list of flips.</p>
 <p>The correlation vector in this case is normalized per supercell. In
 other works it is extensive corresponding to the size of the supercell.</p>
@@ -752,13 +752,13 @@ for the new species to place at that site.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterExpansionProcessor.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.from_dict" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#ClusterExpansionProcessor.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.from_dict" title="Link to this definition">#</a></dt>
 <dd><p>Create a ClusterExpansionProcessor from serialized MSONable dict.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor.num_threads">
-<span class="sig-name descname"><span class="pre">num_threads</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.num_threads" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">num_threads</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.num_threads" title="Link to this definition">#</a></dt>
 <dd><p>Descriptor to set an attributed value that cascades to a sequence of objects.</p>
 <p>This descriptor is useful when an attribute is needs to be synchronized between
 a class that holds a sequence of objects that have a corresponding attribute.</p>
@@ -766,7 +766,7 @@ a class that holds a sequence of objects that have a corresponding attribute.</p
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.ClusterExpansionProcessor.num_threads_full">
-<span class="sig-name descname"><span class="pre">num_threads_full</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.num_threads_full" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">num_threads_full</span></span><a class="headerlink" href="#smol.moca.processor.expansion.ClusterExpansionProcessor.num_threads_full" title="Link to this definition">#</a></dt>
 <dd><p>A descriptor used to set threads of an attributed object that has multi-threading.</p>
 <p>Right now it’s only used for the Evaluator class.</p>
 </dd></dl>
@@ -775,36 +775,36 @@ a class that holds a sequence of objects that have a corresponding attribute.</p
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.LocalEvalData">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LocalEvalData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">site_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads=&lt;smol.utils.cluster.numthreads.SetNumThreads</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#LocalEvalData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LocalEvalData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">site_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads=&lt;smol.utils.cluster.numthreads.SetNumThreads</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/processor/expansion.html#LocalEvalData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Holds data for local evaluation updates.</p>
 <p>A dataclass to the data for local evaluation updates of correlation and cluster
 interaction vectors.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.LocalEvalData.cluster_ratio">
-<span class="sig-name descname"><span class="pre">cluster_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.cluster_ratio" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">cluster_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.cluster_ratio" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.LocalEvalData.evaluator">
-<span class="sig-name descname"><span class="pre">evaluator</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSpaceEvaluator</span></code></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.evaluator" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">evaluator</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSpaceEvaluator</span></code></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.evaluator" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.LocalEvalData.indices">
-<span class="sig-name descname"><span class="pre">indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">OrbitIndices</span></code></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.indices" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">indices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">OrbitIndices</span></code></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.indices" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.LocalEvalData.num_threads">
-<span class="sig-name descname"><span class="pre">num_threads</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.num_threads" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">num_threads</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.num_threads" title="Link to this definition">#</a></dt>
 <dd><p>A descriptor used to set threads of an attributed object that has multi-threading.</p>
 <p>Right now it’s only used for the Evaluator class.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.processor.expansion.LocalEvalData.site_index">
-<span class="sig-name descname"><span class="pre">site_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.site_index" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">site_index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#smol.moca.processor.expansion.LocalEvalData.site_index" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -935,7 +935,7 @@ interaction vectors.</p>
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

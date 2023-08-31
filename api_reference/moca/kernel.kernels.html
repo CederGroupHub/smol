@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>MCKernels &#8212; smol 0.5.0 documentation</title>
+    <title>MCKernels &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -36,16 +36,16 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/moca/kernel.kernels';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../_static/require.js?v=d4dd881e"></script>
     <script src="../../_static/custom.js?v=1f4f4097"></script>
@@ -228,7 +228,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -388,7 +388,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -521,16 +521,16 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="mckernels">
-<h1>MCKernels<a class="headerlink" href="#mckernels" title="Permalink to this heading">#</a></h1>
+<h1>MCKernels<a class="headerlink" href="#mckernels" title="Link to this heading">#</a></h1>
 <p><code class="xref py py-class docutils literal notranslate"><span class="pre">MCKernel</span></code> classes implement different Monte Carlo sampling algorithms. They are
 used by <code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code> classes to perform the actual sampling. The following kernels
 are currently implemented:</p>
-<span class="target" id="module-smol.moca.kernel.metropolis"></span><p>Implementation of Metropolis and UniformlyRandom kernels.</p>
+<p id="module-smol.moca.kernel.metropolis">Implementation of Metropolis and UniformlyRandom kernels.</p>
 <p>A simple Metropolis-Hastings kernel and a Multicell Metropolis kernel that can hop
 among different supercell shapes.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.kernel.metropolis.Metropolis">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Metropolis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/metropolis.html#Metropolis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.metropolis.Metropolis" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Metropolis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/metropolis.html#Metropolis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.metropolis.Metropolis" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MetropolisAcceptMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ThermalKernelMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MCKernel</span></code></p>
 <p>A Metropolis-Hastings kernel.</p>
 <p>The classic and nothing but the classic.</p>
@@ -551,19 +551,19 @@ corresponding step size.</p></li>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.kernel.metropolis.Metropolis.valid_bias">
-<span class="sig-name descname"><span class="pre">valid_bias</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['FugacityBias',</span> <span class="pre">'SquareChargeBias',</span> <span class="pre">'SquareHyperplaneBias']</span></em><a class="headerlink" href="#smol.moca.kernel.metropolis.Metropolis.valid_bias" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">valid_bias</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['FugacityBias',</span> <span class="pre">'SquareChargeBias',</span> <span class="pre">'SquareHyperplaneBias']</span></em><a class="headerlink" href="#smol.moca.kernel.metropolis.Metropolis.valid_bias" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.kernel.metropolis.Metropolis.valid_mcushers">
-<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Flip',</span> <span class="pre">'Swap',</span> <span class="pre">'MultiStep',</span> <span class="pre">'Composite',</span> <span class="pre">'TableFlip']</span></em><a class="headerlink" href="#smol.moca.kernel.metropolis.Metropolis.valid_mcushers" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Flip',</span> <span class="pre">'Swap',</span> <span class="pre">'MultiStep',</span> <span class="pre">'Composite',</span> <span class="pre">'TableFlip']</span></em><a class="headerlink" href="#smol.moca.kernel.metropolis.Metropolis.valid_mcushers" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.kernel.metropolis.MulticellMetropolis">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MulticellMetropolis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mckernels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_hop_periods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_hop_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/metropolis.html#MulticellMetropolis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.metropolis.MulticellMetropolis" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MulticellMetropolis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mckernels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_hop_periods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_hop_probabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/metropolis.html#MulticellMetropolis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.metropolis.MulticellMetropolis" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MetropolisAcceptMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ThermalKernelMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MulticellKernel</span></code></p>
 <p>A Multicell Metropolis Hastings kernel.</p>
 <p>This is useful for example when one wants to sample over different supercell shapes,
@@ -595,27 +595,27 @@ probabilities for choosing each of the specified hop periods.</p></li>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.kernel.metropolis.MulticellMetropolis.temperature">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">temperature</span></span><a class="headerlink" href="#smol.moca.kernel.metropolis.MulticellMetropolis.temperature" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">temperature</span></span><a class="headerlink" href="#smol.moca.kernel.metropolis.MulticellMetropolis.temperature" title="Link to this definition">#</a></dt>
 <dd><p>Get the temperature of kernel.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.kernel.metropolis.MulticellMetropolis.valid_bias">
-<span class="sig-name descname"><span class="pre">valid_bias</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#smol.moca.kernel.metropolis.MulticellMetropolis.valid_bias" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">valid_bias</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#smol.moca.kernel.metropolis.MulticellMetropolis.valid_bias" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.kernel.metropolis.MulticellMetropolis.valid_mcushers">
-<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#smol.moca.kernel.metropolis.MulticellMetropolis.valid_mcushers" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#smol.moca.kernel.metropolis.MulticellMetropolis.valid_mcushers" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<span class="target" id="module-smol.moca.kernel.wanglandau"></span><p>A Wang-Landau kernel for multicanonical estimation of the density of states.</p>
+<p id="module-smol.moca.kernel.wanglandau">A Wang-Landau kernel for multicanonical estimation of the density of states.</p>
 <p>Based on: <a class="reference external" href="https://link.aps.org/doi/10.1103/PhysRevLett.86.2050">https://link.aps.org/doi/10.1103/PhysRevLett.86.2050</a></p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.kernel.wanglandau.WangLandau">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WangLandau</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_enthalpy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_enthalpy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_size</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/wanglandau.html#WangLandau"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">WangLandau</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_enthalpy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_enthalpy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_size</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatness</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/wanglandau.html#WangLandau"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MCKernel</span></code></p>
 <p>A Wang-Landau sampling kernel.</p>
 <p>Allows wang-landau sampling method. Stores histogram and DOS in its instance.</p>
@@ -659,13 +659,13 @@ non-negative integer to seed the PRNG</p></li>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.kernel.wanglandau.WangLandau.bin_size">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_size</span></span><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.bin_size" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bin_size</span></span><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.bin_size" title="Link to this definition">#</a></dt>
 <dd><p>Enthalpy bin size.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.kernel.wanglandau.WangLandau.compute_initial_trace">
-<span class="sig-name descname"><span class="pre">compute_initial_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/wanglandau.html#WangLandau.compute_initial_trace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.compute_initial_trace" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">compute_initial_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/wanglandau.html#WangLandau.compute_initial_trace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.compute_initial_trace" title="Link to this definition">#</a></dt>
 <dd><p>Compute initial values for sample trace given an occupancy.</p>
 <p>Add the micro-canonical entropy and histograms to the trace.
 :type occupancy: 
@@ -680,37 +680,37 @@ non-negative integer to seed the PRNG</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.kernel.wanglandau.WangLandau.dos">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dos</span></span><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.dos" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dos</span></span><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.dos" title="Link to this definition">#</a></dt>
 <dd><p>Density of states on visited levels.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.kernel.wanglandau.WangLandau.entropy">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">entropy</span></span><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.entropy" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">entropy</span></span><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.entropy" title="Link to this definition">#</a></dt>
 <dd><p>log(dos) on visited levels.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.kernel.wanglandau.WangLandau.histogram">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">histogram</span></span><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.histogram" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">histogram</span></span><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.histogram" title="Link to this definition">#</a></dt>
 <dd><p>Histogram on visited levels.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.kernel.wanglandau.WangLandau.levels">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">levels</span></span><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.levels" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">levels</span></span><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.levels" title="Link to this definition">#</a></dt>
 <dd><p>Visited enthalpy levels.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.moca.kernel.wanglandau.WangLandau.mod_factor">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mod_factor</span></span><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.mod_factor" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mod_factor</span></span><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.mod_factor" title="Link to this definition">#</a></dt>
 <dd><p>Mod factor.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.moca.kernel.wanglandau.WangLandau.set_aux_state">
-<span class="sig-name descname"><span class="pre">set_aux_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/wanglandau.html#WangLandau.set_aux_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.set_aux_state" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">set_aux_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/wanglandau.html#WangLandau.set_aux_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.set_aux_state" title="Link to this definition">#</a></dt>
 <dd><p>Set the auxiliary occupancies based on an occupancy.</p>
 <p>This is necessary for WangLandau to work properly because
 it needs to store the current enthalpy and features.</p>
@@ -718,21 +718,21 @@ it needs to store the current enthalpy and features.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.kernel.wanglandau.WangLandau.valid_bias">
-<span class="sig-name descname"><span class="pre">valid_bias</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.valid_bias" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">valid_bias</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.valid_bias" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.kernel.wanglandau.WangLandau.valid_mcushers">
-<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Flip',</span> <span class="pre">'Swap',</span> <span class="pre">'MultiStep',</span> <span class="pre">'Composite',</span> <span class="pre">'TableFlip']</span></em><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.valid_mcushers" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Flip',</span> <span class="pre">'Swap',</span> <span class="pre">'MultiStep',</span> <span class="pre">'Composite',</span> <span class="pre">'TableFlip']</span></em><a class="headerlink" href="#smol.moca.kernel.wanglandau.WangLandau.valid_mcushers" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<span class="target" id="module-smol.moca.kernel.random"></span><p>A uniformly random kernel.</p>
+<p id="module-smol.moca.kernel.random">A uniformly random kernel.</p>
 <p>The UniformlyRandom kernel is equivalent to a Metropolis kernel with infinite temperature.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.moca.kernel.random.UniformlyRandom">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UniformlyRandom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/random.html#UniformlyRandom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.random.UniformlyRandom" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">UniformlyRandom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ensemble</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/random.html#UniformlyRandom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.random.UniformlyRandom" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MCKernel</span></code></p>
 <p>A Kernel that accepts all proposed steps.</p>
 <p>This kernel samples the random limit distribution where all states have the
@@ -762,12 +762,12 @@ corresponding step size.</p></li>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.kernel.random.UniformlyRandom.valid_bias">
-<span class="sig-name descname"><span class="pre">valid_bias</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['FugacityBias',</span> <span class="pre">'SquareChargeBias',</span> <span class="pre">'SquareHyperplaneBias']</span></em><a class="headerlink" href="#smol.moca.kernel.random.UniformlyRandom.valid_bias" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">valid_bias</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['FugacityBias',</span> <span class="pre">'SquareChargeBias',</span> <span class="pre">'SquareHyperplaneBias']</span></em><a class="headerlink" href="#smol.moca.kernel.random.UniformlyRandom.valid_bias" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.moca.kernel.random.UniformlyRandom.valid_mcushers">
-<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Flip',</span> <span class="pre">'Swap',</span> <span class="pre">'MultiStep',</span> <span class="pre">'Composite',</span> <span class="pre">'TableFlip']</span></em><a class="headerlink" href="#smol.moca.kernel.random.UniformlyRandom.valid_mcushers" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">valid_mcushers</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Flip',</span> <span class="pre">'Swap',</span> <span class="pre">'MultiStep',</span> <span class="pre">'Composite',</span> <span class="pre">'TableFlip']</span></em><a class="headerlink" href="#smol.moca.kernel.random.UniformlyRandom.valid_mcushers" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -900,7 +900,7 @@ corresponding step size.</p></li>
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltonian &#8212; smol 0.5.0 documentation</title>
+    <title>Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltonian &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -37,9 +37,9 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/running-ewald-sim_anneal';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../_static/require.js?v=d4dd881e"></script>
     <script src="../_static/custom.js?v=1f4f4097"></script>
@@ -229,7 +229,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -389,7 +389,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -481,7 +481,7 @@ document.write(`
                   
   <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.0/docs/src/notebooks/running-ewald-sim_anneal.ipynb">docs/src/notebooks/running-ewald-sim_anneal.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.1/docs/src/notebooks/running-ewald-sim_anneal.ipynb">docs/src/notebooks/running-ewald-sim_anneal.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -495,7 +495,7 @@ document.write(`
     }
   </script>
 </div><section id="Running-Canonical-Monte-Carlo-Simulated-Annealing-on-an-Ewald-Hamiltonian">
-<h1>Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltonian<a class="headerlink" href="#Running-Canonical-Monte-Carlo-Simulated-Annealing-on-an-Ewald-Hamiltonian" title="Permalink to this heading">#</a></h1>
+<h1>Running Canonical Monte Carlo Simulated Annealing on an Ewald Hamiltonian<a class="headerlink" href="#Running-Canonical-Monte-Carlo-Simulated-Annealing-on-an-Ewald-Hamiltonian" title="Link to this heading">#</a></h1>
 <p>When generating a set of structures to sample, it may be useful to enumerate them through a Monte Carlo (MC) simulation. A MC with only Ewald electrostatic energies can be especially useful for the initial training set, when there are no DFT energies to parametrize a cluster expansion and run MC.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -515,7 +515,7 @@ document.write(`
 </div>
 </div>
 <section id="0)-Create-a-Cluster-Subspace-based-on-the-disordered-structure-with-only-the-empty-cluster-and-Ewald-term">
-<h2>0) Create a Cluster Subspace based on the disordered structure with only the empty cluster and Ewald term<a class="headerlink" href="#0)-Create-a-Cluster-Subspace-based-on-the-disordered-structure-with-only-the-empty-cluster-and-Ewald-term" title="Permalink to this heading">#</a></h2>
+<h2>0) Create a Cluster Subspace based on the disordered structure with only the empty cluster and Ewald term<a class="headerlink" href="#0)-Create-a-Cluster-Subspace-based-on-the-disordered-structure-with-only-the-empty-cluster-and-Ewald-term" title="Link to this heading">#</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -540,7 +540,7 @@ document.write(`
 </div>
 </section>
 <section id="1)-Create-an-Ewald-Processor">
-<h2>1) Create an Ewald Processor<a class="headerlink" href="#1)-Create-an-Ewald-Processor" title="Permalink to this heading">#</a></h2>
+<h2>1) Create an Ewald Processor<a class="headerlink" href="#1)-Create-an-Ewald-Processor" title="Link to this heading">#</a></h2>
 <p>An Ewald Processor handles changes in electrostatic interaction energies among different configurational states, using an Ewald Summation term.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -572,7 +572,7 @@ document.write(`
 </div>
 </section>
 <section id="2)-Create-a-Canonical-Ensemble">
-<h2>2) Create a Canonical Ensemble<a class="headerlink" href="#2)-Create-a-Canonical-Ensemble" title="Permalink to this heading">#</a></h2>
+<h2>2) Create a Canonical Ensemble<a class="headerlink" href="#2)-Create-a-Canonical-Ensemble" title="Link to this heading">#</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
@@ -617,7 +617,7 @@ Sublattice(site_space=Li+0.5 vacA0+0.5, sites=array([ 0,  1,  2,  3,  4,  5,  6,
 </div>
 </section>
 <section id="3)-Create-the-Sampler">
-<h2>3) Create the Sampler<a class="headerlink" href="#3)-Create-the-Sampler" title="Permalink to this heading">#</a></h2>
+<h2>3) Create the Sampler<a class="headerlink" href="#3)-Create-the-Sampler" title="Link to this heading">#</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
@@ -639,7 +639,7 @@ Sampling information: {&#39;kernel&#39;: &#39;Metropolis&#39;, &#39;step&#39;: &
 </div>
 </section>
 <section id="4)-Generate-an-initial-ordered-structure-to-start-the-MC-simulation.">
-<h2>4) Generate an initial ordered structure to start the MC simulation.<a class="headerlink" href="#4)-Generate-an-initial-ordered-structure-to-start-the-MC-simulation." title="Permalink to this heading">#</a></h2>
+<h2>4) Generate an initial ordered structure to start the MC simulation.<a class="headerlink" href="#4)-Generate-an-initial-ordered-structure-to-start-the-MC-simulation." title="Link to this heading">#</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
@@ -700,7 +700,7 @@ The initial occupancy is:
 </div>
 </section>
 <section id="5)-Run-MC-simulated-annealing">
-<h2>5) Run MC simulated annealing<a class="headerlink" href="#5)-Run-MC-simulated-annealing" title="Permalink to this heading">#</a></h2>
+<h2>5) Run MC simulated annealing<a class="headerlink" href="#5)-Run-MC-simulated-annealing" title="Link to this heading">#</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
@@ -743,7 +743,7 @@ Sampling 1 chain(s) from a cell with 128 sites...: 100%|████████
 </div>
 </section>
 <section id="6)-Analyzing-MC-sampling-at-each-temperature">
-<h2>6) Analyzing MC sampling at each temperature<a class="headerlink" href="#6)-Analyzing-MC-sampling-at-each-temperature" title="Permalink to this heading">#</a></h2>
+<h2>6) Analyzing MC sampling at each temperature<a class="headerlink" href="#6)-Analyzing-MC-sampling-at-each-temperature" title="Link to this heading">#</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
@@ -819,7 +819,7 @@ Std dev = 0.0 eV/prim
 </pre></div></div>
 </div>
 <section id="Obtaining-the-ground-state">
-<h3>Obtaining the ground state<a class="headerlink" href="#Obtaining-the-ground-state" title="Permalink to this heading">#</a></h3>
+<h3>Obtaining the ground state<a class="headerlink" href="#Obtaining-the-ground-state" title="Link to this heading">#</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
@@ -848,7 +848,7 @@ Ground state structure is [0 0 0 1 1 1 0 1 1 0 0 0 1 0 1 1 1 1 0 1 0 0 0 1 1 0 1
 </section>
 </section>
 <section id="7)-Plotting-the-results">
-<h2>7) Plotting the results<a class="headerlink" href="#7)-Plotting-the-results" title="Permalink to this heading">#</a></h2>
+<h2>7) Plotting the results<a class="headerlink" href="#7)-Plotting-the-results" title="Link to this heading">#</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
@@ -1000,7 +1000,7 @@ Ground state structure is [0 0 0 1 1 1 0 1 1 0 0 0 1 0 1 1 1 1 0 1 0 0 0 1 1 0 1
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

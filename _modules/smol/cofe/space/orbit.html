@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.cofe.space.orbit &#8212; smol 0.5.0 documentation</title>
+    <title>smol.cofe.space.orbit &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -35,16 +35,16 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/smol/cofe/space/orbit';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../../../_static/require.js?v=d4dd881e"></script>
     <script src="../../../../_static/custom.js?v=1f4f4097"></script>
@@ -225,7 +225,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -381,7 +381,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -500,7 +500,9 @@ document.write(`
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Luis Barroso-Luque, William Davidson Richard&quot;</span>
 
 
-<div class="viewcode-block" id="Orbit"><a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit">[docs]</a><span class="k">class</span> <span class="nc">Orbit</span><span class="p">(</span><span class="n">MSONable</span><span class="p">):</span>
+<div class="viewcode-block" id="Orbit">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit">[docs]</a>
+<span class="k">class</span> <span class="nc">Orbit</span><span class="p">(</span><span class="n">MSONable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Orbit set of symmetrically equivalent clusters.</span>
 
 <span class="sd">    An Orbit represents a set of clusters that are symmetrically equivalent</span>
@@ -759,7 +761,9 @@ document.write(`
                     <span class="p">(</span>
                         <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">site_bases</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">rotation_array</span><span class="o">.</span><span class="n">T</span>
-<div class="viewcode-block" id="Orbit.remove_bit_combo"><a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.remove_bit_combo">[docs]</a>                            <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_arrays</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">bj</span><span class="p">],</span>  <span class="c1"># noqa</span>
+<div class="viewcode-block" id="Orbit.remove_bit_combo">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.remove_bit_combo">[docs]</a>
+                            <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_arrays</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">bj</span><span class="p">],</span>  <span class="c1"># noqa</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">site_bases</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">measure_vector</span>
                             <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_arrays</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">bi</span><span class="p">],</span>  <span class="c1"># noqa</span>
                         <span class="p">)</span>
@@ -791,7 +795,10 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_bit_combos</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">bit_combos</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_bases</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Orbit.remove_bit_combos_by_inds"><a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.remove_bit_combos_by_inds">[docs]</a>    <span class="k">def</span> <span class="nf">remove_bit_combos_by_inds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inds</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Orbit.remove_bit_combos_by_inds">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.remove_bit_combos_by_inds">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove_bit_combos_by_inds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inds</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove bit combos by their indices in the bit_combo list.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">inds</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bit_combos</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -809,7 +816,10 @@ document.write(`
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_bases</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Orbit.transform_site_bases"><a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.transform_site_bases">[docs]</a>    <span class="k">def</span> <span class="nf">transform_site_bases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basis_name</span><span class="p">,</span> <span class="n">orthonormal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Orbit.transform_site_bases">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.transform_site_bases">[docs]</a>
+    <span class="k">def</span> <span class="nf">transform_site_bases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basis_name</span><span class="p">,</span> <span class="n">orthonormal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform the Orbits site bases into new basis set.</span>
 
 <span class="sd">        Args:</span>
@@ -828,7 +838,10 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">site_bases</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">new_bases</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_bases</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Orbit.is_sub_orbit"><a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.is_sub_orbit">[docs]</a>    <span class="k">def</span> <span class="nf">is_sub_orbit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Orbit.is_sub_orbit">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.is_sub_orbit">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_sub_orbit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if given orbits clusters are subclusters.</span>
 
 <span class="sd">        Note this does not consider bit_combos</span>
@@ -859,7 +872,10 @@ document.write(`
 
         <span class="k">return</span> <span class="n">match</span></div>
 
-<div class="viewcode-block" id="Orbit.sub_orbit_mappings"><a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.sub_orbit_mappings">[docs]</a>    <span class="k">def</span> <span class="nf">sub_orbit_mappings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Orbit.sub_orbit_mappings">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.sub_orbit_mappings">[docs]</a>
+    <span class="k">def</span> <span class="nf">sub_orbit_mappings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a mapping of cluster sites in the orbit to cluster sites in sub orbit.</span>
 
 <span class="sd">        If the given orbit is not a sub-orbit will return an empty list.</span>
@@ -910,6 +926,7 @@ document.write(`
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mappings</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
+
     <span class="k">def</span> <span class="nf">_gen_cluster_symops</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the cluster SymOps and decoration permutations.&quot;&quot;&quot;</span>
         <span class="n">symops</span> <span class="o">=</span> <span class="p">[]</span>
@@ -936,13 +953,18 @@ document.write(`
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_symops</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplicity</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">structure_symops</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SymmetryError</span><span class="p">(</span><span class="n">SYMMETRY_ERROR_MESSAGE</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Orbit.reset_bases"><a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.reset_bases">[docs]</a>    <span class="k">def</span> <span class="nf">reset_bases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Orbit.reset_bases">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.reset_bases">[docs]</a>
+    <span class="k">def</span> <span class="nf">reset_bases</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset cached basis function array and correlation tensors.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_basis_arrs</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_corr_tensors</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_flat_corr_tensors</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="Orbit.assign_ids"><a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.assign_ids">[docs]</a>    <span class="k">def</span> <span class="nf">assign_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit_id</span><span class="p">,</span> <span class="n">orbit_bit_id</span><span class="p">,</span> <span class="n">start_cluster_id</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Orbit.assign_ids">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.assign_ids">[docs]</a>
+    <span class="k">def</span> <span class="nf">assign_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit_id</span><span class="p">,</span> <span class="n">orbit_bit_id</span><span class="p">,</span> <span class="n">start_cluster_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign unique orbit and cluster ID&#39;s.</span>
 
 <span class="sd">        This should be called iteratively for a list of orbits to get a proper</span>
@@ -963,6 +985,7 @@ document.write(`
         <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clusters</span><span class="p">:</span>
             <span class="n">c_id</span> <span class="o">=</span> <span class="n">cluster</span><span class="o">.</span><span class="n">assign_ids</span><span class="p">(</span><span class="n">c_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">orbit_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">orbit_bit_id</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bit_combos</span><span class="p">),</span> <span class="n">c_id</span></div>
+
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get total number of orbit basis functions.</span>
@@ -1005,7 +1028,9 @@ document.write(`
         <span class="p">]</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Orbit.from_dict"><a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Orbit.from_dict">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create Orbit from serialized MSONable dict.&quot;&quot;&quot;</span>
         <span class="n">structure_symops</span> <span class="o">=</span> <span class="p">[</span><span class="n">SymmOp</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">so_d</span><span class="p">)</span> <span class="k">for</span> <span class="n">so_d</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;structure_symops&quot;</span><span class="p">]]</span>
@@ -1027,7 +1052,10 @@ document.write(`
         <span class="c1"># can still be correctly recorded and reloaded.</span>
         <span class="k">return</span> <span class="n">orb</span></div>
 
-<div class="viewcode-block" id="Orbit.as_dict"><a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Orbit.as_dict">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.as_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get Json-serialization dict representation.</span>
 
 <span class="sd">        Returns:</span>
@@ -1043,7 +1071,9 @@ document.write(`
             <span class="s2">&quot;structure_symops&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">so</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">so</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure_symops</span><span class="p">],</span>
             <span class="s2">&quot;_bit_combos&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bit_combos</span><span class="p">),</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="n">orb_d</span></div></div>
+        <span class="k">return</span> <span class="n">orb_d</span></div>
+</div>
+
 </pre></div>
 
                 </article>
@@ -1096,7 +1126,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

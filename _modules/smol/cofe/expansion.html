@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.cofe.expansion &#8212; smol 0.5.0 documentation</title>
+    <title>smol.cofe.expansion &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -35,16 +35,16 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/smol/cofe/expansion';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../../_static/require.js?v=d4dd881e"></script>
     <script src="../../../_static/custom.js?v=1f4f4097"></script>
@@ -225,7 +225,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -381,7 +381,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -500,7 +500,9 @@ document.write(`
 <span class="kn">from</span> <span class="nn">smol.utils.cluster</span> <span class="kn">import</span> <span class="n">get_orbit_data</span>
 
 
-<div class="viewcode-block" id="RegressionData"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData">[docs]</a><span class="nd">@dataclass</span>
+<div class="viewcode-block" id="RegressionData">
+<a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">RegressionData</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Dataclass used to store regression model details.</span>
 
@@ -516,7 +518,9 @@ document.write(`
     <span class="n">property_vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
     <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span>
 
-<div class="viewcode-block" id="RegressionData.from_object"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.from_object">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="RegressionData.from_object">
+<a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.from_object">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_object</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="n">feature_matrix</span><span class="p">,</span> <span class="n">property_vector</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a RegressionData object from an estimator class.</span>
 
@@ -547,7 +551,10 @@ document.write(`
             <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="RegressionData.from_sklearn"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.from_sklearn">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="RegressionData.from_sklearn">
+<a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.from_sklearn">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_sklearn</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="n">feature_matrix</span><span class="p">,</span> <span class="n">property_vector</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a RegressionData object from sklearn estimator.</span>
 
@@ -567,10 +574,14 @@ document.write(`
             <span class="n">feature_matrix</span><span class="o">=</span><span class="n">feature_matrix</span><span class="p">,</span>
             <span class="n">property_vector</span><span class="o">=</span><span class="n">property_vector</span><span class="p">,</span>
             <span class="n">parameters</span><span class="o">=</span><span class="n">estimator</span><span class="o">.</span><span class="n">get_params</span><span class="p">(),</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="ClusterExpansion"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion">[docs]</a><span class="k">class</span> <span class="nc">ClusterExpansion</span><span class="p">(</span><span class="n">MSONable</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterExpansion">
+<a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion">[docs]</a>
+<span class="k">class</span> <span class="nc">ClusterExpansion</span><span class="p">(</span><span class="n">MSONable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for the ClusterExpansion proper.</span>
 
 <span class="sd">    This needs a :class:`ClusterSubspace` and a corresponding set of</span>
@@ -733,7 +744,9 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feat_matrix</span>
 
-<div class="viewcode-block" id="ClusterExpansion.predict"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">scmatrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">site_mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ClusterExpansion.predict">
+<a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">scmatrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">site_mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict the fitted property for a given set of structures.</span>
 
 <span class="sd">        Args:</span>
@@ -764,7 +777,10 @@ document.write(`
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coefs</span><span class="p">,</span> <span class="n">corrs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ClusterExpansion.cluster_interactions_from_structure"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.cluster_interactions_from_structure">[docs]</a>    <span class="k">def</span> <span class="nf">cluster_interactions_from_structure</span><span class="p">(</span>
+
+<div class="viewcode-block" id="ClusterExpansion.cluster_interactions_from_structure">
+<a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.cluster_interactions_from_structure">[docs]</a>
+    <span class="k">def</span> <span class="nf">cluster_interactions_from_structure</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scmatrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">site_mapping</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the vector of cluster interaction values for given structure.</span>
@@ -809,7 +825,10 @@ document.write(`
 
         <span class="k">return</span> <span class="n">interactions</span></div>
 
-<div class="viewcode-block" id="ClusterExpansion.prune"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.prune">[docs]</a>    <span class="k">def</span> <span class="nf">prune</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">with_multiplicity</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterExpansion.prune">
+<a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.prune">[docs]</a>
+    <span class="k">def</span> <span class="nf">prune</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">with_multiplicity</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove fit coefficients or ECI&#39;s with small values.</span>
 
 <span class="sd">        Removes ECI&#39;s and orbits in the ClusterSubspaces that have</span>
@@ -851,9 +870,13 @@ document.write(`
         <span class="c1"># reset the evaluator</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_evaluator_data</span><span class="p">(</span><span class="n">set_orbits</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ClusterExpansion.copy"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterExpansion.copy">
+<a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.copy">[docs]</a>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a copy of self.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ClusterExpansion</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span></div>
+
 
     <span class="k">def</span> <span class="nf">_set_evaluator_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_orbits</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the orbit and cluster interaction data in evaluator.&quot;&quot;&quot;</span>
@@ -959,7 +982,9 @@ document.write(`
         <span class="p">]</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ClusterExpansion.from_dict"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ClusterExpansion.from_dict">
+<a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create ClusterExpansion from serialized MSONable dict.&quot;&quot;&quot;</span>
         <span class="n">reg_data_dict</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;regression_data&quot;</span><span class="p">))</span>
@@ -985,7 +1010,10 @@ document.write(`
             <span class="bp">cls</span><span class="o">.</span><span class="n">_feat_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;feature_matrix&quot;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">cluster_expansion</span></div>
 
-<div class="viewcode-block" id="ClusterExpansion.as_dict"><a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterExpansion.as_dict">
+<a class="viewcode-back" href="../../../api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.as_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get Json-serialization dict representation.</span>
 
@@ -1009,7 +1037,9 @@ document.write(`
             <span class="s2">&quot;regression_data&quot;</span><span class="p">:</span> <span class="n">reg_data</span><span class="p">,</span>
             <span class="s2">&quot;feature_matrix&quot;</span><span class="p">:</span> <span class="n">feature_matrix</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="n">ce_d</span></div></div>
+        <span class="k">return</span> <span class="n">ce_d</span></div>
+</div>
+
 </pre></div>
 
                 </article>
@@ -1062,7 +1092,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

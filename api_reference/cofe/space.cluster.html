@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Cluster &#8212; smol 0.5.0 documentation</title>
+    <title>Cluster &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -36,16 +36,16 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/cofe/space.cluster';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../_static/require.js?v=d4dd881e"></script>
     <script src="../../_static/custom.js?v=1f4f4097"></script>
@@ -228,7 +228,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -388,7 +388,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -521,13 +521,13 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="module-smol.cofe.space.cluster">
-<span id="cluster"></span><h1>Cluster<a class="headerlink" href="#module-smol.cofe.space.cluster" title="Permalink to this heading">#</a></h1>
+<span id="cluster"></span><h1>Cluster<a class="headerlink" href="#module-smol.cofe.space.cluster" title="Link to this heading">#</a></h1>
 <p>Implementation of the Cluster class.</p>
 <p>Represents a group of sites of a given lattice. These are the building blocks
 for a cluster basis of functions over configurational space.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">site_spaces</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">site_spaces</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SiteCollection</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
 <p>An undecorated (no occupancies) cluster.</p>
 <p>Represented simply by a list of sites, its centroid, and the underlying
@@ -536,7 +536,7 @@ lattice.</p>
 ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.frac_coords">
-<span class="sig-name descname"><span class="pre">frac_coords</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.frac_coords" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">frac_coords</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.frac_coords" title="Link to this definition">#</a></dt>
 <dd><p>fractional coordinates of each site.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -547,7 +547,7 @@ ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.lattice">
-<span class="sig-name descname"><span class="pre">lattice</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.lattice" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">lattice</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.lattice" title="Link to this definition">#</a></dt>
 <dd><p>Underlying lattice of cluster.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -558,7 +558,7 @@ ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.centroid">
-<span class="sig-name descname"><span class="pre">centroid</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.centroid" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">centroid</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.centroid" title="Link to this definition">#</a></dt>
 <dd><p>Geometric centroid of included sites.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -569,7 +569,7 @@ ClusterSubspace to create orbits and clusters necessary for a CE.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.id">
-<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.id" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.id" title="Link to this definition">#</a></dt>
 <dd><p>ID of cluster.
 Used to identify the Cluster in a given ClusterSubspace.</p>
 <dl class="field-list simple">
@@ -591,7 +591,7 @@ Used to identify the Cluster in a given ClusterSubspace.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.as_dict" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.as_dict" title="Link to this definition">#</a></dt>
 <dd><p>Get json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -602,43 +602,43 @@ Used to identify the Cluster in a given ClusterSubspace.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.assign_ids">
-<span class="sig-name descname"><span class="pre">assign_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.assign_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.assign_ids" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">assign_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.assign_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.assign_ids" title="Link to this definition">#</a></dt>
 <dd><p>Recursively assign IDs to clusters after initialization.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id0">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">centroid</span></span><a class="headerlink" href="#id0" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">centroid</span></span><a class="headerlink" href="#id0" title="Link to this definition">#</a></dt>
 <dd><p>Return the centroid of cluster.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.copy" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.copy" title="Link to this definition">#</a></dt>
 <dd><p>Return a copy of the cluster.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.diameter">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">diameter</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.diameter" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">diameter</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.diameter" title="Link to this definition">#</a></dt>
 <dd><p>Get maximum distance between any 2 sites in the cluster.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id1">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">frac_coords</span></span><a class="headerlink" href="#id1" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">frac_coords</span></span><a class="headerlink" href="#id1" title="Link to this definition">#</a></dt>
 <dd><p>Return the fractional coordinates of cluster w.r.t the underlying lattice.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.from_dict" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.from_dict" title="Link to this definition">#</a></dt>
 <dd><p>Create a Cluster from serialized dict.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.from_file">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.from_file" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.from_file" title="Link to this definition">#</a></dt>
 <dd><p>Read a cluster from a file. Supported formats are json and yaml only.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -652,13 +652,13 @@ Used to identify the Cluster in a given ClusterSubspace.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.from_sites">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.from_sites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.from_sites" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_sites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.from_sites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.from_sites" title="Link to this definition">#</a></dt>
 <dd><p>Create a cluster from a list of sites and lattice object.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.from_str">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.from_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.from_str" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.from_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.from_str" title="Link to this definition">#</a></dt>
 <dd><p>Read a cluster from a string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -677,7 +677,7 @@ filename is. Options include “yaml”, “json”. Non-case sensitive.</p></li
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.get_distance">
-<span class="sig-name descname"><span class="pre">get_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.get_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.get_distance" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.get_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.get_distance" title="Link to this definition">#</a></dt>
 <dd><p>Return distance between sites at index i and j.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -697,25 +697,25 @@ filename is. Options include “yaml”, “json”. Non-case sensitive.</p></li
 
 <dl class="py property">
 <dt class="sig sig-object py" id="id2">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lattice</span></span><a class="headerlink" href="#id2" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lattice</span></span><a class="headerlink" href="#id2" title="Link to this definition">#</a></dt>
 <dd><p>Return the underlying lattice.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.radius">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">radius</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.radius" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">radius</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.radius" title="Link to this definition">#</a></dt>
 <dd><p>Get half the maximum distance between any 2 sites in the cluster.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.sites">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sites</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.sites" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sites</span></span><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.sites" title="Link to this definition">#</a></dt>
 <dd><p>Return the list of sites.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.cluster.Cluster.to">
-<span class="sig-name descname"><span class="pre">to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.to" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/cluster.html#Cluster.to"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.cluster.Cluster.to" title="Link to this definition">#</a></dt>
 <dd><p>Output the cluster  to a file or string.</p>
 <p>this is basically a watered down version of pymatgen.Molecule.to</p>
 <dl class="field-list simple">
@@ -862,7 +862,7 @@ filename. Defaults is None, i.e. string output.</p></li>
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

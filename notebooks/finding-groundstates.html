@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Running periodic ground-state structure solver &#8212; smol 0.5.0 documentation</title>
+    <title>Running periodic ground-state structure solver &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -37,9 +37,9 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/finding-groundstates';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../_static/require.js?v=d4dd881e"></script>
     <script src="../_static/custom.js?v=1f4f4097"></script>
@@ -229,7 +229,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -389,7 +389,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -481,7 +481,7 @@ document.write(`
                   
   <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.0/docs/src/notebooks/finding-groundstates.ipynb">docs/src/notebooks/finding-groundstates.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.1/docs/src/notebooks/finding-groundstates.ipynb">docs/src/notebooks/finding-groundstates.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -495,7 +495,7 @@ document.write(`
     }
   </script>
 </div><section id="Running-periodic-ground-state-structure-solver">
-<h1>Running periodic ground-state structure solver<a class="headerlink" href="#Running-periodic-ground-state-structure-solver" title="Permalink to this heading">#</a></h1>
+<h1>Running periodic ground-state structure solver<a class="headerlink" href="#Running-periodic-ground-state-structure-solver" title="Link to this heading">#</a></h1>
 <p>In this example, we illustrate how to create a periodic ground-state solver for a cluster expansion, and how to obtain ground-states for a specified supercell.</p>
 <p>This procedure solves for the ground state of a fixed periodic super-cell specified by the supercell matrix used to create the <code class="docutils literal notranslate"><span class="pre">Ensemble</span></code> class, this means that the solution obtained corresponds only to an upper bound of the global ground state of the corresponding infinitely sized bulk system.</p>
 <p>For more details on the nature of the global problem, finding upper and lower bounds please see: <a class="reference external" href="https://doi.org/10.1103/PhysRevB.94.134424">https://doi.org/10.1103/PhysRevB.94.134424</a></p>
@@ -516,7 +516,7 @@ document.write(`
 </div>
 </div>
 <section id="0)-Create-a-Cluster-Subspace-based-on-the-disordered-structure-with-an-Ewald-term">
-<h2>0) Create a Cluster Subspace based on the disordered structure with an Ewald term<a class="headerlink" href="#0)-Create-a-Cluster-Subspace-based-on-the-disordered-structure-with-an-Ewald-term" title="Permalink to this heading">#</a></h2>
+<h2>0) Create a Cluster Subspace based on the disordered structure with an Ewald term<a class="headerlink" href="#0)-Create-a-Cluster-Subspace-based-on-the-disordered-structure-with-an-Ewald-term" title="Link to this heading">#</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -587,7 +587,7 @@ Orbit Summary
 </div>
 </section>
 <section id="1)-Create-random-ECIs-and-ClusterExpansion">
-<h2>1) Create random ECIs and ClusterExpansion<a class="headerlink" href="#1)-Create-random-ECIs-and-ClusterExpansion" title="Permalink to this heading">#</a></h2>
+<h2>1) Create random ECIs and ClusterExpansion<a class="headerlink" href="#1)-Create-random-ECIs-and-ClusterExpansion" title="Link to this heading">#</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -608,7 +608,7 @@ Orbit Summary
 </div>
 </section>
 <section id="2)-Create-a-semi-grand-canonical-ensemble">
-<h2>2) Create a semi-grand canonical ensemble<a class="headerlink" href="#2)-Create-a-semi-grand-canonical-ensemble" title="Permalink to this heading">#</a></h2>
+<h2>2) Create a semi-grand canonical ensemble<a class="headerlink" href="#2)-Create-a-semi-grand-canonical-ensemble" title="Link to this heading">#</a></h2>
 <p>By default, the <code class="docutils literal notranslate"><span class="pre">Ensemble</span></code> object uses <code class="docutils literal notranslate"><span class="pre">ClusterDecompositionProcessor</span></code>, which greatly reduces the amount of many-body terms used in optimization pseudo-boolean function. Switching to a <code class="docutils literal notranslate"><span class="pre">ClusterExpansionProcessor</span></code> is allowed but not recommended.</p>
 <p>The upper-bound supercell size is defined within the Ensemble. Here, we use a supercell containing 2 primitive units. A semigrand-canonical ensemble is defined as an Ensemble object with chemical potentials specified.</p>
 <p>In this example, we used a relatively simple chemical space and a small supercell for a quick demonstration. The Boolean problem size grows exponentially with increasing composition complexity, therefore, the solver might not be able to solve the upper-bound in a large super-cell with high configurational entropy.</p>
@@ -623,7 +623,7 @@ Orbit Summary
 </div>
 </section>
 <section id="3)-Create-a-solver-instance-from-the-ensemble">
-<h2>3) Create a solver instance from the ensemble<a class="headerlink" href="#3)-Create-a-solver-instance-from-the-ensemble" title="Permalink to this heading">#</a></h2>
+<h2>3) Create a solver instance from the ensemble<a class="headerlink" href="#3)-Create-a-solver-instance-from-the-ensemble" title="Link to this heading">#</a></h2>
 <p>Charge-balance constraints are included by default. If any other constraint is needed, refer to the documentation of GroundStateSolver.</p>
 <p>The default solver is “SCIP”. For other solvers supported by cvxpy, see: <a class="reference external" href="https://www.cvxpy.org/tutorial/advanced/index.html#setting-solver-options">https://www.cvxpy.org/tutorial/advanced/index.html#setting-solver-options</a></p>
 <div class="nbinput docutils container">
@@ -650,7 +650,7 @@ Number of constraints: 3345
 </div>
 </section>
 <section id="4)-Solve-the-problem-in-semi-grand-canonical-ensemble">
-<h2>4) Solve the problem in semi-grand canonical ensemble<a class="headerlink" href="#4)-Solve-the-problem-in-semi-grand-canonical-ensemble" title="Permalink to this heading">#</a></h2>
+<h2>4) Solve the problem in semi-grand canonical ensemble<a class="headerlink" href="#4)-Solve-the-problem-in-semi-grand-canonical-ensemble" title="Link to this heading">#</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
@@ -746,7 +746,7 @@ PeriodicSite: F- (3.0, 3.0, 3.0) [0.75, 0.75, 0.75]
 </div>
 </section>
 <section id="5)-Create-and-solve-a-canonical-ensemble-problem">
-<h2>5) Create and solve a canonical ensemble problem<a class="headerlink" href="#5)-Create-and-solve-a-canonical-ensemble-problem" title="Permalink to this heading">#</a></h2>
+<h2>5) Create and solve a canonical ensemble problem<a class="headerlink" href="#5)-Create-and-solve-a-canonical-ensemble-problem" title="Link to this heading">#</a></h2>
 <p>Our solver also supports solving the ground-state in canonical ensembles. In doing so, one only needs to create a canonical ensemble (i.e., an ensemble with no chemical potentials provided). When using a canonical ensemble, note that either a fixed composition or an intial occupancy to determine the composition to fix must be provided as an argument to initialize the solver.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
@@ -974,7 +974,7 @@ PeriodicSite: O2- (3.0, 3.0, 3.0) [0.75, 0.75, 0.75]
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

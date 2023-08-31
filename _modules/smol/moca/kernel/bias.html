@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.moca.kernel.bias &#8212; smol 0.5.0 documentation</title>
+    <title>smol.moca.kernel.bias &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -35,16 +35,16 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/smol/moca/kernel/bias';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../../../_static/require.js?v=d4dd881e"></script>
     <script src="../../../../_static/custom.js?v=1f4f4097"></script>
@@ -225,7 +225,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -381,7 +381,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -496,7 +496,9 @@ document.write(`
 <span class="kn">from</span> <span class="nn">smol.utils.class_utils</span> <span class="kn">import</span> <span class="n">class_name_from_str</span><span class="p">,</span> <span class="n">derived_class_factory</span>
 
 
-<div class="viewcode-block" id="MCBias"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.MCBias">[docs]</a><span class="k">class</span> <span class="nc">MCBias</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="MCBias">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.MCBias">[docs]</a>
+<span class="k">class</span> <span class="nc">MCBias</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base bias term class.</span>
 
 <span class="sd">    .. note::</span>
@@ -537,7 +539,9 @@ document.write(`
             <span class="p">],</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="MCBias.compute_bias"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.MCBias.compute_bias">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="MCBias.compute_bias">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.MCBias.compute_bias">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">compute_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute bias from occupancy.</span>
 
@@ -549,7 +553,10 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span></div>
 
-<div class="viewcode-block" id="MCBias.compute_bias_change"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.MCBias.compute_bias_change">[docs]</a>    <span class="k">def</span> <span class="nf">compute_bias_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MCBias.compute_bias_change">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.MCBias.compute_bias_change">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_bias_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute bias change from step.</span>
 
 <span class="sd">        Args:</span>
@@ -563,10 +570,14 @@ document.write(`
         <span class="n">occu_next</span> <span class="o">=</span> <span class="n">occupancy</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">site</span><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">step</span><span class="p">:</span>
             <span class="n">occu_next</span><span class="p">[</span><span class="n">site</span><span class="p">]</span> <span class="o">=</span> <span class="n">code</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_bias</span><span class="p">(</span><span class="n">occu_next</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_bias</span><span class="p">(</span><span class="n">occupancy</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_bias</span><span class="p">(</span><span class="n">occu_next</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_bias</span><span class="p">(</span><span class="n">occupancy</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="FugacityBias"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.FugacityBias">[docs]</a><span class="k">class</span> <span class="nc">FugacityBias</span><span class="p">(</span><span class="n">MCBias</span><span class="p">):</span>
+
+<div class="viewcode-block" id="FugacityBias">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.FugacityBias">[docs]</a>
+<span class="k">class</span> <span class="nc">FugacityBias</span><span class="p">(</span><span class="n">MCBias</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Fugacity fraction bias.</span>
 
 <span class="sd">    This bias corresponds directly to using a composition bias. Using this</span>
@@ -650,7 +661,9 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_fus</span> <span class="o">=</span> <span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fu_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_fu_table</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="FugacityBias.compute_bias"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.FugacityBias.compute_bias">[docs]</a>    <span class="k">def</span> <span class="nf">compute_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
+<div class="viewcode-block" id="FugacityBias.compute_bias">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.FugacityBias.compute_bias">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute bias from occupancy.</span>
 
 <span class="sd">        Args:</span>
@@ -663,7 +676,10 @@ document.write(`
             <span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fu_table</span><span class="p">[</span><span class="n">site</span><span class="p">,</span> <span class="n">species</span><span class="p">])</span> <span class="k">for</span> <span class="n">site</span><span class="p">,</span> <span class="n">species</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">occupancy</span><span class="p">)</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="FugacityBias.compute_bias_change"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.FugacityBias.compute_bias_change">[docs]</a>    <span class="k">def</span> <span class="nf">compute_bias_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+
+<div class="viewcode-block" id="FugacityBias.compute_bias_change">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.FugacityBias.compute_bias_change">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_bias_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute bias change from step.</span>
 
 <span class="sd">        The returned value needs to be the difference of bias logs,</span>
@@ -686,6 +702,7 @@ document.write(`
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">delta_log_fu</span></div>
 
+
     <span class="k">def</span> <span class="nf">_build_fu_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fugacity_fractions</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Build an array for fugacity fractions for all sites in system.</span>
 
@@ -706,7 +723,10 @@ document.write(`
         <span class="k">return</span> <span class="n">table</span></div>
 
 
-<div class="viewcode-block" id="SquareChargeBias"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.SquareChargeBias">[docs]</a><span class="k">class</span> <span class="nc">SquareChargeBias</span><span class="p">(</span><span class="n">MCBias</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SquareChargeBias">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.SquareChargeBias">[docs]</a>
+<span class="k">class</span> <span class="nc">SquareChargeBias</span><span class="p">(</span><span class="n">MCBias</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Square charge bias.</span>
 
 <span class="sd">    This bias penalizes energy on square of the system net charge.</span>
@@ -746,7 +766,9 @@ document.write(`
         <span class="c1"># record specifications</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">penalty</span> <span class="o">=</span> <span class="n">penalty</span>
 
-<div class="viewcode-block" id="SquareChargeBias.compute_bias"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.SquareChargeBias.compute_bias">[docs]</a>    <span class="k">def</span> <span class="nf">compute_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
+<div class="viewcode-block" id="SquareChargeBias.compute_bias">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.SquareChargeBias.compute_bias">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute bias from occupancy.</span>
 
 <span class="sd">        Args:</span>
@@ -757,10 +779,14 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_c_table</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">occupancy</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span> <span class="n">occupancy</span><span class="p">])</span>
         <span class="c1"># Returns a negative value because of the implementation in mckernels.</span>
-        <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">penalty</span> <span class="o">*</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span></div></div>
+        <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">penalty</span> <span class="o">*</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span></div>
+</div>
 
 
-<div class="viewcode-block" id="SquareHyperplaneBias"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.SquareHyperplaneBias">[docs]</a><span class="k">class</span> <span class="nc">SquareHyperplaneBias</span><span class="p">(</span><span class="n">MCBias</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SquareHyperplaneBias">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.SquareHyperplaneBias">[docs]</a>
+<span class="k">class</span> <span class="nc">SquareHyperplaneBias</span><span class="p">(</span><span class="n">MCBias</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Square hyperplane bias.</span>
 
 <span class="sd">    This bias penalizes energy on sum square of distance from a composition n</span>
@@ -812,7 +838,9 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">hyperplane_normals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_A</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">hyperplane_intercepts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-<div class="viewcode-block" id="SquareHyperplaneBias.compute_bias"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.SquareHyperplaneBias.compute_bias">[docs]</a>    <span class="k">def</span> <span class="nf">compute_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
+<div class="viewcode-block" id="SquareHyperplaneBias.compute_bias">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.SquareHyperplaneBias.compute_bias">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute bias from occupancy.</span>
 
 <span class="sd">        Args:</span>
@@ -822,10 +850,14 @@ document.write(`
 <span class="sd">            Float, bias value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">n</span> <span class="o">=</span> <span class="n">occu_to_counts</span><span class="p">(</span><span class="n">occupancy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim_ids_table</span><span class="p">)</span>
-        <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">penalty</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_A</span> <span class="o">@</span> <span class="n">n</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">penalty</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_A</span> <span class="o">@</span> <span class="n">n</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="mcbias_factory"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.mcbias_factory">[docs]</a><span class="k">def</span> <span class="nf">mcbias_factory</span><span class="p">(</span><span class="n">bias_type</span><span class="p">,</span> <span class="n">sublattices</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="mcbias_factory">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.mcbias_factory">[docs]</a>
+<span class="k">def</span> <span class="nf">mcbias_factory</span><span class="p">(</span><span class="n">bias_type</span><span class="p">,</span> <span class="n">sublattices</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a MCMC bias from string name.</span>
 
 <span class="sd">    Args:</span>
@@ -843,6 +875,7 @@ document.write(`
         <span class="n">bias_type</span> <span class="o">+=</span> <span class="s2">&quot;-bias&quot;</span>
     <span class="n">bias_name</span> <span class="o">=</span> <span class="n">class_name_from_str</span><span class="p">(</span><span class="n">bias_type</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">derived_class_factory</span><span class="p">(</span><span class="n">bias_name</span><span class="p">,</span> <span class="n">MCBias</span><span class="p">,</span> <span class="n">sublattices</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
 </pre></div>
 
                 </article>
@@ -895,7 +928,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

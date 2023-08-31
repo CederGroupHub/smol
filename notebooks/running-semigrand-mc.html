@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Running Semigrand Canonical Monte Carlo Sampling &#8212; smol 0.5.0 documentation</title>
+    <title>Running Semigrand Canonical Monte Carlo Sampling &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -37,9 +37,9 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/running-semigrand-mc';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../_static/require.js?v=d4dd881e"></script>
     <script src="../_static/custom.js?v=1f4f4097"></script>
@@ -229,7 +229,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -389,7 +389,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -481,7 +481,7 @@ document.write(`
                   
   <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.0/docs/src/notebooks/running-semigrand-mc.ipynb">docs/src/notebooks/running-semigrand-mc.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.1/docs/src/notebooks/running-semigrand-mc.ipynb">docs/src/notebooks/running-semigrand-mc.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -495,7 +495,7 @@ document.write(`
     }
   </script>
 </div><section id="Running-Semigrand-Canonical-Monte-Carlo-Sampling">
-<h1>Running Semigrand Canonical Monte Carlo Sampling<a class="headerlink" href="#Running-Semigrand-Canonical-Monte-Carlo-Sampling" title="Permalink to this heading">#</a></h1>
+<h1>Running Semigrand Canonical Monte Carlo Sampling<a class="headerlink" href="#Running-Semigrand-Canonical-Monte-Carlo-Sampling" title="Link to this heading">#</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -508,7 +508,7 @@ document.write(`
 </div>
 </div>
 <section id="0)-Load-the-previous-LNO-CE-with-electrostatics">
-<h2>0) Load the previous LNO CE with electrostatics<a class="headerlink" href="#0)-Load-the-previous-LNO-CE-with-electrostatics" title="Permalink to this heading">#</a></h2>
+<h2>0) Load the previous LNO CE with electrostatics<a class="headerlink" href="#0)-Load-the-previous-LNO-CE-with-electrostatics" title="Link to this heading">#</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -520,7 +520,7 @@ document.write(`
 </div>
 </section>
 <section id="1)-Create-a-semigrand-ensemble">
-<h2>1) Create a semigrand ensemble<a class="headerlink" href="#1)-Create-a-semigrand-ensemble" title="Permalink to this heading">#</a></h2>
+<h2>1) Create a semigrand ensemble<a class="headerlink" href="#1)-Create-a-semigrand-ensemble" title="Link to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">Ensemble</span></code> class can also be used to run semigrand canonical MC by fixing relative chemical potentials.</p>
 <p>In SGC chemical potential differences are set as boundary conditions. Any one of the active species can be used as reference.</p>
 <div class="nbinput docutils container">
@@ -571,7 +571,7 @@ Sublattice(site_space=O2-1 , sites=array([32, 33, 34, 35, 36, 37, 38, 39, 40, 41
 </div>
 </section>
 <section id="2)-Create-an-MC-sampler">
-<h2>2) Create an MC sampler<a class="headerlink" href="#2)-Create-an-MC-sampler" title="Permalink to this heading">#</a></h2>
+<h2>2) Create an MC sampler<a class="headerlink" href="#2)-Create-an-MC-sampler" title="Link to this heading">#</a></h2>
 <p>A <code class="docutils literal notranslate"><span class="pre">Sampler</span></code> will take care of running MC sampling runs for a given ensemble. The sampler allows many different options for MC sampling most importantly setting the MCMC algorithm and the type of MC steps taken. However the defaults are usually enough for almost all use cases.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -597,7 +597,7 @@ Sampling information: {&#39;kernel&#39;: &#39;Metropolis&#39;, &#39;step&#39;: &
 </div>
 </section>
 <section id="3)-Create-an-initial-structure-and-get-occupancies">
-<h2>3) Create an initial structure and get occupancies<a class="headerlink" href="#3)-Create-an-initial-structure-and-get-occupancies" title="Permalink to this heading">#</a></h2>
+<h2>3) Create an initial structure and get occupancies<a class="headerlink" href="#3)-Create-an-initial-structure-and-get-occupancies" title="Link to this heading">#</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -657,7 +657,7 @@ The initial occupancy is:
 </div>
 </section>
 <section id="4)-Sweeping-chemical-potentials">
-<h2>4) Sweeping chemical potentials<a class="headerlink" href="#4)-Sweeping-chemical-potentials" title="Permalink to this heading">#</a></h2>
+<h2>4) Sweeping chemical potentials<a class="headerlink" href="#4)-Sweeping-chemical-potentials" title="Link to this heading">#</a></h2>
 <p>Using a semigrand ensemble, we can sweep through relative chemical potentials and get average energies at various compositions.</p>
 <p>Here we will sweep only through the relative chemical potential of vacancies.</p>
 <div class="nbinput docutils container">
@@ -826,7 +826,7 @@ Sampling 1 chain(s) from a cell with 64 sites...: 100%|████████�
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

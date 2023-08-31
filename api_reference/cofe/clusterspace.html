@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Cluster Spaces &#8212; smol 0.5.0 documentation</title>
+    <title>Cluster Spaces &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -36,9 +36,9 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -47,7 +47,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/cofe/clusterspace';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../_static/require.js?v=d4dd881e"></script>
     <script src="../../_static/custom.js?v=1f4f4097"></script>
@@ -230,7 +230,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -390,7 +390,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -518,7 +518,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="cluster-spaces">
-<span id="cluster-space"></span><h1>Cluster Spaces<a class="headerlink" href="#cluster-spaces" title="Permalink to this heading">#</a></h1>
+<span id="cluster-space"></span><h1>Cluster Spaces<a class="headerlink" href="#cluster-spaces" title="Link to this heading">#</a></h1>
 <p>Implementation of ClusterSubspace and related PottsSubspace classes.</p>
 <p><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> is the workhorse for generating the objects and
 information necessary for a cluster expansion. It contains the finite set
@@ -526,10 +526,10 @@ of orbits and orbit basis functions to be included in the cluster expansion.
 The <code class="xref py py-class docutils literal notranslate"><span class="pre">PottsSubspace</span></code> is an (experimental) class that is similar, but
 diverges from the CE mathematic formalism.</p>
 <section id="clustersubspace">
-<h2>ClusterSubspace<a class="headerlink" href="#clustersubspace" title="Permalink to this heading">#</a></h2>
+<h2>ClusterSubspace<a class="headerlink" href="#clustersubspace" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ClusterSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
 <p>ClusterSubspace represents a subspace of functions of configuration.</p>
 <p>A <a class="reference internal" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a> is the main work horse used in constructing a
@@ -549,7 +549,7 @@ structure).</p>
 which will auto-generate the orbits from diameter cutoffs.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.symops">
-<span class="sig-name descname"><span class="pre">symops</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.symops" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">symops</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.symops" title="Link to this definition">#</a></dt>
 <dd><p>Symmetry operations of structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -560,7 +560,7 @@ which will auto-generate the orbits from diameter cutoffs.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.num_corr_functions">
-<span class="sig-name descname"><span class="pre">num_corr_functions</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_corr_functions" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">num_corr_functions</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_corr_functions" title="Link to this definition">#</a></dt>
 <dd><p>Total number of correlation functions (orbit basis functions)
 included in the subspace.</p>
 <dl class="field-list simple">
@@ -572,7 +572,7 @@ included in the subspace.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.num_orbits">
-<span class="sig-name descname"><span class="pre">num_orbits</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_orbits" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">num_orbits</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_orbits" title="Link to this definition">#</a></dt>
 <dd><p>Total number of crystallographic orbits included in the subspace.
 This includes the empty orbit.</p>
 <dl class="field-list simple">
@@ -584,7 +584,7 @@ This includes the empty orbit.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.num_clusters">
-<span class="sig-name descname"><span class="pre">num_clusters</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_clusters" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">num_clusters</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_clusters" title="Link to this definition">#</a></dt>
 <dd><p>Total number of clusters in the primitive cell that are included
 in the subspace.</p>
 <dl class="field-list simple">
@@ -638,7 +638,7 @@ more details.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.add_external_term">
-<span class="sig-name descname"><span class="pre">add_external_term</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.add_external_term"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.add_external_term" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">add_external_term</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.add_external_term"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.add_external_term" title="Link to this definition">#</a></dt>
 <dd><p>Add an external term to the ClusterSubspace.</p>
 <p>Adds an external term (e.g. an Ewald term) to the cluster expansion
 terms. External term classes must be MSONable and implement a method
@@ -653,7 +653,7 @@ implemented.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.as_dict" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.as_dict" title="Link to this definition">#</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -664,25 +664,25 @@ implemented.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.basis_orthogonal">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_orthogonal</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_orthogonal" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_orthogonal</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_orthogonal" title="Link to this definition">#</a></dt>
 <dd><p>Check if the orbit basis is orthogonal.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.basis_orthonormal">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_orthonormal</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_orthonormal" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_orthonormal</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_orthonormal" title="Link to this definition">#</a></dt>
 <dd><p>Check if the orbit basis is orthonormal.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.basis_type">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_type</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_type" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">basis_type</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.basis_type" title="Link to this definition">#</a></dt>
 <dd><p>Get the type of site basis set used.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.change_site_bases">
-<span class="sig-name descname"><span class="pre">change_site_bases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.change_site_bases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.change_site_bases" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">change_site_bases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.change_site_bases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.change_site_bases" title="Link to this definition">#</a></dt>
 <dd><p>Change the type of site basis used in the site basis functions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -696,13 +696,13 @@ implemented.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.copy">
-<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.copy" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.copy" title="Link to this definition">#</a></dt>
 <dd><p>Deep copy of instance.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.corr_from_structure">
-<span class="sig-name descname"><span class="pre">corr_from_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.corr_from_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.corr_from_structure" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">corr_from_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.corr_from_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.corr_from_structure" title="Link to this definition">#</a></dt>
 <dd><p>Get correlation vector for structure.</p>
 <p>Returns the correlation vector for a given structure. To do this, the
 correct supercell matrix of the prim needs to be found to then
@@ -741,7 +741,7 @@ option, you are fully responsible that the mappings are correct!</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.cutoffs">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cutoffs</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.cutoffs" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cutoffs</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.cutoffs" title="Link to this definition">#</a></dt>
 <dd><p>Return dict of orbit cluster cutoffs.</p>
 <p>These are “tight” cutoffs, as in the maximum diameter for each cluster
 size, which is &lt;= the input to from_cutoffs.</p>
@@ -749,7 +749,7 @@ size, which is &lt;= the input to from_cutoffs.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.evaluator">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">evaluator</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.evaluator" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">evaluator</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.evaluator" title="Link to this definition">#</a></dt>
 <dd><p>Get the instance of cluster space evaluator extension type.</p>
 <p>The evaluator is used to compute correlations quickly. You should not use this
 directly, instead use the <a class="reference internal" href="#smol.cofe.space.clusterspace.ClusterSubspace.corr_from_structure" title="smol.cofe.space.clusterspace.ClusterSubspace.corr_from_structure"><code class="xref py py-meth docutils literal notranslate"><span class="pre">corr_from_structure()</span></code></a> method. If you do attempt
@@ -759,13 +759,13 @@ your python interpreter. You have been warned…</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.expansion_structure">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expansion_structure</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.expansion_structure" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">expansion_structure</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.expansion_structure" title="Link to this definition">#</a></dt>
 <dd><p>Get the primitive expansion structure (excludes inactive sites).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.external_terms">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">external_terms</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.external_terms" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">external_terms</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.external_terms" title="Link to this definition">#</a></dt>
 <dd><p>Get external terms to be fitted together with the correlations.</p>
 <p>External terms are those represented by pair interaction Hamiltonians
 (i.e. Ewald electrostatics).</p>
@@ -773,7 +773,7 @@ your python interpreter. You have been warned…</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.from_cutoffs">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'indicator'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_concentration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.from_cutoffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.from_cutoffs" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'indicator'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthonormal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_concentration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.from_cutoffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.from_cutoffs" title="Link to this definition">#</a></dt>
 <dd><p>Create a ClusterSubspace from diameter cutoffs.</p>
 <p>Creates a <a class="reference internal" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a> with orbits of the given size and
 diameter smaller than or equal to the given value. The diameter of an
@@ -832,13 +832,13 @@ to use a species that has a constant amount per formula unit.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.from_dict" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.from_dict" title="Link to this definition">#</a></dt>
 <dd><p>Create ClusterSubspace from an MSONable dict.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_hierarchy">
-<span class="sig-name descname"><span class="pre">function_hierarchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.function_hierarchy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_hierarchy" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">function_hierarchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">invert</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.function_hierarchy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_hierarchy" title="Link to this definition">#</a></dt>
 <dd><p>Get the correlation function hierarchy.</p>
 <p>The function hierarchy is the relationship between specific correlation
 functions and “sub” correlation functions (i.e. a correlation function is
@@ -871,13 +871,13 @@ outer list index.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_inds_by_size</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_inds_by_size</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_by_size" title="Link to this definition">#</a></dt>
 <dd><p>Get correlation function indices by cluster sizes.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_inds_from_cutoffs">
-<span class="sig-name descname"><span class="pre">function_inds_from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.function_inds_from_cutoffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_from_cutoffs" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">function_inds_from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.function_inds_from_cutoffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_from_cutoffs" title="Link to this definition">#</a></dt>
 <dd><p>Get indices of correlation functions by cluster cutoffs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -906,7 +906,7 @@ i.e. {2: cutoff_pairs, 3: cutoff_trips, …}</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_orbit_ids">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_orbit_ids</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_orbit_ids" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_orbit_ids</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_orbit_ids" title="Link to this definition">#</a></dt>
 <dd><p>Get Orbit IDs corresponding to each correlation function.</p>
 <p>If the ClusterSubspace includes external terms, these are not included
 in the list since they are not associated with any orbit.</p>
@@ -914,7 +914,7 @@ in the list since they are not associated with any orbit.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_ordering_multiplicities">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_ordering_multiplicities</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_ordering_multiplicities" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_ordering_multiplicities</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_ordering_multiplicities" title="Link to this definition">#</a></dt>
 <dd><p>Get array of ordering multiplicity of each correlation function.</p>
 <p>The length of the array returned is the total number of correlation
 functions in the subspace for all orbits. The ordering multiplicity of
@@ -925,7 +925,7 @@ product of the same single site functions.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.function_total_multiplicities">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_total_multiplicities</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_total_multiplicities" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">function_total_multiplicities</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.function_total_multiplicities" title="Link to this definition">#</a></dt>
 <dd><p>Get array of total multiplicity of each correlation function.</p>
 <p>The length of the array returned is the total number of correlation
 functions in the subspace for all orbits. The total multiplicity of a
@@ -937,12 +937,12 @@ multiplicity of the orbit.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.gen_orbit_list">
-<span class="sig-name descname"><span class="pre">gen_orbit_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.gen_orbit_list" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">gen_orbit_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.gen_orbit_list" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.get_aliased_orbits">
-<span class="sig-name descname"><span class="pre">get_aliased_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sc_matrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.get_aliased_orbits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.get_aliased_orbits" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_aliased_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sc_matrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.get_aliased_orbits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.get_aliased_orbits" title="Link to this definition">#</a></dt>
 <dd><p>Get the aliased orbits for a given supercell shape.</p>
 <p>Detect the orbits that will be aliased due to translational symmetry imposed by
 the supercell lattice. Orbits i and j are aliased when a geometric cluster in
@@ -970,7 +970,7 @@ that are aliased.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.get_orbit_indices">
-<span class="sig-name descname"><span class="pre">get_orbit_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.get_orbit_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.get_orbit_indices" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_orbit_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.get_orbit_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.get_orbit_indices" title="Link to this definition">#</a></dt>
 <dd><p>Get the OrbitIndices named tuple for a given supercell matrix.</p>
 <p>If the indices have not been cached then they are generated by generating
 the site mappings for the given supercell.e</p>
@@ -978,7 +978,7 @@ the site mappings for the given supercell.e</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.get_sub_function_ids">
-<span class="sig-name descname"><span class="pre">get_sub_function_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corr_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.get_sub_function_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_function_ids" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_sub_function_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corr_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.get_sub_function_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_function_ids" title="Link to this definition">#</a></dt>
 <dd><p>Get the bit combo ids of all sub correlation functions.</p>
 <p>A sub correlation function of a given correlation function means that
 the sub correlation function is a factor of the correlation function
@@ -1008,7 +1008,7 @@ minimum size of clusters in sub orbits to include</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.get_sub_orbits">
-<span class="sig-name descname"><span class="pre">get_sub_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.get_sub_orbits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_orbits" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_sub_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.get_sub_orbits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_orbits" title="Link to this definition">#</a></dt>
 <dd><p>Get sub orbits of the orbit for the corresponding orbit_id.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1032,7 +1032,7 @@ minimum size of clusters in sub orbits to include</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.num_functions_per_orbit">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_functions_per_orbit</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_functions_per_orbit" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_functions_per_orbit</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_functions_per_orbit" title="Link to this definition">#</a></dt>
 <dd><p>Get the number of correlation functions for each orbit.</p>
 <p>The list returned has length equal to the total number of orbits,
 and each entry is the total number of correlation functions
@@ -1041,20 +1041,20 @@ associated with that orbit.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.num_prims_from_matrix">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_prims_from_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.num_prims_from_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_prims_from_matrix" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_prims_from_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.num_prims_from_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_prims_from_matrix" title="Link to this definition">#</a></dt>
 <dd><p>Get number of prim structures in a supercell for a given matrix.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.num_threads">
-<span class="sig-name descname"><span class="pre">num_threads</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_threads" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">num_threads</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.num_threads" title="Link to this definition">#</a></dt>
 <dd><p>A descriptor used to set threads of an attributed object that has multi-threading.</p>
 <p>Right now it’s only used for the Evaluator class.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.occupancy_from_structure">
-<span class="sig-name descname"><span class="pre">occupancy_from_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.occupancy_from_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.occupancy_from_structure" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">occupancy_from_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.occupancy_from_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.occupancy_from_structure" title="Link to this definition">#</a></dt>
 <dd><p>Occupancy string for a given structure.</p>
 <p>Returns a list of occupancies of each site in the structure in the
 appropriate order set implicitly by the supercell matrix that is found.</p>
@@ -1097,7 +1097,7 @@ species itself.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbit_hierarchy">
-<span class="sig-name descname"><span class="pre">orbit_hierarchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.orbit_hierarchy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbit_hierarchy" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">orbit_hierarchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.orbit_hierarchy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbit_hierarchy" title="Link to this definition">#</a></dt>
 <dd><p>Get orbit hierarchy by IDs.</p>
 <p>The orbit hierarchy represents in inclusion relationships between orbits and
 their suborbits.</p>
@@ -1124,19 +1124,19 @@ index.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbit_multiplicities">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbit_multiplicities</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbit_multiplicities" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbit_multiplicities</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbit_multiplicities" title="Link to this definition">#</a></dt>
 <dd><p>Get the crystallographic multiplicities for each orbit.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbits">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbits</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbits</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits" title="Link to this definition">#</a></dt>
 <dd><p>Return a list of all orbits sorted by size.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs">
-<span class="sig-name descname"><span class="pre">orbits_by_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.orbits_by_cutoffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">orbits_by_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.orbits_by_cutoffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs" title="Link to this definition">#</a></dt>
 <dd><p>Get orbits with clusters within given diameter cutoffs (inclusive).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1154,20 +1154,20 @@ lower diameter for clusters to include.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_diameter">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbits_by_diameter</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_diameter" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbits_by_diameter</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_diameter" title="Link to this definition">#</a></dt>
 <dd><p>Get dictionary of orbits with key being the orbit diameter.</p>
 <p>Diameters are rounded to 6 decimal places.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">orbits_by_size</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_size" title="Link to this definition">#</a></dt>
 <dd><p>Get dictionary of orbits with key being the orbit size.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.orbits_from_cutoffs">
-<span class="sig-name descname"><span class="pre">orbits_from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.orbits_from_cutoffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_from_cutoffs" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">orbits_from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.orbits_from_cutoffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.orbits_from_cutoffs" title="Link to this definition">#</a></dt>
 <dd><p>Get orbits with clusters within given diameter cutoffs (inclusive).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1193,7 +1193,7 @@ i.e. {2: pair_cutoff, 3: triplet_cutoff, …}</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.refine_structure">
-<span class="sig-name descname"><span class="pre">refine_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.refine_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.refine_structure" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">refine_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.refine_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.refine_structure" title="Link to this definition">#</a></dt>
 <dd><p>Refine a (relaxed) structure.</p>
 <p>Refine a (relaxed) structure to a perfect supercell structure of the
 the prim structure (aka the corresponding “unrelaxed” structure).</p>
@@ -1223,7 +1223,7 @@ responsible.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.remove_corr_functions">
-<span class="sig-name descname"><span class="pre">remove_corr_functions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corr_ids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.remove_corr_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.remove_corr_functions" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">remove_corr_functions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corr_ids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.remove_corr_functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.remove_corr_functions" title="Link to this definition">#</a></dt>
 <dd><p>Remove correlation functions by their ID’s.</p>
 <p>This allows more granular removal of terms involved in fitting/evaluating a
 cluster expansion. Similar to remove_orbits this is useful to prune a cluster
@@ -1246,7 +1246,7 @@ model interpretations.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.remove_orbits">
-<span class="sig-name descname"><span class="pre">remove_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_ids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.remove_orbits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.remove_orbits" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">remove_orbits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_ids</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.remove_orbits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.remove_orbits" title="Link to this definition">#</a></dt>
 <dd><p>Remove whole orbits by their ids.</p>
 <p>Remove orbits from cluster spaces. It is helpful to print a ClusterSubspace or
 ClusterExpansion to obtain orbit ids. After removing orbits, orbit ID’s and
@@ -1268,7 +1268,7 @@ vector.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.rotate_site_basis">
-<span class="sig-name descname"><span class="pre">rotate_site_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">singlet_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.rotate_site_basis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.rotate_site_basis" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">rotate_site_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">singlet_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.rotate_site_basis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.rotate_site_basis" title="Link to this definition">#</a></dt>
 <dd><p>Apply a rotation to a site basis.</p>
 <p>The rotation is applied around an axis normal to the span of the two
 site functions given by index1 and index 2 (the constant function is
@@ -1291,7 +1291,7 @@ valid here.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure">
-<span class="sig-name descname"><span class="pre">scmatrix_from_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.scmatrix_from_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">scmatrix_from_structure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.scmatrix_from_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure" title="Link to this definition">#</a></dt>
 <dd><p>Get supercell matrix from a given structure.</p>
 <p>Obtain the supercell structure matrix to convert the prim structure
 to a supercell equivalent to given structure.</p>
@@ -1310,7 +1310,7 @@ to a supercell equivalent to given structure.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.site_rotation_matrix">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">site_rotation_matrix</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.site_rotation_matrix" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">site_rotation_matrix</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.site_rotation_matrix" title="Link to this definition">#</a></dt>
 <dd><p>Get change of basis matrix from site function rotations.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1321,13 +1321,13 @@ Using it otherwise will not work as expected.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.structure">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structure</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.structure" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">structure</span></span><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.structure" title="Link to this definition">#</a></dt>
 <dd><p>Get the underlying primitive structure including inactive sites.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.structure_site_mapping">
-<span class="sig-name descname"><span class="pre">structure_site_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">supercell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.structure_site_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.structure_site_mapping" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">structure_site_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">supercell</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.structure_site_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.structure_site_mapping" title="Link to this definition">#</a></dt>
 <dd><p>Get structure site mapping.</p>
 <p>Returns the mapping between sites in the given structure and a prim
 supercell of the corresponding size.</p>
@@ -1349,7 +1349,7 @@ supercell of the corresponding size.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.ClusterSubspace.supercell_orbit_mappings">
-<span class="sig-name descname"><span class="pre">supercell_orbit_mappings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.supercell_orbit_mappings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.supercell_orbit_mappings" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">supercell_orbit_mappings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scmatrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#ClusterSubspace.supercell_orbit_mappings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.ClusterSubspace.supercell_orbit_mappings" title="Link to this definition">#</a></dt>
 <dd><p>Get orbit mappings for a structure from supercell of prim.</p>
 <p>Return the orbit mappings for a specific supercell of the prim
 structure represented by the given matrix</p>
@@ -1373,13 +1373,13 @@ that cluster</p>
 
 </section>
 <section id="pottssubspace">
-<h2>PottsSubspace<a class="headerlink" href="#pottssubspace" title="Permalink to this heading">#</a></h2>
+<h2>PottsSubspace<a class="headerlink" href="#pottssubspace" title="Link to this heading">#</a></h2>
 <p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">PottsSubspace</span></code> implements the following expansion:</p>
 <div class="math notranslate nohighlight">
 \[H(\sigma) = \sum_{\alpha\in D[N]} m_{\alpha}\mathbf{1}_{\alpha}(\sigma)\]</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.PottsSubspace">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PottsSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">without_last_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#PottsSubspace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PottsSubspace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symops</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orbits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">without_last_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#PottsSubspace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code></a></p>
 <p>PottsSubspace represents a subspace of functions using only indicator functions.</p>
 <p>A PottsSubspace is a related model to a standard ClusterSubspace used to build
@@ -1440,7 +1440,7 @@ more details.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.PottsSubspace.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#PottsSubspace.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace.as_dict" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#PottsSubspace.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace.as_dict" title="Link to this definition">#</a></dt>
 <dd><p>Json-serialization dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1451,7 +1451,7 @@ more details.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.PottsSubspace.from_cutoffs">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_last_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#PottsSubspace.from_cutoffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace.from_cutoffs" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_last_cluster</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">matcher_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#PottsSubspace.from_cutoffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace.from_cutoffs" title="Link to this definition">#</a></dt>
 <dd><p>Create a PottsSubspace from diameter cutoffs.</p>
 <p>Creates a <a class="reference internal" href="#smol.cofe.space.clusterspace.PottsSubspace" title="smol.cofe.space.clusterspace.PottsSubspace"><code class="xref py py-class docutils literal notranslate"><span class="pre">PottsSubspace</span></code></a> with orbits of the given size and
 diameter smaller than or equal to the given value. The diameter of an
@@ -1500,13 +1500,13 @@ to use a species that has a constant amount per formula unit.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.PottsSubspace.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#PottsSubspace.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace.from_dict" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#PottsSubspace.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace.from_dict" title="Link to this definition">#</a></dt>
 <dd><p>Create ClusterSubspace from an MSONable dict.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.PottsSubspace.get_function_decoration">
-<span class="sig-name descname"><span class="pre">get_function_decoration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#PottsSubspace.get_function_decoration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace.get_function_decoration" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_function_decoration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#PottsSubspace.get_function_decoration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace.get_function_decoration" title="Link to this definition">#</a></dt>
 <dd><p>Get the decoration/labeling of a specific orbit function.</p>
 <p>When using an indicator site basis there is 1 to 1 equivalence between
 correlation functions and species decorations.</p>
@@ -1526,7 +1526,7 @@ Species/Elements.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.clusterspace.PottsSubspace.get_orbit_decorations">
-<span class="sig-name descname"><span class="pre">get_orbit_decorations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#PottsSubspace.get_orbit_decorations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace.get_orbit_decorations" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_orbit_decorations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/clusterspace.html#PottsSubspace.get_orbit_decorations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.clusterspace.PottsSubspace.get_orbit_decorations" title="Link to this definition">#</a></dt>
 <dd><p>Get all decorations/labellings of species in an orbit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1710,7 +1710,7 @@ Species/Elements.</p>
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Getting Started &#8212; smol 0.5.0 documentation</title>
+    <title>Getting Started &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -36,16 +36,16 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="_static/require.js?v=d4dd881e"></script>
     <script src="_static/custom.js?v=1f4f4097"></script>
@@ -228,7 +228,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -388,7 +388,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -479,9 +479,9 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="getting-started">
-<span id="geting-started"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading">#</a></h1>
+<span id="geting-started"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">#</a></h1>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
 <p><strong>smol</strong> is purposely light on dependencies which should make the installation
 process headache free. Using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">smol</span>
@@ -497,12 +497,12 @@ installing <em>pymatgen</em> with conda first:</p>
 </div>
 </section>
 <section id="basic-usage">
-<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">#</a></h2>
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h2>
 <p><strong>smol</strong> is designed to be simple and intuitive to use. Here is the most
 basic example of creating a Cluster Expansion for a binary alloy and
 subsequently using it to run Monte Carlo sampling.</p>
 <section id="creating-a-cluster-subspace">
-<h3>Creating a cluster subspace<a class="headerlink" href="#creating-a-cluster-subspace" title="Permalink to this heading">#</a></h3>
+<h3>Creating a cluster subspace<a class="headerlink" href="#creating-a-cluster-subspace" title="Link to this heading">#</a></h3>
 <p>Create a cluster subspace for a AuCu binary FCC alloy to define the cluster
 expansion terms and compute the corresponding correlation functions.</p>
 <p>Start by creating a disordered primitive structure.</p>
@@ -522,7 +522,7 @@ quadruplet clusters up to given cluster diameter cutoffs.</p>
 </div>
 </section>
 <section id="preparing-training-data">
-<h3>Preparing training data<a class="headerlink" href="#preparing-training-data" title="Permalink to this heading">#</a></h3>
+<h3>Preparing training data<a class="headerlink" href="#preparing-training-data" title="Link to this heading">#</a></h3>
 <p>Load and use data computed for a training set of ordered structures to
 generate the necessary fitting data (formation energy and correlation vector
 for each training structure). Training data is added as instances of
@@ -538,7 +538,7 @@ for each training structure). Training data is added as instances of
 </div>
 </section>
 <section id="fitting-and-creating-a-cluster-expansion">
-<h3>Fitting and creating a cluster expansion<a class="headerlink" href="#fitting-and-creating-a-cluster-expansion" title="Permalink to this heading">#</a></h3>
+<h3>Fitting and creating a cluster expansion<a class="headerlink" href="#fitting-and-creating-a-cluster-expansion" title="Link to this heading">#</a></h3>
 <p>Using the generated feature matrix and property vector fit a cluster expansion.
 In this case we use simple linear regression, although for most cases this will
 not be appropriate and a regularized regression model will yield a much better
@@ -564,7 +564,7 @@ expansion for future reproducibility (although this is not strictly necessary).<
 </div>
 </section>
 <section id="creating-an-ensemble-for-monte-carlo-sampling">
-<h3>Creating an ensemble for Monte Carlo Sampling<a class="headerlink" href="#creating-an-ensemble-for-monte-carlo-sampling" title="Permalink to this heading">#</a></h3>
+<h3>Creating an ensemble for Monte Carlo Sampling<a class="headerlink" href="#creating-an-ensemble-for-monte-carlo-sampling" title="Link to this heading">#</a></h3>
 <p>Creating an ensemble only requires the cluster expansion and a supercell matrix
 to define the sampling domain.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Ensemble</span>
@@ -575,7 +575,7 @@ to define the sampling domain.</p>
 </div>
 </section>
 <section id="running-monte-carlo-sampling">
-<h3>Running Monte Carlo sampling<a class="headerlink" href="#running-monte-carlo-sampling" title="Permalink to this heading">#</a></h3>
+<h3>Running Monte Carlo sampling<a class="headerlink" href="#running-monte-carlo-sampling" title="Link to this heading">#</a></h3>
 <p>To generate MC samples for the ensemble, we need to create a sampler
 object.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">smol.moca</span> <span class="kn">import</span> <span class="n">Sampler</span>
@@ -604,7 +604,7 @@ to run MC sampling.</p>
 </div>
 </section>
 <section id="saving-the-generated-objects-and-data">
-<h3>Saving the generated objects and data<a class="headerlink" href="#saving-the-generated-objects-and-data" title="Permalink to this heading">#</a></h3>
+<h3>Saving the generated objects and data<a class="headerlink" href="#saving-the-generated-objects-and-data" title="Link to this heading">#</a></h3>
 <p>To save the generated objects for the previous workflow we can simply use the
 provided convenience io functionality. However, all main classes are
 serializable just as pymatgen and so can be saved as json dictionaries or
@@ -725,7 +725,7 @@ package.</p>
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

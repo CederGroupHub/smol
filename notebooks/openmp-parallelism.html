@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Using OpenMP parallelism &#8212; smol 0.5.0 documentation</title>
+    <title>Using OpenMP parallelism &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -37,9 +37,9 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/openmp-parallelism';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../_static/require.js?v=d4dd881e"></script>
     <script src="../_static/custom.js?v=1f4f4097"></script>
@@ -229,7 +229,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -389,7 +389,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -481,7 +481,7 @@ document.write(`
                   
   <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.0/docs/src/notebooks/openmp-parallelism.ipynb">docs/src/notebooks/openmp-parallelism.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.1/docs/src/notebooks/openmp-parallelism.ipynb">docs/src/notebooks/openmp-parallelism.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -495,7 +495,7 @@ document.write(`
     }
   </script>
 </div><section id="Using-OpenMP-parallelism">
-<h1>Using OpenMP parallelism<a class="headerlink" href="#Using-OpenMP-parallelism" title="Permalink to this heading">#</a></h1>
+<h1>Using OpenMP parallelism<a class="headerlink" href="#Using-OpenMP-parallelism" title="Link to this heading">#</a></h1>
 <p><strong>smol</strong> allows computing correlation functions and cluster interactions with openmp thread based parallelization, which can have important performance benefits for MC simulations of large systems or those with many allowed species.</p>
 <p>The settings for the best performance improvements depend on the particular system and the machine being used, so we recommend that you always do a quick benchmark as illustrated in this notebook to find the optimal settings.</p>
 <div class="nbinput nblast docutils container">
@@ -512,7 +512,7 @@ document.write(`
 </div>
 </div>
 <section id="0)-Setup-an-ensemble-and-a-sampler-from-a-cluster-expansion">
-<h2>0) Setup an ensemble and a sampler from a cluster expansion<a class="headerlink" href="#0)-Setup-an-ensemble-and-a-sampler-from-a-cluster-expansion" title="Permalink to this heading">#</a></h2>
+<h2>0) Setup an ensemble and a sampler from a cluster expansion<a class="headerlink" href="#0)-Setup-an-ensemble-and-a-sampler-from-a-cluster-expansion" title="Link to this heading">#</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -540,7 +540,7 @@ document.write(`
 </div>
 </section>
 <section id="1)-Setting-the-number-of-threads-to-benchmark-parallelism-improvements">
-<h2>1) Setting the number of threads to benchmark parallelism improvements<a class="headerlink" href="#1)-Setting-the-number-of-threads-to-benchmark-parallelism-improvements" title="Permalink to this heading">#</a></h2>
+<h2>1) Setting the number of threads to benchmark parallelism improvements<a class="headerlink" href="#1)-Setting-the-number-of-threads-to-benchmark-parallelism-improvements" title="Link to this heading">#</a></h2>
 <p>The default number of threads is set to 2 when <strong>smol</strong> is built with openmp is enabled and the machine has at least 2 cores. The default number of threads can be overriden by setting the <code class="docutils literal notranslate"><span class="pre">OMP_NUM_THREADS</span></code> environment variable.</p>
 <p>Additionally, the number of threads used can also be set for <code class="docutils literal notranslate"><span class="pre">ClusterSubspace</span></code>, <code class="docutils literal notranslate"><span class="pre">ClusterExpansionProcessor</span></code>, and <code class="docutils literal notranslate"><span class="pre">ClusterDecompositionProcessor</span></code> instances at runtime.</p>
 <div class="nbinput docutils container">
@@ -565,7 +565,7 @@ The processor is set to use 2 openmp threads to compute local changes.
 </pre></div></div>
 </div>
 <section id="1.1)-Benchmark-performance-improvement-for-full-computations">
-<h3>1.1) Benchmark performance improvement for full computations<a class="headerlink" href="#1.1)-Benchmark-performance-improvement-for-full-computations" title="Permalink to this heading">#</a></h3>
+<h3>1.1) Benchmark performance improvement for full computations<a class="headerlink" href="#1.1)-Benchmark-performance-improvement-for-full-computations" title="Link to this heading">#</a></h3>
 <p>The attribute <code class="docutils literal notranslate"><span class="pre">num_threads_full</span></code> of the processor sets how many threads are used to compute a full vector, since this operation requires more computations compared to local changes it will usually have better performance gains when increasing the number of threads before the parallelization overhead becomes significant.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -680,7 +680,7 @@ The processor is set to use 2 openmp threads to compute local changes.
 </div>
 </section>
 <section id="1.2)-Benchmark-performance-improvement-for-computations-of-local-changes">
-<h3>1.2) Benchmark performance improvement for computations of local changes<a class="headerlink" href="#1.2)-Benchmark-performance-improvement-for-computations-of-local-changes" title="Permalink to this heading">#</a></h3>
+<h3>1.2) Benchmark performance improvement for computations of local changes<a class="headerlink" href="#1.2)-Benchmark-performance-improvement-for-computations-of-local-changes" title="Link to this heading">#</a></h3>
 <p>The attribute <code class="docutils literal notranslate"><span class="pre">num_threads</span></code> of the processor sets how many threads are used to compute a changes in a vector from local changes (aka flips/swaps/steps). Since the runtime of these calculations are nearly independent of supercell size, better performance improvements will likely be obtained for large expansions (ie those with a large number of clusters)</p>
 <p>When running MC simulations this is the relevant place to set the number of threads.</p>
 <div class="nbinput nblast docutils container">
@@ -834,7 +834,7 @@ The processor is set to use 2 openmp threads to compute local changes.
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

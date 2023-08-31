@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Creating a Cluster Expansion with an additional Ewald electrostatic term &#8212; smol 0.5.0 documentation</title>
+    <title>Creating a Cluster Expansion with an additional Ewald electrostatic term &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -37,9 +37,9 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/creating-a-ce-w-electrostatics';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../_static/require.js?v=d4dd881e"></script>
     <script src="../_static/custom.js?v=1f4f4097"></script>
@@ -229,7 +229,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -389,7 +389,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -481,7 +481,7 @@ document.write(`
                   
   <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.0/docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb">docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.1/docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb">docs/src/notebooks/creating-a-ce-w-electrostatics.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -495,7 +495,7 @@ document.write(`
     }
   </script>
 </div><section id="Creating-a-Cluster-Expansion-with-an-additional-Ewald-electrostatic-term">
-<h1>Creating a Cluster Expansion with an additional Ewald electrostatic term<a class="headerlink" href="#Creating-a-Cluster-Expansion-with-an-additional-Ewald-electrostatic-term" title="Permalink to this heading">#</a></h1>
+<h1>Creating a Cluster Expansion with an additional Ewald electrostatic term<a class="headerlink" href="#Creating-a-Cluster-Expansion-with-an-additional-Ewald-electrostatic-term" title="Link to this heading">#</a></h1>
 <p>Fitting cluster expansions with an ewald term was proposed by former student Will Richards. See chapter 4.6 of his <a class="reference external" href="https://ceder.berkeley.edu/theses/Will_Richards_2017.pdf">thesis</a> for details.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -522,7 +522,7 @@ document.write(`
 </div>
 </div>
 <section id="1)-Create-the-cluster-subspace">
-<h2>1) Create the cluster subspace<a class="headerlink" href="#1)-Create-the-cluster-subspace" title="Permalink to this heading">#</a></h2>
+<h2>1) Create the cluster subspace<a class="headerlink" href="#1)-Create-the-cluster-subspace" title="Link to this heading">#</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -536,7 +536,7 @@ document.write(`
 </div>
 </section>
 <section id="2)-Add-the-ewald-term.">
-<h2>2) Add the ewald term.<a class="headerlink" href="#2)-Add-the-ewald-term." title="Permalink to this heading">#</a></h2>
+<h2>2) Add the ewald term.<a class="headerlink" href="#2)-Add-the-ewald-term." title="Link to this heading">#</a></h2>
 <p>An <code class="docutils literal notranslate"><span class="pre">EwaldTerm</span></code> can be added to a cluster expansion to account for long range electrostatic interactions in ionic materials and therefore reduce the cluster complexity required to train the cluster expansion.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -552,7 +552,7 @@ document.write(`
 </div>
 </div>
 <section id="2.1)-The-Electrostatic-term">
-<h3>2.1) The Electrostatic term<a class="headerlink" href="#2.1)-The-Electrostatic-term" title="Permalink to this heading">#</a></h3>
+<h3>2.1) The Electrostatic term<a class="headerlink" href="#2.1)-The-Electrostatic-term" title="Link to this heading">#</a></h3>
 <p>The last entry in the correlation vector corresponds to the electrostatic energy from the Ewald summation. It essentially is the normalized electrostatic interaction energy. Since it has units of energy it is not rigorously a correlation like the orbit correlations which are unitless.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -579,7 +579,7 @@ The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is
 </section>
 </section>
 <section id="3)-Creating-the-cluster-expansion">
-<h2>3) Creating the cluster expansion<a class="headerlink" href="#3)-Creating-the-cluster-expansion" title="Permalink to this heading">#</a></h2>
+<h2>3) Creating the cluster expansion<a class="headerlink" href="#3)-Creating-the-cluster-expansion" title="Link to this heading">#</a></h2>
 <p>Preparing the training data, fiting and creating the cluster expansion with the Ewald term is same procedure as done for a regular cluster expansion.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
@@ -609,7 +609,7 @@ The Ewald interaction for a structure with composition Li+1 Ni4+5 Ni3+1 O2-12 is
 </div>
 </div>
 <section id="3.1)-Check-the-quality-of-the-fit-and-the-%22dielectric%22-constant">
-<h3>3.1) Check the quality of the fit and the “dielectric” constant<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit-and-the-%22dielectric%22-constant" title="Permalink to this heading">#</a></h3>
+<h3>3.1) Check the quality of the fit and the “dielectric” constant<a class="headerlink" href="#3.1)-Check-the-quality-of-the-fit-and-the-%22dielectric%22-constant" title="Link to this heading">#</a></h3>
 <p>We will check the quality of the fit with the simple methods from before.</p>
 <p>It is also useful to look at the value of the fit coefficient obtained for the Ewald interaction, since its inverse can be interpreted as a dielectric constant.</p>
 <div class="nbinput docutils container">
@@ -644,7 +644,7 @@ Fitted dielectric constant 9.413114998055713
 </section>
 </section>
 <section id="4)-Constraining-the-value-of-the-%22dielectric%22-constant">
-<h2>4) Constraining the value of the “dielectric” constant<a class="headerlink" href="#4)-Constraining-the-value-of-the-%22dielectric%22-constant" title="Permalink to this heading">#</a></h2>
+<h2>4) Constraining the value of the “dielectric” constant<a class="headerlink" href="#4)-Constraining-the-value-of-the-%22dielectric%22-constant" title="Link to this heading">#</a></h2>
 <p>Sometimes we want to constrain the obtained value of the dielectric constant, when it is too large or when it is negative (which would mean higher electrostatic interaction energy is more favorable?)</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
@@ -686,7 +686,7 @@ Fitted dielectric constant 5.0
 </pre></div></div>
 </div>
 <section id="4.1)-If-you-want-to-play-with-decorators-you-can-also-do-the-above-in-a-cleaner-looking-way.">
-<h3>4.1) If you want to play with decorators you can also do the above in a cleaner looking way.<a class="headerlink" href="#4.1)-If-you-want-to-play-with-decorators-you-can-also-do-the-above-in-a-cleaner-looking-way." title="Permalink to this heading">#</a></h3>
+<h3>4.1) If you want to play with decorators you can also do the above in a cleaner looking way.<a class="headerlink" href="#4.1)-If-you-want-to-play-with-decorators-you-can-also-do-the-above-in-a-cleaner-looking-way." title="Link to this heading">#</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
@@ -725,7 +725,7 @@ Fitted dielectric constant 5.0
 </section>
 </section>
 <section id="5)-Save-work">
-<h2>5) Save work<a class="headerlink" href="#5)-Save-work" title="Permalink to this heading">#</a></h2>
+<h2>5) Save work<a class="headerlink" href="#5)-Save-work" title="Link to this heading">#</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -835,7 +835,7 @@ Fitted dielectric constant 5.0
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

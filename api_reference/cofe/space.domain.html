@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Domain &#8212; smol 0.5.0 documentation</title>
+    <title>Domain &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -36,16 +36,16 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/cofe/space.domain';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../_static/require.js?v=d4dd881e"></script>
     <script src="../../_static/custom.js?v=1f4f4097"></script>
@@ -228,7 +228,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -388,7 +388,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -521,7 +521,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="module-smol.cofe.space.domain">
-<span id="domain"></span><h1>Domain<a class="headerlink" href="#module-smol.cofe.space.domain" title="Permalink to this heading">#</a></h1>
+<span id="domain"></span><h1>Domain<a class="headerlink" href="#module-smol.cofe.space.domain" title="Link to this heading">#</a></h1>
 <p>Implementation of SiteSpace and functions to get spaces and allowed species.</p>
 <p>Implementation functions to generate lists of site spaces and allowed species
 for a given disordered structure.</p>
@@ -530,7 +530,7 @@ including special species such as vacancies. A site spaces makes up the domain
 of a site function and many site spaces make up the space of configurations.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SiteSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#SiteSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SiteSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#SiteSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Hashable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MSONable</span></code></p>
 <p>Represents a site space.</p>
 <p>A site spaces is a set of allowed species at a site and their corresponding
@@ -549,7 +549,7 @@ site space.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace.as_dict">
-<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#SiteSpace.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.as_dict" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#SiteSpace.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.as_dict" title="Link to this definition">#</a></dt>
 <dd><p>Get MSONable dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -560,19 +560,19 @@ site space.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace.codes">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">codes</span></span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.codes" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">codes</span></span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.codes" title="Link to this definition">#</a></dt>
 <dd><p>Return range of species (not necessarily sub-lattice encodings).</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace.composition">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">composition</span></span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.composition" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">composition</span></span><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.composition" title="Link to this definition">#</a></dt>
 <dd><p>Return the underlying composition.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.SiteSpace.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#SiteSpace.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.from_dict" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#SiteSpace.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.SiteSpace.from_dict" title="Link to this definition">#</a></dt>
 <dd><p>Create a SiteSpace from dict representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -585,7 +585,7 @@ site space.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.Vacancy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Vacancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oxidation_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#Vacancy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.Vacancy" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Vacancy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'A'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oxidation_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#Vacancy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.Vacancy" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DummySpecies</span></code></p>
 <p>Wrapper class around DummySpecie to treat vacancies as their own species.</p>
 <p>Initialize a Vacancy.</p>
@@ -609,7 +609,7 @@ the charge of a point defect. Defaults to zero.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.get_allowed_species">
-<span class="sig-name descname"><span class="pre">get_allowed_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#get_allowed_species"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.get_allowed_species" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_allowed_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#get_allowed_species"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.get_allowed_species" title="Link to this definition">#</a></dt>
 <dd><p>Get the allowed species for each site in a disordered structure.</p>
 <p>This will get all the allowed species for each site in a pymatgen structure.
 If the site composition does not add to 1, a Vacancy will be appended to
@@ -633,7 +633,7 @@ be disordered, otherwise there is no point in using this.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.get_site_spaces">
-<span class="sig-name descname"><span class="pre">get_site_spaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#get_site_spaces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.get_site_spaces" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_site_spaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_measure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#get_site_spaces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.get_site_spaces" title="Link to this definition">#</a></dt>
 <dd><p>Get site spaces for each site in a disordered structure.</p>
 <p>Method to obtain the single site spaces for the sites in a structure.
 The single site spaces are represented by the allowed species for each site
@@ -663,7 +663,7 @@ otherwise a uniform measure is assumed.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.space.domain.get_species">
-<span class="sig-name descname"><span class="pre">get_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#get_species"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.get_species" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">get_species</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/space/domain.html#get_species"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.space.domain.get_species" title="Link to this definition">#</a></dt>
 <dd><p>Get specie object.</p>
 <p>Wraps pymatgen.core.periodic_table.get_el_sp to be able to catch and
 return Vacancies when needed.</p>
@@ -796,7 +796,7 @@ properties that can be determined.</p>
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

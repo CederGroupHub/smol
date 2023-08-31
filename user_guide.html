@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>User Guide &#8212; smol 0.5.0 documentation</title>
+    <title>User Guide &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -36,16 +36,16 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="_static/require.js?v=d4dd881e"></script>
     <script src="_static/custom.js?v=1f4f4097"></script>
@@ -228,7 +228,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -388,7 +388,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -479,7 +479,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="user-guide">
-<span id="id1"></span><h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this heading">#</a></h1>
+<span id="id1"></span><h1>User Guide<a class="headerlink" href="#user-guide" title="Link to this heading">#</a></h1>
 <p><strong>smol</strong> implements functionality and extensions of CE-MC methodology. It includes tools
 to define, generate and fit a cluster expansion (or more generally an applied lattice
 model). Additionally, it includes tools to run Monte Carlo simulations to sample
@@ -495,7 +495,7 @@ Hamiltonian (and a few other Hamiltonian models).</p></li>
 functions to generate random, special-quasirandom, and ground-state structures.</p></li>
 </ul>
 <section id="overview-diagram">
-<h2>Overview diagram<a class="headerlink" href="#overview-diagram" title="Permalink to this heading">#</a></h2>
+<h2>Overview diagram<a class="headerlink" href="#overview-diagram" title="Link to this heading">#</a></h2>
 <p>An overview diagram of the main classes and data inputs necessary to build and sample
 a lattice model is shown below.</p>
 <img alt="_images/smol_workflow.svg" class="dark-light p-2" src="_images/smol_workflow.svg" /><p>Following the diagram above, the general workflow to construct, fit and sample a lattice
@@ -533,12 +533,12 @@ detailed description of the package is given in the
 </section>
 <hr class="docutils" />
 <section id="main-classes">
-<h2>Main classes<a class="headerlink" href="#main-classes" title="Permalink to this heading">#</a></h2>
+<h2>Main classes<a class="headerlink" href="#main-classes" title="Link to this heading">#</a></h2>
 <p>Below is a general description of the core classes in each submodule, to help understand
 the design, usage and capabilities of <strong>smol</strong>. You can also refer to the <a class="reference internal" href="api_reference/index.html#api-ref"><span class="std std-ref">API Reference</span></a>
 for full documentation of all classes and functions in the package.</p>
 <section id="cluster-orbit-function-expansions-package">
-<span id="smol-cofe-ug"></span><h3>Cluster Orbit Function Expansions package<a class="headerlink" href="#cluster-orbit-function-expansions-package" title="Permalink to this heading">#</a></h3>
+<span id="smol-cofe-ug"></span><h3>Cluster Orbit Function Expansions package<a class="headerlink" href="#cluster-orbit-function-expansions-package" title="Link to this heading">#</a></h3>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">smol.cofe</span></code> includes the necessary classes to define, train, and test cluster
 expansions. A cluster expansion is essentially a way to fit a function of
 configurational degrees of freedom using a specific set of basis functions that
@@ -555,7 +555,7 @@ cluster expansions refer to this document or any of following references
 <li><p><a class="reference internal" href="#cluster-expansion-ug"><span class="std std-ref">Cluster expansion</span></a></p></li>
 </ul>
 <section id="cluster-subspace">
-<span id="cluster-subspace-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">Cluster</span> <span class="pre">subspace</span></code><a class="headerlink" href="#cluster-subspace" title="Permalink to this heading">#</a></h4>
+<span id="cluster-subspace-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">Cluster</span> <span class="pre">subspace</span></code><a class="headerlink" href="#cluster-subspace" title="Link to this heading">#</a></h4>
 <p><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> contains the finite set of orbits and orbit basis
 functions to be included in the cluster expansion.
 In general, a cluster expansion is created by first generating a
@@ -580,7 +580,7 @@ redundant (frame) expansion using site indicator functions
 <p>Full documentation of the class is available here, <a class="reference internal" href="api_reference/cofe/clusterspace.html#cluster-space"><span class="std std-ref">Cluster Spaces</span></a>.</p>
 </section>
 <section id="structure-wrangler">
-<span id="structure-wrangler-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">Structure</span> <span class="pre">wrangler</span></code><a class="headerlink" href="#structure-wrangler" title="Permalink to this heading">#</a></h4>
+<span id="structure-wrangler-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">Structure</span> <span class="pre">wrangler</span></code><a class="headerlink" href="#structure-wrangler" title="Link to this heading">#</a></h4>
 <p><code class="xref py py-class docutils literal notranslate"><span class="pre">StructureWrangler</span></code> handles input data structures and properties
 to fit to the cluster expansion.
 Once a set of structures and their relevant properties (for example, their
@@ -594,7 +594,7 @@ including methods for checking, preparing, and filtering the data.</p>
 <p>Full documentation of the class is available here: <a class="reference internal" href="api_reference/cofe/wrangling.sw.html#structure-wrangler"><span class="std std-ref">Structure Wrangler</span></a>.</p>
 </section>
 <section id="cluster-expansion">
-<span id="cluster-expansion-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">Cluster</span> <span class="pre">expansion</span></code><a class="headerlink" href="#cluster-expansion" title="Permalink to this heading">#</a></h4>
+<span id="cluster-expansion-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">Cluster</span> <span class="pre">expansion</span></code><a class="headerlink" href="#cluster-expansion" title="Link to this heading">#</a></h4>
 <p><code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterExpansion</span></code> contains the fitted coefficients of the cluster
 expansion for predicting CE properties of new structures.
 Based on the feature matrix from the <code class="xref py py-class docutils literal notranslate"><span class="pre">StructureWrangler</span></code>, one can fit
@@ -615,7 +615,7 @@ classes for MC sampling.</p>
 </section>
 </section>
 <section id="monte-carlo-package">
-<span id="smol-moca-ug"></span><h3>Monte Carlo package<a class="headerlink" href="#monte-carlo-package" title="Permalink to this heading">#</a></h3>
+<span id="smol-moca-ug"></span><h3>Monte Carlo package<a class="headerlink" href="#monte-carlo-package" title="Link to this heading">#</a></h3>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">smol.moca</span></code> includes classes and functions to run Markov Chain Monte Carlo
 sampling of statistical mechanical ensembles represented by a cluster expansion
 Hamiltonian (there is also support to run MCMC with simple pair interaction
@@ -642,7 +642,7 @@ prim).</p>
 </li>
 </ul>
 <section id="ensemble">
-<span id="ensemble-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">Ensemble</span></code><a class="headerlink" href="#ensemble" title="Permalink to this heading">#</a></h4>
+<span id="ensemble-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">Ensemble</span></code><a class="headerlink" href="#ensemble" title="Link to this heading">#</a></h4>
 <p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Ensemble</span></code> class represents the specific statistical mechanics ensemble
 by defining the relevant thermodynamic boundary conditions in order to compute
 the appropriate ensemble probability ratios. For example,
@@ -658,7 +658,7 @@ when sampling using a <code class="xref py py-class docutils literal notranslate
 <p>Full documentation of the class and its subclasses are available here: <a class="reference internal" href="api_reference/moca/ensemble.html#ensemble"><span class="std std-ref">Ensembles</span></a>.</p>
 </section>
 <section id="sampler">
-<span id="sampler-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code><a class="headerlink" href="#sampler" title="Permalink to this heading">#</a></h4>
+<span id="sampler-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code><a class="headerlink" href="#sampler" title="Link to this heading">#</a></h4>
 <p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code> takes care of running MCMC sampling for a given ensemble.
 The easiest way to create a sampler (which suffices for most use cases) is to
 use the <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_ensemble()</span></code> class method, which is sufficient for most cases using
@@ -669,7 +669,7 @@ and elaborate MCMC sampling more knowledge of the underlying classes (especially
 <p>Full documentation of the class is available here: <a class="reference internal" href="api_reference/moca/sampler.sampler.html#sampler"><span class="std std-ref">Sampler</span></a>.</p>
 </section>
 <section id="samplecontainer">
-<span id="samplecontainer-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleContainer</span></code><a class="headerlink" href="#samplecontainer" title="Permalink to this heading">#</a></h4>
+<span id="samplecontainer-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">SampleContainer</span></code><a class="headerlink" href="#samplecontainer" title="Link to this heading">#</a></h4>
 <p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">SampleContainer</span></code> stores data from Monte Carlo sampling simulations,
 especially the occupancies and feature vectors. For lengthy MC simulations a
 <code class="xref py py-class docutils literal notranslate"><span class="pre">SampleContainer</span></code> allows streaming directly to an
@@ -680,7 +680,7 @@ mean/variance/minimum of energies, enthalpies, and composition.</p>
 <p>Full documentation of the class is available here: <a class="reference internal" href="api_reference/moca/sampler.container.html#sample-container"><span class="std std-ref">Sample Container</span></a>.</p>
 </section>
 <section id="processors">
-<span id="processors-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">Processors</span></code><a class="headerlink" href="#processors" title="Permalink to this heading">#</a></h4>
+<span id="processors-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">Processors</span></code><a class="headerlink" href="#processors" title="Link to this heading">#</a></h4>
 <p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code> is used to optimally compute correlation vectors, energy,
 and differences in these from variations in site occupancies. Processors
 compute values only for a specific supercell specified by a given supercell
@@ -697,7 +697,7 @@ specific use cases, users will need to instantiate the appropriate processor dir
 </section>
 </section>
 <section id="cluster-analysis-and-applications-package">
-<span id="smol-capp-ug"></span><h3>Cluster Analysis and Applications package<a class="headerlink" href="#cluster-analysis-and-applications-package" title="Permalink to this heading">#</a></h3>
+<span id="smol-capp-ug"></span><h3>Cluster Analysis and Applications package<a class="headerlink" href="#cluster-analysis-and-applications-package" title="Link to this heading">#</a></h3>
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">smol.capp</span></code> includes functions and classes that enable further analysis and
 applications of lattice models and cluster expansions. Notably, this includes
 classes to generate special quasirandom structures (SQS) and to perform ground-state
@@ -708,7 +708,7 @@ searches.</p>
 <li><p><a class="reference internal" href="#ground-state-ug"><span class="std std-ref">PeriodicGroundStateSolver</span></a></p></li>
 </ul>
 <section id="stochasticsqsgenerator">
-<span id="sqs-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">StochasticSQSGenerator</span></code><a class="headerlink" href="#stochasticsqsgenerator" title="Permalink to this heading">#</a></h4>
+<span id="sqs-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">StochasticSQSGenerator</span></code><a class="headerlink" href="#stochasticsqsgenerator" title="Link to this heading">#</a></h4>
 <p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">StochasticSQSGenerator</span></code> class implements the stochastic SQS generation
 algorithm proposed by
 <a class="reference external" href="https://doi.org/10.1016/j.calphad.2013.06.006">van de Walle, A. et al.</a> that allows
@@ -718,7 +718,7 @@ efficient method based on cluster interactions instead.</p>
 <p>Full documentation of the class is available here: <a class="reference internal" href="api_reference/capp/generate.special.html#special"><span class="std std-ref">Special Structures</span></a>.</p>
 </section>
 <section id="periodicgroundstatesolver">
-<span id="ground-state-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">PeriodicGroundStateSolver</span></code><a class="headerlink" href="#periodicgroundstatesolver" title="Permalink to this heading">#</a></h4>
+<span id="ground-state-ug"></span><h4><code class="xref py py-class docutils literal notranslate"><span class="pre">PeriodicGroundStateSolver</span></code><a class="headerlink" href="#periodicgroundstatesolver" title="Link to this heading">#</a></h4>
 <p>Ground-state searches can be performed using the <code class="xref py py-class docutils literal notranslate"><span class="pre">PeriodicGroundStateSolver</span></code>,
 which implements the ground state search procedure for a given supercell with periodic
 boundary conditions proposed by
@@ -851,7 +851,7 @@ expansion constructed with any arbitrary basis and complexity.</p>
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Statistical Mechanics on Lattices &#8212; smol 0.5.0 documentation</title>
+    <title>Statistical Mechanics on Lattices &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -36,16 +36,16 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="_static/require.js?v=d4dd881e"></script>
     <script src="_static/custom.js?v=1f4f4097"></script>
@@ -227,7 +227,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -387,7 +387,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -454,7 +454,7 @@ document.write(`
   <div class="toctree-wrapper compound">
 </div>
 <section id="statistical-mechanics-on-lattices">
-<h1>Statistical Mechanics on Lattices<a class="headerlink" href="#statistical-mechanics-on-lattices" title="Permalink to this heading">#</a></h1>
+<h1>Statistical Mechanics on Lattices<a class="headerlink" href="#statistical-mechanics-on-lattices" title="Link to this heading">#</a></h1>
 <p><em>Lightweight but caffeinated Python implementation of computational methods
 for statistical mechanical calculations of configurational states in
 crystalline materials.</em></p>
@@ -472,7 +472,7 @@ dependencies and built-in functionality—it has a modular design that closely
 follows underlying mathematical formalism and provides useful abstractions to
 easily extend existing methods or implement and test new ones.</p>
 <section id="functionality">
-<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this heading">#</a></h2>
+<h2>Functionality<a class="headerlink" href="#functionality" title="Link to this heading">#</a></h2>
 <p><strong>smol</strong> currently includes the following functionality:</p>
 <ul class="simple">
 <li><p>Defining cluster expansion terms for a given disordered structure using a
@@ -490,13 +490,15 @@ canonical, semigrand canonical, and charge neutral semigrand canonical ensembles
 using a Metropolis or a Wang-Landau sampler.</p></li>
 <li><p>Special quasi-random structure generation based on either correlation vectors or
 cluster interaction vectors.</p></li>
+<li><p>Solving for periodic ground-states of any given cluster expansion with or without
+electrostatics over a given supercell.</p></li>
 </ul>
 <p><strong>smol</strong> is built on top of <a class="reference external" href="https://pymatgen.org/">pymatgen</a> so any pre/post
 structure analysis can be done seamlessly using the various functionality
 supported there.</p>
 </section>
 <section id="citing">
-<h2>Citing<a class="headerlink" href="#citing" title="Permalink to this heading">#</a></h2>
+<h2>Citing<a class="headerlink" href="#citing" title="Link to this heading">#</a></h2>
 <p>If you find <strong>smol</strong> useful please cite the following publication,</p>
 <blockquote>
 <div><p>Barroso-Luque, L., Yang, J.H., Xie, F., Chen T., Kam, R.L., Jadidi, Z., Zhong, P.
@@ -515,7 +517,7 @@ methodology developed by various researchers. Please see the
 <a class="reference internal" href="citing.html"><span class="doc">citing page</span></a> for additional references.</p>
 </section>
 <section id="license">
-<h2>License<a class="headerlink" href="#license" title="Permalink to this heading">#</a></h2>
+<h2>License<a class="headerlink" href="#license" title="Link to this heading">#</a></h2>
 <p><strong>smol</strong> is distributed openly under a modified 3-clause BSD licence.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Statistical</span> <span class="n">Mechanics</span> <span class="n">on</span> <span class="n">Lattices</span> <span class="p">(</span><span class="n">smol</span><span class="p">)</span> <span class="n">Copyright</span> <span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="mi">2022</span><span class="p">,</span> <span class="n">The</span> <span class="n">Regents</span>
 <span class="n">of</span> <span class="n">the</span> <span class="n">University</span> <span class="n">of</span> <span class="n">California</span><span class="p">,</span> <span class="n">through</span> <span class="n">Lawrence</span> <span class="n">Berkeley</span> <span class="n">National</span>
@@ -657,7 +659,7 @@ methodology developed by various researchers. Please see the
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

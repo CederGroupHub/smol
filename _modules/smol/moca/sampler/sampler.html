@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.moca.sampler.sampler &#8212; smol 0.5.0 documentation</title>
+    <title>smol.moca.sampler.sampler &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -35,16 +35,16 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/smol/moca/sampler/sampler';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../../../_static/require.js?v=d4dd881e"></script>
     <script src="../../../../_static/custom.js?v=1f4f4097"></script>
@@ -225,7 +225,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -381,7 +381,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -496,7 +496,9 @@ document.write(`
 <span class="kn">from</span> <span class="nn">smol.utils.progressbar</span> <span class="kn">import</span> <span class="n">progress_bar</span>
 
 
-<div class="viewcode-block" id="Sampler"><a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler">[docs]</a><span class="k">class</span> <span class="nc">Sampler</span><span class="p">:</span>
+<div class="viewcode-block" id="Sampler">
+<a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler">[docs]</a>
+<span class="k">class</span> <span class="nc">Sampler</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A sampler is used to run MCMC sampling simulations.</span>
 
@@ -526,7 +528,9 @@ document.write(`
         <span class="c1">#  Save kernel specifications  #</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_container</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">kernels</span> <span class="o">=</span> <span class="p">[</span><span class="n">kernel</span><span class="o">.</span><span class="n">spec</span> <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="n">kernels</span><span class="p">]</span>
 
-<div class="viewcode-block" id="Sampler.from_ensemble"><a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.from_ensemble">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Sampler.from_ensemble">
+<a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.from_ensemble">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_ensemble</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">ensemble</span><span class="p">,</span>
@@ -614,6 +618,7 @@ document.write(`
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">mckernels</span><span class="p">,</span> <span class="n">container</span><span class="p">)</span></div>
 
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">mckernels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the underlying ensemble.&quot;&quot;&quot;</span>
@@ -629,15 +634,23 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the SampleContainer.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container</span>
 
-<div class="viewcode-block" id="Sampler.efficiency"><a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.efficiency">[docs]</a>    <span class="k">def</span> <span class="nf">efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Sampler.efficiency">
+<a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.efficiency">[docs]</a>
+    <span class="k">def</span> <span class="nf">efficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the efficiency of MCMC sampling (accepted/total).&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">sampling_efficiency</span><span class="p">(</span><span class="n">discard</span><span class="o">=</span><span class="n">discard</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="n">flat</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Sampler.clear_samples"><a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.clear_samples">[docs]</a>    <span class="k">def</span> <span class="nf">clear_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Sampler.clear_samples">
+<a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.clear_samples">[docs]</a>
+    <span class="k">def</span> <span class="nf">clear_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear samples from sampler container.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Sampler.sample"><a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">initial_occupancies</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Sampler.sample">
+<a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.sample">[docs]</a>
+    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">initial_occupancies</span><span class="p">,</span> <span class="n">thin_by</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate MCMC samples.</span>
 
 <span class="sd">        Yield a sampler state every `thin_by` iterations. A state is give by</span>
@@ -685,7 +698,10 @@ document.write(`
                 <span class="c1"># yield copies</span>
                 <span class="k">yield</span> <span class="n">trace</span></div>
 
-<div class="viewcode-block" id="Sampler.run"><a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+
+<div class="viewcode-block" id="Sampler.run">
+<a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nsteps</span><span class="p">,</span>
         <span class="n">initial_occupancies</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -772,11 +788,14 @@ document.write(`
             <span class="k">if</span> <span class="n">keep_last_chunk</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">clear_samples</span><span class="p">()</span></div>
 
+
         <span class="c1"># A checkpoint of aux states should be saved to container here.</span>
         <span class="c1"># Note that to save any general &quot;state&quot; we will need to make sure it is</span>
         <span class="c1"># properly serializable to save as json and also to save in h5py</span>
 
-<div class="viewcode-block" id="Sampler.anneal"><a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.anneal">[docs]</a>    <span class="k">def</span> <span class="nf">anneal</span><span class="p">(</span>
+<div class="viewcode-block" id="Sampler.anneal">
+<a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.anneal">[docs]</a>
+    <span class="k">def</span> <span class="nf">anneal</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">temperatures</span><span class="p">,</span>
         <span class="n">mcmc_steps</span><span class="p">,</span>
@@ -859,7 +878,10 @@ document.write(`
         <span class="k">if</span> <span class="n">stream_chunk</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clear_samples</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Sampler.setup_sample"><a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.setup_sample">[docs]</a>    <span class="k">def</span> <span class="nf">setup_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_occupancies</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Sampler.setup_sample">
+<a class="viewcode-back" href="../../../../api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.setup_sample">[docs]</a>
+    <span class="k">def</span> <span class="nf">setup_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_occupancies</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy and reshape occupancies and compute initial trace for sampling.</span>
 
 <span class="sd">        Args:</span>
@@ -906,6 +928,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">occupancies</span><span class="p">,</span> <span class="n">trace</span></div>
 
+
     <span class="k">def</span> <span class="nf">_single_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancies</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Do a single step for all kernels.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">occupancy</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kernels</span><span class="p">,</span> <span class="n">occupancies</span><span class="p">):</span>
@@ -925,6 +948,7 @@ document.write(`
                 <span class="sa">f</span><span class="s2">&quot; be </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">occupancies</span></div>
+
 
 
 <span class="c1"># TODO potential define two _sample functions serial/parallel that get called</span>
@@ -981,7 +1005,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

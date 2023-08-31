@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.cofe.space.clusterspace &#8212; smol 0.5.0 documentation</title>
+    <title>smol.cofe.space.clusterspace &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -35,16 +35,16 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/smol/cofe/space/clusterspace';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../../../_static/require.js?v=d4dd881e"></script>
     <script src="../../../../_static/custom.js?v=1f4f4097"></script>
@@ -225,7 +225,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -381,7 +381,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -535,7 +535,9 @@ document.write(`
 <span class="n">OrbitIndices</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;OrbitIndices&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;arrays&quot;</span><span class="p">,</span> <span class="s2">&quot;container&quot;</span><span class="p">])</span>
 
 
-<div class="viewcode-block" id="ClusterSubspace"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace">[docs]</a><span class="k">class</span> <span class="nc">ClusterSubspace</span><span class="p">(</span><span class="n">MSONable</span><span class="p">):</span>
+<div class="viewcode-block" id="ClusterSubspace">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace">[docs]</a>
+<span class="k">class</span> <span class="nc">ClusterSubspace</span><span class="p">(</span><span class="n">MSONable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ClusterSubspace represents a subspace of functions of configuration.</span>
 
 <span class="sd">    A :class:`ClusterSubspace` is the main work horse used in constructing a</span>
@@ -695,7 +697,9 @@ document.write(`
         <span class="c1"># structures that have already been matched</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_supercell_orbit_inds</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="ClusterSubspace.from_cutoffs"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.from_cutoffs">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ClusterSubspace.from_cutoffs">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.from_cutoffs">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_cutoffs</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">structure</span><span class="p">,</span>
@@ -790,6 +794,7 @@ document.write(`
             <span class="n">num_threads</span><span class="o">=</span><span class="n">num_threads</span><span class="p">,</span>
             <span class="o">**</span><span class="n">matcher_kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">evaluator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -954,7 +959,9 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">block_diag</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="o">*</span><span class="p">[</span><span class="n">orb</span><span class="o">.</span><span class="n">rotation_array</span> <span class="k">for</span> <span class="n">orb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">orbits</span><span class="p">])</span>
 
-<div class="viewcode-block" id="ClusterSubspace.orbits_by_cutoffs"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs">[docs]</a>    <span class="k">def</span> <span class="nf">orbits_by_cutoffs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="ClusterSubspace.orbits_by_cutoffs">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.orbits_by_cutoffs">[docs]</a>
+    <span class="k">def</span> <span class="nf">orbits_by_cutoffs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get orbits with clusters within given diameter cutoffs (inclusive).</span>
 
 <span class="sd">        Args:</span>
@@ -972,7 +979,10 @@ document.write(`
             <span class="k">if</span> <span class="n">lower</span> <span class="o">&lt;=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">base_cluster</span><span class="o">.</span><span class="n">diameter</span> <span class="o">&lt;=</span> <span class="n">upper</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.orbit_hierarchy"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.orbit_hierarchy">[docs]</a>    <span class="k">def</span> <span class="nf">orbit_hierarchy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.orbit_hierarchy">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.orbit_hierarchy">[docs]</a>
+    <span class="k">def</span> <span class="nf">orbit_hierarchy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get orbit hierarchy by IDs.</span>
 
 <span class="sd">        The orbit hierarchy represents in inclusion relationships between orbits and</span>
@@ -1004,7 +1014,10 @@ document.write(`
             <span class="p">[],</span>
         <span class="p">]</span> <span class="o">+</span> <span class="n">sub_ids</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.function_hierarchy"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.function_hierarchy">[docs]</a>    <span class="k">def</span> <span class="nf">function_hierarchy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.function_hierarchy">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.function_hierarchy">[docs]</a>
+    <span class="k">def</span> <span class="nf">function_hierarchy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the correlation function hierarchy.</span>
 
 <span class="sd">        The function hierarchy is the relationship between specific correlation</span>
@@ -1038,7 +1051,10 @@ document.write(`
 
         <span class="k">return</span> <span class="n">hierarchy</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.orbits_from_cutoffs"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.orbits_from_cutoffs">[docs]</a>    <span class="k">def</span> <span class="nf">orbits_from_cutoffs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.orbits_from_cutoffs">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.orbits_from_cutoffs">[docs]</a>
+    <span class="k">def</span> <span class="nf">orbits_from_cutoffs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get orbits with clusters within given diameter cutoffs (inclusive).</span>
 
 <span class="sd">        Args:</span>
@@ -1075,7 +1091,10 @@ document.write(`
             <span class="k">if</span> <span class="n">lower</span><span class="p">[</span><span class="n">size</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">base_cluster</span><span class="o">.</span><span class="n">diameter</span> <span class="o">&lt;=</span> <span class="n">upper</span><span class="p">[</span><span class="n">size</span><span class="p">]</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.function_inds_from_cutoffs"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_from_cutoffs">[docs]</a>    <span class="k">def</span> <span class="nf">function_inds_from_cutoffs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.function_inds_from_cutoffs">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.function_inds_from_cutoffs">[docs]</a>
+    <span class="k">def</span> <span class="nf">function_inds_from_cutoffs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get indices of correlation functions by cluster cutoffs.</span>
 
 <span class="sd">        Args:</span>
@@ -1101,7 +1120,10 @@ document.write(`
             <span class="n">inds</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">bit_id</span><span class="p">,</span> <span class="n">orbit</span><span class="o">.</span><span class="n">bit_id</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">orbit</span><span class="p">)))</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">inds</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.add_external_term"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.add_external_term">[docs]</a>    <span class="k">def</span> <span class="nf">add_external_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">term</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.add_external_term">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.add_external_term">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_external_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">term</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an external term to the ClusterSubspace.</span>
 
 <span class="sd">        Adds an external term (e.g. an Ewald term) to the cluster expansion</span>
@@ -1118,12 +1140,18 @@ document.write(`
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;This ClusterSubspaces already has an </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">term</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_external_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">term</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.num_prims_from_matrix"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.num_prims_from_matrix">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="ClusterSubspace.num_prims_from_matrix">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.num_prims_from_matrix">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">num_prims_from_matrix</span><span class="p">(</span><span class="n">scmatrix</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get number of prim structures in a supercell for a given matrix.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">scmatrix</span><span class="p">))))</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.corr_from_structure"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.corr_from_structure">[docs]</a>    <span class="k">def</span> <span class="nf">corr_from_structure</span><span class="p">(</span>
+
+<div class="viewcode-block" id="ClusterSubspace.corr_from_structure">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.corr_from_structure">[docs]</a>
+    <span class="k">def</span> <span class="nf">corr_from_structure</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">normalized</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scmatrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">site_mapping</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get correlation vector for structure.</span>
@@ -1181,7 +1209,10 @@ document.write(`
 
         <span class="k">return</span> <span class="n">corr</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.refine_structure"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.refine_structure">[docs]</a>    <span class="k">def</span> <span class="nf">refine_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">scmatrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">site_mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.refine_structure">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.refine_structure">[docs]</a>
+    <span class="k">def</span> <span class="nf">refine_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">scmatrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">site_mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Refine a (relaxed) structure.</span>
 
 <span class="sd">        Refine a (relaxed) structure to a perfect supercell structure of the</span>
@@ -1222,7 +1253,10 @@ document.write(`
                 <span class="n">sites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Structure</span><span class="o">.</span><span class="n">from_sites</span><span class="p">(</span><span class="n">sites</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.occupancy_from_structure"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.occupancy_from_structure">[docs]</a>    <span class="k">def</span> <span class="nf">occupancy_from_structure</span><span class="p">(</span>
+
+<div class="viewcode-block" id="ClusterSubspace.occupancy_from_structure">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.occupancy_from_structure">[docs]</a>
+    <span class="k">def</span> <span class="nf">occupancy_from_structure</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">scmatrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">site_mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encode</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Occupancy string for a given structure.</span>
@@ -1294,7 +1328,10 @@ document.write(`
 
         <span class="k">return</span> <span class="n">occu</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.scmatrix_from_structure"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure">[docs]</a>    <span class="k">def</span> <span class="nf">scmatrix_from_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.scmatrix_from_structure">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.scmatrix_from_structure">[docs]</a>
+    <span class="k">def</span> <span class="nf">scmatrix_from_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get supercell matrix from a given structure.</span>
 
 <span class="sd">        Obtain the supercell structure matrix to convert the prim structure</span>
@@ -1314,7 +1351,10 @@ document.write(`
             <span class="n">scmatrix</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">return</span> <span class="n">scmatrix</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.supercell_orbit_mappings"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.supercell_orbit_mappings">[docs]</a>    <span class="k">def</span> <span class="nf">supercell_orbit_mappings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scmatrix</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.supercell_orbit_mappings">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.supercell_orbit_mappings">[docs]</a>
+    <span class="k">def</span> <span class="nf">supercell_orbit_mappings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scmatrix</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get orbit mappings for a structure from supercell of prim.</span>
 
 <span class="sd">        Return the orbit mappings for a specific supercell of the prim</span>
@@ -1334,7 +1374,10 @@ document.write(`
         <span class="n">orbit_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_orbit_indices</span><span class="p">(</span><span class="n">scmatrix</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">orbit_indices</span><span class="o">.</span><span class="n">arrays</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.get_aliased_orbits"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_aliased_orbits">[docs]</a>    <span class="k">def</span> <span class="nf">get_aliased_orbits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sc_matrix</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.get_aliased_orbits">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_aliased_orbits">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_aliased_orbits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sc_matrix</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the aliased orbits for a given supercell shape.</span>
 
 <span class="sd">        Detect the orbits that will be aliased due to translational symmetry imposed by</span>
@@ -1387,7 +1430,10 @@ document.write(`
         <span class="n">aliased_orbits</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">aliased_orbits</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">aliased_orbits</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.change_site_bases"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.change_site_bases">[docs]</a>    <span class="k">def</span> <span class="nf">change_site_bases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_basis</span><span class="p">,</span> <span class="n">orthonormal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.change_site_bases">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.change_site_bases">[docs]</a>
+    <span class="k">def</span> <span class="nf">change_site_bases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_basis</span><span class="p">,</span> <span class="n">orthonormal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Change the type of site basis used in the site basis functions.</span>
 
 <span class="sd">        Args:</span>
@@ -1403,7 +1449,10 @@ document.write(`
             <span class="n">get_orbit_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbits</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_corr_functions</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.rotate_site_basis"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.rotate_site_basis">[docs]</a>    <span class="k">def</span> <span class="nf">rotate_site_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">singlet_id</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">index1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">index2</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.rotate_site_basis">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.rotate_site_basis">[docs]</a>
+    <span class="k">def</span> <span class="nf">rotate_site_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">singlet_id</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">index1</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">index2</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a rotation to a site basis.</span>
 
 <span class="sd">        The rotation is applied around an axis normal to the span of the two</span>
@@ -1445,7 +1494,10 @@ document.write(`
             <span class="n">get_orbit_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbits</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_corr_functions</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.remove_orbits"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.remove_orbits">[docs]</a>    <span class="k">def</span> <span class="nf">remove_orbits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit_ids</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.remove_orbits">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.remove_orbits">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove_orbits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit_ids</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove whole orbits by their ids.</span>
 
 <span class="sd">        Remove orbits from cluster spaces. It is helpful to print a ClusterSubspace or</span>
@@ -1503,7 +1555,10 @@ document.write(`
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;orbits_by_diameter&quot;</span><span class="p">):</span>
             <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;orbits_by_diameter&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.remove_corr_functions"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.remove_corr_functions">[docs]</a>    <span class="k">def</span> <span class="nf">remove_corr_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corr_ids</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.remove_corr_functions">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.remove_corr_functions">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove_corr_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corr_ids</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove correlation functions by their ID&#39;s.</span>
 
 <span class="sd">        This allows more granular removal of terms involved in fitting/evaluating a</span>
@@ -1551,11 +1606,17 @@ document.write(`
                 <span class="n">get_orbit_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbits</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_corr_functions</span>
             <span class="p">)</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.copy"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.copy">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.copy">[docs]</a>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Deep copy of instance.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.structure_site_mapping"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.structure_site_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">structure_site_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supercell</span><span class="p">,</span> <span class="n">structure</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.structure_site_mapping">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.structure_site_mapping">[docs]</a>
+    <span class="k">def</span> <span class="nf">structure_site_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supercell</span><span class="p">,</span> <span class="n">structure</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get structure site mapping.</span>
 
 <span class="sd">        Returns the mapping between sites in the given structure and a prim</span>
@@ -1574,7 +1635,10 @@ document.write(`
             <span class="k">raise</span> <span class="n">StructureMatchError</span><span class="p">(</span><span class="s2">&quot;Mapping could not be found from structure.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">mapping</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.get_sub_orbits"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_orbits">[docs]</a>    <span class="k">def</span> <span class="nf">get_sub_orbits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit_id</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.get_sub_orbits">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_orbits">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_sub_orbits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit_id</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get sub orbits of the orbit for the corresponding orbit_id.</span>
 
 <span class="sd">        Args:</span>
@@ -1607,7 +1671,10 @@ document.write(`
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">orbits</span><span class="p">[</span><span class="n">orbit_id</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_sub_orbit</span><span class="p">(</span><span class="n">orbit</span><span class="p">)</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.get_sub_function_ids"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_function_ids">[docs]</a>    <span class="k">def</span> <span class="nf">get_sub_function_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corr_id</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.get_sub_function_ids">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_function_ids">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_sub_function_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">corr_id</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the bit combo ids of all sub correlation functions.</span>
 
 <span class="sd">        A sub correlation function of a given correlation function means that</span>
@@ -1644,6 +1711,7 @@ document.write(`
                     <span class="n">sub_fun_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_orbit</span><span class="o">.</span><span class="n">bit_id</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">sub_fun_ids</span></div>
+
 
     <span class="nd">@deprecated</span><span class="p">(</span>
         <span class="n">message</span><span class="o">=</span><span class="p">(</span>
@@ -1698,7 +1766,9 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">num_corr_functions</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_clusters</span> <span class="o">=</span> <span class="n">counts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
-<div class="viewcode-block" id="ClusterSubspace.get_orbit_indices"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_orbit_indices">[docs]</a>    <span class="k">def</span> <span class="nf">get_orbit_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scmatrix</span><span class="p">):</span>
+<div class="viewcode-block" id="ClusterSubspace.get_orbit_indices">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_orbit_indices">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_orbit_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scmatrix</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the OrbitIndices named tuple for a given supercell matrix.</span>
 
 <span class="sd">        If the indices have not been cached then they are generated by generating</span>
@@ -1714,6 +1784,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_supercell_orbit_inds</span><span class="p">[</span><span class="n">scm</span><span class="p">]</span> <span class="o">=</span> <span class="n">orbit_indices</span>
 
         <span class="k">return</span> <span class="n">orbit_indices</span></div>
+
 
     <span class="k">def</span> <span class="nf">_gen_orbit_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scmatrix</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Find all the cluster site indices associated with each orbit in structure.</span>
@@ -2018,7 +2089,9 @@ document.write(`
         <span class="p">]</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ClusterSubspace.from_dict"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ClusterSubspace.from_dict">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create ClusterSubspace from an MSONable dict.&quot;&quot;&quot;</span>
         <span class="n">symops</span> <span class="o">=</span> <span class="p">[</span><span class="n">SymmOp</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">so_d</span><span class="p">)</span> <span class="k">for</span> <span class="n">so_d</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;symops&quot;</span><span class="p">]]</span>
@@ -2081,7 +2154,10 @@ document.write(`
         <span class="n">cluster_subspace</span><span class="o">.</span><span class="n">_supercell_orbit_inds</span> <span class="o">=</span> <span class="n">_supercell_orbit_inds</span>
         <span class="k">return</span> <span class="n">cluster_subspace</span></div>
 
-<div class="viewcode-block" id="ClusterSubspace.as_dict"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ClusterSubspace.as_dict">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.as_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Json-serialization dict representation.</span>
 
@@ -2106,7 +2182,9 @@ document.write(`
             <span class="s2">&quot;external_terms&quot;</span><span class="p">:</span> <span class="n">jsanitize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">external_terms</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
             <span class="s2">&quot;_supercell_orb_inds&quot;</span><span class="p">:</span> <span class="n">_supercell_orb_inds</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="n">cs_dict</span></div></div>
+        <span class="k">return</span> <span class="n">cs_dict</span></div>
+</div>
+
 
 
 <span class="k">def</span> <span class="nf">invert_mapping</span><span class="p">(</span><span class="n">mapping</span><span class="p">):</span>
@@ -2174,7 +2252,9 @@ document.write(`
     <span class="k">return</span> <span class="n">all_level_mapping</span>
 
 
-<div class="viewcode-block" id="PottsSubspace"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace">[docs]</a><span class="k">class</span> <span class="nc">PottsSubspace</span><span class="p">(</span><span class="n">ClusterSubspace</span><span class="p">):</span>
+<div class="viewcode-block" id="PottsSubspace">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace">[docs]</a>
+<span class="k">class</span> <span class="nc">PottsSubspace</span><span class="p">(</span><span class="n">ClusterSubspace</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;PottsSubspace represents a subspace of functions using only indicator functions.</span>
 
 <span class="sd">    A PottsSubspace is a related model to a standard ClusterSubspace used to build</span>
@@ -2262,7 +2342,9 @@ document.write(`
             <span class="o">**</span><span class="n">matcher_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="PottsSubspace.from_cutoffs"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.from_cutoffs">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="PottsSubspace.from_cutoffs">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.from_cutoffs">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_cutoffs</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">structure</span><span class="p">,</span>
@@ -2341,7 +2423,10 @@ document.write(`
             <span class="o">**</span><span class="n">matcher_kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="PottsSubspace.get_function_decoration"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.get_function_decoration">[docs]</a>    <span class="k">def</span> <span class="nf">get_function_decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PottsSubspace.get_function_decoration">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.get_function_decoration">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_function_decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the decoration/labeling of a specific orbit function.</span>
 
 <span class="sd">        When using an indicator site basis there is 1 to 1 equivalence between</span>
@@ -2362,7 +2447,10 @@ document.write(`
         <span class="p">]</span>
         <span class="k">return</span> <span class="n">decorations</span></div>
 
-<div class="viewcode-block" id="PottsSubspace.get_orbit_decorations"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.get_orbit_decorations">[docs]</a>    <span class="k">def</span> <span class="nf">get_orbit_decorations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit_id</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PottsSubspace.get_orbit_decorations">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.get_orbit_decorations">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_orbit_decorations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all decorations/labellings of species in an orbit.</span>
 
 <span class="sd">        Args:</span>
@@ -2379,6 +2467,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">get_function_decoration</span><span class="p">(</span><span class="n">bid</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">bid</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bit_id</span><span class="p">,</span> <span class="n">bit_id</span> <span class="o">+</span> <span class="n">num_combos</span><span class="p">)</span>
         <span class="p">]</span></div>
+
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_gen_orbits_from_cutoffs</span><span class="p">(</span><span class="n">exp_struct</span><span class="p">,</span> <span class="n">cutoffs</span><span class="p">,</span> <span class="n">symops</span><span class="p">,</span> <span class="n">remove_last</span><span class="p">):</span>
@@ -2441,7 +2530,9 @@ document.write(`
 
         <span class="k">return</span> <span class="n">orbits</span>
 
-<div class="viewcode-block" id="PottsSubspace.as_dict"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PottsSubspace.as_dict">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.as_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Json-serialization dict representation.</span>
 
@@ -2453,7 +2544,10 @@ document.write(`
         <span class="n">pcs_dict</span><span class="p">[</span><span class="s2">&quot;_wo_last_cluster&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wo_last_cluster</span>
         <span class="k">return</span> <span class="n">pcs_dict</span></div>
 
-<div class="viewcode-block" id="PottsSubspace.from_dict"><a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="PottsSubspace.from_dict">
+<a class="viewcode-back" href="../../../../api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create ClusterSubspace from an MSONable dict.&quot;&quot;&quot;</span>
         <span class="c1"># pylint: disable=protected-access, no-member</span>
@@ -2464,7 +2558,9 @@ document.write(`
             <span class="k">for</span> <span class="n">orbit</span> <span class="ow">in</span> <span class="n">subspace</span><span class="o">.</span><span class="n">orbits</span><span class="p">:</span>
                 <span class="n">orbit</span><span class="o">.</span><span class="n">remove_bit_combos_by_inds</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">bit_combos</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
         <span class="n">subspace</span><span class="o">.</span><span class="n">_assign_orbit_ids</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">subspace</span></div></div>
+        <span class="k">return</span> <span class="n">subspace</span></div>
+</div>
+
 </pre></div>
 
                 </article>
@@ -2517,7 +2613,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.moca.kernel.mcusher &#8212; smol 0.5.0 documentation</title>
+    <title>smol.moca.kernel.mcusher &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -35,16 +35,16 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/smol/moca/kernel/mcusher';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../../../_static/require.js?v=d4dd881e"></script>
     <script src="../../../../_static/custom.js?v=1f4f4097"></script>
@@ -225,7 +225,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -381,7 +381,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -621,10 +621,14 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">active_sublattices</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sublatt_probs</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="Flip"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Flip">[docs]</a><span class="k">class</span> <span class="nc">Flip</span><span class="p">(</span><span class="n">MCUsher</span><span class="p">):</span>
+<div class="viewcode-block" id="Flip">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Flip">[docs]</a>
+<span class="k">class</span> <span class="nc">Flip</span><span class="p">(</span><span class="n">MCUsher</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementation of a simple flip step at a random site.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Flip.propose_step"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Flip.propose_step">[docs]</a>    <span class="k">def</span> <span class="nf">propose_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
+<div class="viewcode-block" id="Flip.propose_step">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Flip.propose_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">propose_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Propose a single random flip step.</span>
 
 <span class="sd">        A step is given as a sequence of tuples, where each tuple is of the</span>
@@ -640,13 +644,19 @@ document.write(`
         <span class="n">sublattice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_random_sublattice</span><span class="p">()</span>
         <span class="n">site</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">sublattice</span><span class="o">.</span><span class="n">active_sites</span><span class="p">)</span>
         <span class="n">choices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sublattice</span><span class="o">.</span><span class="n">encoding</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="n">occupancy</span><span class="p">[</span><span class="n">site</span><span class="p">]}</span>
-        <span class="k">return</span> <span class="p">[(</span><span class="n">site</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">choices</span><span class="p">)))]</span></div></div>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">site</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">choices</span><span class="p">)))]</span></div>
+</div>
 
 
-<div class="viewcode-block" id="Swap"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Swap">[docs]</a><span class="k">class</span> <span class="nc">Swap</span><span class="p">(</span><span class="n">MCUsher</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Swap">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Swap">[docs]</a>
+<span class="k">class</span> <span class="nc">Swap</span><span class="p">(</span><span class="n">MCUsher</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementation of a simple swap step for two random sites.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Swap.propose_step"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Swap.propose_step">[docs]</a>    <span class="k">def</span> <span class="nf">propose_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
+<div class="viewcode-block" id="Swap.propose_step">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Swap.propose_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">propose_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Propose a single random swap step.</span>
 
 <span class="sd">        A step is given as a sequence of tuples, where each tuple is of the</span>
@@ -670,10 +680,14 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># inefficient, maybe re-call method? infinite recursion problem</span>
             <span class="n">swap</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">return</span> <span class="n">swap</span></div></div>
+        <span class="k">return</span> <span class="n">swap</span></div>
+</div>
 
 
-<div class="viewcode-block" id="MultiStep"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.MultiStep">[docs]</a><span class="k">class</span> <span class="nc">MultiStep</span><span class="p">(</span><span class="n">MCUsher</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MultiStep">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.MultiStep">[docs]</a>
+<span class="k">class</span> <span class="nc">MultiStep</span><span class="p">(</span><span class="n">MCUsher</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A multistep usher to generate steps of several flips.</span>
 
 <span class="sd">    Any usher can be used to chain steps, ie create multi flip steps, multi swap steps</span>
@@ -756,7 +770,9 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the probabilities of choosing a sublattice.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mcusher</span><span class="o">.</span><span class="n">sublattice_probabilities</span> <span class="o">=</span> <span class="n">value</span>
 
-<div class="viewcode-block" id="MultiStep.propose_step"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.MultiStep.propose_step">[docs]</a>    <span class="k">def</span> <span class="nf">propose_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
+<div class="viewcode-block" id="MultiStep.propose_step">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.MultiStep.propose_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">propose_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Propose a step given an occupancy.&quot;&quot;&quot;</span>
         <span class="n">step_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_step_lens</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_step_p</span><span class="p">)</span>
         <span class="n">occu</span> <span class="o">=</span> <span class="n">occupancy</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -774,10 +790,14 @@ document.write(`
                     <span class="n">occu</span><span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># unpack them to single list</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">flip</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span> <span class="k">for</span> <span class="n">flip</span> <span class="ow">in</span> <span class="n">step</span><span class="p">]</span></div></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">flip</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span> <span class="k">for</span> <span class="n">flip</span> <span class="ow">in</span> <span class="n">step</span><span class="p">]</span></div>
+</div>
 
 
-<div class="viewcode-block" id="Composite"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Composite">[docs]</a><span class="k">class</span> <span class="nc">Composite</span><span class="p">(</span><span class="n">MCUsher</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Composite">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Composite">[docs]</a>
+<span class="k">class</span> <span class="nc">Composite</span><span class="p">(</span><span class="n">MCUsher</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A composite usher for chaining different step types.</span>
 
 <span class="sd">    This can be used to mix step types for all sublattices or to create hybrid</span>
@@ -842,7 +862,9 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the weights associated with each mcusher.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span>
 
-<div class="viewcode-block" id="Composite.add_mcusher"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Composite.add_mcusher">[docs]</a>    <span class="k">def</span> <span class="nf">add_mcusher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mcusher</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="Composite.add_mcusher">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Composite.add_mcusher">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_mcusher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mcusher</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an MCUsher to the Composite usher.</span>
 
 <span class="sd">        Args:</span>
@@ -855,6 +877,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mcusher</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_p</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span></div>
 
+
     <span class="k">def</span> <span class="nf">_update_p</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the probabilities for each mcuhser based on a new weight.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
@@ -862,12 +885,18 @@ document.write(`
         <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="p">[</span><span class="n">weight</span> <span class="o">/</span> <span class="n">total</span> <span class="k">for</span> <span class="n">weight</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weights</span><span class="p">]</span>
 
-<div class="viewcode-block" id="Composite.propose_step"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Composite.propose_step">[docs]</a>    <span class="k">def</span> <span class="nf">propose_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
+<div class="viewcode-block" id="Composite.propose_step">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Composite.propose_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">propose_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Propose a step given an occupancy.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mcushers</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">)</span><span class="o">.</span><span class="n">propose_step</span><span class="p">(</span><span class="n">occupancy</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mcushers</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">)</span><span class="o">.</span><span class="n">propose_step</span><span class="p">(</span><span class="n">occupancy</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="TableFlip"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.TableFlip">[docs]</a><span class="k">class</span> <span class="nc">TableFlip</span><span class="p">(</span><span class="n">MCUsher</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TableFlip">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.TableFlip">[docs]</a>
+<span class="k">class</span> <span class="nc">TableFlip</span><span class="p">(</span><span class="n">MCUsher</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementation of table flips.</span>
 
 <span class="sd">    Use user-specified or auto-calculated flip tables. Does not</span>
@@ -1023,7 +1052,9 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">table_ergodic</span> <span class="o">=</span> <span class="n">table_ergodic</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">swap_weight</span> <span class="o">=</span> <span class="n">swap_weight</span>
 
-<div class="viewcode-block" id="TableFlip.propose_step"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.TableFlip.propose_step">[docs]</a>    <span class="k">def</span> <span class="nf">propose_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
+<div class="viewcode-block" id="TableFlip.propose_step">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.TableFlip.propose_step">[docs]</a>
+    <span class="k">def</span> <span class="nf">propose_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Propose a single random flip step.</span>
 
 <span class="sd">        A step is given as a sequence of tuples, where each tuple is of the</span>
@@ -1111,6 +1142,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">step</span></div>
 
+
     <span class="k">def</span> <span class="nf">_get_flip_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute flip id in table from occupancy and step.&quot;&quot;&quot;</span>
         <span class="n">dn</span> <span class="o">=</span> <span class="n">delta_counts_from_step</span><span class="p">(</span><span class="n">occupancy</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim_ids_table</span><span class="p">)</span>
@@ -1126,7 +1158,9 @@ document.write(`
 
         <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="TableFlip.compute_log_priori_factor"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.TableFlip.compute_log_priori_factor">[docs]</a>    <span class="k">def</span> <span class="nf">compute_log_priori_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<div class="viewcode-block" id="TableFlip.compute_log_priori_factor">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.TableFlip.compute_log_priori_factor">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_log_priori_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute a-priori weight to adjust step acceptance ratio.</span>
 
 <span class="sd">        This is essential in keeping detailed balance. Return log for</span>
@@ -1181,10 +1215,14 @@ document.write(`
         <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">dims_nonzero</span><span class="p">:</span>
             <span class="n">log_factor</span> <span class="o">+=</span> <span class="n">facln</span><span class="p">(</span><span class="n">n_now</span><span class="p">[</span><span class="n">dim</span><span class="p">])</span> <span class="o">-</span> <span class="n">facln</span><span class="p">(</span><span class="n">n_next</span><span class="p">[</span><span class="n">dim</span><span class="p">])</span>
 
-        <span class="k">return</span> <span class="n">log_factor</span></div></div>
+        <span class="k">return</span> <span class="n">log_factor</span></div>
+</div>
 
 
-<div class="viewcode-block" id="mcusher_factory"><a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.mcusher_factory">[docs]</a><span class="k">def</span> <span class="nf">mcusher_factory</span><span class="p">(</span><span class="n">usher_type</span><span class="p">,</span> <span class="n">sublattices</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="mcusher_factory">
+<a class="viewcode-back" href="../../../../api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.mcusher_factory">[docs]</a>
+<span class="k">def</span> <span class="nf">mcusher_factory</span><span class="p">(</span><span class="n">usher_type</span><span class="p">,</span> <span class="n">sublattices</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a MC Usher from string name.</span>
 
 <span class="sd">    Args:</span>
@@ -1202,6 +1240,7 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">usher_name</span> <span class="o">=</span> <span class="n">class_name_from_str</span><span class="p">(</span><span class="n">usher_type</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">derived_class_factory</span><span class="p">(</span><span class="n">usher_name</span><span class="p">,</span> <span class="n">MCUsher</span><span class="p">,</span> <span class="n">sublattices</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
 </pre></div>
 
                 </article>
@@ -1254,7 +1293,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.moca.ensemble &#8212; smol 0.5.0 documentation</title>
+    <title>smol.moca.ensemble &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -35,16 +35,16 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/smol/moca/ensemble';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../../_static/require.js?v=d4dd881e"></script>
     <script src="../../../_static/custom.js?v=1f4f4097"></script>
@@ -225,7 +225,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -381,7 +381,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -576,7 +576,9 @@ document.write(`
         <span class="k">return</span> <span class="n">table</span>
 
 
-<div class="viewcode-block" id="Ensemble"><a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble">[docs]</a><span class="k">class</span> <span class="nc">Ensemble</span><span class="p">(</span><span class="n">MSONable</span><span class="p">):</span>
+<div class="viewcode-block" id="Ensemble">
+<a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble">[docs]</a>
+<span class="k">class</span> <span class="nc">Ensemble</span><span class="p">(</span><span class="n">MSONable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Thermodynamic ensemble class.</span>
 
 <span class="sd">    Attributes:</span>
@@ -606,7 +608,9 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_sublattices</span> <span class="o">=</span> <span class="n">sublattices</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chemical_potentials</span> <span class="o">=</span> <span class="n">chemical_potentials</span>
 
-<div class="viewcode-block" id="Ensemble.from_cluster_expansion"><a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.from_cluster_expansion">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Ensemble.from_cluster_expansion">
+<a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.from_cluster_expansion">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_cluster_expansion</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">cluster_expansion</span><span class="p">,</span>
@@ -682,6 +686,7 @@ document.write(`
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processor type </span><span class="si">{</span><span class="n">processor_type</span><span class="si">}</span><span class="s2">&quot;</span> <span class="sa">f</span><span class="s2">&quot; not supported!&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">processor</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the total number of sites in the supercell.&quot;&quot;&quot;</span>
@@ -751,7 +756,9 @@ document.write(`
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The original expansion coefficients can not be changed!&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="n">value</span>
 
-<div class="viewcode-block" id="Ensemble.split_sublattice_by_species"><a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.split_sublattice_by_species">[docs]</a>    <span class="k">def</span> <span class="nf">split_sublattice_by_species</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sublattice_id</span><span class="p">,</span> <span class="n">occu</span><span class="p">,</span> <span class="n">species_in_partitions</span><span class="p">):</span>
+<div class="viewcode-block" id="Ensemble.split_sublattice_by_species">
+<a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.split_sublattice_by_species">[docs]</a>
+    <span class="k">def</span> <span class="nf">split_sublattice_by_species</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sublattice_id</span><span class="p">,</span> <span class="n">occu</span><span class="p">,</span> <span class="n">species_in_partitions</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Split a sub-lattice in system by its occupied species.</span>
 
 <span class="sd">        An example use case might be simulating topotactic Li extraction</span>
@@ -786,7 +793,10 @@ document.write(`
             <span class="p">}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">chemical_potentials</span> <span class="o">=</span> <span class="n">chemical_potentials</span></div>
 
-<div class="viewcode-block" id="Ensemble.compute_feature_vector"><a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.compute_feature_vector">[docs]</a>    <span class="k">def</span> <span class="nf">compute_feature_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Ensemble.compute_feature_vector">
+<a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.compute_feature_vector">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_feature_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the feature vector for a given occupancy.</span>
 
 <span class="sd">        The feature vector includes the necessary features required to compute</span>
@@ -815,7 +825,10 @@ document.write(`
 
         <span class="k">return</span> <span class="n">features</span></div>
 
-<div class="viewcode-block" id="Ensemble.compute_feature_vector_change"><a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.compute_feature_vector_change">[docs]</a>    <span class="k">def</span> <span class="nf">compute_feature_vector_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Ensemble.compute_feature_vector_change">
+<a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.compute_feature_vector_change">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_feature_vector_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the change in the feature vector from a given step.</span>
 
 <span class="sd">        Args:</span>
@@ -839,7 +852,10 @@ document.write(`
 
         <span class="k">return</span> <span class="n">delta_features</span></div>
 
-<div class="viewcode-block" id="Ensemble.restrict_sites"><a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.restrict_sites">[docs]</a>    <span class="k">def</span> <span class="nf">restrict_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Ensemble.restrict_sites">
+<a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.restrict_sites">[docs]</a>
+    <span class="k">def</span> <span class="nf">restrict_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Restricts (freezes) the given sites.</span>
 
 <span class="sd">        This will exclude those sites from being flipped during a Monte Carlo</span>
@@ -853,12 +869,18 @@ document.write(`
         <span class="k">for</span> <span class="n">sublattice</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sublattices</span><span class="p">:</span>
             <span class="n">sublattice</span><span class="o">.</span><span class="n">restrict_sites</span><span class="p">(</span><span class="n">sites</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Ensemble.reset_restricted_sites"><a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.reset_restricted_sites">[docs]</a>    <span class="k">def</span> <span class="nf">reset_restricted_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Ensemble.reset_restricted_sites">
+<a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.reset_restricted_sites">[docs]</a>
+    <span class="k">def</span> <span class="nf">reset_restricted_sites</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Unfreeze all previously restricted sites.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">sublattice</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sublattices</span><span class="p">:</span>
             <span class="n">sublattice</span><span class="o">.</span><span class="n">reset_restricted_sites</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Ensemble.as_dict"><a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Ensemble.as_dict">
+<a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.as_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get Json-serialization dict representation.</span>
 
 <span class="sd">        Returns:</span>
@@ -873,7 +895,10 @@ document.write(`
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">ensemble_d</span></div>
 
-<div class="viewcode-block" id="Ensemble.from_dict"><a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="Ensemble.from_dict">
+<a class="viewcode-back" href="../../../api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ensemble_d</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Instantiate a CanonicalEnsemble from dict representation.</span>
 
@@ -891,7 +916,9 @@ document.write(`
         <span class="k">if</span> <span class="n">chemical_potentials</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ensemble</span><span class="o">.</span><span class="n">chemical_potentials</span> <span class="o">=</span> <span class="n">chemical_potentials</span>
 
-        <span class="k">return</span> <span class="n">ensemble</span></div></div>
+        <span class="k">return</span> <span class="n">ensemble</span></div>
+</div>
+
 </pre></div>
 
                 </article>
@@ -944,7 +971,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

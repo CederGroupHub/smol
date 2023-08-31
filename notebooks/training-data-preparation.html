@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Training Data Preparation &#8212; smol 0.5.0 documentation</title>
+    <title>Training Data Preparation &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -37,9 +37,9 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/training-data-preparation';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../_static/require.js?v=d4dd881e"></script>
     <script src="../_static/custom.js?v=1f4f4097"></script>
@@ -229,7 +229,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -389,7 +389,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -481,7 +481,7 @@ document.write(`
                   
   <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.0/docs/src/notebooks/training-data-preparation.ipynb">docs/src/notebooks/training-data-preparation.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.1/docs/src/notebooks/training-data-preparation.ipynb">docs/src/notebooks/training-data-preparation.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -495,7 +495,7 @@ document.write(`
     }
   </script>
 </div><section id="Training-Data-Preparation">
-<h1>Training Data Preparation<a class="headerlink" href="#Training-Data-Preparation" title="Permalink to this heading">#</a></h1>
+<h1>Training Data Preparation<a class="headerlink" href="#Training-Data-Preparation" title="Link to this heading">#</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -510,7 +510,7 @@ document.write(`
 </div>
 </div>
 <section id="1)-Preparing-a-StructureWrangler">
-<h2>1) Preparing a <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code><a class="headerlink" href="#1)-Preparing-a-StructureWrangler" title="Permalink to this heading">#</a></h2>
+<h2>1) Preparing a <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code><a class="headerlink" href="#1)-Preparing-a-StructureWrangler" title="Link to this heading">#</a></h2>
 <p>Training structures and target data are handled by the <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> class. The class obtains the features and corresponding feature matrix based on the underlying <code class="docutils literal notranslate"><span class="pre">ClusterSubspace</span></code> provided.</p>
 <p>In the most simply settings we just use the feature matrix our supplied total energy from DFT to fit a cluster expansion. But it many cases we may want to improve our fit quality or reduce the model complexity by modifying the target property (i.e. using a reference energy or the energy of mixing) and/or by weighing structures based on some importance metric (i.e. by energy above hull). Using the <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> we can create this modified fitting data.</p>
 <div class="nbinput docutils container">
@@ -553,7 +553,7 @@ Total structures that match 27/31
 </div>
 </section>
 <section id="2)-Modifying-and-adding-new-target-properties">
-<h2>2) Modifying and adding new target properties<a class="headerlink" href="#2)-Modifying-and-adding-new-target-properties" title="Permalink to this heading">#</a></h2>
+<h2>2) Modifying and adding new target properties<a class="headerlink" href="#2)-Modifying-and-adding-new-target-properties" title="Link to this heading">#</a></h2>
 <p>Now that we have access to the structures that match to our cluster subspace, and access to the raw and normalized target properties, we can easily create new modifiend target properties to fit to.</p>
 <p>For a simple example say we simply want to set the minimum energy in our data as a new reference point.</p>
 <div class="nbinput docutils container">
@@ -590,7 +590,7 @@ Total structures that match 27/31
 </div>
 </section>
 <section id="2.1)-Another-example-of-modifying-target-properties">
-<h2>2.1) Another example of modifying target properties<a class="headerlink" href="#2.1)-Another-example-of-modifying-target-properties" title="Permalink to this heading">#</a></h2>
+<h2>2.1) Another example of modifying target properties<a class="headerlink" href="#2.1)-Another-example-of-modifying-target-properties" title="Link to this heading">#</a></h2>
 <p>We can do more complex modifications of the target data. For example a very common target property to fit a cluster expansion is the mixing energy.</p>
 <p>For the current LNO dataset we don’t have a fully delithiated structure, but for the sake of illustration lets assume that we use Ni2O3. (Plus in this dataset mixing energy is not very informative since it is almost linear in concentration.)</p>
 <div class="nbinput docutils container">
@@ -639,7 +639,7 @@ Total structures that match 27/31
 </div>
 </section>
 <section id="3)-Obtaining-and-adding-weights">
-<h2>3) Obtaining and adding weights<a class="headerlink" href="#3)-Obtaining-and-adding-weights" title="Permalink to this heading">#</a></h2>
+<h2>3) Obtaining and adding weights<a class="headerlink" href="#3)-Obtaining-and-adding-weights" title="Link to this heading">#</a></h2>
 <p>Using the structure wrangler it is also very easy to obtain fitting weights based many things such as composition, total energy or energy above hull. Currently the code has the previously available functions to obtaine weights by energy above hull or by energy above composition.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -684,7 +684,7 @@ LinearRegression(fit_intercept=False)
 </div>
 </section>
 <section id="4)-Structure-Selection">
-<h2>4) Structure Selection<a class="headerlink" href="#4)-Structure-Selection" title="Permalink to this heading">#</a></h2>
+<h2>4) Structure Selection<a class="headerlink" href="#4)-Structure-Selection" title="Link to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">StructureWrangler</span></code> class can also be used to ‘filter’ structures to use for a fit based on some criteria. To do so we obtain the indices of all structures that satisfy some filtering criteria</p>
 <p>For example here we will obtain all the structures with electrostatic energy below a given cuttoff</p>
 <div class="nbinput docutils container">
@@ -825,7 +825,7 @@ Property vector shape (26,)
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

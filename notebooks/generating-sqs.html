@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Generating Special Quasirandom Structure (SQS) &#8212; smol 0.5.0 documentation</title>
+    <title>Generating Special Quasirandom Structure (SQS) &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -37,9 +37,9 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/generating-sqs';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../_static/require.js?v=d4dd881e"></script>
     <script src="../_static/custom.js?v=1f4f4097"></script>
@@ -229,7 +229,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -389,7 +389,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -481,7 +481,7 @@ document.write(`
                   
   <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.0/docs/src/notebooks/generating-sqs.ipynb">docs/src/notebooks/generating-sqs.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.1/docs/src/notebooks/generating-sqs.ipynb">docs/src/notebooks/generating-sqs.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -495,7 +495,7 @@ document.write(`
     }
   </script>
 </div><section id="Generating-Special-Quasirandom-Structure-(SQS)">
-<h1>Generating Special Quasirandom Structure (SQS)<a class="headerlink" href="#Generating-Special-Quasirandom-Structure-(SQS)" title="Permalink to this heading">#</a></h1>
+<h1>Generating Special Quasirandom Structure (SQS)<a class="headerlink" href="#Generating-Special-Quasirandom-Structure-(SQS)" title="Link to this heading">#</a></h1>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -508,7 +508,7 @@ document.write(`
 </div>
 </div>
 <section id="1)-Create-a-disordered-prim-structure">
-<h2>1) Create a disordered prim structure<a class="headerlink" href="#1)-Create-a-disordered-prim-structure" title="Permalink to this heading">#</a></h2>
+<h2>1) Create a disordered prim structure<a class="headerlink" href="#1)-Create-a-disordered-prim-structure" title="Link to this heading">#</a></h2>
 <p>To generate SQS, we first have to creat a disordered structure to represent the configurational space as when creating <code class="docutils literal notranslate"><span class="pre">ClusterSubspace</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -603,7 +603,7 @@ PeriodicSite: V:0.333, Co:0.333, Ni:0.333 (0.0000, 0.0000, 0.0000) [0.0000, 0.00
 </div>
 </section>
 <section id="2)-Create-a-SQS-generator-object">
-<h2>2) Create a SQS generator object<a class="headerlink" href="#2)-Create-a-SQS-generator-object" title="Permalink to this heading">#</a></h2>
+<h2>2) Create a SQS generator object<a class="headerlink" href="#2)-Create-a-SQS-generator-object" title="Link to this heading">#</a></h2>
 <p>In <strong>smol</strong> we have implemented the stochastic SQS generation proposed <a class="reference external" href="https://doi.org/10.1016/j.calphad.2013.06.006">here</a>. In order to generate SQSs stochastically, we instantiate a <code class="docutils literal notranslate"><span class="pre">StochasticSQSGenerator</span></code> using the disordered prim representing our configurational search space, and the size of supercells to search.</p>
 <p>A few notes on SQS generation in <strong>smol</strong>:</p>
 <ul class="simple">
@@ -638,7 +638,7 @@ PeriodicSite: V:0.333, Co:0.333, Ni:0.333 (0.0000, 0.0000, 0.0000) [0.0000, 0.00
 </div>
 </section>
 <section id="3)-Generate-SQS-by-running-simulated-annealing">
-<h2>3) Generate SQS by running simulated annealing<a class="headerlink" href="#3)-Generate-SQS-by-running-simulated-annealing" title="Permalink to this heading">#</a></h2>
+<h2>3) Generate SQS by running simulated annealing<a class="headerlink" href="#3)-Generate-SQS-by-running-simulated-annealing" title="Link to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">StochasticSQSGenerator</span></code> will search for SQSs over different supercells of the size given by running simulated annealing. The main arguments controlling the “search time” are the number of mcmc steps per temperature, and number of decreasing temperature values.</p>
 <p>An important parameter is the <code class="docutils literal notranslate"><span class="pre">max_save_num</span></code> which sets the maximum number of candidate structures to keep in memory (the actual value may be less since a structure is only added if its “score” is better than previous ones). The default is set to 1% of the number of mcmc steps per temperature.</p>
 <p>Finally, the default is to search over all symmetrically distinct supercells of a given size, however when only specific supercells are needed (ie to avoid skewed supercells), these can be passed directly using the <code class="docutils literal notranslate"><span class="pre">supercell_matrices</span></code> keyword argument (however, all supercell matrices must represent cells of the same size, ie have the same determinant).</p>
@@ -726,7 +726,7 @@ Generating SQS using 1 chain(s) from cells with 36 sites: 100%|█████�
 </div>
 </section>
 <section id="4)-Get-the-best-SQSs-candidates">
-<h2>4) Get the best SQSs candidates<a class="headerlink" href="#4)-Get-the-best-SQSs-candidates" title="Permalink to this heading">#</a></h2>
+<h2>4) Get the best SQSs candidates<a class="headerlink" href="#4)-Get-the-best-SQSs-candidates" title="Link to this heading">#</a></h2>
 <p>Once an SA run has completed, we can inspect the best SQSs generated and pick the best one for the given application. Each SQS is saved as an named tuple with attributes for the structure, score, features, and supercell matrix.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
@@ -795,7 +795,7 @@ Total number of cluster interaction score SQSs: 19
 </div>
 </div>
 <section id="4.1)-Compare-the-best-SQS-from-both-generation-methods">
-<h3>4.1) Compare the best SQS from both generation methods<a class="headerlink" href="#4.1)-Compare-the-best-SQS-from-both-generation-methods" title="Permalink to this heading">#</a></h3>
+<h3>4.1) Compare the best SQS from both generation methods<a class="headerlink" href="#4.1)-Compare-the-best-SQS-from-both-generation-methods" title="Link to this heading">#</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
@@ -990,7 +990,7 @@ PeriodicSite: Ni (-3.5800, 1.7900, -1.7900) [0.8056, 0.0556, 0.2222]
 </section>
 </section>
 <section id="Compare-with-ATAT-mcsqs">
-<h2>Compare with ATAT mcsqs<a class="headerlink" href="#Compare-with-ATAT-mcsqs" title="Permalink to this heading">#</a></h2>
+<h2>Compare with ATAT mcsqs<a class="headerlink" href="#Compare-with-ATAT-mcsqs" title="Link to this heading">#</a></h2>
 <p>The <strong>mcsqs</strong> program in the ATAT toolkit is arguably the <em>gold standard</em> and most popular program to generate SQS. Lets compare the resulting SQSs generated with <strong>mcsqs</strong> and <strong>smol</strong>. This requires ATAT to be installed, see instructions <a class="reference external" href="https://www.brown.edu/Departments/Engineering/Labs/avdw/atat/">here</a>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
@@ -1267,7 +1267,7 @@ smol sqs_cint correlation vector sum: 1.7005578060307245
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

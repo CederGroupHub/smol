@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Package Design &#8212; smol 0.5.0 documentation</title>
+    <title>Package Design &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -36,16 +36,16 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'developer_guide/design';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../_static/require.js?v=d4dd881e"></script>
     <script src="../_static/custom.js?v=1f4f4097"></script>
@@ -227,7 +227,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -387,7 +387,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -493,9 +493,9 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="package-design">
-<span id="design"></span><h1>Package Design<a class="headerlink" href="#package-design" title="Permalink to this heading">#</a></h1>
+<span id="design"></span><h1>Package Design<a class="headerlink" href="#package-design" title="Link to this heading">#</a></h1>
 <section id="overview-mission">
-<h2>Overview &amp; Mission<a class="headerlink" href="#overview-mission" title="Permalink to this heading">#</a></h2>
+<h2>Overview &amp; Mission<a class="headerlink" href="#overview-mission" title="Link to this heading">#</a></h2>
 <p><strong>smol</strong> is intentionally designed to be easy to use, install and extend. In order to
 achieve these goals the package has few dependencies <a class="footnote-reference brackets" href="#f1" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, and has a heavily
 object-oriented and modular design that closely follows mathematical and methodological
@@ -512,7 +512,7 @@ allow quick development-to-application turnaround time in the study of configura
 dependent properties of inorganic materials.</p>
 </section>
 <section id="module-design">
-<h2>Module Design<a class="headerlink" href="#module-design" title="Permalink to this heading">#</a></h2>
+<h2>Module Design<a class="headerlink" href="#module-design" title="Link to this heading">#</a></h2>
 <p><strong>smol</strong> is organized into two main submodules, <code class="xref py py-mod docutils literal notranslate"><span class="pre">smol.cofe</span></code> and
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">smol.moca</span></code>:</p>
 <ul class="simple">
@@ -535,7 +535,7 @@ an colored arrow pointing from the base class to the derived classes.</p>
 as an attribute) are depicted as dark blue colored arrows. The arrow points from the
 class which is an attribute to the class that holds the former as an attributed.</p>
 <section id="smol-cofe">
-<h3><code class="xref py py-mod docutils literal notranslate"><span class="pre">smol.cofe</span></code><a class="headerlink" href="#smol-cofe" title="Permalink to this heading">#</a></h3>
+<h3><code class="xref py py-mod docutils literal notranslate"><span class="pre">smol.cofe</span></code><a class="headerlink" href="#smol-cofe" title="Link to this heading">#</a></h3>
 <p>The diagram below summarizes the overall design of the <code class="xref py py-mod docutils literal notranslate"><span class="pre">smol.cofe</span></code> module. The main
 classes that users directly instantiate and interact with are the
 <code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterSubspace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">StructureWrangler</span></code>, and <code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterExpansion</span></code> as
@@ -600,7 +600,7 @@ as obtain the <em>effective cluster interactions</em> (ECI), and prune unimporta
 </ul>
 </section>
 <section id="smol-moca">
-<h3><code class="xref py py-mod docutils literal notranslate"><span class="pre">smol.moca</span></code><a class="headerlink" href="#smol-moca" title="Permalink to this heading">#</a></h3>
+<h3><code class="xref py py-mod docutils literal notranslate"><span class="pre">smol.moca</span></code><a class="headerlink" href="#smol-moca" title="Link to this heading">#</a></h3>
 <p>A diagram showing the overall design of the <code class="xref py py-mod docutils literal notranslate"><span class="pre">smol.moca</span></code> module. The
 main classes in this module that are necessary to run Monte Carlo sampling using
 a <code class="xref py py-class docutils literal notranslate"><span class="pre">ClusterExpansion</span></code> are the <code class="xref py py-class docutils literal notranslate"><span class="pre">Processor</span></code> classes, the <code class="xref py py-class docutils literal notranslate"><span class="pre">Ensemble</span></code>,
@@ -769,7 +769,7 @@ installing <strong>smol</strong> should be headache free.</p>
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

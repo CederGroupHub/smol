@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Filtering &#8212; smol 0.5.0 documentation</title>
+    <title>Filtering &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -36,16 +36,16 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api_reference/cofe/wrangling.select';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../_static/require.js?v=d4dd881e"></script>
     <script src="../../_static/custom.js?v=1f4f4097"></script>
@@ -228,7 +228,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -388,7 +388,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -521,11 +521,11 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="module-smol.cofe.wrangling.select">
-<span id="filtering"></span><h1>Filtering<a class="headerlink" href="#module-smol.cofe.wrangling.select" title="Permalink to this heading">#</a></h1>
+<span id="filtering"></span><h1>Filtering<a class="headerlink" href="#module-smol.cofe.wrangling.select" title="Link to this heading">#</a></h1>
 <p>Tools for training structure selection.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.select.composition_select">
-<span class="sig-name descname"><span class="pre">composition_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_sizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/wrangling/select.html#composition_select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.wrangling.select.composition_select" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">composition_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">composition_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_sizes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/wrangling/select.html#composition_select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.wrangling.select.composition_select" title="Link to this definition">#</a></dt>
 <dd><p>Structure selection based on composition multinomial probability.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -562,7 +562,7 @@ numpy seed, Generator, SeedSequence, etc</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.select.full_row_rank_select">
-<span class="sig-name descname"><span class="pre">full_row_rank_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/wrangling/select.html#full_row_rank_select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.wrangling.select.full_row_rank_select" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">full_row_rank_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nrows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/wrangling/select.html#full_row_rank_select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.wrangling.select.full_row_rank_select" title="Link to this definition">#</a></dt>
 <dd><p>Choose a (maximally) full rank subset of rows in a feature matrix.</p>
 <p>This method is for underdetermined systems, i.e., where
 columns (i.e. features) &gt; rows (i.e. structures)</p>
@@ -589,7 +589,7 @@ possible number of rows.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="smol.cofe.wrangling.select.gaussian_select">
-<span class="sig-name descname"><span class="pre">gaussian_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthogonalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/wrangling/select.html#gaussian_select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.wrangling.select.gaussian_select" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">gaussian_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthogonalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/cofe/wrangling/select.html#gaussian_select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.cofe.wrangling.select.gaussian_select" title="Link to this definition">#</a></dt>
 <dd><ol class="upperalpha simple" start="22">
 <li><p>Vanilla structure selection to increase incoherence.</p></li>
 </ol>
@@ -716,7 +716,7 @@ is much larger than the number of samples requested.</p>
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

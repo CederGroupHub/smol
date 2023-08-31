@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.cofe.space.cluster &#8212; smol 0.5.0 documentation</title>
+    <title>smol.cofe.space.cluster &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -35,16 +35,16 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../../../../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/smol/cofe/space/cluster';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../../../../_static/require.js?v=d4dd881e"></script>
     <script src="../../../../_static/custom.js?v=1f4f4097"></script>
@@ -225,7 +225,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -381,7 +381,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -501,7 +501,9 @@ document.write(`
 <span class="kn">from</span> <span class="nn">smol.cofe.space.domain</span> <span class="kn">import</span> <span class="n">Vacancy</span><span class="p">,</span> <span class="n">get_site_spaces</span>
 
 
-<div class="viewcode-block" id="Cluster"><a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster">[docs]</a><span class="k">class</span> <span class="nc">Cluster</span><span class="p">(</span><span class="n">SiteCollection</span><span class="p">,</span> <span class="n">MSONable</span><span class="p">):</span>
+<div class="viewcode-block" id="Cluster">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster">[docs]</a>
+<span class="k">class</span> <span class="nc">Cluster</span><span class="p">(</span><span class="n">SiteCollection</span><span class="p">,</span> <span class="n">MSONable</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An undecorated (no occupancies) cluster.</span>
 
 <span class="sd">    Represented simply by a list of sites, its centroid, and the underlying</span>
@@ -575,7 +577,9 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the list of sites.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sites</span>
 
-<div class="viewcode-block" id="Cluster.get_distance"><a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.get_distance">[docs]</a>    <span class="k">def</span> <span class="nf">get_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="Cluster.get_distance">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.get_distance">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return distance between sites at index i and j.</span>
 
 <span class="sd">        Args:</span>
@@ -586,18 +590,27 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">j</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Cluster.copy"><a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Cluster.copy">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.copy">[docs]</a>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a copy of the cluster.&quot;&quot;&quot;</span>
         <span class="n">new_sites</span> <span class="o">=</span> <span class="p">[</span><span class="n">Site</span><span class="p">(</span><span class="n">site</span><span class="o">.</span><span class="n">species</span><span class="p">,</span> <span class="n">site</span><span class="o">.</span><span class="n">coords</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span> <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites</span><span class="p">]</span>
         <span class="n">lattice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_sites</span><span class="p">(</span><span class="n">new_sites</span><span class="p">,</span> <span class="n">lattice</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Cluster.assign_ids"><a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.assign_ids">[docs]</a>    <span class="k">def</span> <span class="nf">assign_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster_id</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Cluster.assign_ids">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.assign_ids">[docs]</a>
+    <span class="k">def</span> <span class="nf">assign_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Recursively assign IDs to clusters after initialization.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">cluster_id</span>
         <span class="k">return</span> <span class="n">cluster_id</span> <span class="o">+</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="Cluster.to"><a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.to">[docs]</a>    <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Cluster.to">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.to">[docs]</a>
+    <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Output the cluster  to a file or string.</span>
 
@@ -635,7 +648,10 @@ document.write(`
 
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid format: `</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Cluster.from_str"><a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_str">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="Cluster.from_str">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_str">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fmt</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read a cluster from a string.</span>
@@ -658,7 +674,10 @@ document.write(`
 
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid format: `</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fmt</span><span class="p">)</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Cluster.from_file"><a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_file">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="Cluster.from_file">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_file">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read a cluster from a file. Supported formats are json and yaml only.</span>
@@ -681,12 +700,16 @@ document.write(`
 
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot determine file type.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Cluster.from_sites"><a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_sites">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="Cluster.from_sites">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_sites">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_sites</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">lattice</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a cluster from a list of sites and lattice object.&quot;&quot;&quot;</span>
         <span class="n">frac_coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">lattice</span><span class="o">.</span><span class="n">get_fractional_coords</span><span class="p">(</span><span class="n">site</span><span class="o">.</span><span class="n">coords</span><span class="p">)</span> <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="n">sites</span><span class="p">]</span>
         <span class="n">site_spaces</span> <span class="o">=</span> <span class="n">get_site_spaces</span><span class="p">(</span><span class="n">sites</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">site_spaces</span><span class="p">,</span> <span class="n">frac_coords</span><span class="p">,</span> <span class="n">lattice</span><span class="p">)</span></div>
+
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check equivalency of clusters considering symmetry.&quot;&quot;&quot;</span>
@@ -754,7 +777,9 @@ document.write(`
             <span class="p">)</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Cluster.from_dict"><a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cluster.from_dict">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a Cluster from serialized dict.&quot;&quot;&quot;</span>
         <span class="n">sites</span> <span class="o">=</span> <span class="p">[</span><span class="n">Site</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;sites&quot;</span><span class="p">]]</span>
@@ -774,7 +799,10 @@ document.write(`
 
         <span class="k">return</span> <span class="n">Cluster</span><span class="o">.</span><span class="n">from_sites</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="n">Lattice</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;lattice&quot;</span><span class="p">]))</span></div>
 
-<div class="viewcode-block" id="Cluster.as_dict"><a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Cluster.as_dict">
+<a class="viewcode-back" href="../../../../api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.as_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get json-serialization dict representation.</span>
 
 <span class="sd">        Returns:</span>
@@ -790,7 +818,9 @@ document.write(`
                 <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites</span>
             <span class="p">],</span>
         <span class="p">}</span>
-        <span class="k">return</span> <span class="n">cluster_d</span></div></div>
+        <span class="k">return</span> <span class="n">cluster_d</span></div>
+</div>
+
 
 
 <span class="c1"># functions to render cluster using crystal-toolkit</span>
@@ -894,7 +924,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>

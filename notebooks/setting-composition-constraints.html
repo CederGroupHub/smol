@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Setting composition constraints for Monte Carlo sampling or ground state searches. &#8212; smol 0.5.0 documentation</title>
+    <title>Setting composition constraints for Monte Carlo sampling or ground state searches. &#8212; smol 0.5.1 documentation</title>
   
   
   
@@ -37,9 +37,9 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=5dd889ea"></script>
+    <script src="../_static/documentation_options.js?v=dbdadbbb"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -48,7 +48,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/setting-composition-constraints';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/switcher.json';
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5.1';
         </script>
     <script src="../_static/require.js?v=d4dd881e"></script>
     <script src="../_static/custom.js?v=1f4f4097"></script>
@@ -229,7 +229,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -389,7 +389,7 @@ document.write(`
 document.write(`
   <div class="version-switcher__container dropdown">
     <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-      0.5.0  <!-- this text may get changed later by javascript -->
+      0.5.1  <!-- this text may get changed later by javascript -->
       <span class="caret"></span>
     </button>
     <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
@@ -481,7 +481,7 @@ document.write(`
                   
   <div class="admonition note">
   This page was generated from
-  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.0/docs/src/notebooks/setting-composition-constraints.ipynb">docs/src/notebooks/setting-composition-constraints.ipynb</a>.<br>
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.5.1/docs/src/notebooks/setting-composition-constraints.ipynb">docs/src/notebooks/setting-composition-constraints.ipynb</a>.<br>
   <script>
     if (document.location.host) {
       $(document.currentScript).replaceWith(
@@ -495,7 +495,7 @@ document.write(`
     }
   </script>
 </div><section id="Setting-composition-constraints-for-Monte-Carlo-sampling-or-ground-state-searches.">
-<h1>Setting composition constraints for Monte Carlo sampling or ground state searches.<a class="headerlink" href="#Setting-composition-constraints-for-Monte-Carlo-sampling-or-ground-state-searches." title="Permalink to this heading">#</a></h1>
+<h1>Setting composition constraints for Monte Carlo sampling or ground state searches.<a class="headerlink" href="#Setting-composition-constraints-for-Monte-Carlo-sampling-or-ground-state-searches." title="Link to this heading">#</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">CompositionSpace</span></code> class is used internally by <code class="docutils literal notranslate"><span class="pre">TableFlip</span></code> to solve basis vectors for table exchanges to run semigrand MC sampling with composition or charge neutrality constraints. It is also used by the ground state solver to set linear constraints on the composition. The charge-balance constraint and the site-number-conservation constraints are included in <code class="docutils literal notranslate"><span class="pre">CompositionSpace</span></code> by default.</p>
 <p>You can also set additional equality or inequality-type constraints to the compositions, in case of studying only a subspace or a subset of compositions.</p>
 <p>This notebook demonstrates two legal methods to set extrea composition constraints in <code class="docutils literal notranslate"><span class="pre">CompositionSpace</span></code>.</p>
@@ -527,7 +527,7 @@ document.write(`
 </div>
 </div>
 <section id="1)-String-format">
-<h2>1) String format<a class="headerlink" href="#1)-String-format" title="Permalink to this heading">#</a></h2>
+<h2>1) String format<a class="headerlink" href="#1)-String-format" title="Link to this heading">#</a></h2>
 <p>The string format is a more programmatic and more user-friendly way to specify composition constraints. Legal constraint strings to be set in other_constraints arguments are shown below:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -563,7 +563,7 @@ document.write(`
 </div>
 </section>
 <section id="2)-Vector-format">
-<h2>2) Vector format<a class="headerlink" href="#2)-Vector-format" title="Permalink to this heading">#</a></h2>
+<h2>2) Vector format<a class="headerlink" href="#2)-Vector-format" title="Link to this heading">#</a></h2>
 <p>Constraints can also be represented in a vector format, where each constraint is given by a tuple of a vector, a number and a string. The vector represents the pre-factor of the amount of each species on each sub-lattice to the left-hand side of the constraint equation, ordered as simply concatenating sublists in CompositionSpace.bits. (In this example, ordered as: Li+(0), Mn2+(0), Mn3+(0), Mn4+(0), Vacancy(0), Li+(1), Mn2+(1), Vacancy(1), O2-(2), F-(2).)</p>
 <p>The number represents the right-handside of the constraint equation. The string represents the relationship between the left and the right-hand side (“leq”,”eq” or “geq”).</p>
 <p>Note that all constraints must be written assuming the system size is confined to a single primitive cell. Geq(&gt;=) constraints are always transformed into Leq(&lt;=) and stored as Leq in the CompositionSpace object.</p>
@@ -583,7 +583,7 @@ document.write(`
 </div>
 </div>
 <section id="One-is-also-allowed-to-mix-these-two-formats-in-the-list-passed-into-other_constraints.">
-<h3>One is also allowed to mix these two formats in the list passed into other_constraints.<a class="headerlink" href="#One-is-also-allowed-to-mix-these-two-formats-in-the-list-passed-into-other_constraints." title="Permalink to this heading">#</a></h3>
+<h3>One is also allowed to mix these two formats in the list passed into other_constraints.<a class="headerlink" href="#One-is-also-allowed-to-mix-these-two-formats-in-the-list-passed-into-other_constraints." title="Link to this heading">#</a></h3>
 </section>
 </section>
 </section>
@@ -672,7 +672,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
     <br/>
   </p>
 </div>
