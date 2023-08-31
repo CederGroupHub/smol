@@ -12,6 +12,10 @@ Use this section to keep track of changes in the works.
 ### Removed
 ### Deprecated
 
+# [v0.5.1](https://github.com/CederGroupHub/smol/releases/tag/v0.5.0) (2023-08-15)
+### Changed
+*  Edit default openmp num threads behavior (use OMP_NUM_THREADS when set). #404 @lbluque
+
 # [v0.5.0](https://github.com/CederGroupHub/smol/releases/tag/v0.5.0) (2023-08-15)
 ### Added
 * `SQSGenerator.from_processors` to create a generator from a list of processors. #398 @lbluque
