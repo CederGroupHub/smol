@@ -24,7 +24,7 @@ jobs:
       CIBW_SKIP: pp* ${{ github.event.inputs.CIBW_SKIP }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -49,7 +49,7 @@ jobs:
       CIBW_ARCHS_MACOS: ${{ matrix.cibw_arch }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -110,7 +110,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Optional, use if you use setuptools_scm
 
