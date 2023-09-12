@@ -1,39 +1,72 @@
----
-name: "\U0001F41B Bug Report"
-about: "If something isn't working as expected \U0001F914."
-labels: bug
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: input
+    id: contact
+    attributes:
+      label: Email (Optional)
+      description: How can we get in touch with you if we need more info?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: What version of our software are you running?
+      placeholder: v2023.1.1
+    validations:
+      required: true
+  - type: checkboxes
+    id: operating-systems
+    attributes:
+      label: Which OS(es) are you using?
+      description: You may select more than one.
+      options:
+        - label: MacOS
+        - label: Windows
+        - label: Linux
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Provide a concise description of the bug.
+      placeholder: |
+        1. I am attempting to do this (code snippet given below).
+        2. Expected behavior: ...
+        3. Instead, got this behavior: ...
+        4. Proposed solution (if any). Even better, you can just submit a PR with your solution to contribute to the community.
 
----
-
-<!--- Provide a general summary of the issue in the Title above -->
-
-<!--- Thanks for tracking down some smelly bug!
-Please fill in the following as best you can, if you have no info
-for a particular section then just remove the title--->
-
-## Expected Behavior
-<!--- Tell us what should happen -->
-
-## Current Behavior
-<!--- Tell us what happens instead of the expected behavior -->
-
-## Possible Solution
-<!--- Not obligatory, but suggest a fix/reason for the bug, -->
-
-## Steps to Reproduce
-<!--- Provide a link to a live example, or an unambiguous set of steps to -->
-<!--- reproduce this bug. Include code to reproduce, if relevant -->
-1.
-2.
-
-## Context
-<!--- How has this issue affected you? What are you trying to accomplish? -->
-<!--- Providing context helps us come up with a solution that is most useful in the real world -->
-
-<!--- Provide a general summary of the issue in the Title above -->
-
-## Detailed Description
-<!--- Provide a detailed description of the change or addition you are proposing -->
-
-## Possible Implementation
-<!--- Not obligatory, but suggest an idea for implementing addition or change -->
+        Tip: You can attach images or files by clicking this area and then dragging files in.
+    validations:
+      required: true
+  - type: textarea
+    id: snippet
+    attributes:
+      label: Code snippet
+      description: |
+        Please provide a code snippet to reproduce the bug. This will be automatically formatted into code, so no need for backticks.
+      render: python
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log output
+      description: |
+        Please provide any relevant log output, especially error messages. This will be automatically formatted, so no need for backticks.
+      render: shell
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/materialsproject/.github/blob/main/.github/code_of_conduct.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
