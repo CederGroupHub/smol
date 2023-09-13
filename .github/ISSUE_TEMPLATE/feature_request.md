@@ -1,21 +1,49 @@
----
-name: "\U0001F680 Feature request"
-about: Suggest an idea for this project
-labels: enhancement
-
----
-
-<!--
-Thank you for contributing ideas to smol!
-
-Please fill in as much of the template below as you're able.
--->
-
-**Is your feature request related to a problem? Please describe.**
-Please describe the problem you are trying to solve.
-
-**Describe the solution you'd like**
-Please describe the desired behavior.
-
-**Describe alternatives you've considered**
-Please describe alternative solutions or features you have considered.
+name: Feature Request
+description: Propose a new idea for this project
+title: "[Feature Request]: "
+labels: ["feature_request", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to submit this feature request!
+  - type: input
+    id: contact
+    attributes:
+      label: Email (Optional)
+      description: How can we get in touch with you if we need more info?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Briefly describe the problem you're experiencing.
+      placeholder: E.g., I would like to be able to do X.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Detail the feature or solution you'd like to see implemented.
+      placeholder: E.g., Add a module Y with these functionalities (1)..., (2)...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: List any alternative solutions, prior art or features you have considered, if any.
+      placeholder: E.g., Similar functionality is found in package <Y>.
+    validations:
+      required: false
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/materialsproject/.github/blob/main/.github/code_of_conduct.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
