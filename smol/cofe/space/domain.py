@@ -242,7 +242,6 @@ class Vacancy(DummySpecies):
         self,
         symbol: str = "A",
         oxidation_state: float = 0,
-        properties: dict | None = None,
         spin: float | None = None,
     ):
         """Initialize a Vacancy.
@@ -256,13 +255,11 @@ class Vacancy(DummySpecies):
                 because Vac contains V, a valid Element.
             oxidation_state (float): oxidation state for Vacancy. More like
                 the charge of a point defect. Defaults to zero.
-            properties (dict): Deprecated. See pymatgen 2023.6.28 release notes.
             spin: Spin associated with Species. Defaults to None.
         """
         super().__init__(
             symbol=symbol,
             oxidation_state=oxidation_state,
-            properties=properties,
             spin=spin,
         )
 
@@ -286,8 +283,8 @@ class Vacancy(DummySpecies):
 
     def __copy__(self):
         """Copy the vacancy object."""
-        return Vacancy(self.symbol, self._oxi_state)
+        return Vacancy(self.symbol, self._oxi_state, self.spin)
 
     def __deepcopy__(self, memo):
         """Deepcopy the vacancy object."""
-        return Vacancy(self.symbol, self._oxi_state)
+        return Vacancy(self.symbol, self._oxi_state, self.spin)

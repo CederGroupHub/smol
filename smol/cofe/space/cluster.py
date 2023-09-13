@@ -287,9 +287,7 @@ class Cluster(SiteCollection, MSONable):
                 {
                     spec
                     if spec.symbol not in symbols
-                    else Vacancy(
-                        spec.symbol, spec.oxidation_state, spec.properties
-                    ): val
+                    else Vacancy(spec.symbol, spec.oxidation_state, spec.spin): val
                     for spec, val in site.species.items()
                     if spec.symbol not in symbols
                 }
