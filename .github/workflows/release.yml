@@ -1,176 +1,36 @@
 name: release
 
 on:
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+  release:
+    types: [published]
+    inputs:
+      release-pypi:
+        required: true
+        type: boolean
+        default: true
+  workflow_dispatch:
+    inputs:
+      release-pypi:
+        required: true
+        type: boolean
+        description: "if true a release is made on PyPI"
 
 jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
+  build:
+    needs: test
+    uses: ./.github/workflows/build.yml
 
   release-docs:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install pandoc
-        run: sudo apt-get install pandoc
-
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install -r requirements-optional.txt
-          pip install -e .[docs]
-
-      - name: Build docs
-        run: sphinx-build docs/src docs_build
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-          publish_dir: ./docs_build
-
-  release-github:
-
-    runs-on: ubuntu-latest
-    needs:
-      - release-docs
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Get version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
-
-      - name: Write release info  # CHANGES.md must be edited with the correct version being released.
-        run: awk 'BEGIN {p = 0} {a = 0 }; /\[v([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?\]/ { p += 1; a = 1}; p + a == 1 { print } ' CHANGES.md | sed  -e '/./,$!d' -e :a -e '/^\n*$/{$d;N;ba' -e '}' > release.txt
-
-      - name: Release
-        uses: actions/create-release@v1
-        id: create_release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.get_version.outputs.VERSION }}
-          release_name: ${{ steps.get_version.outputs.VERSION }}
-          body_path: release.txt
-          draft: false
-          prerelease: false
-
-  build_wheels:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    needs:
-      - release-github
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    env:
-      CIBW_SKIP: pp* ${{ github.event.inputs.CIBW_SKIP }}
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.15.0
-
-      - uses: actions/upload-artifact@v3
-        with:
-          path: wheelhouse/*.whl
-
-  build_wheels_macos:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    needs:
-      - release-github
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-latest]
-        cibw_python: [cp39-*", "cp310-*", "cp311-*"]
-        cibw_arch: ["x86_64", "arm64"]
-    env:
-      CIBW_BUILD: ${{ matrix.cibw_python }}
-      CIBW_ARCHS_MACOS: ${{ matrix.cibw_arch }}
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Setup openmp for macOS
-        run: |
-          # Make sure to use a libomp version binary compatible with the oldest
-          # supported version of the macos SDK as libomp will be vendored into
-          # the smol wheels for macos. The list of binaries are in
-          # https://packages.macports.org/libomp/.  Currently, the oldest
-          # supported macos version is: High Sierra / 10.13. When upgrading
-          # this, be sure to update the MACOSX_DEPLOYMENT_TARGET environment
-          # variable accordingly. Note that Darwin_17 == High Sierra / 10.13.
-          if [[ "$CIBW_ARCHS_MACOS" == arm64 ]]; then
-              # arm64 builds must cross compile because the CI instance is x86
-              # This turns off the computation of the test program in
-              # tools/build_helpers.py
-              echo "PYTHON_CROSSENV=1" >> "$GITHUB_ENV"
-
-              # SciPy requires 12.0 on arm to prevent kernel panics
-              # https://github.com/scipy/scipy/issues/14688
-              # so being conservative, we just do the same here
-              echo "MACOSX_DEPLOYMENT_TARGET=12.0" >> "$GITHUB_ENV"
-              OPENMP_URL="https://anaconda.org/conda-forge/llvm-openmp/11.1.0/download/osx-arm64/llvm-openmp-11.1.0-hf3c4609_1.tar.bz2"
-          else
-              echo "MACOSX_DEPLOYMENT_TARGET=10.9" >> "$GITHUB_ENV"
-              OPENMP_URL="https://anaconda.org/conda-forge/llvm-openmp/11.1.0/download/osx-64/llvm-openmp-11.1.0-hda6cdc1_1.tar.bz2"
-          fi
-
-          # use conda to install llvm-openmp
-          # Note that we do NOT activate the conda environment, we just add the
-          # library install path to CFLAGS/CXXFLAGS/LDFLAGS below.
-          sudo conda create -n build $OPENMP_URL
-          PREFIX="/usr/local/miniconda/envs/build"
-          echo "CC=/usr/bin/clang" >> "$GITHUB_ENV"
-          echo "CPPFLAGS="$CPPFLAGS -Xpreprocessor -fopenmp"" >> "$GITHUB_ENV"
-          echo "CFLAGS="$CFLAGS -Wno-implicit-function-declaration -I$PREFIX/include"" >> "$GITHUB_ENV"
-          echo "LDFLAGS="$LDFLAGS -Wl,-S -Wl,-rpath,$PREFIX/lib -L$PREFIX/lib -lomp"" >> "$GITHUB_ENV"
-
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.15.0
-
-      - uses: actions/upload-artifact@v3
-        with:
-          path: wheelhouse/*.whl
-
-  build_sdist:
-    name: Build source distribution
-    runs-on: ubuntu-latest
-
-    needs:
-      - release-github
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Optional, use if you use setuptools_scm
-
-      - name: Build sdist
-        run: pipx run build --sdist
-
-      - uses: actions/upload-artifact@v3
-        with:
-          path: dist/*.tar.gz
+    needs: test
+    uses: ./.github/workflows/docs.yml
 
   release-pypi:
+    needs: [build, docs]
     runs-on: ubuntu-latest
-    needs: [build_wheels, build_sdist]
+    if: github.event.inputs.release-pypi == 'true'
 
     steps:
       - uses: actions/download-artifact@v3
@@ -178,9 +38,7 @@ jobs:
           name: artifact
           path: dist
 
-      - name: Publish package
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           verbose: true
           user: __token__
