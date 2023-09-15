@@ -1,0 +1,24 @@
+changelog:
+  exclude:
+    authors: [dependabot, github-actions, pre-commit-ci]
+  categories:
+    - title: 🎉 New Features
+      labels: [feature]
+    - title: 🐛 Bug Fixes
+      labels: [fix]
+    - title: 🛠 Enhancements
+      labels: [enhancement]
+    - title: 📖 Documentation
+      labels: [documentation]
+    - title: 💡 Refactoring
+      labels: [refactor]
+    - title: 🧪 Tests
+      labels: [tests]
+    - title: 💥 Breaking Changes
+      labels: [breaking]
+    - title: 🧹 Deprecations
+      labels: [deprecation]
+    - title: 🔒 Security Fixes
+      labels: [security]
+    - title: 🤷‍♂️ Other Changes
+      labels: ["*"]

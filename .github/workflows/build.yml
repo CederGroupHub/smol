@@ -1,15 +1,6 @@
 name: build-dist
 
-# Use this workflow to manually trigger a build for testing purposes.
-# Download it from artifacts to test installation, or upload directly to PyPI.
-on:
-  workflow_dispatch:
-    inputs:
-      release-pypi:
-        required: true
-        type: boolean
-      CIBW_SKIP:
-        description: wheel builds to skip
+on: [workflow_dispatch, workflow_call]
 
 jobs:
 
@@ -21,7 +12,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
     env:
-      CIBW_SKIP: pp* ${{ github.event.inputs.CIBW_SKIP }}
+      CIBW_SKIP: pp* cp312-* ${{ github.event.inputs.CIBW_SKIP }}
 
     steps:
       - uses: actions/checkout@v4
@@ -109,21 +100,3 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           path: dist/*.tar.gz
-
-  release-pypi:
-    needs: [build_wheels, build_wheels_macos, build_sdist]
-    runs-on: ubuntu-latest
-    if: github.event.inputs.release-pypi == 'true'
-
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: artifact
-          path: dist
-
-      - name: Publish package
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          verbose: true
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
