@@ -16,6 +16,8 @@ changelog:
       labels: [tests]
     - title: 💥 Breaking Changes
       labels: [breaking]
+    - title: 🧹 Deprecations
+      labels: [deprecation]
     - title: 🔒 Security Fixes
       labels: [security]
     - title: 🤷‍♂️ Other Changes
