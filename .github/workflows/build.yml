@@ -12,7 +12,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
     env:
-      CIBW_SKIP: pp* ${{ github.event.inputs.CIBW_SKIP }}
+      CIBW_SKIP: pp* cp312-* ${{ github.event.inputs.CIBW_SKIP }}
 
     steps:
       - uses: actions/checkout@v4
