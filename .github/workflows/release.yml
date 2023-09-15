@@ -23,7 +23,7 @@ jobs:
     needs: test
     uses: ./.github/workflows/build.yml
 
-  release-docs:
+  docs:
     needs: test
     uses: ./.github/workflows/docs.yml
 
