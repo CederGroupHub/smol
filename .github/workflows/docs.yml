@@ -1,6 +1,6 @@
 name: build-documentation
 
-on: workflow_dispatch
+on: [workflow_dispatch, workflow_call]
 
 jobs:
   docs:

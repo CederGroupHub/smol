@@ -12,6 +12,8 @@ on:
     branches:
       - main
 
+  workflow_call:
+
 jobs:
   test:
     # Only 20.04 is known to work with scip 8.0.0
