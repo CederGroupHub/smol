@@ -76,10 +76,16 @@ def get_subclasses(base_class: object) -> Dict[str, object]:
     return sub_classes
 
 
-def get_subclass_names(base_class: object) -> tuple[str]:
+def get_subclass_names(base_class: object, lower=True) -> tuple[str]:
     """Get names of all non-abstract subclasses of a class.
 
     Gets all names of non-abstract classes that inherit from the given base class in
     a module.
+
+    Args:
+        base_class (object): base class to get subclasses of
+        lower (bool): whether to return names in lower case
     """
+    if lower:
+        return tuple(name.lower() for name in get_subclasses(base_class).keys())
     return tuple(get_subclasses(base_class).keys())

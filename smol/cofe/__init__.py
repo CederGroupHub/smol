@@ -7,9 +7,9 @@ functions to define and fit cluster expansions for crystalline materials.
 
 from smol.cofe.wrangling.wrangler import StructureWrangler
 
-from .expansion import ClusterExpansion, RegressionData
-from .space.clusterspace import ClusterSubspace, PottsSubspace
-from .space.basis import available_site_basis_sets
+from smol.cofe.expansion import ClusterExpansion, RegressionData
+from smol.cofe.space.clusterspace import ClusterSubspace, PottsSubspace
+from smol.cofe.space.basis import available_site_basis_sets
 
 
 __all__ = [
@@ -18,4 +18,5 @@ __all__ = [
     "StructureWrangler",
     "ClusterExpansion",
     "RegressionData",
+    "available_site_basis_sets"
 ]

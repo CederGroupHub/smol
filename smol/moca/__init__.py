@@ -15,6 +15,10 @@ from smol.moca.processor.expansion import (
 )
 from smol.moca.sampler.container import SampleContainer
 from smol.moca.sampler.sampler import Sampler
+from smol.moca.kernel import available_mckernels
+from smol.moca.kernel.mcusher import available_step_types
+from smol.moca.kernel.bias import available_bias_types
+
 
 __all__ = [
     "ClusterExpansionProcessor",
@@ -25,4 +29,7 @@ __all__ = [
     "Sampler",
     "SampleContainer",
     "CompositionSpace",
+    "available_mckernels",
+    "available_step_types",
+    "available_bias_types",
 ]

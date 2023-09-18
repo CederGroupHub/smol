@@ -8,7 +8,7 @@ from smol.moca.kernel.base import MCKernelInterface
 from smol.moca.kernel.metropolis import Metropolis, MulticellMetropolis
 from smol.moca.kernel.random import UniformlyRandom
 from smol.moca.kernel.wanglandau import WangLandau
-from smol.utils.class_utils import class_name_from_str, derived_class_factory
+from smol.utils.class_utils import class_name_from_str, derived_class_factory, get_subclass_names
 
 __all__ = [
     "Metropolis",
@@ -17,6 +17,15 @@ __all__ = [
     "UniformlyRandom",
     "mckernel_factory",
 ]
+
+
+def available_mckernels() -> tuple[str]:
+    """Return names of available MCMC kernels.
+
+    Returns:
+        tuple[str]: names of available MCMC kernels
+    """
+    return get_subclass_names(MCKernelInterface)
 
 
 def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
@@ -41,3 +50,4 @@ def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
     return derived_class_factory(
         kernel_name, MCKernelInterface, ensemble, step_type, *args, **kwargs
     )
+
