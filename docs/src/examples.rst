@@ -20,6 +20,7 @@ Basic Examples
 - `Creating a basic cluster expansion`_
 - `Creating a cluster expansion with electrostatics`_
 - `Visualizing clusters`_
+- `Choosing site basis sets`_
 - `Running canonical Monte Carlo`_
 - `Running semigrand canonical Monte Carlo`_
 - `Running charge neutral semigrand canonical Monte Carlo`_
@@ -31,6 +32,8 @@ Basic Examples
 .. _Creating a cluster expansion with electrostatics: notebooks/creating-a-ce-w-electrostatics.ipynb
 
 .. _Visualizing clusters: notebooks/cluster-visualization.ipynb
+
+.. _Choosing site basis sets: notebooks/choosing-site-basis-sets.ipynb
 
 .. _Running Canonical Monte Carlo: notebooks/running-canonical-mc.ipynb
 
