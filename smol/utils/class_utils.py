@@ -74,3 +74,12 @@ def get_subclasses(base_class: object) -> Dict[str, object]:
             sub_classes[sub_class.__name__] = sub_class
 
     return sub_classes
+
+
+def get_subclass_names(base_class: object) -> tuple[str]:
+    """Get names of all non-abstract subclasses of a class.
+
+    Gets all names of non-abstract classes that inherit from the given base class in
+    a module.
+    """
+    return tuple(get_subclasses(base_class).keys())

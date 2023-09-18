@@ -9,6 +9,8 @@ from smol.cofe.wrangling.wrangler import StructureWrangler
 
 from .expansion import ClusterExpansion, RegressionData
 from .space.clusterspace import ClusterSubspace, PottsSubspace
+from .space.basis import available_site_basis_sets
+
 
 __all__ = [
     "ClusterSubspace",

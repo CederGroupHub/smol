@@ -19,7 +19,7 @@ from numpy.polynomial.chebyshev import chebval
 from numpy.polynomial.legendre import legval
 from numpy.polynomial.polynomial import polyval
 
-from smol.utils.class_utils import derived_class_factory, get_subclasses
+from smol.utils.class_utils import derived_class_factory, get_subclasses, get_subclass_names
 
 from .domain import SiteSpace
 
@@ -605,3 +605,8 @@ def basis_factory(basis_name, site_space):
     iterator_name = basis_name.capitalize() + "Iterator"
     basis_funcs = derived_class_factory(iterator_name, BasisIterator, species)
     return StandardBasis(site_space, basis_funcs)
+
+
+def available_site_basis_sets():
+    """Return a list of available site basis sets."""
+    return tuple(name.split("Iterator")[0].lower() for name in get_subclass_names(BasisIterator))
