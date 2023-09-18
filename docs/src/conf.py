@@ -118,7 +118,7 @@ html_theme_options = {
     "external_links": [
         {
             "name": "Changes",
-            "url": "https://github.com/CederGroupHub/smol/blob/master/CHANGES.md",
+            "url": "https://github.com/CederGroupHub/smol/releases",
         },
         {"name": "Issues", "url": "https://github.com/CederGroupHub/smol/issues"},
     ],
