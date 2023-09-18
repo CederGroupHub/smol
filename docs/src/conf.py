@@ -15,7 +15,7 @@ import os
 import sys
 from datetime import date
 
-import smol
+from smol import __version__
 
 sys.path.insert(0, os.path.abspath("../../smol"))
 sys.path.insert(0, os.path.abspath("notebooks"))
@@ -27,8 +27,8 @@ copyright = f"2022-{date.today().year}, Ceder Group"
 author = "Luis Barroso-Luque"
 
 # The full version, including alpha/beta/rc tags
-release = smol.__version__
-version = smol.__version__
+release = __version__
+version = __version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -43,9 +43,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.autosummary",
     "sphinx_autodoc_typehints",
-    # "sphinx.ext.coverage",
     # "sphinx.ext.doctest",
-    # "sphinx.ext.todo",
     "sphinx.ext.viewcode",
     # "sphinx.ext.linkcode",
     "nbsphinx",
@@ -80,8 +78,13 @@ templates_path = ["_templates"]
 # List of patterns, relative to src directory, that match files and
 # directories to ignore when looking for src files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
-
+exclude_patterns = [
+    "_build",
+    "build",
+    "Thumbs.db",
+    ".DS_Store",
+    "notebooks/.ipynb_checkpoints",
+]
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "sphinx"
 
@@ -92,33 +95,26 @@ pygments_style = "sphinx"
 
 html_theme = "pydata_sphinx_theme"
 
-# TODO: update this when fixed version of pydata-sphinx-theme is released
-# html_logo = "_static/logo.png"  # banner.svg needs text as paths to avoid font missing
 
 html_theme_options = {
     "logo": {
         "image_light": "logo.png",
         "image_dark": "logo.png",
     },
-    "github_url": "https://github.com/CederGroupHub/smol",
-    "use_edit_page_button": True,
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/CederGroupHub/smol",
+            "icon": "fa-brands fa-github",
+        },
+    ],
+    "navbar_align": "content",  # [left, content, right] For testing that the navbar
+    "navbar_start": ["navbar-logo", "navbar-version"],
     "show_toc_level": 2,
-    # "navbar_align": "left",  # [left, content, right] For testing that the navbar
-    # items align properly
-    # "navbar_start": ["navbar-logo", "navbar-version"],
-    # "navbar_center": ["navbar-nav", "navbar-version"],  # Just for testing
     "navigation_depth": 2,
     "show_nav_level": 2,
-    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],  #
-    # "left_sidebar_end": ["custom-template.html", "sidebar-ethical-ads.html"],
-    # "footer_items": ["copyright", "sphinx-version", ""]
-    "switcher": {
-        # "json_url": "/_static/switcher.json",
-        "json_url": "https://pydata-sphinx-theme.readthedocs.io/en/latest/_static/"
-        "switcher.json",
-        # "url_template": "https://pydata-sphinx-theme.readthedocs.io/en/v{version}/",
-        "version_match": version,
-    },
+    "use_edit_page_button": True,
+    "primary_sidebar_end": ["indices.html", "sidebar-ethical-ads.html"],
     "external_links": [
         {
             "name": "Changes",
@@ -126,26 +122,20 @@ html_theme_options = {
         },
         {"name": "Issues", "url": "https://github.com/CederGroupHub/smol/issues"},
     ],
+    "content_footer_items": ["last-updated"],
 }
 
 html_context = {
-    "github_url": "https://github.com",  # or your GitHub Enterprise interprise
     "github_user": "CederGroupHub",
     "github_repo": "smol",
     "github_version": "main",
     "doc_path": "docs/src",
     "source_suffix": source_suffix,
     "default_mode": "auto",
-}
-
-# Custom sidebar templates, maps page names to templates.
-html_sidebars = {
-    "contribute/index": [
-        "search-field",
-        "sidebar-nav-bs",
-        "custom-template",
-    ],  # This ensures we test for custom sidebars
-    # "demo/no-sidebar": [],  # Test what page looks like with no sidebar items
+    "versions_dropdown": {
+        "latest": "devel (latest)",
+        "stable": "current (stable)",
+    },
 }
 
 # The style sheet to use for HTML and HTML Help pages. A file of that name
@@ -186,8 +176,6 @@ html_file_suffix = ".html"
 
 # If true, the reST sources are included in the HTML build as _sources/<name>.
 html_copy_source = False
-
-# html_use_opensearch = "smolurl"
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "smol"
