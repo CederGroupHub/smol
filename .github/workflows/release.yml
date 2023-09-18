@@ -28,7 +28,7 @@ jobs:
     uses: ./.github/workflows/docs.yml
 
   release-pypi:
-    needs: [build, docs]
+    needs: [build]
     runs-on: ubuntu-latest
     if: github.event.inputs.release-pypi == 'true'
 
