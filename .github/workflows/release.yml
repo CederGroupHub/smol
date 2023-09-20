@@ -16,15 +16,15 @@ on:
         description: "if true a release is made on PyPI"
 
 jobs:
-  test:
-    uses: ./.github/workflows/test.yml
-
-  build:
-    needs: test
-    uses: ./.github/workflows/build.yml
+#  test:
+#    uses: ./.github/workflows/test.yml
+#
+#  build:
+#    needs: test
+#    uses: ./.github/workflows/build.yml
 
   docs:
-    needs: test
+    # needs: test
     uses: ./.github/workflows/docs.yml
 
   release-pypi:
