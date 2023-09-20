@@ -27,19 +27,19 @@ jobs:
     # needs: test
     uses: ./.github/workflows/docs.yml
 
-  release-pypi:
-    needs: [build]
-    runs-on: ubuntu-latest
-    if: github.event.inputs.release-pypi == 'true'
-
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: artifact
-          path: dist
-
-      - uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          verbose: true
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
+#  release-pypi:
+#    needs: [build]
+#    runs-on: ubuntu-latest
+#    if: github.event.inputs.release-pypi == 'true'
+#
+#    steps:
+#      - uses: actions/download-artifact@v3
+#        with:
+#          name: artifact
+#          path: dist
+#
+#      - uses: pypa/gh-action-pypi-publish@release/v1
+#        with:
+#          verbose: true
+#          user: __token__
+#          password: ${{ secrets.PYPI_API_TOKEN }}
