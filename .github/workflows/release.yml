@@ -26,6 +26,7 @@ jobs:
   docs:
     needs: test
     uses: ./.github/workflows/docs.yml
+    secrets: inherit
 
   release-pypi:
     needs: [build]
