@@ -16,7 +16,11 @@ from smol.cofe.space.domain import get_species
 from smol.moca.composition.space import get_oxi_state
 from smol.moca.metadata import Metadata
 from smol.moca.occu_utils import get_dim_ids_table, occu_to_counts
-from smol.utils.class_utils import class_name_from_str, derived_class_factory, get_subclass_names
+from smol.utils.class_utils import (
+    class_name_from_str,
+    derived_class_factory,
+    get_subclass_names,
+)
 
 
 class MCBias(ABC):

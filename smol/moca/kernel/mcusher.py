@@ -26,7 +26,11 @@ from smol.moca.occu_utils import (
     occu_to_counts,
     occu_to_species_list,
 )
-from smol.utils.class_utils import class_name_from_str, derived_class_factory, get_subclass_names
+from smol.utils.class_utils import (
+    class_name_from_str,
+    derived_class_factory,
+    get_subclass_names,
+)
 from smol.utils.math import NUM_TOL, choose_section_from_partition, flip_weights_mask
 
 
