@@ -16,31 +16,31 @@ on:
         description: "if true a release is made on PyPI"
 
 jobs:
-#  test:
-#    uses: ./.github/workflows/test.yml
-#
-#  build:
-#    needs: test
-#    uses: ./.github/workflows/build.yml
+  test:
+    uses: ./.github/workflows/test.yml
+
+  build:
+    needs: test
+    uses: ./.github/workflows/build.yml
 
   docs:
-    # needs: test
+    needs: test
     uses: ./.github/workflows/docs.yml
     secrets: inherit
 
-#  release-pypi:
-#    needs: [build]
-#    runs-on: ubuntu-latest
-#    if: github.event.inputs.release-pypi == 'true'
-#
-#    steps:
-#      - uses: actions/download-artifact@v3
-#        with:
-#          name: artifact
-#          path: dist
-#
-#      - uses: pypa/gh-action-pypi-publish@release/v1
-#        with:
-#          verbose: true
-#          user: __token__
-#          password: ${{ secrets.PYPI_API_TOKEN }}
+  release-pypi:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: github.event.inputs.release-pypi == 'true'
+
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: artifact
+          path: dist
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          verbose: true
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
