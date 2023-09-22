@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>capp — Cluster Analysis and Applications &#8212; smol 0.5.2 documentation</title>
+    <title>capp — Cluster Analysis and Applications &#8212; smol 0.1.dev1+g0c4ff3d documentation</title>
   
   
   
@@ -18,12 +18,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -33,11 +33,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/css/smol.css?v=153d459c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09" />
-  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=927b94d3fcb96560df09"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
 
-    <script src="../../_static/documentation_options.js?v=ec2251d1"></script>
+    <script src="../../_static/documentation_options.js?v=64f078e1"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,7 +52,7 @@
     <link rel="prev" title="Sublattice" href="../moca/sublattice.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Sep 20, 2023"/>
+    <meta name="docbuild:last-update" content="Sep 22, 2023"/>
   </head>
   
   
@@ -142,7 +142,7 @@
       id="dLabelMore"
       aria-haspopup="listbox"
     >
-      v0.5.2
+      v0.1.dev1+g0c4ff3d
       <span class="caret"></span>
     </button>
   </li>
@@ -240,8 +240,8 @@
  document.write(`
    <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__kbd-shortcut">Search</span>
-    <span><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
    </button>
  `);
  </script>
@@ -285,8 +285,8 @@ document.write(`
  document.write(`
    <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__kbd-shortcut">Search</span>
-    <span><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
    </button>
  `);
  </script>
@@ -505,7 +505,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="../index.html" class="nav-link">API Reference</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><strong>capp</strong> — Cluster Analysis and Applications</li>
+    <li class="breadcrumb-item active" aria-current="page"><strong>capp...</li>
   </ul>
 </nav>
 </div>
@@ -529,8 +529,15 @@ cluster expansions and decompositions.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="generate.html">Generate</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="generate.special.html">Special Structures</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generate.groundstate.html">Ground States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generate.special.html">Special Structures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generate.special.html#smol.capp.generate.special.sqs.SQS"><code class="docutils literal notranslate"><span class="pre">SQS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="generate.special.html#smol.capp.generate.special.sqs.StochasticSQSGenerator"><code class="docutils literal notranslate"><span class="pre">StochasticSQSGenerator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="generate.groundstate.html">Ground States</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generate.groundstate.html#smol.capp.generate.groundstate.upper_bound.solver.PeriodicGroundStateSolver"><code class="docutils literal notranslate"><span class="pre">PeriodicGroundStateSolver</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="generate.enumerate.html">Enumerate</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="generate.enumerate.html#smol.capp.generate.enumerate.enumerate_supercell_matrices"><code class="docutils literal notranslate"><span class="pre">enumerate_supercell_matrices()</span></code></a></li>
 </ul>
@@ -606,7 +613,7 @@ cluster expansions and decompositions.</p>
 <div class="footer-content-items footer-content__inner">
   
     <div class="footer-content-item"><p class="last-updated">
-  Last updated on Sep 20, 2023.
+  Last updated on Sep 22, 2023.
   <br/>
 </p></div>
   
@@ -619,8 +626,8 @@ cluster expansions and decompositions.</p>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -650,7 +657,7 @@ cluster expansions and decompositions.</p>
     <div class="footer-items__end">
       
         <div class="footer-item"><p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.1.
 </p></div>
       
     </div>

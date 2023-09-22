@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Special Structures &#8212; smol 0.5.2 documentation</title>
+    <title>Special Structures &#8212; smol 0.1.dev1+g0c4ff3d documentation</title>
   
   
   
@@ -18,12 +18,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -33,11 +33,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/css/smol.css?v=153d459c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09" />
-  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=927b94d3fcb96560df09"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
 
-    <script src="../../_static/documentation_options.js?v=ec2251d1"></script>
+    <script src="../../_static/documentation_options.js?v=64f078e1"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,7 +52,7 @@
     <link rel="prev" title="Generate" href="generate.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Sep 20, 2023"/>
+    <meta name="docbuild:last-update" content="Sep 22, 2023"/>
   </head>
   
   
@@ -142,7 +142,7 @@
       id="dLabelMore"
       aria-haspopup="listbox"
     >
-      v0.5.2
+      v0.1.dev1+g0c4ff3d
       <span class="caret"></span>
     </button>
   </li>
@@ -240,8 +240,8 @@
  document.write(`
    <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__kbd-shortcut">Search</span>
-    <span><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
    </button>
  `);
  </script>
@@ -285,8 +285,8 @@ document.write(`
  document.write(`
    <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__kbd-shortcut">Search</span>
-    <span><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
    </button>
  `);
  </script>
@@ -533,6 +533,119 @@ document.write(`
   <section id="special-structures">
 <span id="special"></span><h1>Special Structures<a class="headerlink" href="#special-structures" title="Link to this heading">#</a></h1>
 <p>Classes to generate special quasi-random structures (SQS).</p>
+<p id="module-smol.capp.generate.special.sqs">Special Quasi-Random Structures (SQS).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="smol.capp.generate.special.sqs.SQS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SQS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#smol.capp.generate.special.sqs.SQS" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>Create new instance of SQS(structure, score, feature_distance, supercell_matrix)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.capp.generate.special.sqs.SQS.feature_distance">
+<span class="sig-name descname"><span class="pre">feature_distance</span></span><a class="headerlink" href="#smol.capp.generate.special.sqs.SQS.feature_distance" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.capp.generate.special.sqs.SQS.score">
+<span class="sig-name descname"><span class="pre">score</span></span><a class="headerlink" href="#smol.capp.generate.special.sqs.SQS.score" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.capp.generate.special.sqs.SQS.structure">
+<span class="sig-name descname"><span class="pre">structure</span></span><a class="headerlink" href="#smol.capp.generate.special.sqs.SQS.structure" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.capp.generate.special.sqs.SQS.supercell_matrix">
+<span class="sig-name descname"><span class="pre">supercell_matrix</span></span><a class="headerlink" href="#smol.capp.generate.special.sqs.SQS.supercell_matrix" title="Link to this definition">#</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="smol.capp.generate.special.sqs.StochasticSQSGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">StochasticSQSGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_subspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'correlation'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell_matrices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/capp/generate/special/sqs.html#StochasticSQSGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.capp.generate.special.sqs.StochasticSQSGenerator" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQSGenerator</span></code></p>
+<p>StochasticSQSGenertor class.</p>
+<p>Generate special quasirandom structures using simulated annealing, based on the
+following work</p>
+<p><a class="reference external" href="https://doi.org/10.1016/j.calphad.2013.06.006">https://doi.org/10.1016/j.calphad.2013.06.006</a></p>
+<p>Initialize StochasticSQSGenerator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_subspace</strong> (<a class="reference internal" href="../cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace" title="smol.cofe.space.clusterspace.ClusterSubspace"><em>ClusterSubspace</em></a>) – cluster subspace used to determine feature_distance</p></li>
+<li><p><strong>supercell_size</strong> (<em>int</em>) – size of the supercell in multiples of the primitive cell</p></li>
+<li><p><strong>feature_type</strong> (<em>str</em>) – optional
+type of feature_distance to be used to determine SQS.
+options are: “correlation”</p></li>
+<li><p><strong>target_vector</strong> (<em>ndarray</em>) – optional
+target feature vector to use for distance calculations</p></li>
+<li><p><strong>target_weights</strong> (<em>ndarray</em>) – optional
+weights for each target feature</p></li>
+<li><p><strong>match_weight</strong> (<em>float</em>) – optional
+weight for the in the wL term above. That is how much to weight the
+largest diameter below which all features are matched exactly.
+Set to any number &gt;0 to use this term. Default is 1.0. to ignore it
+set it to zero.</p></li>
+<li><p><strong>match_tol</strong> (<em>float</em>) – optional
+tolerance for matching features. Default is 1e-5.</p></li>
+<li><p><strong>supercell_matrices</strong> (<em>list</em><em> of </em><em>ndarray</em>) – optional
+list of supercell matrices to use. If None, all symmetrically distinct
+supercell matrices are generated.</p></li>
+<li><p><strong>processors</strong> (<em>list</em><em> of </em><em>Processor</em>) – optional
+list of processors to use. If None, all processors are generated.</p></li>
+<li><p><strong>kernel_kwargs</strong> (<em>dict</em>) – optional
+keyword arguments for the transition kernel used in each supercell.
+For example see the documentation for <code class="xref py py-class docutils literal notranslate"><span class="pre">Metropolis</span></code> kernel.</p></li>
+<li><p><strong>**kwargs</strong> – keyword arguments used to initialize the <code class="xref py py-class docutils literal notranslate"><span class="pre">MulticellMetropolis</span></code>
+kernel to be used for the simulated annealing.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.capp.generate.special.sqs.StochasticSQSGenerator.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mcmc_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperatures</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_occupancies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clear_previous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_save_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/capp/generate/special/sqs.html#StochasticSQSGenerator.generate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.capp.generate.special.sqs.StochasticSQSGenerator.generate" title="Link to this definition">#</a></dt>
+<dd><p>Generate a SQS structures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mcmc_steps</strong> (<em>int</em>) – number of mcmc steps per temperature to perform simulated annealing</p></li>
+<li><p><strong>temperatures</strong> (<em>list</em><em> of </em><em>float</em>) – optional
+temperatures to use for the mcmc steps, temperatures are unit-less
+the recommended range should be only single digits.</p></li>
+<li><p><strong>initial_occupancies</strong> (<em>ndarray</em>) – optional
+initial occupancies to use in the simulated anneal search, an occupancy
+must be given for each of the supercell shapes, and these occupancies
+must have the correct compositions.</p></li>
+<li><p><strong>clear_previous</strong> (<em>bool</em>) – optional
+whether to clear previous samples.</p></li>
+<li><p><strong>max_save_num</strong> (<em>int</em>) – optional
+max number of best structures to save, if None a maximum 1% of
+structures are saved. A structure is only saved if the SQS score is
+better than the previous best.</p></li>
+<li><p><strong>progress</strong> (<em>bool</em>) – if true will show a progress bar.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.capp.generate.special.sqs.StochasticSQSGenerator.sampler">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sampler</span></span><a class="headerlink" href="#smol.capp.generate.special.sqs.StochasticSQSGenerator.sampler" title="Link to this definition">#</a></dt>
+<dd><p>sampler used to generate SQS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler" title="smol.moca.sampler.sampler.Sampler">Sampler</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -573,6 +686,27 @@ document.write(`
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
   <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.capp.generate.special.sqs.SQS"><code class="docutils literal notranslate"><span class="pre">SQS</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.capp.generate.special.sqs.SQS.feature_distance"><code class="docutils literal notranslate"><span class="pre">SQS.feature_distance</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.capp.generate.special.sqs.SQS.score"><code class="docutils literal notranslate"><span class="pre">SQS.score</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.capp.generate.special.sqs.SQS.structure"><code class="docutils literal notranslate"><span class="pre">SQS.structure</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.capp.generate.special.sqs.SQS.supercell_matrix"><code class="docutils literal notranslate"><span class="pre">SQS.supercell_matrix</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.capp.generate.special.sqs.StochasticSQSGenerator"><code class="docutils literal notranslate"><span class="pre">StochasticSQSGenerator</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.capp.generate.special.sqs.StochasticSQSGenerator.generate"><code class="docutils literal notranslate"><span class="pre">StochasticSQSGenerator.generate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.capp.generate.special.sqs.StochasticSQSGenerator.sampler"><code class="docutils literal notranslate"><span class="pre">StochasticSQSGenerator.sampler</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
   
   <div class="tocsection editthispage">
     <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/api_reference/capp/generate.special.rst">
@@ -596,7 +730,7 @@ document.write(`
 <div class="footer-content-items footer-content__inner">
   
     <div class="footer-content-item"><p class="last-updated">
-  Last updated on Sep 20, 2023.
+  Last updated on Sep 22, 2023.
   <br/>
 </p></div>
   
@@ -609,8 +743,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -640,7 +774,7 @@ document.write(`
     <div class="footer-items__end">
       
         <div class="footer-item"><p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.1.
 </p></div>
       
     </div>

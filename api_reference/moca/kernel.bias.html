@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Sampling Bias &#8212; smol 0.5.2 documentation</title>
+    <title>Sampling Bias &#8212; smol 0.1.dev1+g0c4ff3d documentation</title>
   
   
   
@@ -18,12 +18,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=927b94d3fcb96560df09" rel="stylesheet" />
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -33,11 +33,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/css/smol.css?v=153d459c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09" />
-  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=927b94d3fcb96560df09"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
 
-    <script src="../../_static/documentation_options.js?v=ec2251d1"></script>
+    <script src="../../_static/documentation_options.js?v=64f078e1"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,7 +52,7 @@
     <link rel="prev" title="MCUshers" href="kernel.mcusher.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Sep 20, 2023"/>
+    <meta name="docbuild:last-update" content="Sep 22, 2023"/>
   </head>
   
   
@@ -142,7 +142,7 @@
       id="dLabelMore"
       aria-haspopup="listbox"
     >
-      v0.5.2
+      v0.1.dev1+g0c4ff3d
       <span class="caret"></span>
     </button>
   </li>
@@ -240,8 +240,8 @@
  document.write(`
    <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__kbd-shortcut">Search</span>
-    <span><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
    </button>
  `);
  </script>
@@ -285,8 +285,8 @@ document.write(`
  document.write(`
    <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__kbd-shortcut">Search</span>
-    <span><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
    </button>
  `);
  </script>
@@ -530,8 +530,279 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="sampling-bias">
-<h1>Sampling Bias<a class="headerlink" href="#sampling-bias" title="Link to this heading">#</a></h1>
+  <section id="module-smol.moca.kernel.bias">
+<span id="sampling-bias"></span><h1>Sampling Bias<a class="headerlink" href="#module-smol.moca.kernel.bias" title="Link to this heading">#</a></h1>
+<p>Bias term definitions for biased sampling techniques.</p>
+<p>Bias terms can be added to an MCKernel in order to generate samples that are
+biased accordingly.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.FugacityBias">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FugacityBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fugacity_fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/bias.html#FugacityBias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.bias.FugacityBias" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.kernel.bias.MCBias" title="smol.moca.kernel.bias.MCBias"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCBias</span></code></a></p>
+<p>Fugacity fraction bias.</p>
+<p>This bias corresponds directly to using a composition bias. Using this
+with a CanonicalEnsemble keeps fugacity fractions constant, which
+implicitly sets the chemical potentials, albeit for a specific temperature.
+Since one species per sublattice is the reference species, to calculate
+actual fugacities, the reference fugacity must be computed as an ensemble
+average and all other fugacities can then be calculated.
+From the fugacities and the set temperature, the corresponding chemical
+potentials can then be calculated.</p>
+<p>Initialize fugacity ratio bias.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sublattices</strong> (<em>List</em><em>[</em><a class="reference internal" href="sublattice.html#smol.moca.sublattice.Sublattice" title="smol.moca.sublattice.Sublattice"><em>Sublattice</em></a><em>]</em>) – list of active sublattices, containing species information and
+site indices in sublattice.</p></li>
+<li><p><strong>fugacity_fractions</strong> (<em>sequence</em><em> of </em><em>dicts</em>) – optional
+Dictionary of species name and fugacity fraction for each
+sublattice (.i.e think of it as the sublattice concentrations
+for random structure). If not given this will be taken from the
+prim structure used in the cluster subspace. Needs to be in
+the same order as the corresponding sublattice.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>kwargs:</dt><dd><p>Keyword arguments for initializing MCUsher.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.FugacityBias.compute_bias">
+<span class="sig-name descname"><span class="pre">compute_bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/bias.html#FugacityBias.compute_bias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.bias.FugacityBias.compute_bias" title="Link to this definition">#</a></dt>
+<dd><p>Compute bias from occupancy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>np.ndarray</em>) – Encoded occupancy string.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Float, bias value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.FugacityBias.compute_bias_change">
+<span class="sig-name descname"><span class="pre">compute_bias_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/bias.html#FugacityBias.compute_bias_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.bias.FugacityBias.compute_bias_change" title="Link to this definition">#</a></dt>
+<dd><p>Compute bias change from step.</p>
+<p>The returned value needs to be the difference of bias logs,
+log(bias_f) - log(bias_i), when the bias terms would directly multiply
+the ensemble probability (i.e. exp(-beta * E) * bias).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>occupancy</strong> – (ndarray):
+encoded occupancy array.</p></li>
+<li><p><strong>step</strong> – (List[tuple(int,int)]):
+step returned by MCUsher.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, change of bias value after step.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.FugacityBias.fugacity_fractions">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fugacity_fractions</span></span><a class="headerlink" href="#smol.moca.kernel.bias.FugacityBias.fugacity_fractions" title="Link to this definition">#</a></dt>
+<dd><p>Get the fugacity fractions for species on active sublatts.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.MCBias">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MCBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/bias.html#MCBias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.bias.MCBias" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base bias term class.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Any MCBias should be implemented as beta * E - bias
+will be minimized in thermodynamics kernel.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.MCBias.sublattices">
+<span class="sig-name descname"><span class="pre">sublattices</span></span><a class="headerlink" href="#smol.moca.kernel.bias.MCBias.sublattices" title="Link to this definition">#</a></dt>
+<dd><p>list of sublattices with active sites.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="sublattice.html#smol.moca.sublattice.Sublattice" title="smol.moca.sublattice.Sublattice">Sublattice</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Initialize MCBias.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sublattices</strong> (<em>List</em><em>[</em><a class="reference internal" href="sublattice.html#smol.moca.sublattice.Sublattice" title="smol.moca.sublattice.Sublattice"><em>Sublattice</em></a><em>]</em>) – list of active sublattices, containing species information and
+site indices in sublattice.</p></li>
+<li><p><strong>rng</strong> (<em>np.Generator</em>) – optional
+The given PRNG must be the same instance as that used by the kernel and
+any bias terms, otherwise reproducibility will be compromised.</p></li>
+<li><p><strong>args</strong> – Additional arguments buffer.</p></li>
+<li><p><strong>kwargs</strong> – Additional keyword arguments buffer.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.MCBias.compute_bias">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/bias.html#MCBias.compute_bias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.bias.MCBias.compute_bias" title="Link to this definition">#</a></dt>
+<dd><p>Compute bias from occupancy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>np.ndarray</em>) – encoded occupancy string.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Float, bias value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.MCBias.compute_bias_change">
+<span class="sig-name descname"><span class="pre">compute_bias_change</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/bias.html#MCBias.compute_bias_change"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.bias.MCBias.compute_bias_change" title="Link to this definition">#</a></dt>
+<dd><p>Compute bias change from step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>occupancy</strong> – (ndarray):
+encoded occupancy array.</p></li>
+<li><p><strong>step</strong> – (List[tuple(int,int)]):
+step returned by MCUsher.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Float, change of bias value after step.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.SquareChargeBias">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SquareChargeBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/bias.html#SquareChargeBias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.bias.SquareChargeBias" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.kernel.bias.MCBias" title="smol.moca.kernel.bias.MCBias"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCBias</span></code></a></p>
+<p>Square charge bias.</p>
+<p>This bias penalizes energy on square of the system net charge.</p>
+<p>Square charge bias.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sublattices</strong> (<em>List</em><em>[</em><a class="reference internal" href="sublattice.html#smol.moca.sublattice.Sublattice" title="smol.moca.sublattice.Sublattice"><em>Sublattice</em></a><em>]</em>) – List of active sublattices, containing species information and
+site indices in sublattice. Must include all sites!</p></li>
+<li><p><strong>penalty</strong> (<em>float</em>) – optional
+Penalty factor. energy/kT will be penalized by adding penalty
+* charge**2.
+Must be positive. Default to 0.5, which works
+for most of the cases.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>kwargs:</dt><dd><p>Keyword arguments for initializing MCUsher.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.SquareChargeBias.compute_bias">
+<span class="sig-name descname"><span class="pre">compute_bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/bias.html#SquareChargeBias.compute_bias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.bias.SquareChargeBias.compute_bias" title="Link to this definition">#</a></dt>
+<dd><p>Compute bias from occupancy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>np.ndarray</em>) – Encoded occupancy string.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Float, bias value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.SquareHyperplaneBias">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SquareHyperplaneBias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hyperplane_normals</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hyperplane_intercepts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/bias.html#SquareHyperplaneBias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.bias.SquareHyperplaneBias" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#smol.moca.kernel.bias.MCBias" title="smol.moca.kernel.bias.MCBias"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCBias</span></code></a></p>
+<p>Square hyperplane bias.</p>
+<p>This bias penalizes energy on sum square of distance from a composition n
+(“counts” format) to hyperplanes A n = b (in the unconstrained composition space,
+see CompositionSpace document). In other words, this bias penalizes the
+composition’s deviation from the constraints in A n = b.</p>
+<p>Square composition bias.</p>
+<p>Use this when you have other constraints to the composition
+than the charge constraint.
+:type sublattices: 
+:param sublattices: List of active sublattices, containing species information and</p>
+<blockquote>
+<div><p>site indices in sublattice. Must include all sites!</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hyperplane_normals</strong> (<em>2D ArrayLike</em>) – Normal vectors of hyperplanes, each in a row. (The matrix A.)</p></li>
+<li><p><strong>hyperplane_intercepts</strong> (<em>1D ArrayLike</em>) – Intercepts of each hyperplane. (The vector b.)</p></li>
+<li><p><strong>of</strong> (<em>The matrix A and the vector b together forms a set</em>) – </p></li>
+<li><p><strong>hyperplanes</strong> (<em>constraint</em>) – A n = b. (Per-super-cell, not per-primitive cell).</p></li>
+<li><p><strong>penalty</strong> (<em>float</em>) – optional
+Penalty factor. energy/kT will be penalized by adding penalty
+* ||A n - b||**2. Must be positive.
+Default to 0.5, which works for most of the cases.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>kwargs:</dt><dd><p>Keyword arguments for initializing MCUsher.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.SquareHyperplaneBias.compute_bias">
+<span class="sig-name descname"><span class="pre">compute_bias</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occupancy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/bias.html#SquareHyperplaneBias.compute_bias"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.bias.SquareHyperplaneBias.compute_bias" title="Link to this definition">#</a></dt>
+<dd><p>Compute bias from occupancy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>occupancy</strong> (<em>np.ndarray</em>) – Encoded occupancy string.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Float, bias value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.available_bias_types">
+<span class="sig-name descname"><span class="pre">available_bias_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/bias.html#available_bias_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.bias.available_bias_types" title="Link to this definition">#</a></dt>
+<dd><p>Get a list of available MCMC biases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple[str], list of available MCMC biases.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="smol.moca.kernel.bias.mcbias_factory">
+<span class="sig-name descname"><span class="pre">mcbias_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bias_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sublattices</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/smol/moca/kernel/bias.html#mcbias_factory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#smol.moca.kernel.bias.mcbias_factory" title="Link to this definition">#</a></dt>
+<dd><p>Get a MCMC bias from string name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bias_type</strong> (<em>str</em>) – string specifying bias name to instantiate.</p></li>
+<li><p><strong>sublattices</strong> (<em>List</em><em>[</em><a class="reference internal" href="sublattice.html#smol.moca.sublattice.Sublattice" title="smol.moca.sublattice.Sublattice"><em>Sublattice</em></a><em>]</em>) – list of active sublattices, containing species information and
+site indices in sublattice.</p></li>
+<li><p><strong>*args</strong> – positional args to instantiate a bias term.</p></li>
+<li><p><strong>*kwargs</strong> – keyword argument to instantiate a bias term.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -572,6 +843,37 @@ document.write(`
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
   <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.FugacityBias"><code class="docutils literal notranslate"><span class="pre">FugacityBias</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.FugacityBias.compute_bias"><code class="docutils literal notranslate"><span class="pre">FugacityBias.compute_bias()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.FugacityBias.compute_bias_change"><code class="docutils literal notranslate"><span class="pre">FugacityBias.compute_bias_change()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.FugacityBias.fugacity_fractions"><code class="docutils literal notranslate"><span class="pre">FugacityBias.fugacity_fractions</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.MCBias"><code class="docutils literal notranslate"><span class="pre">MCBias</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.MCBias.sublattices"><code class="docutils literal notranslate"><span class="pre">MCBias.sublattices</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.MCBias.compute_bias"><code class="docutils literal notranslate"><span class="pre">MCBias.compute_bias()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.MCBias.compute_bias_change"><code class="docutils literal notranslate"><span class="pre">MCBias.compute_bias_change()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.SquareChargeBias"><code class="docutils literal notranslate"><span class="pre">SquareChargeBias</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.SquareChargeBias.compute_bias"><code class="docutils literal notranslate"><span class="pre">SquareChargeBias.compute_bias()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.SquareHyperplaneBias"><code class="docutils literal notranslate"><span class="pre">SquareHyperplaneBias</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.SquareHyperplaneBias.compute_bias"><code class="docutils literal notranslate"><span class="pre">SquareHyperplaneBias.compute_bias()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.available_bias_types"><code class="docutils literal notranslate"><span class="pre">available_bias_types()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#smol.moca.kernel.bias.mcbias_factory"><code class="docutils literal notranslate"><span class="pre">mcbias_factory()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
   
   <div class="tocsection editthispage">
     <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/api_reference/moca/kernel.bias.rst">
@@ -595,7 +897,7 @@ document.write(`
 <div class="footer-content-items footer-content__inner">
   
     <div class="footer-content-item"><p class="last-updated">
-  Last updated on Sep 20, 2023.
+  Last updated on Sep 22, 2023.
   <br/>
 </p></div>
   
@@ -608,8 +910,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=927b94d3fcb96560df09"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=927b94d3fcb96560df09"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -639,7 +941,7 @@ document.write(`
     <div class="footer-items__end">
       
         <div class="footer-item"><p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.1.
 </p></div>
       
     </div>

@@ -1,0 +1,1011 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-theme="auto">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Choosing the site basis set for a cluster subspace &#8212; smol 0.1.dev1+g0c4ff3d documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/smol.css?v=153d459c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
+
+    <script src="../_static/documentation_options.js?v=64f078e1"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'notebooks/choosing-site-basis-sets';</script>
+    <script src="../_static/require.js?v=d4dd881e"></script>
+    <script src="../_static/custom.js?v=1f4f4097"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="Sep 22, 2023"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="auto">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+      <div class="navbar-item"><ul class="navbar-nav">
+  <li class="version-switcher__container dropdown">
+    <button
+      type="button"
+      role="button"
+      class="version-switcher__button btn btn-sm navbar-btn"
+      data-bs-toggle="dropdown"
+      id="dLabelMore"
+      aria-haspopup="listbox"
+    >
+      v0.1.dev1+g0c4ff3d
+      <span class="caret"></span>
+    </button>
+  </li>
+</ul></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Example Notebooks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-header-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-header-nav-more-links" class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/releases">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started.html">
+                        Getting Started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples.html">
+                        Example Notebooks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../user_guide.html">
+                        User Guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../api_reference/index.html">
+                        API Reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../citing.html">
+                        Citing
+                      </a>
+                    </li>
+                
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-header-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-header-nav-more-links" class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="../developer_guide/index.html">
+                        Developing
+                      </a>
+                    </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/releases">
+                    Changes
+                  </a>
+                </li>
+                
+
+                <li class="nav-item">
+                  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/issues">
+                    Issues
+                  </a>
+                </li>
+                
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item"><nav class="sidebar-indices-items">
+  <p class="sidebar-indices-items__title" role="heading" aria-level="1">Indices</p>
+  <ul class="indices-link">
+        <li class="toctree-l1">
+          <a class="reference internal"
+             href="../genindex.html"
+             accesskey="I">General Index</a>
+        </li>
+        <li class="toctree-l1">
+          <a class="reference internal" href="../py-modindex.html">Python Module Index</a>
+        </li>
+  </ul>
+</nav></div>
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Choosing...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <div class="admonition note">
+  This page was generated from
+  <a class="reference external" href="https://github.com/CederGroupHub/smol/tree/v0.1.dev1+g0c4ff3d/docs/src/notebooks/choosing-site-basis-sets.ipynb">docs/src/notebooks/choosing-site-basis-sets.ipynb</a>.<br>
+  <script>
+    if (document.location.host) {
+      $(document.currentScript).replaceWith(
+        '<a class="reference external" ' +
+        'href="https://nbviewer.jupyter.org/url' +
+        (window.location.protocol == 'https:' ? 's/' : '/') +
+        window.location.host +
+        window.location.pathname.slice(0, -4) +
+        'ipynb">View & download notebook in <em>nbviewer</em></a>.'
+      );
+    }
+  </script>
+</div><section id="Choosing-the-site-basis-set-for-a-cluster-subspace">
+<h1>Choosing the site basis set for a cluster subspace<a class="headerlink" href="#Choosing-the-site-basis-set-for-a-cluster-subspace" title="Link to this heading">#</a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">monty.serialization</span> <span class="kn">import</span> <span class="n">loadfn</span>
+<span class="kn">from</span> <span class="nn">smol.cofe</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">available_site_basis_sets</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load the prim structure</span>
+<span class="n">prim</span> <span class="o">=</span> <span class="n">loadfn</span><span class="p">(</span><span class="s1">&#39;data/lmo_drx_prim.json&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="0)-Listing-available-basis-sets">
+<h2>0) Listing available basis sets<a class="headerlink" href="#0)-Listing-available-basis-sets" title="Link to this heading">#</a></h2>
+<p>A variety of different site basis sets are available in <strong>smol</strong>. To list the options simply use the function <code class="docutils literal notranslate"><span class="pre">available_site_basis_sets</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The available site basis set options are:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">available_site_basis_sets</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The available site basis set options are:
+ (&#39;indicator&#39;, &#39;sinusoid&#39;, &#39;polynomial&#39;, &#39;chebyshev&#39;, &#39;legendre&#39;)
+</pre></div></div>
+</div>
+</section>
+<section id="1)-Setting-the-site-basis-type-in-a-cluster-subspace">
+<h2>1) Setting the site basis type in a cluster subspace<a class="headerlink" href="#1)-Setting-the-site-basis-type-in-a-cluster-subspace" title="Link to this heading">#</a></h2>
+<p>The default site basis set is <code class="docutils literal notranslate"><span class="pre">indicator</span></code>, also known as the “occupancy” basis or the “lattice-gas” basis. However, the basis type can be set using the <code class="docutils literal notranslate"><span class="pre">basis</span></code> keyword argument when creating a cluster subspace.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subspace_indicator</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span>
+    <span class="n">prim</span><span class="p">,</span>
+    <span class="n">cutoffs</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="c1"># will include orbits of 2 and 3 sites.</span>
+    <span class="n">supercell_size</span><span class="o">=</span><span class="s1">&#39;O2-&#39;</span>
+<span class="p">)</span>
+
+<span class="n">subspace_sine</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span>
+    <span class="n">prim</span><span class="p">,</span>
+    <span class="n">cutoffs</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="c1"># will include orbits of 2 and 3 sites.</span>
+    <span class="n">basis</span><span class="o">=</span><span class="s2">&quot;sinusoid&quot;</span><span class="p">,</span>
+    <span class="n">supercell_size</span><span class="o">=</span><span class="s1">&#39;O2-&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">subspace_indicator</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">subspace_sine</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Basis/Orthogonal/Orthonormal : indicator/False/False
+       Unit Cell Composition : Li+0.7 Mn2+0.7 Mn3+0.2 Mn4+0.2 O2-1
+            Number of Orbits : 17
+No. of Correlation Functions : 123
+             Cluster Cutoffs : 2: 3.64, 3: 2.97
+              External Terms : []
+Orbit Summary
+ ------------------------------------------------------------------------
+ |  ID     Degree    Cluster Diameter    Multiplicity    No. Functions  |
+ |   0       0             NA                 0                1        |
+ |   1       1            0.0000              2                2        |
+ |   2       1            0.0000              1                4        |
+ |   3       2            1.8187              8                8        |
+ |   4       2            2.1000              6                3        |
+ |   5       2            2.9699              12               3        |
+ |   6       2            2.9699              6               10        |
+ |   7       2            3.4825              24               8        |
+ |   8       2            3.6373              4                3        |
+ |   9       2            3.6373              4                3        |
+ |  10       3            2.1000              12              12        |
+ |  11       3            2.9699              24               6        |
+ |  12       3            2.9699              12              12        |
+ |  13       3            2.9699              12              20        |
+ |  14       3            2.9699              8                4        |
+ |  15       3            2.9699              8                4        |
+ |  16       3            2.9699              8               20        |
+ ------------------------------------------------------------------------
+Basis/Orthogonal/Orthonormal : sinusoid/True/False
+       Unit Cell Composition : Li+0.7 Mn2+0.7 Mn3+0.2 Mn4+0.2 O2-1
+            Number of Orbits : 17
+No. of Correlation Functions : 123
+             Cluster Cutoffs : 2: 3.64, 3: 2.97
+              External Terms : []
+Orbit Summary
+ ------------------------------------------------------------------------
+ |  ID     Degree    Cluster Diameter    Multiplicity    No. Functions  |
+ |   0       0             NA                 0                1        |
+ |   1       1            0.0000              2                2        |
+ |   2       1            0.0000              1                4        |
+ |   3       2            1.8187              8                8        |
+ |   4       2            2.1000              6                3        |
+ |   5       2            2.9699              12               3        |
+ |   6       2            2.9699              6               10        |
+ |   7       2            3.4825              24               8        |
+ |   8       2            3.6373              4                3        |
+ |   9       2            3.6373              4                3        |
+ |  10       3            2.1000              12              12        |
+ |  11       3            2.9699              24               6        |
+ |  12       3            2.9699              12              12        |
+ |  13       3            2.9699              12              20        |
+ |  14       3            2.9699              8                4        |
+ |  15       3            2.9699              8                4        |
+ |  16       3            2.9699              8               20        |
+ ------------------------------------------------------------------------
+</pre></div></div>
+</div>
+<section id="Checking-orthogonality-and-orthonormality">
+<h3>Checking orthogonality and orthonormality<a class="headerlink" href="#Checking-orthogonality-and-orthonormality" title="Link to this heading">#</a></h3>
+<p>We see from printing the subspace above that the <code class="docutils literal notranslate"><span class="pre">indicator</span></code> basis is not orthogonal, and that the <code class="docutils literal notranslate"><span class="pre">sinusoid</span></code> basis is not orthonormal (it orthonormal for binary systems only)</p>
+<p>We can also check if a the basis is orthogonal or orthonormal programmatically.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">subspace_indicator</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis is orthogonal </span><span class="si">{</span><span class="n">subspace_indicator</span><span class="o">.</span><span class="n">basis_orthogonal</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">subspace_indicator</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis is orthogonal </span><span class="si">{</span><span class="n">subspace_indicator</span><span class="o">.</span><span class="n">basis_orthonormal</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">subspace_sine</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis is orthogonal </span><span class="si">{</span><span class="n">subspace_sine</span><span class="o">.</span><span class="n">basis_orthogonal</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">subspace_sine</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis is orthogonal </span><span class="si">{</span><span class="n">subspace_sine</span><span class="o">.</span><span class="n">basis_orthonormal</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The indicator basis is orthogonal False
+The indicator basis is orthogonal False
+
+The sinusoid basis is orthogonal True
+The sinusoid basis is orthogonal False
+</pre></div></div>
+</div>
+</section>
+<section id="Inspecting-basis-functions">
+<h3>Inspecting basis functions<a class="headerlink" href="#Inspecting-basis-functions" title="Link to this heading">#</a></h3>
+<p>We can see the actual basis functions by printing the <code class="docutils literal notranslate"><span class="pre">basis_array</span></code> of singlet orbits. Each row of the basis array corresponds to a basis function.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">subspace_indicator</span><span class="o">.</span><span class="n">orbits</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subspace_indicator</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis function:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">subspace_indicator</span><span class="o">.</span><span class="n">orbits</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">basis_arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subspace_sine</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis function:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">subspace_sine</span><span class="o">.</span><span class="n">orbits</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">basis_arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Orbit  1
+    Multiplicity : 2
+   No. functions : 2
+No. symmetry ops : 24
+Function ids : [1, 2]
+Base Cluster :
+  | Diameter : 0.0000
+  |   Charge : 1.0
+  | Centroid :     2.571966     1.818654     4.454775  -&gt;     0.750000     0.750000     0.750000
+  | Sites (1)
+  | ------------------------------------------------------------------------------------------------------------------------
+  | 0 vacA0+:0.333, Li+:0.333, Mn2+:0.333     2.571966     1.818654     4.454775   -&gt;     0.750000     0.750000     0.750000
+
+indicator basis function:
+ [[1. 0. 0.]
+ [0. 1. 0.]]
+
+sinusoid basis function:
+ [[-1.         0.5        0.5      ]
+ [-0.        -0.8660254  0.8660254]]
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">subspace_indicator</span><span class="o">.</span><span class="n">orbits</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subspace_indicator</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis function:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">subspace_indicator</span><span class="o">.</span><span class="n">orbits</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">basis_arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subspace_sine</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis function:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">subspace_sine</span><span class="o">.</span><span class="n">orbits</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">basis_arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Orbit  2
+    Multiplicity : 1
+   No. functions : 4
+No. symmetry ops : 48
+Function ids : [3, 4, 5, 6]
+Base Cluster :
+  | Diameter : 0.0000
+  |   Charge : 2.0
+  | Centroid :     0.000000     0.000000     0.000000  -&gt;     0.000000     0.000000     0.000000
+  | Sites (1)
+  | ------------------------------------------------------------------------------------------------------------------------------------------------
+  | 0 vacA0+:0.200, Li+:0.200, Mn2+:0.200, Mn3+:0.200, Mn4+:0.200     0.000000     0.000000     0.000000   -&gt;     0.000000     0.000000     0.000000
+
+indicator basis function:
+ [[1. 0. 0. 0. 0.]
+ [0. 1. 0. 0. 0.]
+ [0. 0. 1. 0. 0.]
+ [0. 0. 0. 1. 0.]]
+
+sinusoid basis function:
+ [[-1.         -0.30901699  0.80901699  0.80901699 -0.30901699]
+ [-0.         -0.95105652 -0.58778525  0.58778525  0.95105652]
+ [-1.          0.80901699 -0.30901699 -0.30901699  0.80901699]
+ [-0.         -0.58778525  0.95105652 -0.95105652  0.58778525]]
+
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="2)-Changing-the-basis-set-of-a-cluster-subspace">
+<h2>2) Changing the basis set of a cluster subspace<a class="headerlink" href="#2)-Changing-the-basis-set-of-a-cluster-subspace" title="Link to this heading">#</a></h2>
+<p>We can change the basis set of a cluster subspace without having to create a new one (which is faster since it does not generate the orbits from scratch)</p>
+<p><strong>Note</strong> that changing the basis set of a cluster subspace used in a cluster expansion that has already been fitted does not transform the ECI, so it will need to be re-fitted.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subspace_cheby</span> <span class="o">=</span> <span class="n">subspace_sine</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">subspace_cheby</span><span class="o">.</span><span class="n">change_site_bases</span><span class="p">(</span><span class="s2">&quot;chebyshev&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">subspace_cheby</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis is orthogonal </span><span class="si">{</span><span class="n">subspace_cheby</span><span class="o">.</span><span class="n">basis_orthogonal</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">subspace_cheby</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis is orthogonal </span><span class="si">{</span><span class="n">subspace_cheby</span><span class="o">.</span><span class="n">basis_orthonormal</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The chebyshev basis is orthogonal False
+The chebyshev basis is orthogonal False
+</pre></div></div>
+</div>
+<section id="Hey!-Isn't-the-Chebyshev-basis-from-the-original-Sanchez-paper-orthonormal?">
+<h3>Hey! Isn’t the Chebyshev basis from the original <a class="reference external" href="https://doi.org/10.1016/0378-4371(84)90096-7">Sanchez paper</a> orthonormal?<a class="headerlink" href="#Hey!-Isn't-the-Chebyshev-basis-from-the-original-Sanchez-paper-orthonormal?" title="Link to this heading">#</a></h3>
+<p>That is correct! But the default implementation in <strong>smol</strong> uses Chebyshev polynomials without orthonormalizing. In order to get the original Sanchez et al, basis you must use the <code class="docutils literal notranslate"><span class="pre">orthonormal=True</span></code> option.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># this option is also available in the from_cutoffs method</span>
+<span class="n">subspace_cheby</span><span class="o">.</span><span class="n">change_site_bases</span><span class="p">(</span><span class="s2">&quot;chebyshev&quot;</span><span class="p">,</span> <span class="n">orthonormal</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">subspace_cheby</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis is orthogonal </span><span class="si">{</span><span class="n">subspace_cheby</span><span class="o">.</span><span class="n">basis_orthogonal</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">subspace_cheby</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis is orthogonal </span><span class="si">{</span><span class="n">subspace_cheby</span><span class="o">.</span><span class="n">basis_orthonormal</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The chebyshev basis is orthogonal True
+The chebyshev basis is orthogonal True
+</pre></div></div>
+</div>
+</section>
+<section id="Technically-you-can-orthonormalize-any-basis!">
+<h3>Technically you can orthonormalize any basis!<a class="headerlink" href="#Technically-you-can-orthonormalize-any-basis!" title="Link to this heading">#</a></h3>
+<p>And they will be essentially equivalent!</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subspace_indicator_on</span> <span class="o">=</span> <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_cutoffs</span><span class="p">(</span>
+    <span class="n">prim</span><span class="p">,</span>
+    <span class="n">cutoffs</span><span class="o">=</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span> <span class="c1"># will include orbits of 2 and 3 sites.</span>
+    <span class="n">supercell_size</span><span class="o">=</span><span class="s1">&#39;O2-&#39;</span><span class="p">,</span>
+    <span class="n">basis</span><span class="o">=</span><span class="s2">&quot;indicator&quot;</span><span class="p">,</span>
+    <span class="n">orthonormal</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">subspace_indicator_on</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis is orthogonal </span><span class="si">{</span><span class="n">subspace_indicator_on</span><span class="o">.</span><span class="n">basis_orthogonal</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">subspace_indicator_on</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis is orthogonal </span><span class="si">{</span><span class="n">subspace_indicator_on</span><span class="o">.</span><span class="n">basis_orthonormal</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The indicator basis is orthogonal True
+The indicator basis is orthogonal True
+</pre></div></div>
+</div>
+</section>
+<section id="This-is-actually-no-longer-an-indicator-basis!">
+<h3>This is actually no longer an indicator basis!<a class="headerlink" href="#This-is-actually-no-longer-an-indicator-basis!" title="Link to this heading">#</a></h3>
+<p>Lets have a look at the basis functions</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">subspace_cheby</span><span class="o">.</span><span class="n">orbits</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subspace_cheby</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis function:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">subspace_cheby</span><span class="o">.</span><span class="n">orbits</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">basis_arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subspace_indicator_on</span><span class="o">.</span><span class="n">basis_type</span><span class="si">}</span><span class="s2"> basis function:</span><span class="se">\n</span><span class="s2"> </span><span class="si">{</span><span class="n">subspace_indicator_on</span><span class="o">.</span><span class="n">orbits</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">basis_arrays</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Orbit  1
+    Multiplicity : 2
+   No. functions : 2
+No. symmetry ops : 24
+Function ids : [1, 2]
+Base Cluster :
+  | Diameter : 0.0000
+  |   Charge : 1.0
+  | Centroid :     2.571966     1.818654     4.454775  -&gt;     0.750000     0.750000     0.750000
+  | Sites (1)
+  | ------------------------------------------------------------------------------------------------------------------------
+  | 0 vacA0+:0.333, Li+:0.333, Mn2+:0.333     2.571966     1.818654     4.454775   -&gt;     0.750000     0.750000     0.750000
+
+chebyshev basis function:
+ [[-1.22474487 -0.          1.22474487]
+ [-0.70710678  1.41421356 -0.70710678]]
+
+indicator basis function:
+ [[-1.41421356  0.70710678  0.70710678]
+ [-0.          1.22474487 -1.22474487]]
+
+</pre></div></div>
+</div>
+<p>The orthonormalized chebyshev and orthonormalized indicator basis sets look remarkably similar! In fact they are related simply by a rotation!</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#0)-Listing-available-basis-sets">0) Listing available basis sets</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#1)-Setting-the-site-basis-type-in-a-cluster-subspace">1) Setting the site basis type in a cluster subspace</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Checking-orthogonality-and-orthonormality">Checking orthogonality and orthonormality</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Inspecting-basis-functions">Inspecting basis functions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#2)-Changing-the-basis-set-of-a-cluster-subspace">2) Changing the basis set of a cluster subspace</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Hey!-Isn't-the-Chebyshev-basis-from-the-original-Sanchez-paper-orthonormal?">Hey! Isn’t the Chebyshev basis from the original Sanchez paper orthonormal?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Technically-you-can-orthonormalize-any-basis!">Technically you can orthonormalize any basis!</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#This-is-actually-no-longer-an-indicator-basis!">This is actually no longer an indicator basis!</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/CederGroupHub/smol/edit/main/docs/src/notebooks/choosing-site-basis-sets.ipynb">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="footer-content-items footer-content__inner">
+  
+    <div class="footer-content-item"><p class="last-updated">
+  Last updated on Sep 22, 2023.
+  <br/>
+</p></div>
+  
+</div>
+
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2022-2023, Ceder Group.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
