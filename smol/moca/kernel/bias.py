@@ -19,7 +19,7 @@ from smol.moca.occu_utils import get_dim_ids_table, occu_to_counts
 from smol.utils.class_utils import (
     class_name_from_str,
     derived_class_factory,
-    get_subclass_names,
+    get_subclasses_str,
 )
 
 
@@ -378,4 +378,4 @@ def available_bias_types() -> tuple[str]:
     Returns:
         tuple[str], list of available MCMC biases.
     """
-    return tuple(name.split("bias")[0] for name in get_subclass_names(MCBias))
+    return tuple(name.split("bias")[0] for name in get_subclasses_str(MCBias))

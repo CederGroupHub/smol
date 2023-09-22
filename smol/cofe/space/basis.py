@@ -21,8 +21,8 @@ from numpy.polynomial.polynomial import polyval
 
 from smol.utils.class_utils import (
     derived_class_factory,
-    get_subclass_names,
     get_subclasses,
+    get_subclasses_str,
 )
 
 from .domain import SiteSpace
@@ -614,5 +614,6 @@ def basis_factory(basis_name, site_space):
 def available_site_basis_sets():
     """Return a list of available site basis sets."""
     return tuple(
-        name.split("iterator")[0] for name in get_subclass_names(BasisIterator)
+        name.split("iterator")[0]
+        for name in get_subclasses_str(BasisIterator, split=False)
     )

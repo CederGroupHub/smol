@@ -76,7 +76,9 @@ def get_subclasses(base_class: object) -> Dict[str, object]:
     return sub_classes
 
 
-def get_subclass_names(base_class: object, lower=True) -> tuple[str]:
+def get_subclasses_str(
+    base_class: object, lower: bool = True, split: bool = True
+) -> tuple[str]:
     """Get names of all non-abstract subclasses of a class.
 
     Gets all names of non-abstract classes that inherit from the given base class in
@@ -85,7 +87,12 @@ def get_subclass_names(base_class: object, lower=True) -> tuple[str]:
     Args:
         base_class (object): base class to get subclasses of
         lower (bool): whether to return names in lower case
+        split (bool): whether to split the class name and add hyphens between words
     """
+    names = get_subclasses(base_class).keys()
+
+    if split:
+        names = tuple("-".join(re.findall("[A-Z][^A-Z]*", name)) for name in names)
     if lower:
-        return tuple(name.lower() for name in get_subclasses(base_class).keys())
-    return tuple(get_subclasses(base_class).keys())
+        names = tuple(name.lower() for name in names)
+    return names

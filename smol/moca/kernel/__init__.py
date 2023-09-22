@@ -11,7 +11,7 @@ from smol.moca.kernel.wanglandau import WangLandau
 from smol.utils.class_utils import (
     class_name_from_str,
     derived_class_factory,
-    get_subclass_names,
+    get_subclasses_str,
 )
 
 __all__ = [
@@ -29,7 +29,7 @@ def available_mckernels() -> tuple[str]:
     Returns:
         tuple[str]: names of available MCMC kernels
     """
-    return get_subclass_names(MCKernelInterface)
+    return get_subclasses_str(MCKernelInterface)
 
 
 def mckernel_factory(kernel_type, ensemble, step_type, *args, **kwargs):
