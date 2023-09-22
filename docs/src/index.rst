@@ -31,7 +31,7 @@ crystalline materials.*
       :alt: PyPi Version
       :target: https://pypi.org/project/smol
 
-.. image:: https://img.shields.io/badge/python-3.8%2B-blue
+.. image:: https://img.shields.io/badge/python-3.9%2B-blue
       :alt: Python Versions
       :target: https://www.python.org/downloads/
 

@@ -26,7 +26,11 @@ from smol.moca.occu_utils import (
     occu_to_counts,
     occu_to_species_list,
 )
-from smol.utils.class_utils import class_name_from_str, derived_class_factory
+from smol.utils.class_utils import (
+    class_name_from_str,
+    derived_class_factory,
+    get_subclasses_str,
+)
 from smol.utils.math import NUM_TOL, choose_section_from_partition, flip_weights_mask
 
 
@@ -725,3 +729,8 @@ def mcusher_factory(usher_type, sublattices, *args, **kwargs):
     """
     usher_name = class_name_from_str(usher_type)
     return derived_class_factory(usher_name, MCUsher, sublattices, *args, **kwargs)
+
+
+def available_step_types() -> tuple[str]:
+    """Get available step types."""
+    return get_subclasses_str(MCUsher)

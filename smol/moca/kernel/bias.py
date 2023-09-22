@@ -16,7 +16,11 @@ from smol.cofe.space.domain import get_species
 from smol.moca.composition.space import get_oxi_state
 from smol.moca.metadata import Metadata
 from smol.moca.occu_utils import get_dim_ids_table, occu_to_counts
-from smol.utils.class_utils import class_name_from_str, derived_class_factory
+from smol.utils.class_utils import (
+    class_name_from_str,
+    derived_class_factory,
+    get_subclasses_str,
+)
 
 
 class MCBias(ABC):
@@ -366,3 +370,12 @@ def mcbias_factory(bias_type, sublattices, *args, **kwargs):
         bias_type += "-bias"
     bias_name = class_name_from_str(bias_type)
     return derived_class_factory(bias_name, MCBias, sublattices, *args, **kwargs)
+
+
+def available_bias_types() -> tuple[str]:
+    """Get a list of available MCMC biases.
+
+    Returns:
+        tuple[str], list of available MCMC biases.
+    """
+    return tuple(name.split("bias")[0] for name in get_subclasses_str(MCBias))
