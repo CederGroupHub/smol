@@ -51,6 +51,7 @@ Advanced Examples
 - `Centering training data in stage-wise fit with electrostatics`_
 - `Adding structures to a StructureWrangler in parallel`_
 - `Simulated annealing with point electrostatics`_
+- `Choosing Monte Carlo kernels and step types`_
 - `Wang-Landau sampling of an FCC Ising model`_
 - `Generating special quasirandom structures`_
 - `Solving for periodic ground-states`_
@@ -63,6 +64,8 @@ Advanced Examples
 .. _Adding structures to a StructureWrangler in parallel: notebooks/adding-structures-in-parallel.ipynb
 
 .. _Simulated annealing with point electrostatics: notebooks/running-ewald-sim_anneal.ipynb
+
+.. _Choosing Monte Carlo kernels and step types: notebooks/advanced-mc-settings.ipynb
 
 .. _Wang-Landau sampling of an FCC Ising model: notebooks/wang-landau-ising.ipynb
 
