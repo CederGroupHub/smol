@@ -21,7 +21,6 @@ jobs:
     strategy:
       max-parallel: 10
       matrix:
-        # '3.11' fails because h5py has to be built from source since prebuilt wheels are not provided yet
         python_version: ['3.9', '3.10', '3.11']
 
     steps:
@@ -56,7 +55,7 @@ jobs:
         run: |
           pytest tests --cov=smol --cov-report=xml
 
-      - if: ${{ matrix.python_version == 3.11}}
+      - if: matrix.python_version == '3.11' && github.repository == github.event.pull_request.head.repo.full_name
         name: codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
