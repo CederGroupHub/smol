@@ -55,7 +55,7 @@ jobs:
         run: |
           pytest tests --cov=smol --cov-report=xml
 
-      - if: matrix.python_version == '3.11' && github.repository == github.event.pull_request.head.repo.full_name
+      - if: ${{ matrix.python_version == '3.11' == 'ubuntu-latest' && github.event_name == 'push' }}
         name: codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
