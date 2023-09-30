@@ -8,12 +8,18 @@ on:
         required: true
         type: boolean
         default: true
+
   workflow_dispatch:
     inputs:
       release-pypi:
         required: true
         type: boolean
         description: "if true a release is made on PyPI"
+
+      cibw_skip:
+        required: false
+        type: string
+        description: "wheels to skip building"
 
 jobs:
   test:
@@ -22,6 +28,8 @@ jobs:
   build:
     needs: test
     uses: ./.github/workflows/build.yml
+    with:
+      cibw_skip: ${{ github.event.inputs.cibw_skip }}
 
   docs:
     needs: test
