@@ -113,7 +113,7 @@ Adding code contributions
 
     * We recommend to only your forks *main* branch for short/easy fixes and additions.
     * For more complex features, try to use a feature branch with a descriptive name.
-    * For very complex feautres feel free to open up a PR even before your contribution is finished with
+    * For very complex features feel free to open up a PR even before your contribution is finished with
       [WIP] in its name, and optionally mark it as a *draft*.
 
 #.  While developing we recommend you use the pre-commit hook that is setup to ensure that your
