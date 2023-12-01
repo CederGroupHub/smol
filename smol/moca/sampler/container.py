@@ -140,7 +140,6 @@ class SampleContainer(MSONable):
         true sampling efficiency, as we do not know the efficiency of the discarded
         samples.
         """
-
         total_accepted = self._trace.accepted[discard:].sum(axis=0)
         efficiency = total_accepted / (self._nsamples - discard)
         if flat:
