@@ -73,13 +73,11 @@ def check_property_converged(property_array, min_std=1e-4, last_m=None, verbose=
 
     else:
         if verbose:
-            print("The property last value is not close to the mean.")
+            print("The last value of the property is not close to the mean.")
 
     # Check criteria 2
     converged_cum_mean = 0
-    prop_cum_mean = np.divide(
-        np.cumsum(property_array), np.arange(1, len(n_samples) + 1)
-    )
+    prop_cum_mean = np.divide(np.cumsum(property_array), np.arange(1, n_samples + 1))
     if all(prop_cum_mean[last_m:] < mean_prop + std_prop) and all(
         prop_cum_mean[last_m:] > mean_prop - std_prop
     ):
