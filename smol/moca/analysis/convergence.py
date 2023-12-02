@@ -7,20 +7,25 @@ from warnings import warn
 import numpy as np
 
 
-def check_property_converged(property_array, min_std=1e-4, last_m=None, verbose=False):
+def check_property_converged(
+    property_array, conv_tol=None, min_std=1e-4, last_m=None, verbose=False
+):
     """Check if a property is converged in MC run.
 
     A relatively rudimentary check for convergence, perhaps not the most rigorous.
     The criteria for convergence are:
      1) The last value of the property should be close to the mean of the property, +/-
-        the spread of the property.
+        some tolerance.
 
      2) The cumulative mean of the property in the last M samples should be close to
-        the mean of the property, +/- the spread of the property.
+        the mean of the property, +/- some tolerance.
 
     Args:
         property_array (ndarray):
             array of numerical values of a property (energy, composition, etc)
+        conv_tol (float):
+            value to determine the convergence tolerance. If None, the std. dev. of the
+            property will be used
         min_std (float):
             minimum standard deviation of the property required to perform this
             convergence test. If std dev is too small, then we can assume that there
@@ -49,6 +54,9 @@ def check_property_converged(property_array, min_std=1e-4, last_m=None, verbose=
             )
         return True
 
+    if conv_tol is None:
+        conv_tol = std_prop
+
     mean_prop = np.average(property_array)
     n_samples = len(property_array)
 
@@ -66,8 +74,8 @@ def check_property_converged(property_array, min_std=1e-4, last_m=None, verbose=
     # Check criteria 1
     converged_last_val = 0
     if (
-        property_array[-1] < mean_prop + std_prop
-        and property_array[-1] > mean_prop - std_prop
+        property_array[-1] < mean_prop + conv_tol
+        and property_array[-1] > mean_prop - conv_tol
     ):
         converged_last_val = True
 
@@ -78,8 +86,8 @@ def check_property_converged(property_array, min_std=1e-4, last_m=None, verbose=
     # Check criteria 2
     converged_cum_mean = 0
     prop_cum_mean = np.divide(np.cumsum(property_array), np.arange(1, n_samples + 1))
-    if all(prop_cum_mean[-last_m:] < mean_prop + std_prop) and all(
-        prop_cum_mean[-last_m:] > mean_prop - std_prop
+    if all(prop_cum_mean[-last_m:] < mean_prop + conv_tol) and all(
+        prop_cum_mean[-last_m:] > mean_prop - conv_tol
     ):
         converged_cum_mean = True
 
