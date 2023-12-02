@@ -94,3 +94,56 @@ def check_property_converged(property_array, min_std=1e-4, last_m=None, verbose=
 
     else:
         return False
+
+
+def determine_discard_number(
+    property_array, init_discard=None, increment=10, verbose=False
+):
+    """Determine the minimum number of samples to discard for MC equilibration.
+
+    Identify a range of number of samples to discard. Determine the smallest value that
+    yields a converged property.
+
+    Args:
+        property_array (ndarray):
+            array of numerical values of a property (energy, composition, etc)
+        init_discard (int):
+            initial guess for number of samples to discard. If None, take the first 10%
+            as the initial guess
+        increment (int):
+            determines the increment of discard values to search for. Will search for
+            discard values in increments of (n_samples - init_discard)/increment
+
+    Returns:
+        discard_n (int):
+            number of samples to discard
+
+    """
+    property_array = np.array(property_array)
+    n_samples = len(property_array)
+
+    if init_discard is None:
+        init_discard = int(n_samples / 10)
+    elif init_discard > n_samples:
+        warn(
+            f"Number to discard ({init_discard}) is greater than num samples "
+            f"({n_samples})! Will set the discard value to be 10% of the number of"
+            f"samples ({int(n_samples/10)})"
+        )
+        init_discard = int(n_samples / 10)
+
+    discard_val_increment = (n_samples - init_discard) / increment
+    for discard_n in np.arange(
+        init_discard, n_samples - increment, discard_val_increment
+    ):
+        discard_n = int(discard_n)
+        if check_property_converged(property_array[discard_n:]):
+            return discard_n
+
+    if verbose:
+        print(
+            "Could not find a discard value that leads to MC convergence. Will return"
+            " the initial guess."
+        )
+
+    return init_discard
