@@ -140,7 +140,7 @@ def determine_discard_number(
 
     discard_val_increment = (n_samples - init_discard) / increment
     for discard_n in np.arange(
-        init_discard, n_samples - increment, discard_val_increment
+        init_discard, n_samples - discard_val_increment, discard_val_increment
     ):
         discard_n = int(discard_n)
         if check_property_converged(property_array[discard_n:]):
