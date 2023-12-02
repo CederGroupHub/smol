@@ -78,8 +78,8 @@ def check_property_converged(property_array, min_std=1e-4, last_m=None, verbose=
     # Check criteria 2
     converged_cum_mean = 0
     prop_cum_mean = np.divide(np.cumsum(property_array), np.arange(1, n_samples + 1))
-    if all(prop_cum_mean[last_m:] < mean_prop + std_prop) and all(
-        prop_cum_mean[last_m:] > mean_prop - std_prop
+    if all(prop_cum_mean[-last_m:] < mean_prop + std_prop) and all(
+        prop_cum_mean[-last_m:] > mean_prop - std_prop
     ):
         converged_cum_mean = True
 
@@ -140,8 +140,8 @@ def determine_discard_number(
 
     if verbose:
         print(
-            "Could not find a discard value that leads to MC convergence. Will return"
-            " the initial guess."
+            "Could not find a discard value that leads to MC convergence. Will return "
+            "0."
         )
 
-    return init_discard
+    return 0
