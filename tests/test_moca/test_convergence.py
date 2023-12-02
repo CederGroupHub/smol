@@ -25,16 +25,17 @@ def prop_array_2(rng):
 
     more_random_samples = rng.normal(loc=0, scale=0.01, size=10000)
     array2.extend(more_random_samples)
+    array2.append(0.005)
     return np.array(array2)
 
 
 def test_check_property_converged(prop_array_1, prop_array_2):
     assert not check_property_converged(prop_array_1)
-    assert not check_property_converged(prop_array_2[:220])
+    assert not check_property_converged(prop_array_2[:200])
     assert check_property_converged(prop_array_2[1000:])
 
 
 def test_determine_discard_number(prop_array_1, prop_array_2):
     assert not determine_discard_number(prop_array_1)
-    assert not determine_discard_number(prop_array_2[:220])
+    assert not determine_discard_number(prop_array_2[:200])
     assert determine_discard_number(prop_array_2[1000:]) > 0
