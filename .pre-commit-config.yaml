@@ -6,7 +6,7 @@ ci:
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.4.0
+  rev: v4.5.0
   hooks:
   - id: check-yaml
   - id: fix-encoding-pragma
@@ -18,7 +18,7 @@ repos:
     args: ['--maxkb=600']
 
 - repo: https://github.com/psf/black
-  rev: 23.9.1
+  rev: 23.11.0
   hooks:
   - id: black
 
@@ -38,7 +38,7 @@ repos:
     - --profile=black
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.13.0
+  rev: v3.15.0
   hooks:
     - id: pyupgrade
       args: [--py38-plus]
