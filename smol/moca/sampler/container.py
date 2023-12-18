@@ -12,19 +12,14 @@ import os
 import warnings
 from collections import defaultdict
 
+import h5py
 import numpy as np
-from monty.dev import requires
 from monty.json import MontyDecoder, MontyEncoder, MSONable, jsanitize
 
 from smol.moca import Ensemble
 from smol.moca.metadata import Metadata
 from smol.moca.sublattice import Sublattice
 from smol.moca.trace import Trace
-
-try:
-    import h5py
-except ImportError:
-    h5py = None
 
 
 class SampleContainer(MSONable):
@@ -437,7 +432,6 @@ class SampleContainer(MSONable):
         self._total_steps = 0
         self._nsamples = 0
 
-    @requires(h5py is not None, "'h5py' not found. Please install it.")
     def get_backend(self, file_path, alloc_nsamples=0, swmr_mode=False):
         """Get a backend file object.
 
@@ -630,7 +624,6 @@ class SampleContainer(MSONable):
         backend.close()
 
     @classmethod
-    @requires(h5py is not None, "'h5py' not found. Please install it.")
     def from_hdf5(cls, file_path, swmr_mode=True, ensemble=None):
         """Instantiate a SampleContainer from an hdf5 file.
 
