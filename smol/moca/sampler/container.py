@@ -134,9 +134,14 @@ class SampleContainer(MSONable):
         return self._trace.names
 
     def sampling_efficiency(self, discard=0, flat=True):
-        """Return the sampling efficiency for chains."""
+        """Return the sampling efficiency for chains.
+
+        If the sampling is thinned by > 1, this value becomes only an estimate for the
+        true sampling efficiency, as we do not know the efficiency of the discarded
+        samples.
+        """
         total_accepted = self._trace.accepted[discard:].sum(axis=0)
-        efficiency = total_accepted / (self._total_steps - discard)
+        efficiency = total_accepted / (self._nsamples - discard)
         if flat:
             efficiency = efficiency.mean()
         return efficiency
