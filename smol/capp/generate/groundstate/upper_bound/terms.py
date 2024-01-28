@@ -1,4 +1,5 @@
 """Handles boolean product terms in expression."""
+
 from typing import List, Tuple
 
 import cvxpy as cp

@@ -1,4 +1,5 @@
 """Test smol.moca.utils.math_utils."""
+
 from collections import Counter
 from fractions import Fraction
 

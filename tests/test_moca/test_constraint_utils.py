@@ -1,4 +1,5 @@
 """Test utilities for managing composition constraints."""
+
 import numpy.testing as npt
 import pytest
 from pymatgen.core import DummySpecies, Element, Species

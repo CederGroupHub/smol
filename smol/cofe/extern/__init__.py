@@ -7,7 +7,6 @@ Currently only an Ewald electrostatic interaction term exists. Maybe it will
 be the only term ever needed, but alas abstraction?
 """
 
-
 from .ewald import EwaldTerm
 
 __all__ = ["EwaldTerm"]

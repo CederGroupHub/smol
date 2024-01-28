@@ -1,4 +1,5 @@
 """Solver class for the ground state problem of cluster expansion."""
+
 from typing import List, NamedTuple, Union
 from warnings import warn
 

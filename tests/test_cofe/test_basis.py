@@ -176,8 +176,8 @@ def test_sinusoid_basis(site_space):
     m = len(site_space)
     for n in range(1, len(site_space)):
         a = -(-n // 2)
-        f = (
-            lambda s: -np.sin(2 * np.pi * a * s / m)
+        f = lambda s: (
+            -np.sin(2 * np.pi * a * s / m)
             if n % 2 == 0
             else -np.cos(2 * np.pi * a * s / m)
         )

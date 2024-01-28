@@ -1,4 +1,5 @@
 """Exotic cases where sub-lattices contains split and manually fixed sites."""
+
 from itertools import product
 
 import numpy as np
