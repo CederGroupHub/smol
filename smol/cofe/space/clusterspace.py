@@ -6,6 +6,7 @@ information necessary for a cluster expansion.
 The PottsSubspace class is an (experimental) class that is similar, but
 diverges from the CE mathematic formalism.
 """
+
 # pylint: disable=too-many-lines
 
 

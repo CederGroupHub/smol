@@ -1,4 +1,5 @@
 """Test constraints to the upper-bound problem."""
+
 import itertools
 
 import pytest

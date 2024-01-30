@@ -1,4 +1,5 @@
 """Get constraints on variables from a processor."""
+
 from numbers import Number
 from typing import List, Tuple, Union
 

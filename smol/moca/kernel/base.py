@@ -705,9 +705,9 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
                 new_features.append(kernel.ensemble.compute_feature_vector(occupancy))
             self._features = np.vstack(new_features)
         else:  # if only one assume it is continuing from a run...
-            self._features[
-                self._current_kernel_index, :
-            ] = self.current_kernel.ensemble.compute_feature_vector(occupancy)
+            self._features[self._current_kernel_index, :] = (
+                self.current_kernel.ensemble.compute_feature_vector(occupancy)
+            )
             self.current_kernel.set_aux_state(occupancy, *args, **kwargs)
 
     def compute_initial_trace(self, occupancy):

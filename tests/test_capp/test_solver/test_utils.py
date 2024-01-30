@@ -1,4 +1,5 @@
 """Test utility functions for upper-bound."""
+
 from itertools import product
 
 import cvxpy as cp

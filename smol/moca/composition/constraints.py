@@ -1,4 +1,5 @@
 """Utility manager that converts input of composition constraints to equations."""
+
 import itertools
 import re
 from numbers import Number
