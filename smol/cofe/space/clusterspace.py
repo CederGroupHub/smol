@@ -1509,7 +1509,7 @@ class ClusterSubspace(MSONable):
             f"            Number of Orbits : {self.num_orbits}",
             f"No. of Correlation Functions : {self.num_corr_functions}",
             "             Cluster Cutoffs : "
-            f"{', '.join('{}: {:.2f}'.format(s, c) for s, c in self.cutoffs.items())}",
+            f"{', '.join(f'{s}: {c:.2f}' for s, c in self.cutoffs.items())}",
             f"              External Terms : {self.external_terms}",
             "Orbit Summary",
             " ------------------------------------------------------------------------",
@@ -1537,7 +1537,7 @@ class ClusterSubspace(MSONable):
             f"Number of Orbits : {self.num_orbits}   "
             f"No. of Correlation Functions : {self.num_corr_functions}",
             "Cluster Cutoffs : "
-            f"{', '.join('{}: {:.2f}'.format(s, c) for s, c in self.cutoffs.items())}",
+            f"{', '.join(f'{s}: {c:.2f}' for s, c in self.cutoffs.items())}",
             f"External Terms : {self.external_terms}",
         ]
         return "\n".join(outs)
