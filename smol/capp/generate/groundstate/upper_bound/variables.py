@@ -1,4 +1,5 @@
 """Get variables from processor."""
+
 from typing import List, Tuple
 
 import cvxpy as cp

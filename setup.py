@@ -1,4 +1,5 @@
 """smol -- Statistical Mechanics On Lattices"""
+
 import os
 import platform
 import shutil

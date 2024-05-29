@@ -12,19 +12,14 @@ import os
 import warnings
 from collections import defaultdict
 
+import h5py
 import numpy as np
-from monty.dev import requires
 from monty.json import MontyDecoder, MontyEncoder, MSONable, jsanitize
 
 from smol.moca import Ensemble
 from smol.moca.metadata import Metadata
 from smol.moca.sublattice import Sublattice
 from smol.moca.trace import Trace
-
-try:
-    import h5py
-except ImportError:
-    h5py = None
 
 
 class SampleContainer(MSONable):
@@ -134,9 +129,14 @@ class SampleContainer(MSONable):
         return self._trace.names
 
     def sampling_efficiency(self, discard=0, flat=True):
-        """Return the sampling efficiency for chains."""
+        """Return the sampling efficiency for chains.
+
+        If the sampling is thinned by > 1, this value becomes only an estimate for the
+        true sampling efficiency, as we do not know the efficiency of the discarded
+        samples.
+        """
         total_accepted = self._trace.accepted[discard:].sum(axis=0)
-        efficiency = total_accepted / (self._total_steps - discard)
+        efficiency = total_accepted / (self._nsamples - discard)
         if flat:
             efficiency = efficiency.mean()
         return efficiency
@@ -432,7 +432,6 @@ class SampleContainer(MSONable):
         self._total_steps = 0
         self._nsamples = 0
 
-    @requires(h5py is not None, "'h5py' not found. Please install it.")
     def get_backend(self, file_path, alloc_nsamples=0, swmr_mode=False):
         """Get a backend file object.
 
@@ -625,7 +624,6 @@ class SampleContainer(MSONable):
         backend.close()
 
     @classmethod
-    @requires(h5py is not None, "'h5py' not found. Please install it.")
     def from_hdf5(cls, file_path, swmr_mode=True, ensemble=None):
         """Instantiate a SampleContainer from an hdf5 file.
 

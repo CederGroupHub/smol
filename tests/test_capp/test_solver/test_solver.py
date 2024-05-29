@@ -1,4 +1,5 @@
 """Test groundstate class construction and usage."""
+
 from itertools import permutations, product
 
 import numpy as np

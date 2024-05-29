@@ -1,6 +1,5 @@
 """Definitions of specific exceptions raised elsewhere."""
 
-
 SYMMETRY_ERROR_MESSAGE = (
     "Error in calculating symmetry operations."
     "Try using a more symmetrically refined input"

@@ -1,6 +1,5 @@
 """Simple mixin class that has an attributed/method that runs in parallel."""
 
-
 import os
 import warnings
 

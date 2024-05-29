@@ -1,4 +1,5 @@
 """Generate energy terms from processor to be converted into cvxpy."""
+
 from copy import deepcopy
 from itertools import product
 from typing import List, Tuple, Union

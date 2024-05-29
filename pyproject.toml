@@ -21,7 +21,8 @@ classifiers = [
 dependencies = [
     "numpy >=1.24",
     "pymatgen >=2023.08.10",
-    "monty >=v2022.9.8"
+    "monty >=v2022.9.8",
+    "h5py >=3.10.0"
 ]
 authors = [
     {name = "Luis Barroso-Luque", email = "lbluque@berkeley.edu"},
@@ -34,7 +35,6 @@ maintainers = [
 [project.optional-dependencies]
 optional = [
     "scikit-learn >=1.1.2",
-    "h5py >=3.6.0",
     "polytope",
     "cvxpy",
     "cvxopt",
@@ -54,7 +54,7 @@ test = [
     "pytest >=7.2.0",
     "pytest-cov >=4.0.0",
     "scikit-learn >=1.1.2",
-    "h5py >=3.6.0",
+    "h5py >=3.10.0",
     "coverage",
     "polytope",
     "cvxpy",

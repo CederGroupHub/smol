@@ -1,4 +1,5 @@
 """Test boolean variables' generation for upper-bound groundstate."""
+
 import numpy as np
 import numpy.testing as npt
 import pytest

@@ -285,9 +285,11 @@ class Cluster(SiteCollection, MSONable):
         for symbols, site in zip(d["vacancy_symbols"], sites):
             site.species = Composition(
                 {
-                    spec
-                    if spec.symbol not in symbols
-                    else Vacancy(spec.symbol, spec.oxidation_state, spec.spin): val
+                    (
+                        spec
+                        if spec.symbol not in symbols
+                        else Vacancy(spec.symbol, spec.oxidation_state, spec.spin)
+                    ): val
                     for spec, val in site.species.items()
                     if spec.symbol not in symbols
                 }

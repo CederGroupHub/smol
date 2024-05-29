@@ -5,6 +5,7 @@ obtain correlation vectors. The domain of a site function is a site space,
 which is defined by the allowed species at the site and their measures, i.e.
 the concentration of the species in the random structure.
 """
+
 # pylint: disable=invalid-name, too-few-public-methods
 
 import warnings
@@ -323,9 +324,9 @@ class StandardBasis(DiscreteBasis):
             )
             self._f_array[1:] = self._f_array[1:] @ rotation_mat.T
             # make really small numbers zero
-            self._f_array[
-                abs(self._f_array) < EPS_MULT * np.finfo(np.float64).eps
-            ] = 0.0
+            self._f_array[abs(self._f_array) < EPS_MULT * np.finfo(np.float64).eps] = (
+                0.0
+            )
 
         self._rot_array = rotation_mat @ self._rot_array
 

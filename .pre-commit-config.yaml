@@ -18,7 +18,7 @@ repos:
     args: ['--maxkb=600']
 
 - repo: https://github.com/psf/black
-  rev: 23.9.1
+  rev: 24.3.0
   hooks:
   - id: black
 
@@ -30,7 +30,7 @@ repos:
     exclude: README.md
 
 - repo: https://github.com/pycqa/isort
-  rev: 5.12.0
+  rev: 5.13.2
   hooks:
   - id: isort
     name: isort (python)
@@ -38,13 +38,13 @@ repos:
     - --profile=black
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.15.0
+  rev: v3.15.2
   hooks:
     - id: pyupgrade
       args: [--py38-plus]
 
 - repo: https://github.com/PyCQA/autoflake
-  rev: v2.2.1
+  rev: v2.3.1
   hooks:
     - id: autoflake
       args:
