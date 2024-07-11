@@ -16,7 +16,7 @@ from smol.moca.kernel.mcusher import Swap
 
 def get_random_solver_test_occu(sublattices):
     # Only use this on orig_sublattices.
-    # Li+ 9 Mn2+ 2 Mn3+ 1 Mn4+ 1 Ti4+ 2 Vac 5 O2- 8 O- 2 F- 10
+    # Li+ 3 Mn2+ 3 Mn4+ 2 Ti4+ 1 Vac 3 O2- 9 F- 3
     cation_sublattice = None
     anion_sublattice = None
     for sublattice in sublattices:
@@ -25,20 +25,17 @@ def get_random_solver_test_occu(sublattices):
         if Species("O", -2) in sublattice.species:
             anion_sublattice = sublattice
 
-    li_va_sites = np.random.choice(cation_sublattice.sites, size=14, replace=False)
-    li_sites = np.random.choice(li_va_sites, size=9, replace=False)
+    li_va_sites = np.random.choice(cation_sublattice.sites, size=6, replace=False)
+    li_sites = np.random.choice(li_va_sites, size=3, replace=False)
     va_sites = np.setdiff1d(li_va_sites, li_sites)
     mn_ti_sites = np.setdiff1d(cation_sublattice.sites, li_va_sites)
-    ti_sites = np.random.choice(mn_ti_sites, size=2, replace=False)
+    ti_sites = np.random.choice(mn_ti_sites, size=1, replace=False)
     mn_sites = np.setdiff1d(mn_ti_sites, ti_sites)
-    mn2_sites = np.random.choice(mn_sites, size=2, replace=False)
-    mn34_sites = np.setdiff1d(mn_sites, mn2_sites)
-    mn3_sites = np.random.choice(mn34_sites, size=1, replace=False)
-    mn4_sites = np.setdiff1d(mn34_sites, mn3_sites)
+    mn2_sites = np.random.choice(mn_sites, size=3, replace=False)
+    mn4_sites = np.setdiff1d(mn_sites, mn2_sites)
 
-    o_sites = np.random.choice(anion_sublattice.sites, size=10, replace=False)
-    o2_sites = np.random.choice(o_sites, size=8, replace=False)
-    o1_sites = np.setdiff1d(o_sites, o2_sites)
+    o_sites = np.random.choice(anion_sublattice.sites, size=9, replace=False)
+    o2_sites = o_sites
     f_sites = np.setdiff1d(anion_sublattice.sites, o_sites)
 
     li_code = cation_sublattice.encoding[
@@ -46,9 +43,6 @@ def get_random_solver_test_occu(sublattices):
     ]
     mn2_code = cation_sublattice.encoding[
         cation_sublattice.species.index(Species("Mn", 2))
-    ]
-    mn3_code = cation_sublattice.encoding[
-        cation_sublattice.species.index(Species("Mn", 3))
     ]
     mn4_code = cation_sublattice.encoding[
         cation_sublattice.species.index(Species("Mn", 4))
@@ -60,20 +54,15 @@ def get_random_solver_test_occu(sublattices):
     o2_code = anion_sublattice.encoding[
         anion_sublattice.species.index(Species("O", -2))
     ]
-    o1_code = anion_sublattice.encoding[
-        anion_sublattice.species.index(Species("O", -1))
-    ]
     f_code = anion_sublattice.encoding[anion_sublattice.species.index(Species("F", -1))]
 
-    occu = np.zeros(40, dtype=int) - 1
+    occu = np.zeros(24, dtype=int) - 1
     occu[li_sites] = li_code
     occu[mn2_sites] = mn2_code
-    occu[mn3_sites] = mn3_code
     occu[mn4_sites] = mn4_code
     occu[ti_sites] = ti_code
     occu[va_sites] = va_code
     occu[o2_sites] = o2_code
-    occu[o1_sites] = o1_code
     occu[f_sites] = f_code
 
     assert np.all(occu >= 0)

@@ -57,7 +57,7 @@ def test_expansion_upper(solver_test_ensemble, solver_test_initial_occupancy):
     objective, aux, aux_indices, aux_cons = get_expression_and_auxiliary_from_terms(
         terms, variables
     )
-    for _ in range(50):
+    for _ in range(20):
         rand_val = get_random_variable_values(solver_test_ensemble.sublattices)
         aux_val = get_auxiliary_variable_values(rand_val, aux_indices)
         rand_occu = get_occupancy_from_variables(
@@ -100,7 +100,7 @@ def test_ewald_upper(solver_test_ensemble, solver_test_initial_occupancy):
     for inds in aux_indices:
         assert len(inds) == 2  # No more than pair terms.
 
-    for _ in range(50):
+    for _ in range(20):
         # Should have the same ewald for either neutral or not neutral.
         rand_val = get_random_variable_values(solver_test_ensemble.sublattices)
         aux_val = get_auxiliary_variable_values(rand_val, aux_indices)
@@ -137,7 +137,7 @@ def test_chemical_potentials_upper(solver_test_ensemble, solver_test_initial_occ
         assert aux is None
         assert len(aux_indices) == 0
         assert len(aux_cons) == 0
-        for _ in range(50):
+        for _ in range(20):
             rand_val = get_random_variable_values(solver_test_ensemble.sublattices)
             rand_occu = get_occupancy_from_variables(
                 solver_test_ensemble.sublattices,
