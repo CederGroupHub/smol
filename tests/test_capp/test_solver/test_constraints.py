@@ -68,17 +68,16 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
         variable_indices,
         solver_test_ensemble.processor.structure,
         other_constraints=[
-            "Mn4+ == 1",  # Broken when force_flip, kept when canonical. 2nd.
-            "Ti4+ = 2",  # Broken when force_flip, kept when canonical. 3rd.
-            "Mn4+ + Mn3+ + Mn2+ >= 7",  # Never true. 4th.
-            "Mn3+ + Mn2+ <= 3",  # Always true. 5th.
+            "Mn4+ == 2",  # Broken when force_flip, kept when canonical. 2nd.
+            "Mn4+ + Mn2+ >= 7",  # Never true. 3rd.
+            "Mn4+ + Mn2+ <= 6",  # Always true. 4th.
             "0 >= -1",  # Always True. Skipped.
             "0 <= 1.5",  # Always True. Skipped.
             "0.0 = 0.0",  # Always True. Skipped.
         ],
     )
 
-    assert len(constraints) == 5
+    assert len(constraints) == 4
     # Check with force_flip.
     for _ in range(20):
         rand_val = get_random_neutral_variable_values(
@@ -89,7 +88,7 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
         )
         variables.value = rand_val
         results = [c.value() for c in constraints]
-        assert results == [True, False, False, False, True]
+        assert results == [True, False, False, True]
     # Check with canonical.
     for _ in range(20):
         rand_val = get_random_neutral_variable_values(
@@ -100,7 +99,7 @@ def test_comp_space_constraints(solver_test_ensemble, solver_test_initial_occupa
         )
         variables.value = rand_val
         results = [c.value() for c in constraints]
-        assert results == [True, True, True, False, True]
+        assert results == [True, True, False, True]
 
     # Bad test cases.
     with pytest.raises(ValueError):
@@ -185,8 +184,8 @@ def test_fixed_composition_constraints(
         fixed_composition=fixed_counts,
     )
 
-    # F- is fixed and always satisfied, will not appear.
-    assert len(constraints) == 8
+    # F- and O2- are fixed and always satisfied, will not appear.
+    assert len(constraints) == 5
     for _ in range(20):
         rand_val = get_random_neutral_variable_values(
             solver_test_ensemble.sublattices,
@@ -196,10 +195,11 @@ def test_fixed_composition_constraints(
         )  # Force canonical constraints, will always satisfy.
         variables.value = rand_val
         results = [c.value() for c in constraints]
-        assert results == [True for _ in range(8)]
+        assert results == [True for _ in range(5)]
     flatten_bits = list(itertools.chain(*bits))
     flatten_bits.remove(Species("F", -1))
-    assert len(flatten_bits) == 8
+    flatten_bits.remove(Species("O", -2))
+    assert len(flatten_bits) == 5
     ti_id = flatten_bits.index(Species("Ti", 4))
     mn4_id = flatten_bits.index(Species("Mn", 4))
     for _ in range(20):
