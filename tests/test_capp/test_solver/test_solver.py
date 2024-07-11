@@ -130,6 +130,12 @@ def simple_ensemble(simple_expansion, request):
             ),
         ),
         "GUROBI",
+        # pytest.param(
+        #     "GUROBI",
+        #     marks=pytest.mark.xfail(
+        #         reason="Gurobi requires license to run.",
+        #         raises=IndexError,
+        #     ),
     ]
 )
 def simple_solver(simple_ensemble, request):
