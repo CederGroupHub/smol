@@ -19,7 +19,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
 dependencies = [
-    "numpy >=1.24",
+    "numpy >=1.24,<2.0",
     "pymatgen >=2023.08.10",
     "monty >=v2022.9.8",
     "h5py >=3.10.0"
