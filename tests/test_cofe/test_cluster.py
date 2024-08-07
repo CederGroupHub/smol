@@ -1,10 +1,9 @@
-import json
 import os
 from itertools import combinations
 
 import numpy as np
 import pytest
-from ruamel import yaml
+from ruamel.yaml import YAML
 
 from smol.cofe.space import Cluster
 from smol.cofe.space.domain import get_site_spaces
@@ -70,23 +69,24 @@ def test_to_from(cluster, tmpdir):
     cluster2 = Cluster.from_str(yml, "yaml")
     assert cluster == cluster2
 
+    YAML()
     with open(os.path.join(tmpdir, "cluster.yaml"), "w") as f:
-        yaml.dump(yml, f)
+        f.write(yml)
     with open(os.path.join(tmpdir, "cluster.json"), "w") as f:
-        json.dump(js, f)
+        f.write(js)
 
-    # cluster2 = Cluster.from_file(os.path.join(tmpdir, "cluster.yaml"))
-    # assert cluster == cluster2
-    # cluster2 = Cluster.from_file(os.path.join(tmpdir, "cluster.json"))
-    # assert cluster == cluster2
+    cluster2 = Cluster.from_file(os.path.join(tmpdir, "cluster.yaml"))
+    assert cluster == cluster2
+    cluster2 = Cluster.from_file(os.path.join(tmpdir, "cluster.json"))
+    assert cluster == cluster2
 
-    # cluster.to("yaml", os.path.join(tmpdir, "cluster.yaml"))
-    # cluster.to("json", os.path.join(tmpdir, "cluster.json"))
+    cluster.to("yaml", os.path.join(tmpdir, "cluster.yaml"))
+    cluster.to("json", os.path.join(tmpdir, "cluster.json"))
 
-    # cluster2 = Cluster.from_file(os.path.join(tmpdir, "cluster.yaml"))
-    # assert cluster == cluster2
-    # cluster2 = Cluster.from_file(os.path.join(tmpdir, "cluster.json"))
-    # assert cluster == cluster2
+    cluster2 = Cluster.from_file(os.path.join(tmpdir, "cluster.yaml"))
+    assert cluster == cluster2
+    cluster2 = Cluster.from_file(os.path.join(tmpdir, "cluster.json"))
+    assert cluster == cluster2
 
     with pytest.raises(ValueError):
         cluster.to("bad_format")

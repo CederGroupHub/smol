@@ -37,8 +37,8 @@ def test_variable_indices_for_components(
         variable_indices,
         solver_test_ensemble.processor.structure,
     )
-    # Total 9 species on all sub-lattices.
-    assert len(var_inds_for_components) == 9
+    # Total 7 species on all sub-lattices.
+    assert len(var_inds_for_components) == 7
     dim_id = 0
     for sublattice in solver_test_ensemble.sublattices:
         sub_bits = sublattice.species
@@ -51,11 +51,11 @@ def test_variable_indices_for_components(
             dtype=int,
         )
         if Species("Li", 1) in sub_bits:
-            # 2 li sites are restricted.
+            # 1 li sites are restricted.
             li_code = sublattice.encoding[sub_bits.index(Species("Li", 1))]
             va_code = sublattice.encoding[sub_bits.index(Vacancy())]
             restricted_all_sites = sublattice.restricted_sites
-            assert len(restricted_all_sites) == 4
+            assert len(restricted_all_sites) == 3
             restricted_li_sites = restricted_all_sites[
                 np.where(
                     solver_test_initial_occupancy[restricted_all_sites] == li_code
@@ -64,8 +64,8 @@ def test_variable_indices_for_components(
             restricted_vac_sites = np.setdiff1d(
                 restricted_all_sites, restricted_li_sites
             )
-            assert len(restricted_li_sites) == 3
-            assert len(restricted_vac_sites) == 1
+            assert len(restricted_li_sites) == 1
+            assert len(restricted_vac_sites) == 2
             # Only li sites restricted.
             npt.assert_array_equal(
                 solver_test_initial_occupancy[restricted_li_sites], li_code
@@ -76,16 +76,16 @@ def test_variable_indices_for_components(
             for sp_id, species in enumerate(sub_bits):
                 var_ids, n_fix = var_inds_for_components[dim_id]
                 if species == Species("Li", 1):
-                    assert n_fix == 3  # 3 li sites manually restricted
+                    assert n_fix == 1  # 1 li sites manually restricted
                 elif species == Vacancy():
-                    assert n_fix == 1
+                    assert n_fix == 2
                 else:
                     raise ValueError(
                         "Li/Vac sub-lattice was not correctly partitioned!"
                         f" Extra species {species}."
                     )
-                # 6 unrestricted li sites + 5 unrestricted vac sites.
-                assert len(var_ids) == 10
+                # 2 unrestricted li sites + 1 unrestricted vac sites.
+                assert len(var_ids) == 3
                 # Check indices are correct.
                 npt.assert_array_equal(sl_active_variables[:, sp_id], var_ids)
                 dim_id += 1
@@ -97,22 +97,16 @@ def test_variable_indices_for_components(
                 assert len(var_ids) == 6
                 npt.assert_array_equal(sl_active_variables[:, sp_id], var_ids)
                 dim_id += 1
-        elif Species("O", -2) in sub_bits:
-            for sp_id, species in enumerate(sub_bits):
-                var_ids, n_fix = var_inds_for_components[dim_id]
-                if species == Species("O", -2):
-                    # 2 restricted o2- sites.
-                    assert n_fix == 2
-                else:
-                    assert n_fix == 0
-                # 6 unrestricted o2- sites, 2 unrestricted o- sites.
-                assert len(var_ids) == 8
-                npt.assert_array_equal(sl_active_variables[:, sp_id], var_ids)
-                dim_id += 1
+        elif Species("O", -2) in sub_bits:  # O2- sublattice totally inactive.
+            assert list(sub_bits) == [Species("O", -2)]
+            var_ids, n_fix = var_inds_for_components[dim_id]
+            assert n_fix == 9
+            assert len(var_ids) == 0
+            dim_id += 1
         else:  # F sub-lattice totally inactive.
             assert list(sub_bits) == [Species("F", -1)]
             var_ids, n_fix = var_inds_for_components[dim_id]
-            assert n_fix == 10
+            assert n_fix == 3
             assert len(var_ids) == 0
             dim_id += 1
 
@@ -142,7 +136,7 @@ def test_ewald_indices(solver_test_ensemble, solver_test_initial_occupancy):
 
     restricted_vac_sites = solver_test_ensemble.restricted_sites[
         np.where(
-            solver_test_initial_occupancy[solver_test_ensemble.restricted_sites] == 5
+            solver_test_initial_occupancy[solver_test_ensemble.restricted_sites] == 4
         )[0]
     ]
     # print("supercell:\n", ew_processor.structure)
@@ -169,23 +163,30 @@ def test_ewald_indices(solver_test_ensemble, solver_test_initial_occupancy):
                         var_id += 1
                 continue
             if site_id in solver_test_ensemble.restricted_sites:
-                # Not the inactive F sub-lattice, just manually restricted.
-                if Species("F", -1) not in sublattice.species:
+                # Not the inactive F or O sub-lattice, just manually restricted.
+                if (Species("F", -1) not in sublattice.species) and (
+                    Species("O", -2) not in sublattice.species
+                ):
                     # Always occupied by one non-vacancy species.
-                    if spec == Species("O", -2) or (
-                        spec == Species("Li", 1) and site_id not in restricted_vac_sites
-                    ):
+                    if spec == Species("Li", 1) and site_id not in restricted_vac_sites:
                         expected = -1
                     # Always occupied by other species than this one.
                     else:
                         expected = -2
-                # Inactive F sub-lattice.
+                # Inactive F or O sub-lattice.
                 else:
-                    if spec == Species("F", -1):
-                        expected = -1
+                    if Species("F", -1) in sublattice.species:
+                        if spec == Species("F", -1):
+                            expected = -1
+                        else:
+                            expected = -2
+                    elif Species("O", -2) in sublattice.species:
+                        if spec == Species("O", -2):
+                            expected = -1
+                        else:
+                            expected = -2
                     else:
-                        assert spec.symbol == "O"
-                        expected = -2
+                        raise ValueError(f"Invalid sublattice: {sublattice}!")
             # Active site.
             else:
                 # In the new sub-lattice.
@@ -199,8 +200,8 @@ def test_ewald_indices(solver_test_ensemble, solver_test_initial_occupancy):
             ew_id += 1
             expects.append(expected)
 
-    assert ew_id == n_ew_rows
     # print("expected:\n", expects)
+    assert ew_id == n_ew_rows
     npt.assert_array_equal(expects, ew_to_var_id)
 
 
