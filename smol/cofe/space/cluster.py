@@ -58,7 +58,7 @@ class Cluster(SiteCollection, MSONable):
         self._centroid = centroid - shift
         self._frac_coords = frac_coords - shift
         self._sites = tuple(
-            Site(site_space, coords)
+            Site(Composition({sp: amt for sp, amt in site_space.items()}), coords)
             for site_space, coords in zip(
                 site_spaces, lattice.get_cartesian_coords(frac_coords)
             )
