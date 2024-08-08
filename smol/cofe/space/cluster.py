@@ -193,9 +193,9 @@ class Cluster(SiteCollection, MSONable):
         """
         filename = str(filename)
 
-        with zopen(filename) as f:
-            contents = f.read()
-        fname = filename.lower()
+        with zopen(filename, mode="rt", errors="replace") as file:
+            contents = file.read()
+        fname = os.path.basename(filename)
 
         if fnmatch(fname, "*.json*") or fnmatch(fname, "*.mson*"):
             return cls.from_str(contents, fmt="json")
