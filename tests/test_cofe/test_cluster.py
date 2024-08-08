@@ -36,7 +36,7 @@ def test_diameter(cluster):
 def test_periodicity(cluster, rng):
     new_coords = cluster.frac_coords.copy()
     new_coords += rng.integers(-5, 5)
-    site_spaces = [s.species for s in cluster.sites]
+    site_spaces = get_site_spaces(cluster)
     assert Cluster(site_spaces, new_coords, cluster.lattice) == cluster
     new_coords[0] += 0.005 + rng.random()
     assert Cluster(site_spaces, new_coords, cluster.lattice) != cluster
