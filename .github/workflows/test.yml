@@ -55,7 +55,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest tests --cov=smol --cov-report=xml
+          pytest --splits 8 --group ${{ matrix.split }} --durations-path tests/.test_durations tests
 
       - if: ${{ matrix.python_version == '3.11' && github.event_name == 'push' }}
         name: codacy-coverage-reporter
