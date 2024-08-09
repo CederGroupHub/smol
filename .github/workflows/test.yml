@@ -19,11 +19,11 @@ jobs:
     # Only 20.04 is known to work with scip 8.0.0
     runs-on: ubuntu-20.04
     strategy:
-      max-parallel: 10
+      #max-parallel: 10
       matrix:
         python_version: ['3.9', '3.11']
 
-      split: [1, 2, 3, 4, 5, 6, 7, 8]
+        split: [1, 2, 3, 4, 5, 6, 7, 8]
 
     steps:
       - uses: actions/checkout@v4
