@@ -19,16 +19,21 @@ jobs:
     # Only 20.04 is known to work with scip 8.0.0
     runs-on: ubuntu-20.04
     strategy:
-      max-parallel: 10
+      #max-parallel: 10
       matrix:
-        python_version: ['3.9', '3.11']
+        config:
+          - python: "3.9"
+          - python: "3.10"
+          - python: "3.11"
+
+        split: [1, 2, 3, 4, 5, 6, 7, 8]
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python_version }}
+      - name: Set up Python ${{ matrix.config.python }}
         uses: actions/setup-python@v5
         with:
-          python-version:  ${{ matrix.python_version }}
+          python-version:  ${{ matrix.config.python }}
 
       - name: Install dependencies
         run: |
@@ -53,9 +58,9 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest tests --cov=smol --cov-report=xml
+          pytest --splits 8 --group ${{ matrix.split }} --durations-path tests/.test_durations tests
 
-      - if: ${{ matrix.python_version == '3.11' && github.event_name == 'push' }}
+      - if: ${{ matrix.config.python == '3.11' && github.event_name == 'push' }}
         name: codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
