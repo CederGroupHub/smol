@@ -6,7 +6,7 @@ ci:
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.6.0
+  rev: v5.0.0
   hooks:
   - id: check-yaml
   - id: fix-encoding-pragma
@@ -18,12 +18,12 @@ repos:
     args: ['--maxkb=600']
 
 - repo: https://github.com/psf/black
-  rev: 24.8.0
+  rev: 24.10.0
   hooks:
   - id: black
 
 - repo: https://github.com/asottile/blacken-docs
-  rev: 1.18.0
+  rev: 1.19.0
   hooks:
   - id: blacken-docs
     additional_dependencies: [black==23.1.0]
@@ -38,7 +38,7 @@ repos:
     - --profile=black
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.17.0
+  rev: v3.18.0
   hooks:
     - id: pyupgrade
       args: [--py38-plus]
@@ -84,6 +84,6 @@ repos:
   rev: v2.3.0
   hooks:
     - id: codespell
-      stages: [commit, commit-msg]
+      stages: [pre-commit, commit-msg]
       exclude_types: [html]
       args: [--ignore-words-list, 'nd, tread, mater', --skip, "*.ipynb"]
