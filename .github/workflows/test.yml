@@ -19,7 +19,6 @@ jobs:
       matrix:
         config:
           - python: "3.10"
-          - python: "3.11"
           - python: "3.12"
 
         split: [1, 2, 3, 4, 5, 6, 7, 8]
@@ -49,10 +48,37 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest --splits 8 --group ${{ matrix.split }} --durations-path tests/.test_durations tests
+          pytest --cov=smol --splits 8 --group ${{ matrix.split }} --durations-path tests/.test_durations tests
 
-      - if: ${{ matrix.config.python == '3.11' && github.event_name == 'push' }}
-        name: codacy-coverage-reporter
+      - name: Upload coverage
+        if: ${{ matrix.config.python == '3.11' && github.event_name == 'push' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage${{ matrix.group }}
+          path: .coverage
+
+  coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Download all artifacts
+        # Downloads coverage1, coverage2, etc.
+        uses: actions/download-artifact@v2
+      - name: Run coverage
+        run: |
+          coverage combine coverage*/.coverage*
+          coverage report --fail-under=100
+          coverage xml
+      - name: codacy-coverage-reporter
         uses: codacy/codacy-coverage-reporter-action@v1
         with:
             project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
