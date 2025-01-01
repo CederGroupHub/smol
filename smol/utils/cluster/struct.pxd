@@ -6,31 +6,33 @@ interaction vectors.
 
 __author__ = "Luis Barroso-Luque"
 
+cimport numpy as np
+
 
 cdef struct IntArray1D:
-    long* data
-    int size
+    np.int32_t* data
+    np.int32_t size
 
 
 cdef struct IntArray2D:
-    long* data
-    int size_r
-    int size_c
+    np.int32_t* data
+    np.int32_t size_r
+    np.int32_t size_c
 
 
 cdef struct FloatArray1D:
-    double* data
-    int size
+    np.float64_t* data
+    np.int32_t size
 
 
 cdef struct FloatArray2D:
-    double* data
-    int size_r
-    int size_c
+    np.float64_t* data
+    np.int32_t size_r
+    np.int32_t size_c
 
 
 cdef struct OrbitC:
-    int id
-    int bit_id
+    np.float64_t id
+    np.int32_t bit_id
     IntArray1D tensor_indices
     FloatArray2D correlation_tensors

@@ -16,63 +16,63 @@ from smol.utils.cluster.struct cimport (
 
 cdef class OrbitContainer:
     cdef OrbitC* data
-    cdef readonly int size
+    cdef readonly np.int32_t size
     cdef tuple _orbit_data
 
     cpdef public void set_orbits(self, tuple orbit_data) except *
 
     @staticmethod
     cdef OrbitC create_struct(
-            int orbit_id,
-            int bit_id,
-            double[:, ::1] correlation_tensors,
-            long[::1] tensor_indices,
+            np.int32_t orbit_id,
+            np.int32_t bit_id,
+            np.float64_t[:, ::1] correlation_tensors,
+            np.int32_t[::1] tensor_indices,
     )
 
 
 @cython.final
 cdef class FloatArray2DContainer:
     cdef FloatArray2D* data
-    cdef readonly int size
+    cdef readonly np.int32_t size
     cdef tuple _arrays
 
     cpdef public void set_arrays(self, tuple arrays) except *
 
     @staticmethod
-    cdef FloatArray2D create_struct(double[:, ::1] array)
+    cdef FloatArray2D create_struct(np.float64_t[:, ::1] array)
 
 
 @cython.final
 cdef class FloatArray1DContainer:
     cdef FloatArray1D* data
-    cdef readonly int size
+    cdef readonly np.int32_t size
     cdef tuple _arrays
 
     cpdef public void set_arrays(self, tuple arrays)  except *
 
     @staticmethod
-    cdef FloatArray1D create_struct(double[::1] array)
+    cdef FloatArray1D create_struct(np.float64_t[::1] array)
 
 
 @cython.final
 cdef class IntArray1DContainer:
     cdef IntArray1D* data
-    cdef readonly int size
+    cdef readonly np.int32_t size
     cdef tuple _arrays
 
     cpdef public void set_arrays(self, tuple arrays)  except *
 
     @staticmethod
-    cdef IntArray1D create_struct(long[::1] array)
+    cdef IntArray1D create_struct(np.int32_t[::1] array)
 
 
 @cython.final
 cdef class IntArray2DContainer:
     cdef IntArray2D* data
-    cdef readonly int size
+    cdef readonly np.int32_t size
     cdef tuple _arrays
 
     cpdef public void set_arrays(self, tuple arrays)  except *
 
     @staticmethod
-    cdef IntArray2D create_struct(long[:, ::1] array)
+    cdef IntArray2D create_struct(np.int32_t[:, ::1] array)

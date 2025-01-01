@@ -2,12 +2,14 @@
 
 __author__ = "William D. Richards"
 
+cimport numpy as np
 
-cpdef double delta_ewald_single_flip(const long[::1] occu_f,
-                                     const long[::1] occu_i,
-                                     const double[:, ::1] ewald_matrix,
-                                     const long[:, ::1] ewald_indices,
-                                     const int site_ind) nogil:
+
+cpdef np.float64_t delta_ewald_single_flip(const np.int32_t[::1] occu_f,
+                                           const np.int32_t[::1] occu_i,
+                                           const np.float64_t[:, ::1] ewald_matrix,
+                                           const np.int32_t[:, ::1] ewald_indices,
+                                           const np.int32_t site_ind) nogil:
     """Compute the change in electrostatic interaction energy from a flip.
 
     Args:
@@ -20,16 +22,16 @@ cpdef double delta_ewald_single_flip(const long[::1] occu_f,
         ewald_indices (ndarray):
             2D array of indices corresponding to a specific site occupation
             in the ewald matrix
-        site_ind (int):
+        site_ind (np.int32_t):
             site index for site being flipped
 
     Returns:
         float: electrostatic interaction energy difference
     """
-    cdef int i, j, k, add, sub
+    cdef np.int32_t i, j, k, add, sub
     cdef bint ok
-    cdef double out = 0
-    cdef double out_k
+    cdef np.float64_t out = 0
+    cdef np.float64_t out_k
 
     # values of -1 are vacancies and hence don't have ewald indices
     add = ewald_indices[site_ind, occu_f[site_ind]]
