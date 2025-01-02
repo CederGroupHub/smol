@@ -15,21 +15,21 @@ from smol.utils.cluster.container cimport (
 
 @cython.final
 cdef class ClusterSpaceEvaluator(OrbitContainer):
-    cdef np.int32_t num_corr  # total number of correlation functions
-    cdef np.int32_t num_orbits  # total number of orbits
-    cdef public np.float64_t offset  # offset for the interaction tensor
+    cdef int num_corr  # total number of correlation functions
+    cdef int num_orbits  # total number of orbits
+    cdef public double offset  # offset for the interaction tensor
     cdef FloatArray1DContainer cluster_interactions
-    cdef public np.int32_t num_threads
+    cdef public int num_threads
 
     cpdef public void reset_data(
             self,
             tuple orbit_data,
-            np.int32_t num_orbits,
-            np.int32_t num_corr_functions,
+            int num_orbits,
+            int num_corr_functions,
     )
 
     cpdef public void set_cluster_interactions(
-            self, tuple cluster_interaction_tensors, np.float64_t offset
+            self, tuple cluster_interaction_tensors, double offset
     )
 
     cpdef np.ndarray[np.float64_t, ndim=1] correlations_from_occupancy(

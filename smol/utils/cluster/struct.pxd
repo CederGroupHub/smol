@@ -11,28 +11,28 @@ cimport numpy as np
 
 cdef struct IntArray1D:
     np.int32_t* data
-    np.int32_t size
+    int size
 
 
 cdef struct IntArray2D:
     np.int32_t* data
-    np.int32_t size_r
-    np.int32_t size_c
+    int size_r
+    int size_c
 
 
 cdef struct FloatArray1D:
     np.float64_t* data
-    np.int32_t size
+    int size
 
 
 cdef struct FloatArray2D:
     np.float64_t* data
-    np.int32_t size_r
-    np.int32_t size_c
+    int size_r
+    int size_c
 
 
 cdef struct OrbitC:
-    np.float64_t id
-    np.int32_t bit_id
+    int id
+    int bit_id
     IntArray1D tensor_indices
     FloatArray2D correlation_tensors

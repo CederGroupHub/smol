@@ -4,6 +4,8 @@
 
 __author__ = "Luis Barroso-Luque"
 
+cimport numpy as np
+
 import cython
 from smol.utils.cluster.struct cimport (
     FloatArray1D,
@@ -16,15 +18,15 @@ from smol.utils.cluster.struct cimport (
 
 cdef class OrbitContainer:
     cdef OrbitC* data
-    cdef readonly np.int32_t size
+    cdef readonly int size
     cdef tuple _orbit_data
 
     cpdef public void set_orbits(self, tuple orbit_data) except *
 
     @staticmethod
     cdef OrbitC create_struct(
-            np.int32_t orbit_id,
-            np.int32_t bit_id,
+            int orbit_id,
+            int bit_id,
             np.float64_t[:, ::1] correlation_tensors,
             np.int32_t[::1] tensor_indices,
     )
@@ -33,7 +35,7 @@ cdef class OrbitContainer:
 @cython.final
 cdef class FloatArray2DContainer:
     cdef FloatArray2D* data
-    cdef readonly np.int32_t size
+    cdef readonly int size
     cdef tuple _arrays
 
     cpdef public void set_arrays(self, tuple arrays) except *
@@ -45,7 +47,7 @@ cdef class FloatArray2DContainer:
 @cython.final
 cdef class FloatArray1DContainer:
     cdef FloatArray1D* data
-    cdef readonly np.int32_t size
+    cdef readonly int size
     cdef tuple _arrays
 
     cpdef public void set_arrays(self, tuple arrays)  except *
@@ -57,7 +59,7 @@ cdef class FloatArray1DContainer:
 @cython.final
 cdef class IntArray1DContainer:
     cdef IntArray1D* data
-    cdef readonly np.int32_t size
+    cdef readonly int size
     cdef tuple _arrays
 
     cpdef public void set_arrays(self, tuple arrays)  except *
@@ -69,7 +71,7 @@ cdef class IntArray1DContainer:
 @cython.final
 cdef class IntArray2DContainer:
     cdef IntArray2D* data
-    cdef readonly np.int32_t size
+    cdef readonly int size
     cdef tuple _arrays
 
     cpdef public void set_arrays(self, tuple arrays)  except *

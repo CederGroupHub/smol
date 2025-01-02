@@ -30,10 +30,10 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
     def __cinit__(
             self,
             tuple orbit_data,
-            np.int32_t num_orbits,  # Fix cross-platform dtype issue after numpy>=2.0.
-            np.int32_t num_corr_functions,
-            np.int32_t num_threads = 1,
-            np.float64_t offset = 0.0,
+            int num_orbits,  # Fix cross-platform dtype issue after numpy>=2.0.
+            int num_corr_functions,
+            int num_threads = 1,
+            double offset = 0.0,
             tuple cluster_interaction_tensors = None
     ):
         """Initialize ClusterSpaceEvaluator extension type.
@@ -44,11 +44,11 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
                     - orbit bit id
                     - orbit tensor indices
                     - orbit correlation tensors
-            num_orbits (np.int32_t):
+            num_orbits (int):
                 Number of orbits.
-            num_corr_functions (np.int32_t):
+            num_corr_functions (int):
                 Number of correlation functions.
-            offset (np.float64_t):
+            offset (double):
                 interaction value for the constant term (i.e. the grand mean).
             cluster_interaction_tensors (tuple):
                 Tuple of ndarrays cluster interaction tensors.
@@ -80,8 +80,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
     cpdef public void reset_data(
             self,
             tuple orbit_data,
-            np.int32_t num_orbits,
-            np.int32_t num_corr_functions,
+            int num_orbits,
+            int num_corr_functions,
     ):
         """Reset data of ClusterSpaceEvaluator extension type.
 
@@ -91,9 +91,9 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
                     - orbit bit id
                     - orbit tensor indices
                     - orbit correlation tensors
-            num_orbits (np.int32_t):
+            num_orbits (int):
                 Number of orbits.
-            num_corr_functions (np.int32_t):
+            num_corr_functions (int):
                 Number of correlation functions.
         """
         self.num_orbits = num_orbits
@@ -101,14 +101,14 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         self.set_orbits(orbit_data)
 
     cpdef public void set_cluster_interactions(
-            self, tuple cluster_interaction_tensors, np.float64_t offset
+            self, tuple cluster_interaction_tensors, double offset
     ):
         """Sets the cluster interaction tensors.
 
         Args:
             cluster_interaction_tensors (tuple):
                 Tuple of ndarrays cluster interaction tensors.
-            offset (float):
+            offset (double):
                 interaction value for the constant term (i.e. the grand mean).
         """
         if len(cluster_interaction_tensors) != self.size:
@@ -135,8 +135,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         Returns: array
             correlation vector for given occupancy
         """
-        cdef np.int32_t i, j, k, n, I, J, K, N, index, bit_id
-        cdef np.float64_t p
+        cdef int i, j, k, n, I, J, K, N, index, bit_id
+        cdef double p
         cdef IntArray2D indices  # flattened tensor indices
         cdef OrbitC orbit
 
@@ -182,8 +182,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         Returns: array
             cluster interaction vector for given occupancy
         """
-        cdef np.int32_t n, i, j, I, J, index
-        cdef np.float64_t p
+        cdef int n, i, j, I, J, index
+        cdef double p
         cdef IntArray2D indices
         cdef OrbitC orbit
         cdef FloatArray1D interaction_tensor
@@ -232,8 +232,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         Returns: ndarray
             correlation vector difference
         """
-        cdef np.int32_t i, j, k, n, I, J, K, N, ind_i, ind_f, bit_id
-        cdef np.float64_t p
+        cdef int i, j, k, n, I, J, K, N, ind_i, ind_f, bit_id
+        cdef double p
         cdef IntArray2D indices  # flattened tensor indices
         cdef OrbitC orbit
 
@@ -290,8 +290,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         Returns: ndarray
             cluster interaction vector difference
         """
-        cdef np.int32_t i, j, n, I, J, ind_i, ind_f
-        cdef np.float64_t p
+        cdef int i, j, n, I, J, ind_i, ind_f
+        cdef double p
         cdef IntArray2D indices
         cdef OrbitC orbit
         cdef FloatArray1D interaction_tensor
@@ -343,8 +343,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
             ndarray: 2D with correlation vector distances from reference for each of occu_i
             and occu_f
         """
-        cdef np.int32_t i, j, k, n, I, J, K, N, bit_id, ind_i, ind_f
-        cdef np.float64_t p_i, p_f
+        cdef int i, j, k, n, I, J, K, N, bit_id, ind_i, ind_f
+        cdef double p_i, p_f
         cdef IntArray2D indices  # flattened tensor indices
         cdef OrbitC orbit
 
@@ -405,8 +405,8 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
                 ndarray: 2D with cluster interaction vector distances from reference for each of
                 occu_i and occu_f
             """
-        cdef np.int32_t n, i, j, I, J, ind_i, ind_f
-        cdef np.float64_t p_i, p_f
+        cdef int n, i, j, I, J, ind_i, ind_f
+        cdef double p_i, p_f
         cdef IntArray2D indices
         cdef OrbitC orbit
         cdef FloatArray1D interaction_tensor

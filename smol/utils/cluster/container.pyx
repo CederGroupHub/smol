@@ -46,13 +46,13 @@ cdef class OrbitContainer:
 
     cpdef public void set_orbits(self, tuple orbit_data) except *:
         """Populated data using a list of orbit data."""
-        cdef np.int32_t i
+        cdef int i
 
         # check that dataypes are correct
         for data in orbit_data:
-            if not isinstance(data[0], np.int32_t):
+            if not isinstance(data[0], int):
                 raise TypeError("id must be an integer.")
-            if not isinstance(data[1], np.int32_t):
+            if not isinstance(data[1], int):
                 raise TypeError("bit_id must be an integer.")
             if not isinstance(data[2], np.ndarray):
                 raise TypeError("correlation_tensors must be a numpy array.")
@@ -83,8 +83,8 @@ cdef class OrbitContainer:
 
     @staticmethod
     cdef OrbitC create_struct(
-            np.int32_t orbit_id,
-            np.int32_t bit_id,
+            int orbit_id,
+            int bit_id,
             np.float64_t[:, ::1] correlation_tensors,
             np.int32_t[::1] tensor_indices,
     ):
@@ -131,7 +131,7 @@ cdef class FloatArray2DContainer:
 
     cpdef public void set_arrays(self, tuple arrays) except *:
         """Populated data using a list of 2D arrays."""
-        cdef np.int32_t i
+        cdef int i
 
         for array in arrays:
             if array.ndim != 2:
@@ -190,7 +190,7 @@ cdef class FloatArray1DContainer:
 
     cpdef public void set_arrays(self, tuple arrays) except *:
         """Populated data using a list of 1D arrays."""
-        cdef np.int32_t i
+        cdef int i
 
         for array in arrays:
             if array.ndim != 1:
@@ -247,7 +247,7 @@ cdef class IntArray1DContainer:
 
     cpdef public void set_arrays(self, tuple arrays) except *:
         """Populated data using a list of 1D arrays."""
-        cdef np.int32_t i
+        cdef int i
 
         for array in arrays:
             if array.ndim != 1:
@@ -304,7 +304,7 @@ cdef class IntArray2DContainer:
 
     cpdef public void set_arrays(self, tuple arrays)  except *:
         """Populated data using a list of 2D arrays."""
-        cdef np.int32_t i
+        cdef int i
 
         for array in arrays:
             if array.ndim != 2:
