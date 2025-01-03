@@ -93,7 +93,8 @@ class EwaldTerm(MSONable):
                 inds[i] = len(ewald_sites)
                 ewald_sites.append(PeriodicSite(spec, site.frac_coords, site.lattice))
             ewald_inds.append(inds)
-        ewald_inds = np.array(ewald_inds, dtype=int)
+        # Enforce int32 to ensure compatibility.
+        ewald_inds = np.array(ewald_inds, dtype=np.int32)
         ewald_structure = Structure.from_sites(ewald_sites)
 
         return ewald_structure, ewald_inds
@@ -172,7 +173,8 @@ class EwaldTerm(MSONable):
             matrix = ewald_summation.real_space_energy_matrix
         else:
             matrix = np.diag(ewald_summation.point_energy_matrix)
-        return matrix
+        # Enforce float64 to ensure compatibility.
+        return matrix.astype(np.float64)
 
     def __str__(self):
         """Pretty print EwaldTerm."""

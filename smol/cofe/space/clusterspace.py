@@ -813,8 +813,8 @@ class ClusterSubspace(MSONable):
             else:
                 occu.append(spec)
 
-        if encode:  # cast to ndarray dtype int
-            occu = np.array(occu, dtype=int)
+        if encode:  # cast to ndarray dtype int32.
+            occu = np.array(occu, dtype=np.int32)
 
         return occu
 
@@ -1049,7 +1049,7 @@ class ClusterSubspace(MSONable):
                 list of correlation function ids to remove
         """
         empty_orbit_ids = []
-        corr_ids = np.array(corr_ids, dtype=int)
+        corr_ids = np.array(corr_ids, dtype=np.int32)
 
         for orbit in self.orbits:
             first_id = orbit.bit_id
@@ -1272,7 +1272,8 @@ class ClusterSubspace(MSONable):
             # increases, so I haven't implemented a more efficient method
 
             # assure contiguous C order
-            orbit_indices.append(np.ascontiguousarray(inds, dtype=int))
+            # Enforce int32 to ensure compatibility.
+            orbit_indices.append(np.ascontiguousarray(inds, dtype=np.int32))
 
         orbit_indices = tuple(orbit_indices)
         return OrbitIndices(orbit_indices, IntArray2DContainer(orbit_indices))
@@ -1332,7 +1333,8 @@ class ClusterSubspace(MSONable):
                 s_basis.orthonormalize()
 
         orbits = {}
-        nbits = np.array([len(b) - 1 for b in site_spaces])
+        # Enforce int32 to ensure compatibility.
+        nbits = np.array([len(b) - 1 for b in site_spaces]).astype(np.int32)
 
         # Generate singlet/point orbits
         orbits[1] = ClusterSubspace._gen_point_orbits(
@@ -1592,11 +1594,14 @@ class ClusterSubspace(MSONable):
                     "of smol. Please resave it to avoid this warning.",
                     FutureWarning,
                 )
+                # Enforce int32 to ensure compatibility.
                 _supercell_orbit_inds[scm] = tuple(
-                    np.array(ind) for o_id, ind in indices
+                    np.array(ind, dtype=np.int32) for o_id, ind in indices
                 )
             else:
-                _supercell_orbit_inds[scm] = tuple(np.array(ind) for ind in indices)
+                _supercell_orbit_inds[scm] = tuple(
+                    np.array(ind, dtype=np.int32) for ind in indices
+                )
         # now generate the containers
         _supercell_orbit_inds = {
             scm: OrbitIndices(indices, IntArray2DContainer(indices))
@@ -1931,7 +1936,8 @@ class PottsSubspace(ClusterSubspace):
         site_spaces = get_site_spaces(exp_struct)
         site_bases = tuple(IndicatorBasis(site_space) for site_space in site_spaces)
         orbits = {}
-        nbits = np.array([len(b) for b in site_spaces])
+        # Enforce int32 to ensure compatibility.
+        nbits = np.array([len(b) for b in site_spaces]).astype(np.int32)
 
         try:
             if cutoffs.pop(1) is None:

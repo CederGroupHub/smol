@@ -199,7 +199,7 @@ class StandardBasis(DiscreteBasis):
         super().__init__(site_space, basis_functions)
         self._r_array = None  # array from QR in basis orthonormalization
         # rotation array
-        self._rot_array = np.eye(self.function_array.shape[1])
+        self._rot_array = np.eye(self.function_array.shape[1]).astype(np.float64)
 
     def _construct_function_array(self, basis_functions):
         """Construct function array with basis functions as rows."""
@@ -211,7 +211,8 @@ class StandardBasis(DiscreteBasis):
             [[function(sp) for sp in self.species] for function in nconst_functions]
         )
         # stack the constant basis function on there for proper normalization
-        return np.vstack((np.ones_like(func_arr[0]), func_arr))
+        # Enforce float64 type to guarantee compatibility.
+        return np.vstack((np.ones_like(func_arr[0]), func_arr)).astype(np.float64)
 
     @property
     def function_array(self):
@@ -387,7 +388,8 @@ class IndicatorBasis(DiscreteBasis, MSONable):
     def _construct_function_array(self, basis_functions):
         func_array = np.array(
             [[function(sp) for sp in self.species] for function in basis_functions]
-        )
+        ).astype(np.float64)
+        # Enforce float64 to ensure compatibility.
         return func_array
 
     @classmethod

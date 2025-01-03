@@ -142,7 +142,8 @@ class Orbit(MSONable):
             all_combos = []
             for bit_combo in product(*self.bits):
                 if not any(np.array_equal(bit_combo, bc) for bc in chain(*all_combos)):
-                    bit_combo = np.array(bit_combo, dtype=int)
+                    # Enforce int32 to ensure compatibility.
+                    bit_combo = np.array(bit_combo, dtype=np.int32)
                     new_bits = np.unique(bit_combo[self.cluster_permutations], axis=0)
                     all_combos.append(new_bits)
             self._bit_combos = tuple(all_combos)
@@ -238,7 +239,8 @@ class Orbit(MSONable):
                     )
                 corr_tensors[i] /= len(combos)
             self._flat_corr_tensors = None  # reset
-            self._corr_tensors = corr_tensors
+            # Enforce float64 to ensure compatibility.
+            self._corr_tensors = corr_tensors.astype(np.float64)
         return self._corr_tensors
 
     @property
@@ -263,7 +265,8 @@ class Orbit(MSONable):
         indices = np.cumprod(np.append(self.correlation_tensors.shape[2:], 1)[::-1])[
             ::-1
         ]
-        return np.ascontiguousarray(indices, dtype=int)
+        # Enforce int32 to ensure compatibility.
+        return np.ascontiguousarray(indices, dtype=np.int32)
 
     @property
     def rotation_array(self):
@@ -431,7 +434,8 @@ class Orbit(MSONable):
                 "The given orbit is a suborbit, but no site mappings were "
                 "found!\n Something is very wrong here!"
             )
-        return np.unique(mappings, axis=0)
+        # Enforce int32 to ensure compatibility.
+        return np.unique(mappings, axis=0).astype(np.int32)
 
     def _gen_cluster_symops(self):
         """Generate the cluster SymOps and decoration permutations."""
@@ -541,8 +545,9 @@ class Orbit(MSONable):
             structure_symops,
         )
 
+        # Enforce int32 to ensure compatibility.
         orb._bit_combos = (
-            tuple(np.array(c, dtype=int) for c in d["_bit_combos"])
+            tuple(np.array(c, dtype=np.int32) for c in d["_bit_combos"])
             if "_bit_combos" in d
             else None
         )
