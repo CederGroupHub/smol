@@ -149,9 +149,15 @@ def test_prune(cluster_expansion):
             for s, m in zip(cluster_expansion.structures, cluster_expansion.scmatrices)
         ]
     )
-    preds = np.sum(
-        cluster_expansion.cluster_subspace.orbit_multiplicities * ints, axis=1
-    )
+
+    # 01/07/2024 Fengyu Xie: using the original cluster_expansion.cluster_subspace is
+    # not safe, as pruning may occasionally prune out an entire orbit, causing
+    # inconsistency between ints.shape and orbit_multiplicities.shape. Fixed by replacing
+    # with expansion.cluster_subspace.orbit_multiplicities.
+    # preds = np.sum(
+    #     cluster_expansion.cluster_subspace.orbit_multiplicities * ints, axis=1
+    # )
+    preds = np.sum(expansion.cluster_subspace.orbit_multiplicities * ints, axis=1)
     npt.assert_allclose(preds, np.dot(pruned_feat_matrix, new_coefs), atol=1e-5)
 
 

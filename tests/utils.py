@@ -41,6 +41,11 @@ def assert_msonable(obj, skip_keys=None, test_if_subclass=True):
     for key in d1.keys():
         if key in skip_keys:
             continue
+        # if d1[key] != d2[key]:
+        #     print("key:", key)
+        #     print("d1:", d1[key])
+        #     print("d2:", d2[key])
+
         assert d1[key] == d2[key]
 
     try:

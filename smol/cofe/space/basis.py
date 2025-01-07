@@ -74,7 +74,10 @@ class DiscreteBasis(MSONable, metaclass=ABCMeta):
                 f"species {site_space} in the site space provided."
             )
 
-        self._f_array = self._construct_function_array(basis_functions)
+        # Enforce float64 type to guarantee compatibility.
+        self._f_array = np.array(
+            self._construct_function_array(basis_functions), dtype=np.float64
+        )
 
     @abstractmethod
     def _construct_function_array(self, basis_functions):
@@ -211,8 +214,7 @@ class StandardBasis(DiscreteBasis):
             [[function(sp) for sp in self.species] for function in nconst_functions]
         )
         # stack the constant basis function on there for proper normalization
-        # Enforce float64 type to guarantee compatibility.
-        return np.vstack((np.ones_like(func_arr[0]), func_arr)).astype(np.float64)
+        return np.vstack((np.ones_like(func_arr[0]), func_arr))
 
     @property
     def function_array(self):
@@ -250,6 +252,10 @@ class StandardBasis(DiscreteBasis):
 
         self._r_array = q_mat[:, 0] / np.sqrt(self.measure_vector) * r_mat.T
         self._f_array = q_mat.T / q_mat[:, 0]  # make first row constant = 1
+
+        # Enforce float64 to guarantee compatibility.
+        self._r_array = self._r_array.astype(np.float64)
+        self._f_array = self._f_array.astype(np.float64)
 
     def rotate(self, angle, index1=0, index2=1):
         """Rotate basis functions about subspace spanned by two vectors.
@@ -354,11 +360,16 @@ class StandardBasis(DiscreteBasis):
         site_space = SiteSpace.from_dict(d["site_space"])
         site_basis = basis_factory(d["flavor"], site_space)
         # restore arrays
-        site_basis._f_array = np.array(d["func_array"])
-        site_basis._r_array = np.array(d["orthonorm_array"])
+        site_basis._f_array = np.array(d["func_array"]).astype(np.float64)
+        site_basis._r_array = (
+            None
+            if d["orthonorm_array"] is None
+            else np.array(d["orthonorm_array"]).astype(np.float64)
+        )
         rot_array = d.get("rot_array")
         if rot_array is not None:
-            site_basis._rot_array = np.array(rot_array)
+            # Enforce float64 to ensure compatibility
+            site_basis._rot_array = np.array(rot_array).astype(np.float64)
         return site_basis
 
 

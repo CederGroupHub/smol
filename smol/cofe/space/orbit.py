@@ -247,6 +247,7 @@ class Orbit(MSONable):
     def flat_correlation_tensors(self):
         """Get correlation_tensors flattened to 2D for fast cython."""
         if self._flat_corr_tensors is None:
+            # Enforce float64 to ensure compatibility.
             self._flat_corr_tensors = np.ascontiguousarray(
                 np.reshape(
                     self.correlation_tensors,
@@ -256,7 +257,7 @@ class Orbit(MSONable):
                     ),
                     order="C",
                 )
-            )
+            ).astype(np.float64)
         return self._flat_corr_tensors
 
     @property
