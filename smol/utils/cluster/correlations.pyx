@@ -37,7 +37,7 @@ cpdef corr_from_occupancy(const np.int32_t[::1] occu,
     cdef double p
     cdef const np.int32_t[:, ::1] indices
     cdef const np.int32_t[::1] tensor_indices
-    cdef const np.int32_t[:, ::1] corr_tensors
+    cdef const np.float64_t[:, ::1] corr_tensors
     out = np.zeros(num_corr_functions)
     cdef np.float64_t[:] o_view = out
     o_view[0] = 1  # empty cluster
