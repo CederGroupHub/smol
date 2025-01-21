@@ -246,4 +246,4 @@ def test_expression_from_terms():
         rand_aux_vals = get_auxiliary_variable_values(rand_vals, indices)
         for ii, inds in enumerate(indices):
             assert len(inds) > 1
-            assert np.product(rand_vals[inds]) == rand_aux_vals[ii]
+            assert np.prod(rand_vals[inds]) == rand_aux_vals[ii]

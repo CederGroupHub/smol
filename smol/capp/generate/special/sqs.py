@@ -518,8 +518,9 @@ class StochasticSQSGenerator(SQSGenerator):
         self._kernel.kB = 1.0  # set kB to 1.0 units
 
         # get a trial trace to initialize sample container trace
+        # Enforce int32.
         _trace = self._kernel.compute_initial_trace(
-            np.zeros(kernels[0].ensemble.num_sites, dtype=int)
+            np.zeros(kernels[0].ensemble.num_sites, dtype=np.int32)
         )
         sample_trace = Trace(
             **{
