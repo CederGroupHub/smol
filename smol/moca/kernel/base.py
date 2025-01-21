@@ -235,7 +235,8 @@ class MCKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
             self.spec.bias = self.bias.spec
 
         # run a initial step to populate trace values
-        _ = self.single_step(np.zeros(ensemble.num_sites, dtype=int))
+        # Enforce int32.
+        _ = self.single_step(np.zeros(ensemble.num_sites, dtype=np.int32))
 
     @property
     def trace(self):

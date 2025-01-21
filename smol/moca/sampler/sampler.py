@@ -116,8 +116,9 @@ class Sampler:
         ]
 
         # get a trial trace to initialize sample container trace
+        # Enforce int32.
         _trace = mckernels[0].compute_initial_trace(
-            np.zeros(ensemble.num_sites, dtype=int)
+            np.zeros(ensemble.num_sites, dtype=np.int32)
         )
         sample_trace = Trace(
             **{
@@ -400,6 +401,9 @@ class Sampler:
         occupancies = initial_occupancies.copy()
         if occupancies.shape != self.samples.shape:
             occupancies = self._reshape_occu(occupancies)
+        # Enforce int32 here at the beginning of simulation.
+        # This will ensure that all following steps are in int32 format.
+        occupancies = occupancies.astype(np.int32)
 
         # set up any auxiliary states from initial occupancies
         selected_occus = []
@@ -431,6 +435,7 @@ class Sampler:
 
     def _single_step(self, occupancies):
         """Do a single step for all kernels."""
+        # Don't enforce int32 here as it may increase overhead.
         for kernel, occupancy in zip(self._kernels, occupancies):
             yield kernel.single_step(occupancy)
 

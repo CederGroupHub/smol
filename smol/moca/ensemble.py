@@ -321,12 +321,13 @@ class Ensemble(MSONable):
         correlation vector x system size
 
         Args:
-            occupancy (ndarray):
+            occupancy (ndarray[np.int32]):
                 encoded occupancy string
 
         Returns:
             ndarray: feature vector
         """
+        # Don't enforce int32 here as it may increase overhead.
         features = self.processor.compute_feature_vector(occupancy)
 
         if self.chemical_potentials is not None:
@@ -342,7 +343,7 @@ class Ensemble(MSONable):
         """Compute the change in the feature vector from a given step.
 
         Args:
-            occupancy (ndarray):
+            occupancy (ndarray[np.int32]):
                 encoded occupancy string.
             step (list of tuple):
                 a sequence of flips given by MCUsher.propose_step
@@ -350,6 +351,7 @@ class Ensemble(MSONable):
         Returns:
             ndarray: difference in feature vector
         """
+        # Don't enforce int32 here as it may increase overhead.
         delta_features = self.processor.compute_feature_vector_change(occupancy, step)
 
         if self.chemical_potentials is not None:

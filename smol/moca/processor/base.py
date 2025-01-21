@@ -215,12 +215,13 @@ class Processor(MSONable, metaclass=ABCMeta):
 
     def encode_occupancy(self, occupancy):
         """Encode occupancy string of Species object to ints."""
+        # Enforce int32 to ensure compatibility.
         return np.array(
             [
                 species.index(spec)
                 for species, spec in zip(self.allowed_species, occupancy)
             ],
-            dtype=int,
+            dtype=np.int32,
         )
 
     def decode_occupancy(self, encoded_occupancy):
