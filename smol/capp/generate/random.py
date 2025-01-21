@@ -81,7 +81,8 @@ def _gen_unconstrained_ordered_occu(sublattices, rng=None):
         rand_occu[sublatt.sites] = rng.choice(
             sublatt.encoding, size=len(sublatt.sites), replace=True
         )
-    return np.ascontiguousarray(rand_occu, dtype=int)
+    # Enforce int32.
+    return np.ascontiguousarray(rand_occu, dtype=np.int32)
 
 
 def _gen_neutral_occu(sublattices, lam=10, num_attempts=10000, rng=None):
@@ -135,7 +136,8 @@ def _gen_neutral_occu(sublattices, lam=10, num_attempts=10000, rng=None):
     for _ in range(num_attempts):
         occu, C = flip(occu, sublattices, lam=lam)
         if C == 0:
-            return np.ascontiguousarray(occu, dtype=int)
+            # Enforce int32.
+            return np.ascontiguousarray(occu, dtype=np.int32)
 
     raise TimeoutError(
         f"Can not generate a neutral occupancy in {num_attempts} attempts!"
@@ -174,7 +176,8 @@ def _gen_composition_ordered_occu(sublattices, composition, tol, rng=None):
             occu[sites] = code
             all_sites = [i for i in all_sites if i not in sites]
 
-    return np.ascontiguousarray(occu, dtype=int)
+    # Enforce int32.
+    return np.ascontiguousarray(occu, dtype=np.int32)
 
 
 def _composition_compatiblity(sublattices, composition, tol, rng=None):

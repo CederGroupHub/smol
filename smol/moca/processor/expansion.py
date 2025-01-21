@@ -166,18 +166,24 @@ class ClusterExpansionProcessor(Processor):
         other works it is extensive corresponding to the size of the supercell.
 
         Args:
-            occupancy (ndarray):
+            occupancy (ndarray[np.int32]):
                 encoded occupation array
 
         Returns:
             array: correlation vector
         """
-        return (
-            self._evaluator.correlations_from_occupancy(
-                occupancy, self._indices.container
+        try:
+            corr = (
+                self._evaluator.correlations_from_occupancy(
+                    occupancy, self._indices.container
+                )
+                * self.size
             )
-            * self.size
-        )
+        except ValueError:
+            raise ValueError(
+                f"occupancy dtype is: {occupancy.dtype}, must be an array of np.int32!"
+            )
+        return corr
 
     def compute_feature_vector_change(self, occupancy, flips):
         """
@@ -204,9 +210,14 @@ class ClusterExpansionProcessor(Processor):
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
             eval_data = self._eval_data_by_sites[f[0]]
-            delta_corr += eval_data.evaluator.delta_correlations_from_occupancies(
-                occu_f, occu_i, eval_data.cluster_ratio, eval_data.indices.container
-            )
+            try:
+                delta_corr += eval_data.evaluator.delta_correlations_from_occupancies(
+                    occu_f, occu_i, eval_data.cluster_ratio, eval_data.indices.container
+                )
+            except ValueError:
+                raise ValueError(
+                    f"occupancy dtype is: {occupancy.dtype}, must be an array of np.int32!"
+                )
             occu_i = occu_f
 
         return delta_corr * self.size
@@ -379,12 +390,18 @@ class ClusterDecompositionProcessor(Processor):
         Returns:
             array: correlation vector
         """
-        return (
-            self._evaluator.interactions_from_occupancy(
-                occupancy, self._indices.container
+        try:
+            corr = (
+                self._evaluator.interactions_from_occupancy(
+                    occupancy, self._indices.container
+                )
+                * self.size
             )
-            * self.size
-        )
+        except ValueError:
+            raise ValueError(
+                f"occupancy dtype is: {occupancy.dtype}, must be an array of np.int32!"
+            )
+        return corr
 
     def compute_feature_vector_change(self, occupancy, flips):
         """
@@ -410,11 +427,19 @@ class ClusterDecompositionProcessor(Processor):
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
             eval_data = self._eval_data_by_sites[f[0]]
-            delta_interactions += (
-                eval_data.evaluator.delta_interactions_from_occupancies(
-                    occu_f, occu_i, eval_data.cluster_ratio, eval_data.indices.container
+            try:
+                delta_interactions += (
+                    eval_data.evaluator.delta_interactions_from_occupancies(
+                        occu_f,
+                        occu_i,
+                        eval_data.cluster_ratio,
+                        eval_data.indices.container,
+                    )
                 )
-            )
+            except ValueError:
+                raise ValueError(
+                    f"occupancy dtype is: {occupancy.dtype}, must be an array of np.int32!"
+                )
             occu_i = occu_f
 
         return delta_interactions * self.size

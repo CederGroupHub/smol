@@ -101,7 +101,8 @@ def test_from_cluster_expansion(
             ensemble.natural_parameters[: ensemble.num_energy_coefs],
             np.append(cluster_subspace_ewald.orbit_multiplicities, coefs[-1]),
         )
-    occu = np.zeros(ensemble.num_sites, dtype=int)
+    # Enforce int32.
+    occu = np.zeros(ensemble.num_sites, dtype=np.int32)
     for _ in range(50):  # test a few flips
         sublatt = rng.choice(ensemble.active_sublattices)
         site = rng.choice(sublatt.sites)
