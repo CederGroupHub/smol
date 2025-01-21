@@ -34,43 +34,43 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
     cpdef np.ndarray[np.float64_t, ndim=1] correlations_from_occupancy(
             self,
-            const long[::1] occu,
+            const np.int32_t[::1] occu,
             IntArray2DContainer cluster_indices,
     )
 
     cpdef np.ndarray[np.float64_t, ndim=1] interactions_from_occupancy(
             self,
-            const long[::1] occu,
+            const np.int32_t[::1] occu,
             IntArray2DContainer cluster_indices,
     )
 
     cpdef np.ndarray[np.float64_t, ndim=1] delta_correlations_from_occupancies(
             self,
-            const long[::1] occu_f,
-            const long[::1] occu_i,
-            const double[::1] cluster_ratio,
+            const np.int32_t[::1] occu_f,
+            const np.int32_t[::1] occu_i,
+            const np.float64_t[::1] cluster_ratio,
             IntArray2DContainer cluster_indices)
 
     cpdef np.ndarray[np.float64_t, ndim=1] delta_interactions_from_occupancies(
             self,
-            const long[::1] occu_f,
-            const long[::1] occu_i,
-            const double[::1] cluster_ratio,
+            const np.int32_t[::1] occu_f,
+            const np.int32_t[::1] occu_i,
+            const np.float64_t[::1] cluster_ratio,
             IntArray2DContainer cluster_indices
     )
 
     cpdef np.ndarray[np.float64_t, ndim=1] corr_distances_from_occupancies(
             self,
-            const long[::1] occu_f,
-            const long[::1] occu_i,
-            const double[::1] ref_corr_vector,
+            const np.int32_t[::1] occu_f,
+            const np.int32_t[::1] occu_i,
+            const np.float64_t[::1] ref_corr_vector,
             IntArray2DContainer cluster_indices
     )
 
     cpdef np.ndarray[np.float64_t, ndim=1] interaction_distances_from_occupancies(
             self,
-            const long[::1] occu_f,
-            const long[::1] occu_i,
-            const double[::1] ref_interaction_vector,
+            const np.int32_t[::1] occu_f,
+            const np.int32_t[::1] occu_i,
+            const np.float64_t[::1] ref_interaction_vector,
             IntArray2DContainer cluster_indices
     )

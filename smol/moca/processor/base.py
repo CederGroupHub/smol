@@ -101,7 +101,7 @@ class Processor(MSONable, metaclass=ABCMeta):
         symmetrically distinct bit ordering.
 
         Args:
-            occupancy (ndarray):
+            occupancy (ndarray[np.int32]):
                 encoded occupation array
 
         Returns:
@@ -115,7 +115,7 @@ class Processor(MSONable, metaclass=ABCMeta):
         Compute the change in the feature vector from a list of flips.
 
         Args:
-            occupancy (ndarray):
+            occupancy (ndarray[np.int32]):
                 encoded occupancy array
             flips (list of tuple):
                 list of tuples with two elements. Each tuple represents a
@@ -137,7 +137,7 @@ class Processor(MSONable, metaclass=ABCMeta):
         Args:
             feature_vector (ndarray):
                 fixed vector to compute absolute distance differences from.
-            occupancy (ndarray):
+            occupancy (ndarray[np.int32]):
                 encoded occupancy array
             flips (list of tuple):
                 list of tuples with two elements. Each tuple represents a
@@ -215,12 +215,13 @@ class Processor(MSONable, metaclass=ABCMeta):
 
     def encode_occupancy(self, occupancy):
         """Encode occupancy string of Species object to ints."""
+        # Enforce int32 to ensure compatibility.
         return np.array(
             [
                 species.index(spec)
                 for species, spec in zip(self.allowed_species, occupancy)
             ],
-            dtype=int,
+            dtype=np.int32,
         )
 
     def decode_occupancy(self, encoded_occupancy):

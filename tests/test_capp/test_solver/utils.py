@@ -56,7 +56,7 @@ def get_random_solver_test_occu(sublattices):
     ]
     f_code = anion_sublattice.encoding[anion_sublattice.species.index(Species("F", -1))]
 
-    occu = np.zeros(24, dtype=int) - 1
+    occu = np.zeros(24, dtype=np.int32) - 1
     occu[li_sites] = li_code
     occu[mn2_sites] = mn2_code
     occu[mn4_sites] = mn4_code
@@ -67,7 +67,7 @@ def get_random_solver_test_occu(sublattices):
 
     assert np.all(occu >= 0)
 
-    return occu
+    return occu.astype(np.int32)
 
 
 def get_random_variable_values(sublattices):
@@ -124,7 +124,7 @@ def get_random_neutral_occupancy(
     rand_occu = initial_occupancy.copy()
     for site_id, code in flip:
         rand_occu[site_id] = code
-    return rand_occu
+    return rand_occu.astype(np.int32)
 
 
 def get_random_neutral_variable_values(
@@ -139,7 +139,8 @@ def get_random_neutral_variable_values(
 
 def validate_correlations_from_occupancy(expansion_processor, occupancy):
     # Check whether our interpretation of corr function is correct.
-    occupancy = np.array(occupancy, dtype=int)
+    # Enforce int32.
+    occupancy = np.array(occupancy, dtype=np.int32)
     space = expansion_processor.cluster_subspace
     sc_matrix = expansion_processor.supercell_matrix
     mappings = space.supercell_orbit_mappings(sc_matrix)
@@ -168,7 +169,8 @@ def validate_correlations_from_occupancy(expansion_processor, occupancy):
 def validate_interactions_from_occupancy(decomposition_processor, occupancy):
     # Check whether our interpretation of corr function is correct.
     orbit_tensors = decomposition_processor._interaction_tensors
-    occupancy = np.array(occupancy, dtype=int)
+    # Enforce int32.
+    occupancy = np.array(occupancy, dtype=np.int32)
     space = decomposition_processor.cluster_subspace
     sc_matrix = decomposition_processor.supercell_matrix
     mappings = space.supercell_orbit_mappings(sc_matrix)
@@ -201,6 +203,6 @@ def evaluate_correlations_from_variable_values(grouped_terms, variable_values):
             if len(var_inds) == 0:
                 f += corr_factor
             else:
-                f += corr_factor * np.product(variable_values[var_inds])
+                f += corr_factor * np.prod(variable_values[var_inds])
         corr.append(f)
     return np.array(corr)

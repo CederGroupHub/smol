@@ -141,6 +141,8 @@ given a disordered one.
 Finally, the ordered structure can be used to generate an initial configuration
 to run MC sampling.
 
+**Notice: If you pass in your own init_occu string instead of generating one from structure, it is strongly recommended to convert the string into np.int32 dtype to reduce data type conversion overhead within the code.**
+
 .. code-block:: python
 
     init_occu = ensemble.processor.occupancy_from_structure(structure)

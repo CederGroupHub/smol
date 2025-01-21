@@ -170,7 +170,8 @@ class PeriodicGroundStateSolver:
 
         self._other_constraints = other_constraints
         if initial_occupancy is not None:
-            self.initial_occupancy = np.array(initial_occupancy, dtype=int)
+            # Enforce int32.
+            self.initial_occupancy = np.array(initial_occupancy, dtype=np.int32)
         else:
             self.initial_occupancy = None
 

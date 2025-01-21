@@ -136,12 +136,13 @@ def get_occupancy_from_variables(
             List of variable indices corresponding to each site index and
             the species in its site space.
     Returns:
-        np.ndarray: Encoded occupancy string.
+        np.ndarray[np.int32]: Encoded occupancy string.
     """
     values = np.round(variable_values).astype(int)
 
     num_sites = len(variable_indices)
-    occu = np.zeros(num_sites, dtype=int) - 1
+    # Enforce int32.
+    occu = np.zeros(num_sites) - 1
     site_sublattice_ids = get_sublattice_indices_by_site(sublattices)
 
     # Not considering species encoding order yet.
@@ -162,7 +163,8 @@ def get_occupancy_from_variables(
     if np.any(occu < 0):
         raise ValueError(f"Variables does not match given indices: {variable_indices}!")
 
-    return occu
+    # Enforce int32.
+    return occu.astype(np.int32)
 
 
 def get_variable_values_from_occupancy(

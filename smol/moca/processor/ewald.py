@@ -142,7 +142,7 @@ class EwaldProcessor(Processor):
         Compute the change in the feature vector from a list of flips.
 
         Args:
-            occupancy (ndarray):
+            occupancy (ndarray[np.int32]):
                 encoded occupancy string
             flips (list of tuple):
                 list of tuples with two elements. Each tuple represents a
@@ -158,9 +158,14 @@ class EwaldProcessor(Processor):
         for f in flips:
             occu_f = occu_i.copy()
             occu_f[f[0]] = f[1]
-            delta_energy += delta_ewald_single_flip(
-                occu_f, occu_i, self.ewald_matrix, self._ewald_inds, f[0]
-            )
+            try:
+                delta_energy += delta_ewald_single_flip(
+                    occu_f, occu_i, self.ewald_matrix, self._ewald_inds, f[0]
+                )
+            except ValueError:
+                raise ValueError(
+                    f"occupancy dtype is: {occu_i.dtype}, must be an array of np.int32!"
+                )
             occu_i = occu_f
         return delta_energy
 

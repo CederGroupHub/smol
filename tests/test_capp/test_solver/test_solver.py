@@ -204,7 +204,8 @@ def test_solve(simple_solver):
     else:
         other_states = set(permutations([0] * 4 + [1] * 4))
     for other_state in other_states:
-        other_state = np.array(list(other_state), dtype=int)
+        # Enforce int32.
+        other_state = np.array(list(other_state), dtype=np.int32)
         other_feats = simple_solver.ensemble.compute_feature_vector(other_state)
         other_energy = np.dot(other_feats, simple_solver.ensemble.natural_parameters)
         # allow just a tiny slack.

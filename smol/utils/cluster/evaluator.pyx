@@ -30,7 +30,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
     def __cinit__(
             self,
             tuple orbit_data,
-            int num_orbits,
+            int num_orbits,  # Fix cross-platform dtype issue after numpy>=2.0.
             int num_corr_functions,
             int num_threads = 1,
             double offset = 0.0,
@@ -48,7 +48,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
                 Number of orbits.
             num_corr_functions (int):
                 Number of correlation functions.
-            offset (float):
+            offset (double):
                 interaction value for the constant term (i.e. the grand mean).
             cluster_interaction_tensors (tuple):
                 Tuple of ndarrays cluster interaction tensors.
@@ -108,7 +108,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         Args:
             cluster_interaction_tensors (tuple):
                 Tuple of ndarrays cluster interaction tensors.
-            offset (float):
+            offset (double):
                 interaction value for the constant term (i.e. the grand mean).
         """
         if len(cluster_interaction_tensors) != self.size:
@@ -120,7 +120,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
     cpdef np.ndarray[np.float64_t, ndim=1] correlations_from_occupancy(
             self,
-            const long[::1] occu,
+            const np.int32_t[::1] occu,
             IntArray2DContainer cluster_indices,
     ):
         """Computes the correlation vector for a given encoded occupancy string.
@@ -141,7 +141,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef OrbitC orbit
 
         out = np.zeros(self.num_corr)
-        cdef double[::1] o_view = out
+        cdef np.float64_t[::1] o_view = out
         o_view[0] = 1  # empty cluster
 
         # loop thru orbits
@@ -169,7 +169,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
     cpdef np.ndarray[np.float64_t, ndim=1] interactions_from_occupancy(
             self,
-            const long[::1] occu,
+            const np.int32_t[::1] occu,
             IntArray2DContainer cluster_indices,
     ):
         """Computes the cluster interaction vector for a given encoded occupancy string.
@@ -189,7 +189,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef FloatArray1D interaction_tensor
 
         out = np.zeros(self.num_orbits)
-        cdef double[::1] o_view = out
+        cdef np.float64_t[::1] o_view = out
         o_view[0] = self.offset  # empty cluster
 
         for n in prange(self.size, nogil=True, schedule="guided", num_threads=self.num_threads):
@@ -210,9 +210,9 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
     cpdef np.ndarray[np.float64_t, ndim=1] delta_correlations_from_occupancies(
             self,
-            const long[::1] occu_f,
-            const long[::1] occu_i,
-            const double[::1] cluster_ratio,
+            const np.int32_t[::1] occu_f,
+            const np.int32_t[::1] occu_i,
+            const np.float64_t[::1] cluster_ratio,
             IntArray2DContainer cluster_indices,
     ):
         """Computes the correlation difference between two occupancy vectors.
@@ -238,7 +238,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef OrbitC orbit
 
         out = np.zeros(self.num_corr)
-        cdef double[::1] o_view = out
+        cdef np.float64_t[::1] o_view = out
 
         # loop thru orbits
         for n in prange(self.size, nogil=True, num_threads=self.num_threads):
@@ -266,9 +266,9 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
     cpdef np.ndarray[np.float64_t, ndim=1] delta_interactions_from_occupancies(
             self,
-            const long[::1] occu_f,
-            const long[::1] occu_i,
-            const double[::1] cluster_ratio,
+            const np.int32_t[::1] occu_f,
+            const np.int32_t[::1] occu_i,
+            const np.float64_t[::1] cluster_ratio,
             IntArray2DContainer cluster_indices,
 
     ):
@@ -297,7 +297,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef FloatArray1D interaction_tensor
 
         out = np.zeros(self.num_orbits)
-        cdef double[::1] o_view = out
+        cdef np.float64_t[::1] o_view = out
 
         for n in prange(self.size, nogil=True, num_threads=self.num_threads):
             orbit = self.data[n]
@@ -318,9 +318,9 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
     cpdef np.ndarray[np.float64_t, ndim=1] corr_distances_from_occupancies(
             self,
-            const long[::1] occu_f,
-            const long[::1] occu_i,
-            const double[::1] ref_corr_vector,
+            const np.int32_t[::1] occu_f,
+            const np.int32_t[::1] occu_i,
+            const np.float64_t[::1] ref_corr_vector,
             IntArray2DContainer cluster_indices
     ):
         """Computes the absolute distance of two correlation vectors separated by a single
@@ -349,7 +349,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef OrbitC orbit
 
         out = np.zeros((2, self.num_corr))
-        cdef double[:, ::1] o_view = out
+        cdef np.float64_t[:, ::1] o_view = out
         o_view[:, 0] = 0
 
         # loop thru orbits
@@ -380,9 +380,9 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
 
     cpdef np.ndarray[np.float64_t, ndim=1] interaction_distances_from_occupancies(
             self,
-            const long[::1] occu_f,
-            const long[::1] occu_i,
-            const double[::1] ref_interaction_vector,
+            const np.int32_t[::1] occu_f,
+            const np.int32_t[::1] occu_i,
+            const np.float64_t[::1] ref_interaction_vector,
             IntArray2DContainer cluster_indices
     ):
         """Computes the absolute distance of two cluster interaction vectors separated by a
@@ -412,7 +412,7 @@ cdef class ClusterSpaceEvaluator(OrbitContainer):
         cdef FloatArray1D interaction_tensor
 
         out = np.zeros((2, self.num_orbits))
-        cdef double[:, ::1] o_view = out
+        cdef np.float64_t[:, ::1] o_view = out
         o_view[:, 0] = 0
 
         for n in prange(self.size, nogil=True, schedule="guided", num_threads=self.num_threads):

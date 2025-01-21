@@ -15,7 +15,7 @@ import numpy as np
 cimport numpy as np
 
 
-cpdef corr_from_occupancy(const long[::1] occu,
+cpdef corr_from_occupancy(const np.int32_t[::1] occu,
                           const int num_corr_functions,
                           list orbit_list):
     """Computes the correlation vector for a given encoded occupancy string.
@@ -35,11 +35,11 @@ cpdef corr_from_occupancy(const long[::1] occu,
     """
     cdef int i, j, n, m, I, J, M, index
     cdef double p
-    cdef const long[:, ::1] indices
-    cdef const long[::1] tensor_indices
-    cdef const double[:, ::1] corr_tensors
+    cdef const np.int32_t[:, ::1] indices
+    cdef const np.int32_t[::1] tensor_indices
+    cdef const np.float64_t[:, ::1] corr_tensors
     out = np.zeros(num_corr_functions)
-    cdef double[:] o_view = out
+    cdef np.float64_t[:] o_view = out
     o_view[0] = 1  # empty cluster
 
     for n, tensor_indices, corr_tensors, indices in orbit_list:
@@ -58,8 +58,8 @@ cpdef corr_from_occupancy(const long[::1] occu,
     return out
 
 
-cpdef delta_corr_single_flip(const long[::1] occu_f,
-                             const long[::1] occu_i,
+cpdef delta_corr_single_flip(const np.int32_t[::1] occu_f,
+                             const np.int32_t[::1] occu_i,
                              const int num_corr_functions,
                              list site_orbit_list):
     """Computes the correlation difference between two occupancy arrays.
@@ -82,11 +82,11 @@ cpdef delta_corr_single_flip(const long[::1] occu_f,
     """
     cdef int i, j, n, m, I, J, M, ind_i, ind_f
     cdef double p, ratio
-    cdef const long[:, ::1] indices
-    cdef const long[::1] tensor_indices
-    cdef const double[:, ::1] corr_tensors
+    cdef const np.int32_t[:, ::1] indices
+    cdef const np.int32_t[::1] tensor_indices
+    cdef const np.float64_t[:, ::1] corr_tensors
     out = np.zeros(num_corr_functions)
-    cdef double[::1] o_view = out
+    cdef np.float64_t[::1] o_view = out
 
     for n, ratio, tensor_indices, corr_tensors, indices in site_orbit_list:
         M = corr_tensors.shape[0] # index of bit combos
@@ -105,9 +105,9 @@ cpdef delta_corr_single_flip(const long[::1] occu_f,
     return out
 
 
-cpdef corr_distance_single_flip(const long[::1] occu_f,
-                                const long[::1] occu_i,
-                                const double[::1] ref_corr_vector,
+cpdef corr_distance_single_flip(const np.int32_t[::1] occu_f,
+                                const np.int32_t[::1] occu_i,
+                                const np.float64_t[::1] ref_corr_vector,
                                 const int num_corr_functions,
                                 list orbit_list):
     """Computes the absolute distance of two correlation vectors separated by a single
@@ -135,11 +135,11 @@ cpdef corr_distance_single_flip(const long[::1] occu_f,
     """
     cdef int i, j, n, m, I, J, M, ind_i, ind_f
     cdef double p_i, p_f
-    cdef const long[:, ::1] indices
-    cdef const long[::1] tensor_indices
-    cdef const double[:, ::1] corr_tensors
+    cdef const np.int32_t[:, ::1] indices
+    cdef const np.int32_t[::1] tensor_indices
+    cdef const np.float64_t[:, ::1] corr_tensors
     out = np.zeros((2, num_corr_functions))
-    cdef double[:, ::1] o_view = out
+    cdef np.float64_t[:, ::1] o_view = out
     o_view[:, 0] = 0
 
     for n, tensor_indices, corr_tensors, indices in orbit_list:
@@ -161,7 +161,7 @@ cpdef corr_distance_single_flip(const long[::1] occu_f,
     return out
 
 
-cpdef interactions_from_occupancy(const long[::1] occu,
+cpdef interactions_from_occupancy(const np.int32_t[::1] occu,
                                   const int num_interactions,
                                   const double offset,
                                   list orbit_list):
@@ -172,7 +172,7 @@ cpdef interactions_from_occupancy(const long[::1] occu,
             encoded occupancy vector
         num_interactions (int):
             total number of cluster interactions (orbits in cluster subspace).
-        offset (float):
+        offset (double):
             eci value for the constant term.
         orbit_list:
             Information of all orbits.
@@ -183,11 +183,11 @@ cpdef interactions_from_occupancy(const long[::1] occu,
     """
     cdef int n, i, j, I, J, index
     cdef double p
-    cdef const long[:, ::1] indices
-    cdef const long[::1] tensor_indices
-    cdef const double[::1] interaction_tensor
+    cdef const np.int32_t[:, ::1] indices
+    cdef const np.int32_t[::1] tensor_indices
+    cdef const np.float64_t[::1] interaction_tensor
     out = np.zeros(num_interactions)
-    cdef double[:] o_view = out
+    cdef np.float64_t[:] o_view = out
     o_view[0] = offset  # empty cluster
 
     n = 1
@@ -206,8 +206,8 @@ cpdef interactions_from_occupancy(const long[::1] occu,
     return out
 
 
-cpdef delta_interactions_single_flip(const long[::1] occu_f,
-                                     const long[::1] occu_i,
+cpdef delta_interactions_single_flip(const np.int32_t[::1] occu_f,
+                                     const np.int32_t[::1] occu_i,
                                      const int num_interactions,
                                      list site_orbit_list):
     """Computes the cluster interaction vector difference between two occupancy
@@ -229,11 +229,11 @@ cpdef delta_interactions_single_flip(const long[::1] occu_f,
     """
     cdef int i, j, n, I, J, ind_i, ind_f
     cdef double p, ratio
-    cdef const long[:, ::1] indices
-    cdef const long[::1] tensor_indices
-    cdef const double[::1] interaction_tensor
+    cdef const np.int32_t[:, ::1] indices
+    cdef const np.int32_t[::1] tensor_indices
+    cdef const np.float64_t[::1] interaction_tensor
     out = np.zeros(num_interactions)
-    cdef double[::1] o_view = out
+    cdef np.float64_t[::1] o_view = out
 
     for n, ratio, tensor_indices, interaction_tensor, indices in site_orbit_list:
         I = indices.shape[0] # cluster index
@@ -249,9 +249,9 @@ cpdef delta_interactions_single_flip(const long[::1] occu_f,
     return out
 
 
-cpdef interaction_distance_single_flip(const long[::1] occu_f,
-                                       const long[::1] occu_i,
-                                       const double[::1] ref_interaction_vector,
+cpdef interaction_distance_single_flip(const np.int32_t[::1] occu_f,
+                                       const np.int32_t[::1] occu_i,
+                                       const np.float64_t[::1] ref_interaction_vector,
                                        const int num_interactions,
                                        list orbit_list):
     """Computes the absolute distance of two cluster interaction vectors separated by a
@@ -280,11 +280,11 @@ cpdef interaction_distance_single_flip(const long[::1] occu_f,
     """
     cdef int n, i, j, I, J, ind_i, ind_f
     cdef double p_i, p_f
-    cdef const long[:, ::1] indices
-    cdef const long[::1] tensor_indices
-    cdef const double[::1] interaction_tensor
+    cdef const np.int32_t[:, ::1] indices
+    cdef const np.int32_t[::1] tensor_indices
+    cdef const np.float64_t[::1] interaction_tensor
     out = np.zeros((2, num_interactions))
-    cdef double[:, ::1] o_view = out
+    cdef np.float64_t[:, ::1] o_view = out
     o_view[:, 0] = 0
 
     n = 1
@@ -305,10 +305,10 @@ cpdef interaction_distance_single_flip(const long[::1] occu_f,
     return out
 
 
-cpdef delta_ewald_single_flip(const long[::1] occu_f,
-                              const long[::1] occu_i,
-                              const double[:, ::1] ewald_matrix,
-                              const long[:, ::1] ewald_indices,
+cpdef delta_ewald_single_flip(const np.int32_t[::1] occu_f,
+                              const np.int32_t[::1] occu_i,
+                              const np.float64_t[:, ::1] ewald_matrix,
+                              const np.int32_t[:, ::1] ewald_indices,
                               const int site_ind):
     """Compute the change in electrostatic interaction energy from a flip.
 
@@ -326,7 +326,7 @@ cpdef delta_ewald_single_flip(const long[::1] occu_f,
             site index for site being flipped
 
     Returns:
-        float: electrostatic interaction energy difference
+        double: electrostatic interaction energy difference
     """
     cdef int i, j, k, add, sub
     cdef bint ok

@@ -41,7 +41,7 @@ class Sublattice(MSONable):
         array of site indices for all sites in sublattice
      active_sites (ndarray):
         array of site indices for all unrestricted sites in the sublattice.
-     encoding (ndarray):
+     encoding (ndarray[np.int32]):
         array of species encoding in integer indices. By default,
         will be initialized as range(len(site_space)). Might be different
         if a sub-lattice was created from the split of another sub-lattice.
@@ -60,7 +60,8 @@ class Sublattice(MSONable):
             # A single-species sub-lattice should not be active at all.
             self.restrict_sites(self.sites)
 
-        self.encoding = np.arange(len(self.site_space), dtype=int)
+        # Enforce int32 to prevent dtype problems.
+        self.encoding = np.arange(len(self.site_space), dtype=np.int32)
 
     @property
     def is_active(self):
@@ -172,7 +173,8 @@ class Sublattice(MSONable):
             part_space = SiteSpace(part_comp)
             part_sites = np.array(part_sites, dtype=int)
             part_actives = np.array(part_actives, dtype=int)
-            part_codes = np.array(part_codes, dtype=int)
+            # Enforce int32.
+            part_codes = np.array(part_codes, dtype=np.int32)
             part_sublatt = Sublattice(part_space, part_sites)
             part_sublatt.active_sites = part_actives
             part_sublatt.encoding = part_codes
@@ -219,5 +221,6 @@ class Sublattice(MSONable):
             SiteSpace.from_dict(d["site_space"]), sites=np.array(d["sites"], dtype=int)
         )
         sublattice.active_sites = np.array(d["active_sites"], dtype=int)
-        sublattice.encoding = np.array(d["encoding"], dtype=int)
+        # Enforce int32.
+        sublattice.encoding = np.array(d["encoding"], dtype=np.int32)
         return sublattice

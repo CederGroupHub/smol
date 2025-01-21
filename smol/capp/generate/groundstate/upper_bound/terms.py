@@ -26,10 +26,10 @@ def get_auxiliary_variable_values(
             Values of auxiliary variables subjecting to auxiliary constraints,
             as 0 and 1.
     """
-    variable_values = np.array(variable_values).astype(int)
+    variable_values = np.array(variable_values, dtype=int)
     aux_values = np.ones(len(indices_in_auxiliary_products), dtype=int)
     for i, inds in enumerate(indices_in_auxiliary_products):
-        aux_values[i] = np.product(variable_values[inds])
+        aux_values[i] = np.prod(variable_values[inds])
 
     return aux_values.astype(int)
 

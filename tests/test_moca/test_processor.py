@@ -175,6 +175,7 @@ def test_get_average_drift(processor):
 def test_compute_property_change(processor, rng):
     sublattices = processor.get_sublattices()
     occu = _gen_unconstrained_ordered_occu(sublattices, rng=rng)
+    occu_wrong_type = occu.astype(np.int64)
     active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
 
     for _ in range(100):
@@ -186,6 +187,19 @@ def test_compute_property_change(processor, rng):
         prop_f = processor.compute_property(new_occu)
         prop_i = processor.compute_property(occu)
         dprop = processor.compute_property_change(occu, [(site, new_sp)])
+        # Check error raising behavior.
+        if isinstance(
+            processor, (ClusterExpansionProcessor, ClusterDecompositionProcessor)
+        ):
+            with pytest.raises(ValueError):
+                _ = processor.compute_property(occu_wrong_type)
+        if isinstance(
+            processor,
+            (ClusterExpansionProcessor, ClusterDecompositionProcessor, EwaldProcessor),
+        ):
+            with pytest.raises(ValueError):
+                _ = processor.compute_property_change(occu_wrong_type, [(site, new_sp)])
+
         # Check with some tight tolerances.
         npt.assert_allclose(dprop, prop_f - prop_i, rtol=RTOL, atol=ATOL)
         # Test reverse matches forward

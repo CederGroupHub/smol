@@ -28,11 +28,16 @@ class Trace(SimpleNamespace):
 
     def __setattr__(self, name, value):
         """Set only ndarrays as attributes."""
-        if isinstance(value, (float, int)):
-            value = np.array([value])
+        if isinstance(value, float):
+            value = np.array([value], dtype=np.float64)
+        if isinstance(value, int):
+            value = np.array([value], dtype=np.int32)
 
+        # Don't enforce int32 and float64 here as that may cause overhead.
+        # Calling modules will be responsible for checking dtype.
         if not isinstance(value, np.ndarray):
             raise TypeError("Trace only supports attributes of type ndarray.")
+
         self.__dict__[name] = value
 
     def as_dict(self):

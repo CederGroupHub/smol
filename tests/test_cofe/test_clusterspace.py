@@ -825,7 +825,8 @@ def test_site_basis_rotation(cluster_subspace, rng):
 
 
 def _encode_occu(occu, bits):
-    return np.array([bit.index(sp) for sp, bit in zip(occu, bits)])
+    # Enforce int32 to ensure compatibility.
+    return np.array([bit.index(sp) for sp, bit in zip(occu, bits)], dtype=np.int32)
 
 
 def test_vs_CASM_pairs(single_structure):

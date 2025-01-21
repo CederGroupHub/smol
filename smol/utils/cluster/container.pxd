@@ -4,6 +4,8 @@
 
 __author__ = "Luis Barroso-Luque"
 
+cimport numpy as np
+
 import cython
 from smol.utils.cluster.struct cimport (
     FloatArray1D,
@@ -25,8 +27,8 @@ cdef class OrbitContainer:
     cdef OrbitC create_struct(
             int orbit_id,
             int bit_id,
-            double[:, ::1] correlation_tensors,
-            long[::1] tensor_indices,
+            np.float64_t[:, ::1] correlation_tensors,
+            np.int32_t[::1] tensor_indices,
     )
 
 
@@ -39,7 +41,7 @@ cdef class FloatArray2DContainer:
     cpdef public void set_arrays(self, tuple arrays) except *
 
     @staticmethod
-    cdef FloatArray2D create_struct(double[:, ::1] array)
+    cdef FloatArray2D create_struct(np.float64_t[:, ::1] array)
 
 
 @cython.final
@@ -51,7 +53,7 @@ cdef class FloatArray1DContainer:
     cpdef public void set_arrays(self, tuple arrays)  except *
 
     @staticmethod
-    cdef FloatArray1D create_struct(double[::1] array)
+    cdef FloatArray1D create_struct(np.float64_t[::1] array)
 
 
 @cython.final
@@ -63,7 +65,7 @@ cdef class IntArray1DContainer:
     cpdef public void set_arrays(self, tuple arrays)  except *
 
     @staticmethod
-    cdef IntArray1D create_struct(long[::1] array)
+    cdef IntArray1D create_struct(np.int32_t[::1] array)
 
 
 @cython.final
@@ -75,4 +77,4 @@ cdef class IntArray2DContainer:
     cpdef public void set_arrays(self, tuple arrays)  except *
 
     @staticmethod
-    cdef IntArray2D create_struct(long[:, ::1] array)
+    cdef IntArray2D create_struct(np.int32_t[:, ::1] array)

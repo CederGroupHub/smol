@@ -19,17 +19,19 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
 dependencies = [
-    "numpy >=1.24,<2.0",
-    "pymatgen >=2023.08.10",
-    "monty >=v2022.9.8",
-    "h5py >=3.10.0"
+    "numpy >=2.0.0,<3.0",
+    "pymatgen >=2025.1.9",
+    "monty >=2025.1.9",
+    "h5py >=3.12.0"
 ]
 authors = [
     {name = "Luis Barroso-Luque", email = "lbluque@berkeley.edu"},
-    {name = "Fengyu Xie", email = "lbluque@berkeley.edu"}
+    {name = "Fengyu Xie", email = "fengyu_xie@berkeley.edu"}
 ]
 maintainers = [
-    {name = "Luis Barroso-Luque", email = "lbluque@berkeley.edu"}
+    {name = "Luis Barroso-Luque", email = "lbluque@berkeley.edu"},
+    {name = "Fengyu Xie", email = "fengyu_xie@berkeley.edu"},
+    {name = "Ronald Kam", email = "kamronald@berkeley.edu"}
 ]
 
 [project.optional-dependencies]
@@ -55,7 +57,7 @@ test = [
     "pytest-cov >=4.0.0",
     "pytest-split>=0.9.0",
     "scikit-learn >=1.1.2",
-    "h5py >=3.10.0",
+    "h5py >=3.12.0",
     "coverage",
     "polytope",
     "cvxpy",
@@ -79,7 +81,7 @@ changelog = "https://cedergrouphub.github.io/smol/CHANGES.md"
 tracker = "https://github.com/CederGroupHub/smol/issues"
 
 [build-system]
-requires = ["setuptools", "setuptools-scm[toml]>=6.2", "cython>= 0.29.34", "numpy>=1.24"]
+requires = ["setuptools", "setuptools-scm[toml]>=6.2", "cython>= 0.29.34", "numpy>=2.0.0"]
 # Use legacy backend to import local packages in setup.py
 build-backend = "setuptools.build_meta:__legacy__"
 

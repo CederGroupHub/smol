@@ -6,25 +6,27 @@ interaction vectors.
 
 __author__ = "Luis Barroso-Luque"
 
+cimport numpy as np
+
 
 cdef struct IntArray1D:
-    long* data
+    np.int32_t* data
     int size
 
 
 cdef struct IntArray2D:
-    long* data
+    np.int32_t* data
     int size_r
     int size_c
 
 
 cdef struct FloatArray1D:
-    double* data
+    np.float64_t* data
     int size
 
 
 cdef struct FloatArray2D:
-    double* data
+    np.float64_t* data
     int size_r
     int size_c
 

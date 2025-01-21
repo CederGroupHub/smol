@@ -24,6 +24,9 @@ def test_corr_from_occu(cluster_subspace, supercell_matrix, rng):
     mappings = cluster_subspace.supercell_orbit_mappings(supercell_matrix)
     orbit_list = []
     for orbit, cluster_inds in zip(cluster_subspace.orbits, mappings):
+        assert cluster_inds.dtype == np.int32
+        assert orbit.flat_tensor_indices.dtype == np.int32
+        assert orbit.flat_correlation_tensors.dtype == np.float64
         orbit_list.append(
             (
                 orbit.bit_id,
@@ -57,6 +60,7 @@ def test_corr_from_occu(cluster_subspace, supercell_matrix, rng):
         occu = cluster_subspace.occupancy_from_structure(
             structure, encode=True, scmatrix=supercell_matrix
         )
+        assert occu.dtype == np.int32
 
         # legacy cython function
         corr = corr_from_occupancy(occu, len(cluster_subspace), orbit_list)

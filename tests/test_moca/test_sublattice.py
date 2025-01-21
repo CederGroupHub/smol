@@ -14,7 +14,7 @@ def sublattice(rng):
         {
             DummySpecies("A"): 0.3,
             DummySpecies("X"): 0.3,
-            DummySpecies("D"): 0.2,
+            DummySpecies("G"): 0.2,
             DummySpecies("E"): 0.2,
         }
     )

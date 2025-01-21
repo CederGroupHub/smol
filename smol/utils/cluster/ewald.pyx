@@ -2,11 +2,14 @@
 
 __author__ = "William D. Richards"
 
+cimport numpy as np
+import numpy as np
 
-cpdef double delta_ewald_single_flip(const long[::1] occu_f,
-                                     const long[::1] occu_i,
-                                     const double[:, ::1] ewald_matrix,
-                                     const long[:, ::1] ewald_indices,
+
+cpdef double delta_ewald_single_flip(const np.int32_t[::1] occu_f,
+                                     const np.int32_t[::1] occu_i,
+                                     const np.float64_t[:, ::1] ewald_matrix,
+                                     const np.int32_t[:, ::1] ewald_indices,
                                      const int site_ind) nogil:
     """Compute the change in electrostatic interaction energy from a flip.
 

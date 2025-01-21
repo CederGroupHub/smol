@@ -235,7 +235,8 @@ class MCKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
             self.spec.bias = self.bias.spec
 
         # run a initial step to populate trace values
-        _ = self.single_step(np.zeros(ensemble.num_sites, dtype=int))
+        # Enforce int32.
+        _ = self.single_step(np.zeros(ensemble.num_sites, dtype=np.int32))
 
     @property
     def trace(self):
@@ -696,10 +697,14 @@ class MulticellKernel(StandardSingleStepMixin, MCKernelInterface, ABC):
         of occupancies for each kernel, ie dim = (n_kernels, n_sites).
         """
         # set the current and previous values based on given occupancy
+        # Enforce int32.
+        if occupancy.dtype != np.int32:
+            occupancy = occupancy.astype(np.int32)
         new_features = []
         if occupancy.ndim == 2 and occupancy.shape[0] == len(self._kernels):
             for kernel, occupancy in zip(self._kernels, occupancy):
-                occupancy = np.ascontiguousarray(occupancy, dtype=int)
+                # Enforce int32.
+                occupancy = np.ascontiguousarray(occupancy, dtype=np.int32)
                 kernel.trace.occupancy = occupancy
                 kernel.set_aux_state(occupancy, *args, **kwargs)
                 new_features.append(kernel.ensemble.compute_feature_vector(occupancy))
