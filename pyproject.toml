@@ -20,8 +20,8 @@ classifiers = [
 ]
 dependencies = [
     "numpy >=2.0.0,<3.0",
-    "pymatgen >=2024.11.13",
-    "monty >=2024.12.10",
+    "pymatgen >=2025.1.9",
+    "monty >=2025.1.9",
     "h5py >=3.12.0"
 ]
 authors = [
