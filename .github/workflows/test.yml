@@ -48,14 +48,15 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest --cov-report --cov=smol --splits 8 --group ${{ matrix.split }} --durations-path tests/.test_durations tests
+          pytest --cov-report xml --cov=smol --splits 8 --group ${{ matrix.split }} --durations-path tests/.test_durations tests
 
       - name: Upload coverage
         if: ${{ matrix.config.python == '3.12' && github.event_name == 'push' }}
         uses: actions/upload-artifact@v4
         with:
-          name: coverage${{ matrix.group }}
+          name: coverage${{ matrix.group }}.xml
           path: .coverage
+          if-no-files-found: error
 
   coverage:
     needs: test
