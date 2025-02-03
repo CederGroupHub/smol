@@ -80,7 +80,8 @@ jobs:
           pattern: .coverage*
       - name: Run coverage
         run: |
-          coverage combine coverage*/.coverage*
+          ls -la
+          coverage combine .coverage*
           coverage report --fail-under=100
           coverage xml
       - name: codacy-coverage-reporter
