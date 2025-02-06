@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           include-hidden-files: true
-          name: .coverage.${{ matrix.split }}
+          name: .coverage${{ matrix.split }}
           path: .coverage
           if-no-files-found: error
 
@@ -78,10 +78,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: .coverage*
+          merge-multiple: true
+          path: coverage
       - name: Run coverage
         run: |
-          ls -la
-          coverage combine .coverage.*
+          ls -Ra
+          coverage combine coverage/.coverage*
           coverage report --fail-under=100
           coverage xml
       - name: codacy-coverage-reporter
