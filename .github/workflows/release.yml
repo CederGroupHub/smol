@@ -24,6 +24,7 @@ on:
 jobs:
   test:
     uses: ./.github/workflows/test.yml
+    secrets: inherit
 
   build:
     needs: test
