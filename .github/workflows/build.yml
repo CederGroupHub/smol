@@ -37,11 +37,15 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: wheelhouse/*.whl
 
   build_wheels_macos:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -el {0}
     strategy:
       fail-fast: false
       matrix:
@@ -56,6 +60,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+
       - name: Setup openmp for macOS
         run: |
           # Make sure to use a libomp version binary compatible with the oldest
@@ -65,11 +74,13 @@ jobs:
           # supported macos version is: High Sierra / 10.13. When upgrading
           # this, be sure to update the MACOSX_DEPLOYMENT_TARGET environment
           # variable accordingly. Note that Darwin_17 == High Sierra / 10.13.
-          if [[ "$CIBW_ARCHS_MACOS" == arm64 ]]; then
-              # arm64 builds must cross compile because the CI instance is x86
-              # This turns off the computation of the test program in
-              # tools/build_helpers.py
-              echo "PYTHON_CROSSENV=1" >> "$GITHUB_ENV"
+          if [[ "$CIBW_BUILD" == *-macosx_arm64 ]]; then
+              if [[ $(uname -m) == "x86_64" ]]; then
+                # arm64 builds must cross compile because the CI instance is x86
+                # This turns off the computation of the test program in
+                # tools/build_helpers.py
+                echo "PYTHON_CROSSENV=1" >> "$GITHUB_ENV"
+              fi
 
               # SciPy requires 12.0 on arm to prevent kernel panics
               # https://github.com/scipy/scipy/issues/14688
@@ -84,18 +95,22 @@ jobs:
           # use conda to install llvm-openmp
           # Note that we do NOT activate the conda environment, we just add the
           # library install path to CFLAGS/CXXFLAGS/LDFLAGS below.
-          sudo conda create -n build $OPENMP_URL
-          PREFIX="/usr/local/miniconda/envs/build"
-          echo "CC=/usr/bin/clang" >> "$GITHUB_ENV"
-          echo "CPPFLAGS="$CPPFLAGS -Xpreprocessor -fopenmp"" >> "$GITHUB_ENV"
-          echo "CFLAGS="$CFLAGS -Wno-implicit-function-declaration -I$PREFIX/include"" >> "$GITHUB_ENV"
-          echo "LDFLAGS="$LDFLAGS -Wl,-S -Wl,-rpath,$PREFIX/lib -L$PREFIX/lib -lomp"" >> "$GITHUB_ENV"
+          conda create -n build $OPENMP_URL
+          PREFIX="$HOME/miniconda/envs/build"
+
+          export CC=/usr/bin/clang
+          export CXX=/usr/bin/clang++
+          export CPPFLAGS="$CPPFLAGS -Xpreprocessor -fopenmp"
+          export CFLAGS="$CFLAGS -I$PREFIX/include"
+          export CXXFLAGS="$CXXFLAGS -I$PREFIX/include"
+          export LDFLAGS="$LDFLAGS -Wl,-rpath,$PREFIX/lib -L$PREFIX/lib -lomp"
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.22.0
 
       - uses: actions/upload-artifact@v4
         with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: wheelhouse/*.whl
 
   build_sdist:
