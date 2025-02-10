@@ -161,7 +161,7 @@ package.
     save_work("CuAu_ce_mc.json", wrangler, expansion, ensemble, sampler.samples)
 
 
-.. code-links:: python
-.. code-links:: clear
+#.. code-links:: python
+#.. code-links:: clear
 
-For more detailed examples on how to use **smol** have a look at the :ref:`examples`.
+For more detailed examples on how to use **smol** have a look at docs/src/notebooks.

@@ -559,7 +559,7 @@ class TableFlip(MCUsher):
         1, Pick a flip in table;
         2, Choose sites from site specie statistics list according to the flip.
         3, (Acceptance proability will be adjusted according to a-priori
-           weight to enforce detailed balance.)
+            weight to enforce detailed balance.)
         4, If selection failed, may or may not attempt a canonical swap based
            on self.add_swap parameter.
 
