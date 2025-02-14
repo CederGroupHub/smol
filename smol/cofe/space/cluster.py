@@ -122,15 +122,15 @@ class Cluster(SiteCollection, MSONable):
 
     def to(self, fmt: str = None, filename: str = None):
         """
-        Output the cluster  to a file or string.
+        Output the cluster to a file or string.
 
         this is basically a watered down version of pymatgen.Molecule.to
 
         Args:
             fmt (str): Format to output to. Defaults to JSON unless filename
-                is provided. If fmt is specifies, it overrides whatever the
+                is provided. If fmt is specified, it overrides whatever the
                 filename is. Options include "yaml" and "json" only.
-                 Non-case sensitive.
+                Non-case sensitive.
             filename (str): If provided, output will be written to a file. If
                 fmt is not specified, the format is determined from the
                 filename. Defaults is None, i.e. string output.

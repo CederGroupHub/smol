@@ -12,7 +12,7 @@ some methods for simple analysis of the raw data, including means,
 variances, and minima of energies and enthalpies, mean compositions,
 minimum-energy occupancies, etc.
 
-.. autoclass:: smol.moca.sampler.SampleContainer
+.. autoclass:: smol.moca.sampler.container.SampleContainer
    :members:
    :undoc-members:
    :show-inheritance:
