@@ -2,42 +2,45 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-theme="auto">
+<html lang="en" data-content_root="../../../../" data-theme="auto">
 
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smol.moca.processor.expansion &#8212; smol 0.5.3 documentation</title>
+    <title>smol.moca.processor.expansion &#8212; smol 0.5.7 documentation</title>
   
   
   
   <script data-cfasync="false">
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="../../../../_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-  
-  <link href="../../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
-
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/smol.css?v=153d459c" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
-  <script src="../../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../../../_static/documentation_options.js?v=485ad5c8"></script>
-    <script src="../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../_static/documentation_options.js?v=82ac5a42"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
@@ -49,7 +52,8 @@
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 02, 2023"/>
+  <meta name="docsearch:version" content="0.5.7" />
+    <meta name="docbuild:last-update" content="Feb 14, 2025"/>
   </head>
   
   
@@ -57,32 +61,16 @@
 
   
   
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
   
   <div id="pst-scroll-pixel-helper"></div>
-
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>
-    Back to top
-  </button>
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          name="__primary"
-          id="__primary"/>
-  <label class="overlay overlay-primary" for="__primary"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          name="__secondary"
-          id="__secondary"/>
-  <label class="overlay overlay-secondary" for="__secondary"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../../../../search.html"
       method="get">
@@ -90,7 +78,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search the docs ..."
          aria-label="Search the docs ..."
          autocomplete="off"
@@ -98,22 +85,31 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
   
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <label class="sidebar-toggle primary-toggle" for="__primary">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
-  </label>
+  </button>
   
   
   <div class="col-lg-3 navbar-header-items__start">
     
       <div class="navbar-item">
+
+  
+    
   
 
 <a class="navbar-brand logo" href="../../../../index.html">
+  
   
   
   
@@ -123,8 +119,8 @@
       
     
     
-    <img src="../../../../_static/logo.png" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="../../../../_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+    <img src="../../../../_static/logo.png" class="logo__image only-light" alt="smol 0.5.7 documentation - Home"/>
+    <img src="../../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="smol 0.5.7 documentation - Home"/>
   
   
 </a></div>
@@ -139,7 +135,7 @@
       id="dLabelMore"
       aria-haspopup="listbox"
     >
-      v0.5.3
+      v0.5.7
       <span class="caret"></span>
     </button>
   </li>
@@ -151,75 +147,72 @@
     
     <div class="me-auto navbar-header-items__center">
       
-        <div class="navbar-item"><nav class="navbar-nav">
-  <p class="sidebar-header-items__title"
-     role="heading"
-     aria-level="1"
-     aria-label="Site Navigation">
-    Site Navigation
-  </p>
+        <div class="navbar-item">
+<nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../../../getting_started.html">
-                        Getting Started
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Getting Started
+  </a>
+</li>
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../../../examples.html">
-                        Example Notebooks
-                      </a>
-                    </li>
-                
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../../../user_guide.html">
-                        User Guide
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Notebooks
+  </a>
+</li>
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../../../api_reference/index.html">
-                        API Reference
-                      </a>
-                    </li>
-                
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../../../citing.html">
-                        Citing
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../citing.html">
+    Citing
+  </a>
+</li>
+
             <li class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-header-nav-more-links">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
                     More
                 </button>
-                <ul id="pst-header-nav-more-links" class="dropdown-menu">
+                <ul id="pst-nav-more-links" class="dropdown-menu">
                     
-                    <li class="nav-item">
-                      <a class="nav-link dropdown-item nav-internal" href="../../../../developer_guide/index.html">
-                        Developing
-                      </a>
-                    </li>
-                
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../developer_guide/index.html">
+    Developing
+  </a>
+</li>
 
-                <li class="nav-item">
-                  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/releases">
-                    Changes
-                  </a>
-                </li>
-                
 
-                <li class="nav-item">
-                  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/issues">
-                    Issues
-                  </a>
-                </li>
-                
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/releases">
+    Changes
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/issues">
+    Issues
+  </a>
+</li>
+
                 </ul>
             </li>
             
@@ -233,30 +226,24 @@
       
         <div class="navbar-item navbar-persistent--container">
           
- <script>
- document.write(`
-   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
         </div>
       
       
         <div class="navbar-item">
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
-  </button>
-`);
-</script></div>
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
       
-        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+        <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
         <li class="nav-item">
           
@@ -267,7 +254,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -278,27 +265,30 @@ document.write(`
   
   
     <div class="navbar-persistent--mobile">
- <script>
- document.write(`
-   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
     </div>
   
 
   
 </div>
 
-    </nav>
+    </header>
   
+
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
       
-      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
         
 
   
@@ -307,80 +297,70 @@ document.write(`
     
       <div class="sidebar-header-items__center">
         
-          <div class="navbar-item"><nav class="navbar-nav">
-  <p class="sidebar-header-items__title"
-     role="heading"
-     aria-level="1"
-     aria-label="Site Navigation">
-    Site Navigation
-  </p>
+          
+          
+            <div class="navbar-item">
+<nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../../../getting_started.html">
-                        Getting Started
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Getting Started
+  </a>
+</li>
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../../../examples.html">
-                        Example Notebooks
-                      </a>
-                    </li>
-                
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../../../user_guide.html">
-                        User Guide
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Notebooks
+  </a>
+</li>
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../../../api_reference/index.html">
-                        API Reference
-                      </a>
-                    </li>
-                
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../../../citing.html">
-                        Citing
-                      </a>
-                    </li>
-                
-            <li class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-header-nav-more-links">
-                    More
-                </button>
-                <ul id="pst-header-nav-more-links" class="dropdown-menu">
-                    
-                    <li class="nav-item">
-                      <a class="nav-link dropdown-item nav-internal" href="../../../../developer_guide/index.html">
-                        Developing
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../user_guide.html">
+    User Guide
+  </a>
+</li>
 
-                <li class="nav-item">
-                  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/releases">
-                    Changes
-                  </a>
-                </li>
-                
 
-                <li class="nav-item">
-                  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/issues">
-                    Issues
-                  </a>
-                </li>
-                
-                </ul>
-            </li>
-            
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../citing.html">
+    Citing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../developer_guide/index.html">
+    Developing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/releases">
+    Changes
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+    Issues
+  </a>
+</li>
+
   </ul>
 </nav></div>
+          
         
       </div>
     
@@ -389,17 +369,14 @@ document.write(`
       <div class="sidebar-header-items__end">
         
           <div class="navbar-item">
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
-  </button>
-`);
-</script></div>
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
         
-          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+          <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
         <li class="nav-item">
           
@@ -410,7 +387,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -421,8 +398,8 @@ document.write(`
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item"><nav class="sidebar-indices-items">
-  <p class="sidebar-indices-items__title" role="heading" aria-level="1">Indices</p>
+      <div class="sidebar-primary-item"><nav class="sidebar-indices-items" aria-labelledby="pst-indices-navigation-heading-2">
+  <p id="pst-indices-navigation-heading-2" class="sidebar-indices-items__title" role="heading" aria-level="1">Indices</p>
   <ul class="indices-link">
         <li class="toctree-l1">
           <a class="reference internal"
@@ -434,29 +411,32 @@ document.write(`
         </li>
   </ul>
 </nav></div>
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
       
-      <main id="main-content" class="bd-main">
+      <main id="main-content" class="bd-main" role="main">
         
         
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article">
+              <div class="bd-header-article d-print-none">
 <div class="header-article-items header-article__inner">
   
     <div class="header-article-items__start">
       
         <div class="header-article-item">
 
-
-
-<nav aria-label="Breadcrumb">
+<nav aria-label="Breadcrumb" class="d-print-none">
   <ul class="bd-breadcrumbs">
     
     <li class="breadcrumb-item breadcrumb-home">
@@ -467,7 +447,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">smol.moca.pr...</li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">smol.moca.processor.expansion</span></li>
   </ul>
 </nav>
 </div>
@@ -482,7 +462,7 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article" role="main">
+                <article class="bd-article">
                   
   <h1>Source code for smol.moca.processor.expansion</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Implementation of CE processor class for a fixed size supercell.</span>
@@ -494,24 +474,24 @@ document.write(`
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Luis Barroso-Luque&quot;</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">smol.cofe.space.clusterspace</span> <span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">OrbitIndices</span>
-<span class="kn">from</span> <span class="nn">smol.moca.processor.base</span> <span class="kn">import</span> <span class="n">Processor</span>
-<span class="kn">from</span> <span class="nn">smol.utils.cluster</span> <span class="kn">import</span> <span class="n">get_orbit_data</span>
-<span class="kn">from</span> <span class="nn">smol.utils.cluster.container</span> <span class="kn">import</span> <span class="n">IntArray2DContainer</span>
-<span class="kn">from</span> <span class="nn">smol.utils.cluster.evaluator</span> <span class="kn">import</span> <span class="n">ClusterSpaceEvaluator</span>
-<span class="kn">from</span> <span class="nn">smol.utils.cluster.numthreads</span> <span class="kn">import</span> <span class="n">SetNumThreads</span>
-<span class="kn">from</span> <span class="nn">smol.utils.setmany</span> <span class="kn">import</span> <span class="n">SetMany</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">smol.cofe.space.clusterspace</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClusterSubspace</span><span class="p">,</span> <span class="n">OrbitIndices</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">smol.moca.processor.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Processor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">smol.utils.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_orbit_data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">smol.utils.cluster.container</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntArray2DContainer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">smol.utils.cluster.evaluator</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClusterSpaceEvaluator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">smol.utils.cluster.numthreads</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetNumThreads</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">smol.utils.setmany</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetMany</span>
 
 
 <div class="viewcode-block" id="LocalEvalData">
 <a class="viewcode-back" href="../../../../api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.LocalEvalData">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">LocalEvalData</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LocalEvalData</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Holds data for local evaluation updates.</span>
 
 <span class="sd">    A dataclass to the data for local evaluation updates of correlation and cluster</span>
@@ -528,7 +508,7 @@ document.write(`
 
 <div class="viewcode-block" id="ClusterExpansionProcessor">
 <a class="viewcode-back" href="../../../../api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor">[docs]</a>
-<span class="k">class</span> <span class="nc">ClusterExpansionProcessor</span><span class="p">(</span><span class="n">Processor</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClusterExpansionProcessor</span><span class="p">(</span><span class="n">Processor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ClusterExpansionProcessor class to use a ClusterExpansion in MC.</span>
 
 <span class="sd">    A CE processor is optimized to compute correlation vectors and local</span>
@@ -550,7 +530,7 @@ document.write(`
     <span class="n">num_threads</span> <span class="o">=</span> <span class="n">SetMany</span><span class="p">(</span><span class="s2">&quot;num_threads&quot;</span><span class="p">,</span> <span class="s2">&quot;_eval_data_by_sites&quot;</span><span class="p">)</span>
     <span class="n">num_threads_full</span> <span class="o">=</span> <span class="n">SetNumThreads</span><span class="p">(</span><span class="s2">&quot;_evaluator&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cluster_subspace</span><span class="p">,</span>
         <span class="n">supercell_matrix</span><span class="p">,</span>
@@ -653,30 +633,36 @@ document.write(`
 
 <div class="viewcode-block" id="ClusterExpansionProcessor.compute_feature_vector">
 <a class="viewcode-back" href="../../../../api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_feature_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_feature_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the correlation vector for a given occupancy string.</span>
 
 <span class="sd">        The correlation vector in this case is normalized per supercell. In</span>
 <span class="sd">        other works it is extensive corresponding to the size of the supercell.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            occupancy (ndarray):</span>
+<span class="sd">            occupancy (ndarray[np.int32]):</span>
 <span class="sd">                encoded occupation array</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            array: correlation vector</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_evaluator</span><span class="o">.</span><span class="n">correlations_from_occupancy</span><span class="p">(</span>
-                <span class="n">occupancy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="o">.</span><span class="n">container</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">corr</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_evaluator</span><span class="o">.</span><span class="n">correlations_from_occupancy</span><span class="p">(</span>
+                    <span class="n">occupancy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="o">.</span><span class="n">container</span>
+                <span class="p">)</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
             <span class="p">)</span>
-            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
-        <span class="p">)</span></div>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;occupancy dtype is: </span><span class="si">{</span><span class="n">occupancy</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, must be an array of np.int32!&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">corr</span></div>
 
 
 <div class="viewcode-block" id="ClusterExpansionProcessor.compute_feature_vector_change">
 <a class="viewcode-back" href="../../../../api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor.compute_feature_vector_change">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_feature_vector_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">flips</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_feature_vector_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">flips</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the change in the correlation vector from a list of flips.</span>
 
@@ -701,9 +687,14 @@ document.write(`
             <span class="n">occu_f</span> <span class="o">=</span> <span class="n">occu_i</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="n">occu_f</span><span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">eval_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eval_data_by_sites</span><span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-            <span class="n">delta_corr</span> <span class="o">+=</span> <span class="n">eval_data</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">delta_correlations_from_occupancies</span><span class="p">(</span>
-                <span class="n">occu_f</span><span class="p">,</span> <span class="n">occu_i</span><span class="p">,</span> <span class="n">eval_data</span><span class="o">.</span><span class="n">cluster_ratio</span><span class="p">,</span> <span class="n">eval_data</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">container</span>
-            <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">delta_corr</span> <span class="o">+=</span> <span class="n">eval_data</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">delta_correlations_from_occupancies</span><span class="p">(</span>
+                    <span class="n">occu_f</span><span class="p">,</span> <span class="n">occu_i</span><span class="p">,</span> <span class="n">eval_data</span><span class="o">.</span><span class="n">cluster_ratio</span><span class="p">,</span> <span class="n">eval_data</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">container</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;occupancy dtype is: </span><span class="si">{</span><span class="n">occupancy</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, must be an array of np.int32!&quot;</span>
+                <span class="p">)</span>
             <span class="n">occu_i</span> <span class="o">=</span> <span class="n">occu_f</span>
 
         <span class="k">return</span> <span class="n">delta_corr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span></div>
@@ -712,7 +703,7 @@ document.write(`
 <div class="viewcode-block" id="ClusterExpansionProcessor.from_dict">
 <a class="viewcode-back" href="../../../../api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a ClusterExpansionProcessor from serialized MSONable dict.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">ClusterSubspace</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;cluster_subspace&quot;</span><span class="p">]),</span>
@@ -725,7 +716,7 @@ document.write(`
 
 <div class="viewcode-block" id="ClusterDecompositionProcessor">
 <a class="viewcode-back" href="../../../../api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterDecompositionProcessor">[docs]</a>
-<span class="k">class</span> <span class="nc">ClusterDecompositionProcessor</span><span class="p">(</span><span class="n">Processor</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClusterDecompositionProcessor</span><span class="p">(</span><span class="n">Processor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ClusterDecompositionProcessor to use a CD in MC simulations.</span>
 
 <span class="sd">    An ClusterDecompositionProcessor is similar to a ClusterExpansionProcessor</span>
@@ -752,7 +743,7 @@ document.write(`
     <span class="n">num_threads</span> <span class="o">=</span> <span class="n">SetMany</span><span class="p">(</span><span class="s2">&quot;num_threads&quot;</span><span class="p">,</span> <span class="s2">&quot;_eval_data_by_sites&quot;</span><span class="p">)</span>
     <span class="n">num_threads_full</span> <span class="o">=</span> <span class="n">SetNumThreads</span><span class="p">(</span><span class="s2">&quot;_evaluator&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cluster_subspace</span><span class="p">,</span>
         <span class="n">supercell_matrix</span><span class="p">,</span>
@@ -873,7 +864,7 @@ document.write(`
 
 <div class="viewcode-block" id="ClusterDecompositionProcessor.compute_feature_vector">
 <a class="viewcode-back" href="../../../../api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_feature_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_feature_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the cluster interaction vector for a given occupancy string.</span>
 
 <span class="sd">        The cluster interaction vector in this case is normalized per supercell.</span>
@@ -885,17 +876,23 @@ document.write(`
 <span class="sd">        Returns:</span>
 <span class="sd">            array: correlation vector</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_evaluator</span><span class="o">.</span><span class="n">interactions_from_occupancy</span><span class="p">(</span>
-                <span class="n">occupancy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="o">.</span><span class="n">container</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">corr</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_evaluator</span><span class="o">.</span><span class="n">interactions_from_occupancy</span><span class="p">(</span>
+                    <span class="n">occupancy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span><span class="o">.</span><span class="n">container</span>
+                <span class="p">)</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
             <span class="p">)</span>
-            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
-        <span class="p">)</span></div>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;occupancy dtype is: </span><span class="si">{</span><span class="n">occupancy</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, must be an array of np.int32!&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">corr</span></div>
 
 
 <div class="viewcode-block" id="ClusterDecompositionProcessor.compute_feature_vector_change">
 <a class="viewcode-back" href="../../../../api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterDecompositionProcessor.compute_feature_vector_change">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_feature_vector_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">flips</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_feature_vector_change</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy</span><span class="p">,</span> <span class="n">flips</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the change in the cluster interaction vector from a list of flips.</span>
 
@@ -919,11 +916,19 @@ document.write(`
             <span class="n">occu_f</span> <span class="o">=</span> <span class="n">occu_i</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="n">occu_f</span><span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">eval_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eval_data_by_sites</span><span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-            <span class="n">delta_interactions</span> <span class="o">+=</span> <span class="p">(</span>
-                <span class="n">eval_data</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">delta_interactions_from_occupancies</span><span class="p">(</span>
-                    <span class="n">occu_f</span><span class="p">,</span> <span class="n">occu_i</span><span class="p">,</span> <span class="n">eval_data</span><span class="o">.</span><span class="n">cluster_ratio</span><span class="p">,</span> <span class="n">eval_data</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">container</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">delta_interactions</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="n">eval_data</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">delta_interactions_from_occupancies</span><span class="p">(</span>
+                        <span class="n">occu_f</span><span class="p">,</span>
+                        <span class="n">occu_i</span><span class="p">,</span>
+                        <span class="n">eval_data</span><span class="o">.</span><span class="n">cluster_ratio</span><span class="p">,</span>
+                        <span class="n">eval_data</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">container</span><span class="p">,</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
-            <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;occupancy dtype is: </span><span class="si">{</span><span class="n">occupancy</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, must be an array of np.int32!&quot;</span>
+                <span class="p">)</span>
             <span class="n">occu_i</span> <span class="o">=</span> <span class="n">occu_f</span>
 
         <span class="k">return</span> <span class="n">delta_interactions</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span></div>
@@ -931,7 +936,7 @@ document.write(`
 
 <div class="viewcode-block" id="ClusterDecompositionProcessor.as_dict">
 <a class="viewcode-back" href="../../../../api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterDecompositionProcessor.as_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Json-serialization dict representation.</span>
 
@@ -948,7 +953,7 @@ document.write(`
 <div class="viewcode-block" id="ClusterDecompositionProcessor.from_dict">
 <a class="viewcode-back" href="../../../../api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterDecompositionProcessor.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a ClusterExpansionProcessor from serialized MSONable dict.&quot;&quot;&quot;</span>
         <span class="n">interaction_tensors</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">interaction</span><span class="p">)</span> <span class="k">for</span> <span class="n">interaction</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;interaction_tensors&quot;</span><span class="p">]</span>
@@ -968,8 +973,8 @@ document.write(`
               
               
               
-                <footer class="prev-next-footer">
-                  <!-- Previous / next buttons -->
+                <footer class="prev-next-footer d-print-none">
+                  
 <div class="prev-next-area">
 </div>
                 </footer>
@@ -985,7 +990,7 @@ document.write(`
 <div class="footer-content-items footer-content__inner">
   
     <div class="footer-content-item"><p class="last-updated">
-  Last updated on Oct 02, 2023.
+  Last updated on Feb 14, 2025.
   <br/>
 </p></div>
   
@@ -998,8 +1003,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../../../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
-<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1007,17 +1012,19 @@ document.write(`
     <div class="footer-items__start">
       
         <div class="footer-item">
+
   <p class="copyright">
     
-      © Copyright 2022-2023, Ceder Group.
+      © Copyright 2022-2025, Ceder Group.
       <br/>
     
   </p>
 </div>
       
         <div class="footer-item">
+
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
     <br/>
   </p>
 </div>
@@ -1028,8 +1035,10 @@ document.write(`
   
     <div class="footer-items__end">
       
-        <div class="footer-item"><p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.1.
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
 </p></div>
       
     </div>

@@ -2,42 +2,45 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-theme="auto">
+<html lang="en" data-content_root="./" data-theme="auto">
 
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; smol 0.5.3 documentation</title>
+    <title>Index &#8212; smol 0.5.7 documentation</title>
   
   
   
   <script data-cfasync="false">
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "auto";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "auto";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-  
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
-
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/css/smol.css?v=153d459c" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
-  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=485ad5c8"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/documentation_options.js?v=82ac5a42"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
@@ -49,7 +52,8 @@
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Oct 02, 2023"/>
+  <meta name="docsearch:version" content="0.5.7" />
+    <meta name="docbuild:last-update" content="Feb 14, 2025"/>
   </head>
   
   
@@ -57,32 +61,16 @@
 
   
   
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
   
   <div id="pst-scroll-pixel-helper"></div>
-
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>
-    Back to top
-  </button>
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          name="__primary"
-          id="__primary"/>
-  <label class="overlay overlay-primary" for="__primary"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          name="__secondary"
-          id="__secondary"/>
-  <label class="overlay overlay-secondary" for="__secondary"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -90,7 +78,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search the docs ..."
          aria-label="Search the docs ..."
          autocomplete="off"
@@ -98,22 +85,31 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
   
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <label class="sidebar-toggle primary-toggle" for="__primary">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
-  </label>
+  </button>
   
   
   <div class="col-lg-3 navbar-header-items__start">
     
       <div class="navbar-item">
+
+  
+    
   
 
 <a class="navbar-brand logo" href="index.html">
+  
   
   
   
@@ -123,8 +119,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-light" alt="smol 0.5.7 documentation - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="smol 0.5.7 documentation - Home"/>
   
   
 </a></div>
@@ -139,7 +135,7 @@
       id="dLabelMore"
       aria-haspopup="listbox"
     >
-      v0.5.3
+      v0.5.7
       <span class="caret"></span>
     </button>
   </li>
@@ -151,75 +147,72 @@
     
     <div class="me-auto navbar-header-items__center">
       
-        <div class="navbar-item"><nav class="navbar-nav">
-  <p class="sidebar-header-items__title"
-     role="heading"
-     aria-level="1"
-     aria-label="Site Navigation">
-    Site Navigation
-  </p>
+        <div class="navbar-item">
+<nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="getting_started.html">
-                        Getting Started
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting_started.html">
+    Getting Started
+  </a>
+</li>
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="examples.html">
-                        Example Notebooks
-                      </a>
-                    </li>
-                
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="user_guide.html">
-                        User Guide
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Example Notebooks
+  </a>
+</li>
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="api_reference/index.html">
-                        API Reference
-                      </a>
-                    </li>
-                
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="citing.html">
-                        Citing
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api_reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="citing.html">
+    Citing
+  </a>
+</li>
+
             <li class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-header-nav-more-links">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
                     More
                 </button>
-                <ul id="pst-header-nav-more-links" class="dropdown-menu">
+                <ul id="pst-nav-more-links" class="dropdown-menu">
                     
-                    <li class="nav-item">
-                      <a class="nav-link dropdown-item nav-internal" href="developer_guide/index.html">
-                        Developing
-                      </a>
-                    </li>
-                
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="developer_guide/index.html">
+    Developing
+  </a>
+</li>
 
-                <li class="nav-item">
-                  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/releases">
-                    Changes
-                  </a>
-                </li>
-                
 
-                <li class="nav-item">
-                  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/issues">
-                    Issues
-                  </a>
-                </li>
-                
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/releases">
+    Changes
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/issues">
+    Issues
+  </a>
+</li>
+
                 </ul>
             </li>
             
@@ -233,30 +226,24 @@
       
         <div class="navbar-item navbar-persistent--container">
           
- <script>
- document.write(`
-   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
         </div>
       
       
         <div class="navbar-item">
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
-  </button>
-`);
-</script></div>
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
       
-        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+        <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
         <li class="nav-item">
           
@@ -267,7 +254,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -278,27 +265,30 @@ document.write(`
   
   
     <div class="navbar-persistent--mobile">
- <script>
- document.write(`
-   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script>
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
     </div>
   
 
   
 </div>
 
-    </nav>
+    </header>
   
+
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
       
-      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
         
 
   
@@ -307,80 +297,70 @@ document.write(`
     
       <div class="sidebar-header-items__center">
         
-          <div class="navbar-item"><nav class="navbar-nav">
-  <p class="sidebar-header-items__title"
-     role="heading"
-     aria-level="1"
-     aria-label="Site Navigation">
-    Site Navigation
-  </p>
+          
+          
+            <div class="navbar-item">
+<nav>
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="getting_started.html">
-                        Getting Started
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting_started.html">
+    Getting Started
+  </a>
+</li>
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="examples.html">
-                        Example Notebooks
-                      </a>
-                    </li>
-                
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="user_guide.html">
-                        User Guide
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples.html">
+    Example Notebooks
+  </a>
+</li>
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="api_reference/index.html">
-                        API Reference
-                      </a>
-                    </li>
-                
 
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="citing.html">
-                        Citing
-                      </a>
-                    </li>
-                
-            <li class="nav-item dropdown">
-                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-header-nav-more-links">
-                    More
-                </button>
-                <ul id="pst-header-nav-more-links" class="dropdown-menu">
-                    
-                    <li class="nav-item">
-                      <a class="nav-link dropdown-item nav-internal" href="developer_guide/index.html">
-                        Developing
-                      </a>
-                    </li>
-                
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide.html">
+    User Guide
+  </a>
+</li>
 
-                <li class="nav-item">
-                  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/releases">
-                    Changes
-                  </a>
-                </li>
-                
 
-                <li class="nav-item">
-                  <a class="nav-link dropdown-item nav-external" href="https://github.com/CederGroupHub/smol/issues">
-                    Issues
-                  </a>
-                </li>
-                
-                </ul>
-            </li>
-            
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api_reference/index.html">
+    API Reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="citing.html">
+    Citing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="developer_guide/index.html">
+    Developing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/releases">
+    Changes
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://github.com/CederGroupHub/smol/issues">
+    Issues
+  </a>
+</li>
+
   </ul>
 </nav></div>
+          
         
       </div>
     
@@ -389,17 +369,14 @@ document.write(`
       <div class="sidebar-header-items__end">
         
           <div class="navbar-item">
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
-  </button>
-`);
-</script></div>
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
         
-          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+          <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
         <li class="nav-item">
           
@@ -410,7 +387,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+          <a href="https://github.com/CederGroupHub/smol" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -421,8 +398,8 @@ document.write(`
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item"><nav class="sidebar-indices-items">
-  <p class="sidebar-indices-items__title" role="heading" aria-level="1">Indices</p>
+      <div class="sidebar-primary-item"><nav class="sidebar-indices-items" aria-labelledby="pst-indices-navigation-heading-2">
+  <p id="pst-indices-navigation-heading-2" class="sidebar-indices-items__title" role="heading" aria-level="1">Indices</p>
   <ul class="indices-link">
         <li class="toctree-l1">
           <a class="reference internal"
@@ -434,26 +411,31 @@ document.write(`
         </li>
   </ul>
 </nav></div>
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
       
-      <main id="main-content" class="bd-main">
+      <main id="main-content" class="bd-main" role="main">
         
         
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article"></div>
+              <div class="bd-header-article d-print-none"></div>
               
               
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article" role="main">
+                <article class="bd-article">
                   
 
 <h1 id="index">Index</h1>
@@ -502,6 +484,8 @@ document.write(`
 </li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.add_weights">add_weights() (StructureWrangler method)</a>
 </li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.allocate">allocate() (SampleContainer method)</a>
+</li>
       <li><a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.anneal">anneal() (Sampler method)</a>
 </li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.append_entries">append_entries() (StructureWrangler method)</a>
@@ -528,6 +512,8 @@ document.write(`
         <li><a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.as_dict">(Orbit method)</a>
 </li>
         <li><a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.as_dict">(PottsSubspace method)</a>
+</li>
+        <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.as_dict">(SampleContainer method)</a>
 </li>
         <li><a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.SiteSpace.as_dict">(SiteSpace method)</a>
 </li>
@@ -622,6 +608,8 @@ document.write(`
 </li>
       <li><a href="api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.chemical_potentials">chemical_potentials (Ensemble attribute)</a>
 </li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.clear">clear() (SampleContainer method)</a>
+</li>
       <li><a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.clear_samples">clear_samples() (Sampler method)</a>
 </li>
       <li><a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster">Cluster (class in smol.cofe.space.cluster)</a>
@@ -672,6 +660,8 @@ document.write(`
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.composition_variance">composition_variance() (SampleContainer method)</a>
+</li>
       <li><a href="api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.FugacityBias.compute_bias">compute_bias() (FugacityBias method)</a>
 
       <ul>
@@ -780,16 +770,22 @@ document.write(`
 </li>
       <li><a href="api_reference/moca/sublattice.html#id1">encoding (Sublattice attribute)</a>, <a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice.encoding">[1]</a>
 </li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.energy_variance">energy_variance() (SampleContainer method)</a>
+</li>
       <li><a href="api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble">Ensemble (class in smol.moca.ensemble)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.ensemble">ensemble (SampleContainer property)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.enthalpy_variance">enthalpy_variance() (SampleContainer method)</a>
 </li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.entries">entries (StructureWrangler property)</a>
 </li>
       <li><a href="api_reference/moca/kernel.kernels.html#smol.moca.kernel.wanglandau.WangLandau.entropy">entropy (WangLandau property)</a>
 </li>
-      <li><a href="api_reference/capp/generate.enumerate.html#smol.capp.generate.enumerate.enumerate_supercell_matrices">enumerate_supercell_matrices() (in module smol.capp.generate.enumerate)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/capp/generate.enumerate.html#smol.capp.generate.enumerate.enumerate_supercell_matrices">enumerate_supercell_matrices() (in module smol.capp.generate.enumerate)</a>
+</li>
       <li><a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.estimator_name">estimator_name (RegressionData attribute)</a>
 </li>
       <li><a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.evaluator">evaluator (ClusterSubspace property)</a>
@@ -832,6 +828,8 @@ document.write(`
         <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.feature_matrix">(StructureWrangler property)</a>
 </li>
       </ul></li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.feature_vector_variance">feature_vector_variance() (SampleContainer method)</a>
+</li>
       <li><a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.flat_correlation_tensors">flat_correlation_tensors (Orbit property)</a>
 </li>
       <li><a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.flat_tensor_indices">flat_tensor_indices (Orbit property)</a>
@@ -853,6 +851,8 @@ document.write(`
 </li>
       </ul></li>
       <li><a href="api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Flip">Flip (class in smol.moca.kernel.mcusher)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.flush_to_backend">flush_to_backend() (SampleContainer method)</a>
 </li>
       <li><a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.frac_coords">frac_coords (Cluster attribute)</a>
 
@@ -895,6 +895,8 @@ document.write(`
 </li>
         <li><a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.from_dict">(PottsSubspace class method)</a>
 </li>
+        <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.from_dict">(SampleContainer class method)</a>
+</li>
         <li><a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.SiteSpace.from_dict">(SiteSpace class method)</a>
 </li>
         <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.StandardBasis.from_dict">(StandardBasis class method)</a>
@@ -909,6 +911,8 @@ document.write(`
       <li><a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.from_ensemble">from_ensemble() (Sampler class method)</a>
 </li>
       <li><a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.from_file">from_file() (Cluster class method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.from_hdf5">from_hdf5() (SampleContainer class method)</a>
 </li>
       <li><a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.RegressionData.from_object">from_object() (RegressionData class method)</a>
 </li>
@@ -960,6 +964,10 @@ document.write(`
 </li>
       <li><a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.get_allowed_species">get_allowed_species() (in module smol.cofe.space.domain)</a>
 </li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_backend">get_backend() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_compositions">get_compositions() (SampleContainer method)</a>
+</li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_condition_number">get_condition_number() (StructureWrangler method)</a>
 </li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_constant_features">get_constant_features() (StructureWrangler method)</a>
@@ -967,6 +975,10 @@ document.write(`
       <li><a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.get_distance">get_distance() (Cluster method)</a>
 </li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_duplicate_corr_indices">get_duplicate_corr_indices() (StructureWrangler method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_energies">get_energies() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_enthalpies">get_enthalpies() (SampleContainer method)</a>
 </li>
       <li><a href="api_reference/cofe/extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.get_ewald_matrix">get_ewald_matrix() (EwaldTerm method)</a>
 </li>
@@ -978,19 +990,35 @@ document.write(`
 </li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_feature_matrix_rank">get_feature_matrix_rank() (StructureWrangler method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_feature_vectors">get_feature_vectors() (SampleContainer method)</a>
+</li>
       <li><a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.get_function_decoration">get_function_decoration() (PottsSubspace method)</a>
 </li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_gram_matrix">get_gram_matrix() (StructureWrangler method)</a>
 </li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_matching_corr_duplicate_indices">get_matching_corr_duplicate_indices() (StructureWrangler method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_minimum_energy">get_minimum_energy() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_minimum_energy_occupancy">get_minimum_energy_occupancy() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy">get_minimum_enthalpy() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_minimum_enthalpy_occupancy">get_minimum_enthalpy_occupancy() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_occupancies">get_occupancies() (SampleContainer method)</a>
+</li>
       <li><a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.PottsSubspace.get_orbit_decorations">get_orbit_decorations() (PottsSubspace method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_orbit_factors">get_orbit_factors() (SampleContainer method)</a>
 </li>
       <li><a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_orbit_indices">get_orbit_indices() (ClusterSubspace method)</a>
 </li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_property_vector">get_property_vector() (StructureWrangler method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_sampled_structures">get_sampled_structures() (SampleContainer method)</a>
 </li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_similarity_matrix">get_similarity_matrix() (StructureWrangler method)</a>
 </li>
@@ -998,9 +1026,17 @@ document.write(`
 </li>
       <li><a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.get_species">get_species() (in module smol.cofe.space.domain)</a>
 </li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_species_counts">get_species_counts() (SampleContainer method)</a>
+</li>
       <li><a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_function_ids">get_sub_function_ids() (ClusterSubspace method)</a>
 </li>
       <li><a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.get_sub_orbits">get_sub_orbits() (ClusterSubspace method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_sublattice_compositions">get_sublattice_compositions() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_sublattice_species_counts">get_sublattice_species_counts() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.get_trace_value">get_trace_value() (SampleContainer method)</a>
 </li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.get_weights">get_weights() (StructureWrangler method)</a>
 </li>
@@ -1090,6 +1126,18 @@ document.write(`
 </li>
       <li><a href="api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.Composite.mcushers">mcushers (Composite property)</a>
 </li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.mean_composition">mean_composition() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.mean_energy">mean_energy() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.mean_enthalpy">mean_enthalpy() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.mean_feature_vector">mean_feature_vector() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.mean_sublattice_composition">mean_sublattice_composition() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.mean_trace_value">mean_trace_value() (SampleContainer method)</a>
+</li>
       <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.measure_array">measure_array (DiscreteBasis property)</a>
 </li>
       <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.DiscreteBasis.measure_vector">measure_vector (DiscreteBasis property)</a>
@@ -1097,6 +1145,8 @@ document.write(`
       <li><a href="api_reference/cofe/clusterexpansion.html#smol.cofe.expansion.ClusterExpansion.metadata">metadata (ClusterExpansion attribute)</a>
 
       <ul>
+        <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.metadata">(SampleContainer attribute)</a>
+</li>
         <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.metadata">(StructureWrangler property)</a>
 </li>
       </ul></li>
@@ -1172,7 +1222,13 @@ document.write(`
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.natural_parameters">natural_parameters (Ensemble property)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.natural_parameters">(SampleContainer attribute)</a>
 </li>
+        <li><a href="api_reference/moca/sampler.container.html#id0">(SampleContainer property)</a>
+</li>
+      </ul></li>
       <li><a href="api_reference/cofe/clusterspace.html#smol.cofe.space.clusterspace.ClusterSubspace.num_clusters">num_clusters (ClusterSubspace attribute)</a>
 </li>
       <li><a href="api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterExpansionProcessor.num_corr_functions">num_corr_functions (ClusterExpansionProcessor attribute)</a>
@@ -1193,8 +1249,14 @@ document.write(`
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.num_sites">num_sites (Ensemble property)</a>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.num_samples">num_samples (SampleContainer property)</a>
 </li>
+      <li><a href="api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.num_sites">num_sites (Ensemble property)</a>
+
+      <ul>
+        <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.num_sites">(SampleContainer attribute)</a>
+</li>
+      </ul></li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.num_structures">num_structures (StructureWrangler property)</a>
 </li>
       <li><a href="api_reference/moca/processors.expansion.html#smol.moca.processor.expansion.ClusterDecompositionProcessor.num_threads">num_threads (ClusterDecompositionProcessor attribute)</a>
@@ -1373,11 +1435,17 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.sample">sample() (Sampler method)</a>
 </li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer">SampleContainer (class in smol.moca.sampler.container)</a>
+</li>
       <li><a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler">Sampler (class in smol.moca.sampler.sampler)</a>
 </li>
       <li><a href="api_reference/capp/generate.special.html#smol.capp.generate.special.sqs.StochasticSQSGenerator.sampler">sampler (StochasticSQSGenerator property)</a>
 </li>
       <li><a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.samples">samples (Sampler property)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.sampling_efficiency">sampling_efficiency() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.save_sampled_trace">save_sampled_trace() (SampleContainer method)</a>
 </li>
       <li><a href="api_reference/io.html#smol.io.save_work">save_work() (in module smol.io)</a>
 </li>
@@ -1390,6 +1458,8 @@ document.write(`
       <li><a href="api_reference/moca/kernel.kernels.html#smol.moca.kernel.wanglandau.WangLandau.set_aux_state">set_aux_state() (WangLandau method)</a>
 </li>
       <li><a href="api_reference/moca/sampler.sampler.html#smol.moca.sampler.sampler.Sampler.setup_sample">setup_sample() (Sampler method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.shape">shape (SampleContainer property)</a>
 </li>
       <li><a href="api_reference/cofe/space.basis.html#smol.cofe.space.basis.sin_f">sin_f() (in module smol.cofe.space.basis)</a>
 </li>
@@ -1632,6 +1702,8 @@ document.write(`
 </li>
       <li><a href="api_reference/moca/sublattice.html#smol.moca.sublattice.Sublattice">Sublattice (class in smol.moca.sublattice)</a>
 </li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.sublattice_composition_variance">sublattice_composition_variance() (SampleContainer method)</a>
+</li>
       <li><a href="api_reference/moca/kernel.mcusher.html#smol.moca.kernel.mcusher.MultiStep.sublattice_probabilities">sublattice_probabilities (MultiStep property)</a>
 </li>
       <li><a href="api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.sublattices">sublattices (Ensemble property)</a>
@@ -1640,6 +1712,10 @@ document.write(`
         <li><a href="api_reference/moca/kernel.bias.html#smol.moca.kernel.bias.MCBias.sublattices">(MCBias attribute)</a>
 </li>
         <li><a href="api_reference/capp/generate.groundstate.html#smol.capp.generate.groundstate.upper_bound.solver.PeriodicGroundStateSolver.sublattices">(PeriodicGroundStateSolver property)</a>
+</li>
+        <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.sublattices">(SampleContainer attribute)</a>
+</li>
+        <li><a href="api_reference/moca/sampler.container.html#id2">(SampleContainer property)</a>
 </li>
       </ul></li>
       <li><a href="api_reference/cofe/wrangling.sw.html#smol.cofe.wrangling.wrangler.StructureWrangler.supercell_matrices">supercell_matrices (StructureWrangler property)</a>
@@ -1664,11 +1740,19 @@ document.write(`
 </li>
       <li><a href="api_reference/moca/kernel.kernels.html#smol.moca.kernel.metropolis.MulticellMetropolis.temperature">temperature (MulticellMetropolis property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api_reference/moca/ensemble.html#smol.moca.ensemble.Ensemble.thermo_boundaries">thermo_boundaries (Ensemble attribute)</a>
 </li>
       <li><a href="api_reference/cofe/space.cluster.html#smol.cofe.space.cluster.Cluster.to">to() (Cluster method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.to_hdf5">to_hdf5() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.total_mc_steps">total_mc_steps (SampleContainer property)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.trace_value_variance">trace_value_variance() (SampleContainer method)</a>
+</li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.traced_values">traced_values (SampleContainer property)</a>
 </li>
       <li><a href="api_reference/cofe/space.orbit.html#smol.cofe.space.orbit.Orbit.transform_site_bases">transform_site_bases() (Orbit method)</a>
 </li>
@@ -1694,6 +1778,8 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api_reference/cofe/space.domain.html#smol.cofe.space.domain.Vacancy">Vacancy (class in smol.cofe.space.domain)</a>
 </li>
+      <li><a href="api_reference/moca/sampler.container.html#smol.moca.sampler.container.SampleContainer.vacuum">vacuum() (SampleContainer method)</a>
+</li>
       <li><a href="api_reference/moca/kernel.kernels.html#smol.moca.kernel.metropolis.Metropolis.valid_bias">valid_bias (Metropolis attribute)</a>
 
       <ul>
@@ -1704,6 +1790,8 @@ document.write(`
         <li><a href="api_reference/moca/kernel.kernels.html#smol.moca.kernel.wanglandau.WangLandau.valid_bias">(WangLandau attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api_reference/moca/kernel.kernels.html#smol.moca.kernel.metropolis.Metropolis.valid_mcushers">valid_mcushers (Metropolis attribute)</a>
 
       <ul>
@@ -1714,8 +1802,6 @@ document.write(`
         <li><a href="api_reference/moca/kernel.kernels.html#smol.moca.kernel.wanglandau.WangLandau.valid_mcushers">(WangLandau attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api_reference/cofe/extern.ewald.html#smol.cofe.extern.ewald.EwaldTerm.value_from_occupancy">value_from_occupancy() (EwaldTerm method)</a>
 </li>
       <li><a href="api_reference/capp/generate.groundstate.html#smol.capp.generate.groundstate.upper_bound.solver.PeriodicGroundStateSolver.variable_indices">variable_indices (PeriodicGroundStateSolver property)</a>
@@ -1749,8 +1835,8 @@ document.write(`
               
               
               
-                <footer class="prev-next-footer">
-                  <!-- Previous / next buttons -->
+                <footer class="prev-next-footer d-print-none">
+                  
 <div class="prev-next-area">
 </div>
                 </footer>
@@ -1766,7 +1852,7 @@ document.write(`
 <div class="footer-content-items footer-content__inner">
   
     <div class="footer-content-item"><p class="last-updated">
-  Last updated on Oct 02, 2023.
+  Last updated on Feb 14, 2025.
   <br/>
 </p></div>
   
@@ -1779,8 +1865,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1788,17 +1874,19 @@ document.write(`
     <div class="footer-items__start">
       
         <div class="footer-item">
+
   <p class="copyright">
     
-      © Copyright 2022-2023, Ceder Group.
+      © Copyright 2022-2025, Ceder Group.
       <br/>
     
   </p>
 </div>
       
         <div class="footer-item">
+
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.4.7.
     <br/>
   </p>
 </div>
@@ -1809,8 +1897,10 @@ document.write(`
   
     <div class="footer-items__end">
       
-        <div class="footer-item"><p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.1.
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
 </p></div>
       
     </div>
