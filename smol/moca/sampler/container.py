@@ -1,4 +1,3 @@
-
 """Implementation of SampleContainer class.
 
 A SampleContainer is used to store data from Monte Carlo sampling simulation.
