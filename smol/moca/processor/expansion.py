@@ -310,8 +310,10 @@ class ClusterDecompositionProcessor(Processor):
             else coefficients
         )
         super().__init__(
-            cluster_subspace, supercell_matrix, coefficients=coefficients,
-            use_concentration=use_concentration
+            cluster_subspace,
+            supercell_matrix,
+            coefficients=coefficients,
+            use_concentration=use_concentration,
         )
 
         self._interaction_tensors = interaction_tensors  # keep these for serialization

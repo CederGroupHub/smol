@@ -165,22 +165,21 @@ class Ensemble(MSONable):
         """
         if len(cluster_expansion.cluster_subspace.external_terms) > 0:
             processor = CompositeProcessor(
-                cluster_expansion.cluster_subspace, supercell_matrix,
-                use_concentration
+                cluster_expansion.cluster_subspace, supercell_matrix, use_concentration
             )
             if processor_type == "decomposition":
                 ceprocessor = ClusterDecompositionProcessor(
                     cluster_expansion.cluster_subspace,
                     supercell_matrix,
                     cluster_expansion.cluster_interaction_tensors,
-                    use_concentration
+                    use_concentration,
                 )
             elif processor_type == "expansion":
                 ceprocessor = ClusterExpansionProcessor(
                     cluster_expansion.cluster_subspace,
                     supercell_matrix,
                     cluster_expansion.coefs[:-1],
-                    use_concentration
+                    use_concentration,
                 )
             else:
                 raise ValueError(f"Processor type {processor_type}" f" not supported!")
@@ -193,7 +192,7 @@ class Ensemble(MSONable):
                 supercell_matrix,
                 ewald_term=ewald_term,
                 coefficient=cluster_expansion.coefs[-1],
-                use_concentration=use_concentration
+                use_concentration=use_concentration,
             )
             processor.add_processor(ewprocessor)
         else:
@@ -202,14 +201,14 @@ class Ensemble(MSONable):
                     cluster_expansion.cluster_subspace,
                     supercell_matrix,
                     cluster_expansion.cluster_interaction_tensors,
-                    use_concentration
+                    use_concentration,
                 )
             elif processor_type == "expansion":
                 processor = ClusterExpansionProcessor(
                     cluster_expansion.cluster_subspace,
                     supercell_matrix,
                     cluster_expansion.coefs,
-                    use_concentration
+                    use_concentration,
                 )
             else:
                 raise ValueError(f"Processor type {processor_type}" f" not supported!")

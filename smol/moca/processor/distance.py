@@ -93,8 +93,7 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
             cluster_subspace,
             supercell_matrix,
             coefficients=np.concatenate([[-match_weight], target_weights]),
-            use_concentration=use_concentration
-            **processor_kwargs,
+            use_concentration=use_concentration**processor_kwargs,
         )
 
     @abstractmethod

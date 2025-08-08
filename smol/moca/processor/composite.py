@@ -36,9 +36,7 @@ class CompositeProcessor(Processor):
     :class:`CompositeProcessor` or :class:`ClusterExpansionProcessor` for you.
     """
 
-    def __init__(
-            self, cluster_subspace, supercell_matrix, use_concentration=False
-    ):
+    def __init__(self, cluster_subspace, supercell_matrix, use_concentration=False):
         """Initialize a CompositeProcessor.
 
         Args:
@@ -51,9 +49,7 @@ class CompositeProcessor(Processor):
                 If true the concentrations in the prim structure sites will be
                 used as the measure to orthonormalize site bases.
         """
-        super().__init__(
-            cluster_subspace, supercell_matrix, None, use_concentration
-        )
+        super().__init__(cluster_subspace, supercell_matrix, None, use_concentration)
         self._processors = []
         self.coefs = np.empty(0)
 
