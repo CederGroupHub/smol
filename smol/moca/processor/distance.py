@@ -227,6 +227,7 @@ class CorrelationDistanceProcessor(DistanceProcessor, ClusterExpansionProcessor)
         self,
         cluster_subspace,
         supercell_matrix,
+        use_concentration=False,
         target_vector=None,
         match_weight=1.0,
         target_weights=None,
@@ -240,6 +241,9 @@ class CorrelationDistanceProcessor(DistanceProcessor, ClusterExpansionProcessor)
             supercell_matrix (ndarray):
                 an array representing the supercell matrix with respect to the
                 Cluster Expansion prim structure.
+            use_concentration (bool):
+                If true the concentrations in the prim structure sites will be
+                used as the measure to orthonormalize site bases.
             target_vector (ndarray): optional
                 target correlation vector, if None given as vector of zeros is used.
             match_weight (float): optional
@@ -261,6 +265,7 @@ class CorrelationDistanceProcessor(DistanceProcessor, ClusterExpansionProcessor)
         super().__init__(
             cluster_subspace,
             supercell_matrix,
+            use_concentration=use_concentration,
             target_vector=target_vector,
             match_weight=match_weight,
             target_weights=target_weights,
@@ -367,6 +372,9 @@ class ClusterInteractionDistanceProcessor(
                 Sequence of ndarray where each array corresponds to the
                 cluster interaction tensor. These should be in the same order as their
                 corresponding orbits in the given cluster_subspace
+            use_concentration (bool):
+                If true the concentrations in the prim structure sites will be
+                used as the measure to orthonormalize site bases.
             target_vector (ndarray): optional
                 target cluster interaction vector, if None given as vector of zeros is
                 used.
@@ -406,7 +414,7 @@ class ClusterInteractionDistanceProcessor(
             cluster_subspace,
             supercell_matrix,
             interaction_tensors=interaction_tensors,
-            use_concentration=False,
+            use_concentration=use_concentration,
             target_vector=target_vector,
             match_weight=match_weight,
             target_weights=target_weights,
