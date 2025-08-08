@@ -268,6 +268,7 @@ class ClusterDecompositionProcessor(Processor):
         supercell_matrix,
         interaction_tensors,
         coefficients=None,
+        use_concentration=False,
         num_threads=None,
         num_threads_full=None,
     ):
@@ -308,7 +309,10 @@ class ClusterDecompositionProcessor(Processor):
             if coefficients is None
             else coefficients
         )
-        super().__init__(cluster_subspace, supercell_matrix, coefficients=coefficients)
+        super().__init__(
+            cluster_subspace, supercell_matrix, coefficients=coefficients,
+            use_concentration=use_concentration
+        )
 
         self._interaction_tensors = interaction_tensors  # keep these for serialization
 
