@@ -43,6 +43,7 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
         match_weight=1.0,
         match_tol=1e-5,
         target_weights=None,
+        use_concentration=False,
         **processor_kwargs,
     ):
         """Initialize a DistanceProcessor.
@@ -65,6 +66,9 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
             target_weights (ndarray): optional
                 Weights for the absolute differences each feature when calculating
                 the total distance. If None, then all features are weighted equally.
+            use_concentration (bool):
+                If true the concentrations in the prim structure sites will be
+                used as the measure to orthonormalize site bases.
             processor_kwargs (dict): optional
                 additional keyword arguments to instantiate the underlying processor
                 being inherited from.
@@ -89,6 +93,7 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
             cluster_subspace,
             supercell_matrix,
             coefficients=np.concatenate([[-match_weight], target_weights]),
+            use_concentration=use_concentration
             **processor_kwargs,
         )
 
