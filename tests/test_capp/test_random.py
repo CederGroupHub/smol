@@ -18,7 +18,9 @@ def test_generate_random_ordered_occupancy(
     scm = np.eye(3)
     scm[0, 0] = 5
     scm[1, 1] = 4
-    processor = ClusterExpansionProcessor(subspace, scm, np.ones(len(subspace)))
+    processor = ClusterExpansionProcessor(
+        subspace, scm, np.ones(len(subspace)), use_concentration=True
+    )
     print(processor.num_sites)
 
     if composition is True:
