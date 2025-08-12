@@ -39,7 +39,14 @@ class Processor(MSONable, metaclass=ABCMeta):
             Number of prims in the supercell structure.
     """
 
-    def __init__(self, cluster_subspace, supercell_matrix, coefficients, **kwargs):
+    def __init__(
+        self,
+        cluster_subspace,
+        supercell_matrix,
+        coefficients,
+        use_concentration=False,
+        **kwargs,
+    ):
         """Initialize a BaseProcessor.
 
         Args:
@@ -50,6 +57,9 @@ class Processor(MSONable, metaclass=ABCMeta):
                 ClusterExpansion prim structure.
             coefficients:
                 single or array of fit coefficients.
+            use_concentration (bool):
+                If true the concentrations in the prim structure sites will be
+                used as the measure to orthonormalize site bases.
         """
         self._subspace = cluster_subspace
         self._structure = self._subspace.structure.copy()
@@ -62,7 +72,9 @@ class Processor(MSONable, metaclass=ABCMeta):
             self.coefs = self.coefs[np.newaxis]
 
         # this can be used (maybe should) to check if a flip is valid
-        site_spaces = set(get_site_spaces(self.structure, include_measure=True))
+        site_spaces = set(
+            get_site_spaces(self.structure, include_measure=use_concentration)
+        )
         self.unique_site_spaces = tuple(sorted(site_spaces))
         # Sort to ensure a fixed ordering between sub-lattices.
         self.active_site_spaces = tuple(
