@@ -36,6 +36,7 @@ class EwaldProcessor(Processor):
         supercell_matrix,
         ewald_term,
         coefficient=1.0,
+        use_concentration=False,
     ):
         """Initialize an EwaldProcessor.
 
@@ -49,6 +50,9 @@ class EwaldProcessor(Processor):
                 an instance of EwaldTerm to compute electrostatic energies.
             coefficient (float):
                 Fitting coefficient to scale Ewald energy by.
+            use_concentration (bool):
+                If true the concentrations in the prim structure sites will be
+                used as the measure to orthonormalize site bases.
         """
         contains_ewald = False
         for term in cluster_subspace.external_terms:
@@ -63,7 +67,9 @@ class EwaldProcessor(Processor):
                 "an Ewald term. Creating a default Ewald "
                 "term and adding to cluster subspace"
             )
-        super().__init__(cluster_subspace, supercell_matrix, coefficient)
+        super().__init__(
+            cluster_subspace, supercell_matrix, coefficient, use_concentration
+        )
 
         self._ewald_term = ewald_term
         # Set up ewald structure and indices
