@@ -130,6 +130,11 @@ class Orbit(MSONable):
         return len(self.clusters)
 
     @property
+    def order(self):
+        """Get the order of the orbit (i.e. 2 = pair, 3 = triplet, etc.) """
+        return len(self.base_cluster)
+
+    @property
     def bit_combos(self):
         """Get tuple of contracted multi-indeces for site function ordering.
 
