@@ -228,6 +228,10 @@ class SampleContainer(MSONable):
             energies = self._flatten(energies)
         return energies
 
+    def get_temperatures(self, discard=0, thin_by=1):
+        """Get the temperatures corresponding to each sample"""
+        return self.get_trace_value("temperature", discard, thin_by)
+
     def get_sublattice_compositions(self, sublattice, discard=0, thin_by=1, flat=True):
         """Get the compositions of a specific sublattice."""
         counts = self.get_sublattice_species_counts(sublattice, discard, thin_by, flat)

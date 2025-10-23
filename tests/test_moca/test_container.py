@@ -140,6 +140,9 @@ def test_get_sampled_values(container, fake_traces, discard, thin):
     assert container.get_energies(discard=discard, thin_by=thin).shape == (
         nsamples * nw,
     )
+    assert container.get_temperatures(discard=discard, thin_by=thin).shape == (
+        nsamples * nw,
+    )
     for sublattice, comp in zip(sublattices, SUBLATTICE_COMPOSITIONS):
         c = container.get_sublattice_compositions(
             sublattice, discard=discard, thin_by=thin
