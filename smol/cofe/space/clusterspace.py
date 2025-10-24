@@ -478,6 +478,24 @@ class ClusterSubspace(MSONable):
         """
         return block_diag([1], *[orb.rotation_array for orb in self.orbits])
 
+    @property
+    def species_indices_maps(self):
+        """ The mappings between species and indices in occupancy arrays.
+
+        Returns list of dicts {index: Species} that maps the occupancy indices
+        to species, for each sublattice in the disordered structure.
+
+        """
+        spec_ind_maps = []
+        site_spaces = get_site_spaces(self.structure)
+        for site_space in site_spaces:
+            map = {
+                ind: spec.__str__() for ind, spec in enumerate(site_space.keys())
+            }
+            spec_ind_maps.append(map)
+
+        return spec_ind_maps
+
     def orbits_by_cutoffs(self, upper, lower=0):
         """Get orbits with clusters within given diameter cutoffs (inclusive).
 
