@@ -839,7 +839,7 @@ class ClusterSubspace(MSONable):
         return scmatrix
 
     def supercell_orbit_mappings(self, scmatrix):
-        """Get orbit mappings for a structure from supercell of prim.
+        """Get the site indices of each orbit for a specific supercell structure.
 
         Return the orbit mappings for a specific supercell of the prim
         structure represented by the given matrix
