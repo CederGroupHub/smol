@@ -480,7 +480,7 @@ class ClusterSubspace(MSONable):
 
     @property
     def species_indices_maps(self):
-        """ The mappings between species and indices in occupancy arrays.
+        """The mappings between species and indices in occupancy arrays.
 
         Returns list of dicts {index: Species} that maps the occupancy indices
         to species, for each sublattice in the disordered structure.
@@ -489,9 +489,7 @@ class ClusterSubspace(MSONable):
         spec_ind_maps = []
         site_spaces = get_site_spaces(self.structure)
         for site_space in site_spaces:
-            map = {
-                ind: spec.__str__() for ind, spec in enumerate(site_space.keys())
-            }
+            map = {ind: spec.__str__() for ind, spec in enumerate(site_space.keys())}
             spec_ind_maps.append(map)
 
         return spec_ind_maps
