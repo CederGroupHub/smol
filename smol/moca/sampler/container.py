@@ -229,7 +229,7 @@ class SampleContainer(MSONable):
         return energies
 
     def get_temperatures(self, discard=0, thin_by=1):
-        """Get the temperatures corresponding to each sample"""
+        """Get the temperatures corresponding to each sample."""
         return self.get_trace_value("temperature", discard, thin_by)
 
     def get_sublattice_compositions(self, sublattice, discard=0, thin_by=1, flat=True):
