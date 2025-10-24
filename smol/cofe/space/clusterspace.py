@@ -489,8 +489,10 @@ class ClusterSubspace(MSONable):
         spec_ind_maps = []
         site_spaces = get_site_spaces(self.structure)
         for site_space in site_spaces:
-            map = {ind: spec.__str__() for ind, spec in enumerate(site_space.keys())}
-            spec_ind_maps.append(map)
+            subl_map = {
+                ind: spec.__str__() for ind, spec in enumerate(site_space.keys())
+            }
+            spec_ind_maps.append(subl_map)
 
         return spec_ind_maps
 
