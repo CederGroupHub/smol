@@ -130,7 +130,7 @@ class Orbit(MSONable):
         return len(self.clusters)
 
     @property
-    def order(self):
+    def num_sites(self):
         """Get the order of the orbit (i.e. 2 = pair, 3 = triplet, etc.). """
         return len(self.base_cluster)
 
