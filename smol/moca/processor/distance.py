@@ -141,6 +141,7 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
         Returns:
             array: change in feature vector
         """
+        occupancy = np.array(occupancy, dtype=np.int32)
         feature_vector = (
             super().compute_feature_vector(occupancy) / self.size
         )  # remove scaling
@@ -171,6 +172,7 @@ class DistanceProcessor(Processor, metaclass=ABCMeta):
         Returns:
             array: change in feature vector
         """
+        occupancy = np.array(occupancy, dtype=np.int32)
         distance_vectors = self.compute_feature_vector_distances(occupancy, flips)
 
         if self.coefs[0] != 0:
@@ -292,6 +294,7 @@ class CorrelationDistanceProcessor(DistanceProcessor, ClusterExpansionProcessor)
             ndarray: 2D distance vector where the first row corresponds to correlations
             before flips
         """
+        occupancy = np.array(occupancy, dtype=np.int32)
         occu_f = occupancy.copy()
         for f in flips:
             occu_f[f[0]] = f[1]
@@ -437,6 +440,7 @@ class ClusterInteractionDistanceProcessor(
             ndarray: 2D distance vector where the first row corresponds to correlations
             before flips
         """
+        occupancy = np.array(occupancy, dtype=np.int32)
         occu_f = occupancy.copy()
         for f in flips:
             occu_f[f[0]] = f[1]

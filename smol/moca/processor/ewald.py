@@ -138,6 +138,7 @@ class EwaldProcessor(Processor):
         Returns:
             array: correlation vector
         """
+        occupancy = np.array(occupancy, dtype=np.int32)
         ew_occu = self._ewald_term.get_ewald_occu(
             occupancy, self.ewald_matrix.shape[0], self._ewald_inds
         )
@@ -159,6 +160,7 @@ class EwaldProcessor(Processor):
         Returns:
             array: change in correlation vector
         """
+        occupancy = np.array(occupancy, dtype=np.int32)
         occu_i = occupancy
         delta_energy = 0
         for f in flips:
