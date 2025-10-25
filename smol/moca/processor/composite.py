@@ -126,6 +126,7 @@ class CompositeProcessor(Processor):
         Returns:
             array: correlation vector
         """
+        occupancy = np.array(occupancy, dtype=np.int32)
         features = [
             np.array(pr.compute_feature_vector(occupancy)) for pr in self._processors
         ]
@@ -147,6 +148,7 @@ class CompositeProcessor(Processor):
         Returns:
             array: change in feature vector
         """
+        occupancy = np.array(occupancy, dtype=np.int32)
         updates = [
             np.array(pr.compute_feature_vector_change(occupancy, flips))
             for pr in self._processors

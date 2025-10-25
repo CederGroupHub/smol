@@ -176,6 +176,7 @@ class ClusterExpansionProcessor(Processor):
             array: correlation vector
         """
         try:
+            occupancy = np.array(occupancy, dtype=np.int32)
             corr = (
                 self._evaluator.correlations_from_occupancy(
                     occupancy, self._indices.container
@@ -184,7 +185,7 @@ class ClusterExpansionProcessor(Processor):
             )
         except ValueError:
             raise ValueError(
-                f"occupancy dtype is: {occupancy.dtype}, must be an array of np.int32!"
+                f"occupancy dtype is: {occupancy.dtype}, but should be integers!"
             )
         return corr
 
@@ -207,6 +208,7 @@ class ClusterExpansionProcessor(Processor):
         Returns:
             array: change in correlation vector
         """
+        occupancy = np.array(occupancy, dtype=np.int32)
         occu_i = occupancy
         delta_corr = np.zeros(self.cluster_subspace.num_corr_functions)
         for f in flips:
@@ -219,7 +221,7 @@ class ClusterExpansionProcessor(Processor):
                 )
             except ValueError:
                 raise ValueError(
-                    f"occupancy dtype is: {occupancy.dtype}, must be an array of np.int32!"
+                    f"occupancy dtype is: {occupancy.dtype}, but should be integers!"
                 )
             occu_i = occu_f
 
@@ -400,6 +402,7 @@ class ClusterDecompositionProcessor(Processor):
             array: correlation vector
         """
         try:
+            occupancy = np.array(occupancy, dtype=np.int32)
             corr = (
                 self._evaluator.interactions_from_occupancy(
                     occupancy, self._indices.container
@@ -408,7 +411,7 @@ class ClusterDecompositionProcessor(Processor):
             )
         except ValueError:
             raise ValueError(
-                f"occupancy dtype is: {occupancy.dtype}, must be an array of np.int32!"
+                f"occupancy dtype is: {occupancy.dtype}, but should be integers!"
             )
         return corr
 
@@ -430,6 +433,7 @@ class ClusterDecompositionProcessor(Processor):
         Returns:
             array: change in cluster interaction vector
         """
+        occupancy = np.array(occupancy, dtype=np.int32)
         occu_i = occupancy
         delta_interactions = np.zeros(self.cluster_subspace.num_orbits)
         for f in flips:
@@ -447,7 +451,7 @@ class ClusterDecompositionProcessor(Processor):
                 )
             except ValueError:
                 raise ValueError(
-                    f"occupancy dtype is: {occupancy.dtype}, must be an array of np.int32!"
+                    f"occupancy dtype is: {occupancy.dtype}, but should be integers!"
                 )
             occu_i = occu_f
 

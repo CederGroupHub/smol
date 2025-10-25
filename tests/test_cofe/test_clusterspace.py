@@ -676,7 +676,8 @@ def test_corr_from_structure(single_subspace, rng):
     assert corr[0] == 1
 
     cs = ClusterSubspace.from_cutoffs(
-        single_subspace.structure, {2: 5}, basis="indicator"
+        single_subspace.structure, {2: 5}, basis="indicator",
+        orthonormal=False
     )
 
     # make an ordered supercell_structure
@@ -833,7 +834,9 @@ def test_vs_CASM_pairs(single_structure):
     species = [{"Li+": 0.1}] * 3 + ["Br-"]
     coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75), (0.5, 0.5, 0.5), (0, 0, 0))
     structure = Structure(single_structure.lattice, species, coords)
-    cs = ClusterSubspace.from_cutoffs(structure, {2: 6}, basis="indicator")
+    cs = ClusterSubspace.from_cutoffs(
+        structure, {2: 6}, basis="indicator", orthonormal=False
+    )
     evaluator = ClusterSpaceEvaluator(
         get_orbit_data(cs.orbits), cs.num_orbits, cs.num_corr_functions
     )
@@ -876,7 +879,9 @@ def test_vs_CASM_triplets(single_structure):
     species = [{"Li+": 0.1}] * 3 + ["Br-"]
     coords = ((0.25, 0.25, 0.25), (0.75, 0.75, 0.75), (0.5, 0.5, 0.5), (0, 0, 0))
     structure = Structure(single_structure.lattice, species, coords)
-    cs = ClusterSubspace.from_cutoffs(structure, {2: 6, 3: 4.5}, basis="indicator")
+    cs = ClusterSubspace.from_cutoffs(
+        structure, {2: 6, 3: 4.5}, basis="indicator", orthonormal=False
+    )
     evaluator = ClusterSpaceEvaluator(
         get_orbit_data(cs.orbits), cs.num_orbits, cs.num_corr_functions
     )
@@ -918,7 +923,9 @@ def test_vs_CASM_triplets(single_structure):
 
 
 def test_vs_CASM_multicomp(single_structure):
-    cs = ClusterSubspace.from_cutoffs(single_structure, {2: 5}, basis="indicator")
+    cs = ClusterSubspace.from_cutoffs(
+        single_structure, {2: 5}, basis="indicator", orthonormal=False
+    )
     evaluator = ClusterSpaceEvaluator(
         get_orbit_data(cs.orbits), cs.num_orbits, cs.num_corr_functions
     )
