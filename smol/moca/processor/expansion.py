@@ -184,9 +184,8 @@ class ClusterExpansionProcessor(Processor):
                 * self.size
             )
         except ValueError:
-            raise ValueError(
-                f"occupancy dtype is: {occupancy.dtype}, but should be integers!"
-            )
+            types = {type(n) for n in occupancy}
+            raise ValueError(f"occupancy contains {types}, but should be integers!")
         return corr
 
     def compute_feature_vector_change(self, occupancy, flips):
@@ -208,7 +207,11 @@ class ClusterExpansionProcessor(Processor):
         Returns:
             array: change in correlation vector
         """
-        occupancy = np.array(occupancy, dtype=np.int32)
+        try:
+            occupancy = np.array(occupancy, dtype=np.int32)
+        except ValueError:
+            types = {type(n) for n in occupancy}
+            raise ValueError(f"occupancy contains {types}, but should be integers!")
         occu_i = occupancy
         delta_corr = np.zeros(self.cluster_subspace.num_corr_functions)
         for f in flips:
@@ -410,9 +413,8 @@ class ClusterDecompositionProcessor(Processor):
                 * self.size
             )
         except ValueError:
-            raise ValueError(
-                f"occupancy dtype is: {occupancy.dtype}, but should be integers!"
-            )
+            types = {type(n) for n in occupancy}
+            raise ValueError(f"occupancy contains {types}, but should be integers!")
         return corr
 
     def compute_feature_vector_change(self, occupancy, flips):
@@ -433,7 +435,11 @@ class ClusterDecompositionProcessor(Processor):
         Returns:
             array: change in cluster interaction vector
         """
-        occupancy = np.array(occupancy, dtype=np.int32)
+        try:
+            occupancy = np.array(occupancy, dtype=np.int32)
+        except ValueError:
+            types = {type(n) for n in occupancy}
+            raise ValueError(f"occupancy contains: {types}, but should be integers!")
         occu_i = occupancy
         delta_interactions = np.zeros(self.cluster_subspace.num_orbits)
         for f in flips:

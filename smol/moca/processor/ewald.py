@@ -160,7 +160,11 @@ class EwaldProcessor(Processor):
         Returns:
             array: change in correlation vector
         """
-        occupancy = np.array(occupancy, dtype=np.int32)
+        try:
+            occupancy = np.array(occupancy, dtype=np.int32)
+        except ValueError:
+            types = {type(n) for n in occupancy}
+            raise ValueError(f"occupancy contains: {types}, but should be integers!")
         occu_i = occupancy
         delta_energy = 0
         for f in flips:
