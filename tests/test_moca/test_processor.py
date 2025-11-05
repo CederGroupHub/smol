@@ -175,7 +175,7 @@ def test_get_average_drift(processor):
 def test_compute_property_change(processor, rng):
     sublattices = processor.get_sublattices()
     occu = _gen_unconstrained_ordered_occu(sublattices, rng=rng)
-    occu_wrong_type = occu.astype(np.int64)
+    occu_wrong_type = ["Mn" for n in range(len(occu))]
     active_sublattices = [sublatt for sublatt in sublattices if sublatt.is_active]
 
     for _ in range(100):
