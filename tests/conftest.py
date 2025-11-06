@@ -81,8 +81,11 @@ def single_structure():
 @pytest.fixture(params=test_structures, scope="package")
 def cluster_subspace(cluster_cutoffs, request):
     subspace = ClusterSubspace.from_cutoffs(
-        request.param, cutoffs=cluster_cutoffs, supercell_size="volume",
-        basis='indicator', orthonormal=False
+        request.param,
+        cutoffs=cluster_cutoffs,
+        supercell_size="volume",
+        basis="indicator",
+        orthonormal=False,
     )
     return subspace
 
@@ -90,8 +93,11 @@ def cluster_subspace(cluster_cutoffs, request):
 @pytest.fixture(params=test_structures, scope="package")
 def cluster_subspace_ewald(cluster_cutoffs, request):
     subspace = ClusterSubspace.from_cutoffs(
-        request.param, cutoffs=cluster_cutoffs, supercell_size="volume",
-        basis='indicator', orthonormal=False
+        request.param,
+        cutoffs=cluster_cutoffs,
+        supercell_size="volume",
+        basis="indicator",
+        orthonormal=False,
     )
     subspace.add_external_term(EwaldTerm())
     return subspace
@@ -101,8 +107,11 @@ def cluster_subspace_ewald(cluster_cutoffs, request):
 def single_subspace(single_structure):
     # this is a subspace with the LiCaBr structure for some fixed tests
     subspace = ClusterSubspace.from_cutoffs(
-        single_structure, cutoffs={2: 6, 3: 5}, supercell_size="volume",
-        basis='indicator', orthonormal=False
+        single_structure,
+        cutoffs={2: 6, 3: 5},
+        supercell_size="volume",
+        basis="indicator",
+        orthonormal=False,
     )
     return subspace
 

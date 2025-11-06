@@ -676,8 +676,7 @@ def test_corr_from_structure(single_subspace, rng):
     assert corr[0] == 1
 
     cs = ClusterSubspace.from_cutoffs(
-        single_subspace.structure, {2: 5}, basis="indicator",
-        orthonormal=False
+        single_subspace.structure, {2: 5}, basis="indicator", orthonormal=False
     )
 
     # make an ordered supercell_structure
