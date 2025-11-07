@@ -748,12 +748,15 @@ class ClusterSubspace(MSONable):
         if scmatrix is None:
             scmatrix = self.scmatrix_from_structure(structure)
 
+        supercell_structure = self.structure.copy()
+        supercell_structure.make_supercell(scmatrix)
+
+        if site_mapping is None:
+            site_mapping = self.structure_site_mapping(supercell_structure, structure)
+
         occu = self.occupancy_from_structure(
             structure, scmatrix=scmatrix, site_mapping=site_mapping
         )
-
-        supercell_structure = self.structure.copy()
-        supercell_structure.make_supercell(scmatrix)
 
         sites = []
         for specie, site in zip(occu, supercell_structure):
@@ -766,7 +769,19 @@ class ClusterSubspace(MSONable):
                     label=site.label,
                 )
                 sites.append(site)
-        return Structure.from_sites(sites)
+
+        refined_struc = Structure.from_sites(sites)
+
+        if structure.site_properties != {}:
+            # Get the site properties from original structure
+            site_props = self.get_mapped_site_properties(
+                structure, scmatrix, site_mapping
+            )
+
+            for prop_type, props in site_props.items():
+                refined_struc.add_site_property(prop_type, props)
+
+        return refined_struc
 
     def occupancy_from_structure(
         self, structure, scmatrix=None, site_mapping=None, encode=False
@@ -839,6 +854,63 @@ class ClusterSubspace(MSONable):
             occu = np.array(occu, dtype=np.int32)
 
         return occu
+
+    def get_mapped_site_properties(self, structure, scmatrix=None, site_mapping=None):
+        """Extract the site properties from the original structure.
+
+        For placing into a refined structure.
+
+        Args:
+            structure (Structure):
+                a pymatgen Structure.
+            scmatrix (array): optional
+                supercell matrix relating the given structure and the
+                primitive structure. If you pass the supercell, you fully are
+                responsible that it is the correct one! This prevents running
+                the _scmatcher (supercell structure matcher)
+            site_mapping (list): optional
+                site mapping as obtained by StructureMatcher.get_mapping
+                such that the elements of site_mapping represent the indices
+                of the matching sites to the prim structure. If you pass this
+                option, you are fully responsible that the mappings are correct!
+                This prevents running _site_matcher to get the mappings.
+
+        Returns:
+            site_props_info (dict):
+                Dictionary of lists containing the properties of each
+                site. {'property_type': list_of_properties}
+        """
+        if scmatrix is None:
+            scmatrix = self.scmatrix_from_structure(structure)
+
+        supercell = self.structure.copy()
+        supercell.make_supercell(scmatrix)
+
+        if site_mapping is None:
+            site_mapping = self.structure_site_mapping(supercell, structure)
+
+        site_properties = {
+            prop_type: [] for prop_type, props in structure.site_properties.items()
+        }
+
+        for i, allowed_species in enumerate(get_allowed_species(supercell)):
+            # rather than starting with all vacancies and looping
+            # only over mapping, explicitly loop over everything to
+            # catch vacancies on improper sites
+            if i in site_mapping:
+                for prop_type, prop in structure[
+                    site_mapping.index(i)
+                ].properties.items():
+                    site_properties[prop_type].append(prop)
+
+            else:  # append None for vacancies, 0 if it is a magmom
+                for prop_type, props in site_properties:
+                    if prop_type == "magmom":
+                        site_properties[prop_type].append(0)
+                    else:
+                        site_properties[prop_type].append(None)
+
+        return site_properties
 
     def scmatrix_from_structure(self, structure):
         """Get supercell matrix from a given structure.
