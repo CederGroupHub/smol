@@ -1,13 +1,15 @@
+import os
 from itertools import combinations
 
 import numpy as np
 import numpy.testing as npt
 import pytest
+from monty.serialization import loadfn
 from pymatgen.analysis.structure_matcher import (
     OrderDisorderElementComparator,
     StructureMatcher,
 )
-from pymatgen.core import Species, Structure
+from pymatgen.core import PeriodicSite, Species, Structure
 from pymatgen.util.coord import is_coord_subset_pbc
 
 from smol.cofe import ClusterSubspace, PottsSubspace
@@ -737,6 +739,40 @@ def test_corr_from_structure(single_subspace, rng):
     for _ in range(10):
         rng.shuffle(s)
         npt.assert_allclose(cs.corr_from_structure(s), expected)
+
+
+def test_get_mapped_site_properties():
+    DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+    lmof_prim = loadfn(os.path.join(DATA_DIR, "LiMOF_prim.json"))
+    cutoffs = {2: 5}
+    lmof_subspace = ClusterSubspace.from_cutoffs(
+        structure=lmof_prim, cutoffs=cutoffs, supercell_size="volume"
+    )
+    ortho_struc = loadfn(os.path.join(DATA_DIR, "ortho-limno2-afm.json"))
+    mag_sg_ortho = "C2/c"
+
+    ortho_ref = lmof_subspace.refine_structure(ortho_struc)
+    # Check if magnetic symmetry is retained after refining the structure.
+    # Make new structure with defined spins on Mn species
+    new_sites_spin = []
+    for s in ortho_ref:
+        if "Mn" in s.species_string:
+            if s.properties["magmom"] > 2:
+                spin = 4
+            else:
+                spin = -4
+            new_site = PeriodicSite(
+                Species("Mn", spin=spin),
+                coords=s.frac_coords,
+                lattice=s.lattice,
+                properties=s.properties,
+            )
+        else:
+            new_site = s
+        new_sites_spin.append(new_site)
+
+    ortho_ref_spin = Structure.from_sites(new_sites_spin)
+    assert ortho_ref_spin.get_space_group_info(symprec=1e-5)[0] == mag_sg_ortho
 
 
 def test_periodicity(single_subspace):
