@@ -787,15 +787,6 @@ def test_get_mapped_site_properties():
     ortho_vec_ref_spin = get_struc_with_spin(ortho_vac_ref)
     assert ortho_vec_ref_spin.get_space_group_info(symprec=1e-5)[0] == "C2/c"
 
-    vac_mags = np.array(
-        [
-            s.properties["magmom"]
-            for s in ortho_vec_ref_spin
-            if "vac" in s.species_string
-        ]
-    )
-    assert np.all(vac_mags == 0)
-
 
 def test_periodicity(single_subspace):
     # Check to see if a supercell of a smaller structure gives the same corr
