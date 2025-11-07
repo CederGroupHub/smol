@@ -759,7 +759,11 @@ class ClusterSubspace(MSONable):
         for specie, site in zip(occu, supercell_structure):
             if not isinstance(specie, Vacancy):  # skip vacancies
                 site = PeriodicSite(
-                    specie, site.frac_coords, supercell_structure.lattice
+                    specie,
+                    site.frac_coords,
+                    supercell_structure.lattice,
+                    properties=site.properties,
+                    label=site.label,
                 )
                 sites.append(site)
         return Structure.from_sites(sites)
