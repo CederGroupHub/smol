@@ -903,9 +903,6 @@ class ClusterSubspace(MSONable):
                 ].properties.items():
                     site_properties[prop_type].append(prop)
 
-            else:  # append None for vacancies, 0 if it is a magmom
-                continue
-
         return site_properties
 
     def scmatrix_from_structure(self, structure):
