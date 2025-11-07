@@ -904,11 +904,7 @@ class ClusterSubspace(MSONable):
                     site_properties[prop_type].append(prop)
 
             else:  # append None for vacancies, 0 if it is a magmom
-                for prop_type, props in site_properties:
-                    if prop_type == "magmom":
-                        site_properties[prop_type].append(0)
-                    else:
-                        site_properties[prop_type].append(None)
+                continue
 
         return site_properties
 

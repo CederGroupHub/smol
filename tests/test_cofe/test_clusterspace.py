@@ -751,27 +751,50 @@ def test_get_mapped_site_properties():
     ortho_struc = loadfn(os.path.join(DATA_DIR, "ortho-limno2-afm.json"))
 
     ortho_ref = lmof_subspace.refine_structure(ortho_struc)
+
     # Check if magnetic symmetry is retained after refining the structure.
     # Make new structure with defined spins on Mn species
-    new_sites_spin = []
-    for s in ortho_ref:
-        if "Mn" in s.species_string:
-            if s.properties["magmom"] > 2:
-                spin = 4
+    def get_struc_with_spin(struct):
+        new_sites_spin = []
+        for s in struct:
+            if "Mn" in s.species_string:
+                if s.properties["magmom"] > 2:
+                    spin = 4
+                else:
+                    spin = -4
+                new_site = PeriodicSite(
+                    Species("Mn", spin=spin),
+                    coords=s.frac_coords,
+                    lattice=s.lattice,
+                    properties=s.properties,
+                )
             else:
-                spin = -4
-            new_site = PeriodicSite(
-                Species("Mn", spin=spin),
-                coords=s.frac_coords,
-                lattice=s.lattice,
-                properties=s.properties,
-            )
-        else:
-            new_site = s
-        new_sites_spin.append(new_site)
+                new_site = s
+            new_sites_spin.append(new_site)
 
-    ortho_ref_spin = Structure.from_sites(new_sites_spin)
+        return Structure.from_sites(new_sites_spin)
+
+    ortho_ref_spin = get_struc_with_spin(ortho_ref)
     assert ortho_ref_spin.get_space_group_info(symprec=1e-5)[0] == "C2/c"
+
+    # Now check if this works with vacancies
+    ortho_vac = ortho_struc.copy()
+    li_inds = [i for i, s in enumerate(ortho_vac) if "Li" in s.species_string]
+    ortho_vac.remove_sites(li_inds)
+    assert ortho_vac.get_space_group_info(symprec=1e-5)[0] == "Pmmn"
+
+    ortho_vac_ref = lmof_subspace.refine_structure(ortho_vac)
+    ortho_vec_ref_spin = get_struc_with_spin(ortho_vac_ref)
+    assert ortho_vec_ref_spin.get_space_group_info(symprec=1e-5)[0] == "C2/c"
+
+    vac_mags = np.array(
+        [
+            s.properties["magmom"]
+            for s in ortho_vec_ref_spin
+            if "vac" in s.species_string
+        ]
+    )
+    assert np.all(vac_mags == 0)
 
 
 def test_periodicity(single_subspace):
