@@ -749,7 +749,6 @@ def test_get_mapped_site_properties():
         structure=lmof_prim, cutoffs=cutoffs, supercell_size="volume"
     )
     ortho_struc = loadfn(os.path.join(DATA_DIR, "ortho-limno2-afm.json"))
-    mag_sg_ortho = "C2/c"
 
     ortho_ref = lmof_subspace.refine_structure(ortho_struc)
     # Check if magnetic symmetry is retained after refining the structure.
@@ -772,7 +771,7 @@ def test_get_mapped_site_properties():
         new_sites_spin.append(new_site)
 
     ortho_ref_spin = Structure.from_sites(new_sites_spin)
-    assert ortho_ref_spin.get_space_group_info(symprec=1e-5)[0] == mag_sg_ortho
+    assert ortho_ref_spin.get_space_group_info(symprec=1e-5)[0] == "C2/c"
 
 
 def test_periodicity(single_subspace):
