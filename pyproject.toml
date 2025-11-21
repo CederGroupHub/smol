@@ -62,7 +62,7 @@ test = [
     "polytope",
     "cvxpy",
     "gurobipy",
-    "pyscipopt==5.6.0",
+    "pyscipopt==5.7.1",
 ]
 dev = [
     "pre-commit >=2.12.1",
