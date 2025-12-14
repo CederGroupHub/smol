@@ -18,12 +18,12 @@ repos:
     args: ['--maxkb=600']
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.21.1
+  rev: v3.21.2
   hooks:
   - id: pyupgrade
 
 - repo: https://github.com/psf/black-pre-commit-mirror
-  rev: 25.11.0
+  rev: 25.12.0
   hooks:
   - id: black
 
@@ -43,7 +43,7 @@ repos:
     - --profile=black
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.21.1
+  rev: v3.21.2
   hooks:
     - id: pyupgrade
       args: [--py38-plus]
