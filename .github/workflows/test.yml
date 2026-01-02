@@ -76,7 +76,7 @@ jobs:
 
       - name: Download all artifacts
         # Downloads coverage1, coverage2, etc.
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           pattern: .coverage*
           merge-multiple: true
