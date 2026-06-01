@@ -67,14 +67,12 @@ def compile_test_program(code, extra_preargs=None, extra_postargs=None):
 
 def basic_check_build():
     """Check basic compilation and linking of C code."""
-    code = textwrap.dedent(
-        """\
+    code = textwrap.dedent("""\
         #include <stdio.h>
         int main(void) {
         return 0;
         }
-        """
-    )
+        """)
     compile_test_program(code)
 
 
@@ -99,8 +97,7 @@ def get_openmp_flag(compiler):
 
 def check_openmp_support(compiler):
     """Check whether OpenMP test code can be compiled and run."""
-    code = textwrap.dedent(
-        """\
+    code = textwrap.dedent("""\
         #include <omp.h>
         #include <stdio.h>
         int main(void) {
@@ -108,8 +105,7 @@ def check_openmp_support(compiler):
         printf("nthreads=%d\\n", omp_get_num_threads());
         return 0;
         }
-        """
-    )
+        """)
     extra_preargs = os.getenv("LDFLAGS", None)
     if extra_preargs is not None:
         extra_preargs = extra_preargs.strip().split(" ")
@@ -150,8 +146,7 @@ def check_openmp_support(compiler):
         traceback.print_exc()
 
     if not openmp_supported:
-        message = textwrap.dedent(
-            """
+        message = textwrap.dedent("""
 
                             ***********
                             * WARNING *
@@ -176,8 +171,7 @@ def check_openmp_support(compiler):
               parallelism.
 
                                 ***\n
-            """
-        )
+            """)
         warnings.warn(message)
 
     return openmp_supported
