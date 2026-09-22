@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         config:
-          - python: "3.10"
+          - python: "3.11"
           - python: "3.12"
 
         split: [1, 2, 3, 4, 5, 6, 7, 8]
