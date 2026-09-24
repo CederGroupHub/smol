@@ -35,7 +35,7 @@ repos:
     exclude: README.md
 
 - repo: https://github.com/pycqa/isort
-  rev: 9.0.0a3
+  rev: 9.0.1
   hooks:
   - id: isort
     name: isort (python)
@@ -49,7 +49,7 @@ repos:
       args: [--py38-plus]
 
 - repo: https://github.com/PyCQA/autoflake
-  rev: v2.3.3
+  rev: v2.4.0
   hooks:
     - id: autoflake
       args:
@@ -86,7 +86,7 @@ repos:
   - id: rst-inline-touching-normal
 
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.4.2
+  rev: v2.4.3
   hooks:
     - id: codespell
       stages: [pre-commit, commit-msg]
