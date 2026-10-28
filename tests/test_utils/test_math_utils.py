@@ -686,7 +686,7 @@ def test_choose_sections():
 
 @pytest.mark.parametrize("determinant", range(6, 13))
 def test_yield_hermite_normal_forms(determinant):
-    hnfs = [hnf for hnf in yield_hermite_normal_forms(determinant)]
+    hnfs = [*yield_hermite_normal_forms(determinant)]
     for hnf in hnfs:
         assert np.linalg.det(hnf) == pytest.approx(determinant)
 
