@@ -19,9 +19,7 @@ def test_unique_corr_indices(structure_wrangler):
     indices, duplicates = unique_corr_vector_indices(
         structure_wrangler, "energy", return_compliment=True
     )
-    assert set(indices) | set(duplicates) == {
-        i for i in range(structure_wrangler.num_structures)
-    }
+    assert set(indices) | set(duplicates) == {*range(structure_wrangler.num_structures)}
 
     feature_matrix = structure_wrangler.feature_matrix
     energies = structure_wrangler.get_property_vector("energy")
@@ -67,7 +65,7 @@ def test_ewald_energy_indices(structure_wrangler):
         structure_wrangler, e_tol, return_compliment=True
     )
     assert set(indices) | set(compliments) == {
-        i for i in range(structure_wrangler.num_structures)
+        *range(structure_wrangler.num_structures)
     }
 
     comps = [
