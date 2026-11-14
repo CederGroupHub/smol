@@ -209,7 +209,7 @@ class StandardBasis(DiscreteBasis):
         # exclude the last basis function since the constant phi_0 will
         # take its place
         # pylint: disable=unnecessary-comprehension
-        nconst_functions = [function for function in basis_functions][:-1]
+        nconst_functions = [*basis_functions][:-1]
         func_arr = np.array(
             [[function(sp) for sp in self.species] for function in nconst_functions]
         )

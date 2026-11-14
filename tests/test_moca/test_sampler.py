@@ -47,7 +47,7 @@ def test_sample(sampler, thin, rng):
         ]
     )
     steps = 1000
-    samples = [state for state in sampler.sample(1000, occu, thin_by=thin)]
+    samples = [*sampler.sample(1000, occu, thin_by=thin)]
     assert len(samples) == steps // thin
 
     it = sampler.sample(43, occu, thin_by=7)
