@@ -9,9 +9,7 @@ from tests.utils import assert_pickles
 
 @pytest.fixture(params=["correlation", "cluster-interaction"], scope="package")
 def generator(structure, cluster_cutoffs, request):
-    _, supercell_size = integerize_vector(
-        [val for val in structure.composition.values()]
-    )
+    _, supercell_size = integerize_vector([*structure.composition.values()])
     generator = StochasticSQSGenerator.from_structure(
         structure,
         cluster_cutoffs,
